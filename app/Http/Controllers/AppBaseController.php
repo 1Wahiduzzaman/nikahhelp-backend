@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Enums\HttpStatusCode;
+use InfyOm\Generator\Utils\ResponseUtil;
+use Response;
+use Symfony\Component\HttpFoundation\Response as FResponse;
+use JWTAuth;
+
+/**
+ * @SWG\Swagger(
+ *   basePath="/api/v1",
+ *   @SWG\Info(
+ *     title="Laravel Generator APIs",
+ *     version="1.0.0",
+ *   )
+ * )
+ * This class should be parent class for other API controllers
+ * Class AppBaseController
+ */
+class AppBaseController extends Controller
+{
+    public function sendResponse($result, $message,$code=FResponse::HTTP_OK)
+    {
+        return $this->sendSuccessResponse($result, $message, [], $code);
+    }
+
+    public function sendError($message, $code = FResponse::HTTP_BAD_REQUEST)
+    {
+        return $this->sendErrorResponse($message, $errorMessages = [], $code);
+    }
+
+    public function sendSuccess($data,$message,$code)
+    {
+       return $this->sendSuccessResponse($data,$message,$code);
+    }
+
+    public function getUserId(){
+        $user = JWTAuth::parseToken()->authenticate();
+        return $user['id'];
+    }
+
+
+    /**
+     * Return Response with pagination
+     *
+     * @param $items
+     * @return array
+     */
+    public function paginationResponse($items)
+    {
+        return array(
+            'total_items' => $items->total(),
+            'current_items' => $items->count(),
+            'first_item' => $items->firstItem(),
+            'last_item' => $items->lastItem(),
+            'current_page' => $items->currentPage(),
+            'last_page' => $items->lastPage(),
+            'has_more_pages' => $items->hasMorePages(),
+        );
+    }
+}

@@ -1,0 +1,63 @@
+<?php
+
+
+namespace App\Http\Requests\Candidate;
+
+use App\Http\Requests\APIRequest;
+use Illuminate\Validation\Rule;
+
+class CandidatePreferenceRatingRequest  extends APIRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            "pre_pros_part_status" => 'sometimes|digits_between:1,3',
+            'pre_strength_of_character_rate' => 'sometimes|digits_between:1,5',
+            'pre_look_and_appearance_rate' => 'sometimes|digits_between:1,5',
+            'pre_religiosity_or_faith_rate' => 'sometimes|digits_between:1,5',
+            'pre_manners_socialskill_ethics_rate' => 'sometimes|digits_between:1,5',
+            'pre_emotional_maturity_rate' => 'sometimes|digits_between:1,5',
+            'pre_good_listener_rate' => 'sometimes|digits_between:1,5',
+            'pre_good_talker_rate' => 'sometimes|digits_between:1,5',
+            'pre_wiling_to_learn_rate' => 'sometimes|digits_between:1,5',
+            'pre_family_social_status_rate' => 'sometimes|digits_between:1,5',
+            'pre_employment_wealth_rate' => 'sometimes|digits_between:1,5',
+            'pre_education_rate' => 'sometimes|digits_between:1,5',
+            'pre_things_important_status' => 'sometimes|digits_between:1,3',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'pre_pros_part_status.*' => 'Value required and must be between 1 to 3',
+            'pre_strength_of_character_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_look_and_appearance_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_religiosity_or_faith_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_manners_socialskill_ethics_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_emotional_maturity_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_good_listener_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_good_talker_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_wiling_to_learn_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_family_social_status_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_employment_wealth_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_education_rate.*' => 'Value required and must be between `Important` to `Extremely Important`',
+            'pre_things_important_status.*' => 'Value required and must be between 1 to 3',
+        ];
+    }
+}
