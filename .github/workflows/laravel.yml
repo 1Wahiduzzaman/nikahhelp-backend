@@ -1,22 +1,30 @@
-name: Laravel
-
+name: Build and Deploy
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    push:
+        branches:
+            -   master
 
 jobs:
-  laravel-tests:
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Configure PHP 8.0
-        uses: shivammathur/setup-php@master
-        with:
-          php-version: 7.4
-          extensions: mbstring, ctype, fileinfo, openssl, PDO, bcmath, json, tokenizer, xml
-      - name: Composer install
-        run: composer install --no-dev --no-interaction --prefer-dist
+    build:
+        name: Build and Deploy
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout Repository
+                uses: actions/checkout@master
+            -   name: Setup Enviroment
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '7.4'
+            -   name: Speed up the packages installation process
+                run: composer global require hirak/prestissimo
+            -   name: Install Packages
+                run: composer install --no-dev
+            -   name: Deploy to Server
+                uses: ngocquyhoang/deploy@laravel
+                with:
+                    user: ${{ secrets.user }}
+                    host: ${{ secrets.host }}
+                    port: ${{ secrets.port }}
+                    path: ${{ secrets.deploymentPath }}
+                env:
+                    DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
