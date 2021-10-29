@@ -19,10 +19,8 @@ jobs:
             -   name: Install dependencies
                 uses: php-actions/composer@v6
                 with:
-                    version: 1
+                    version: 2
                     dev: no
-            -   name: Speed up the packages installation process
-                run: composer global require hirak/prestissimo
             -   name: Install Packages
                 run: composer update
             -   name: Deploy to Server
