@@ -22,7 +22,7 @@ jobs:
                     version: 2
                     dev: no
             -   name: Install Packages
-                run: composer update
+                run: composer install --no-dev
             -   name: Deploy to Server
                 uses: ngocquyhoang/deploy@laravel
                 with:
