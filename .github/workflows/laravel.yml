@@ -11,6 +11,7 @@ jobs:
         steps:
             -   name: Checkout Repository
                 uses: actions/checkout@master
+                uses: php-actions/composer@v1
             -   name: Setup Enviroment
                 uses: shivammathur/setup-php@v2
                 with:
