@@ -24,7 +24,7 @@ jobs:
             -   name: Speed up the packages installation process
                 run: composer global require hirak/prestissimo
             -   name: Install Packages
-                run: composer install --no-dev
+                run: composer update
             -   name: Deploy to Server
                 uses: ngocquyhoang/deploy@laravel
                 with:
