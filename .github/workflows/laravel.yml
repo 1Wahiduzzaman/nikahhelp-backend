@@ -13,9 +13,12 @@ jobs:
                 uses: actions/checkout@master
             -   name: Setup Enviroment
                 uses: shivammathur/setup-php@v2
-                run: composer self-update --1
                 with:
                     php-version: '7.4'
+            -   name: Install dependencies
+                uses: php-actions/composer@v6
+                  with:
+                    version: 1
             -   name: Speed up the packages installation process
                 run: composer global require hirak/prestissimo
             -   name: Install Packages
