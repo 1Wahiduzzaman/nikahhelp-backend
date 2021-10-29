@@ -11,12 +11,9 @@ jobs:
         steps:
             -   name: Checkout Repository
                 uses: actions/checkout@master
-                uses: php-actions/composer@v1
-                with:
-                  php_version: 7.4
-                  version: 1
             -   name: Setup Enviroment
                 uses: shivammathur/setup-php@v2
+                uses: "ramsey/composer-install@v1"
                 with:
                     php-version: '7.4'
             -   name: Speed up the packages installation process
