@@ -30,4 +30,4 @@ jobs:
                     host: 66.29.130.69
                     path: /home/bismillah/public_html/api/
                 env:
-                    DEPLOY_KEY: arranzed
+                    DEPLOY_KEY: matrimony
