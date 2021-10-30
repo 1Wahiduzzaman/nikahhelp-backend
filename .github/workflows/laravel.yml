@@ -15,4 +15,4 @@ jobs:
                       username: root
                       host: 66.29.130.69
                       password: ${{ secrets.SSH_PASSWORD }}
-                      script: ./deploy_setup.sh
+                      script: pwd
