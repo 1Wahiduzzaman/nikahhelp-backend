@@ -18,6 +18,5 @@ jobs:
                       host: 66.29.130.69
                       password: ${{ secrets.SSH_PASSWORD }}
                       passphrase: ${{ secrets.pass }}
-                      sync: true
-                      script: 'git clone git@github.com:khorramk/mat-backend.git'
+                      script: 'ssh -T git@github.com'
                       debug: true
