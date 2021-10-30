@@ -14,10 +14,10 @@ jobs:
               -   name: Deploy to production
                   uses: appleboy/ssh-action@master
                   with:
-                      username: root
-                      host: 66.29.130.69
+                      username: ${{ secrets.username }}
+                      host: ${{ secrets.host }}
                       password: ${{ secrets.SSH_PASSWORD }}
                       passphrase: ${{ secrets.pass }}
-                      script: 'cd /home/bismillah/public_html && git clone https://github.com/khorramk/mat-backend.git;
+                      script: 'cd public_html && git clone https://github.com/khorramk/mat-backend.git;
                       cd mat_backend; composer install'
 
