@@ -1,34 +1,18 @@
-name: Build and Deploy
+name: CD
+
 on:
-    push:
-        branches:
-            -   main
+  push:
+    branches: [ production ]
 
 jobs:
-    build:
-        name: Build and Deploy
-        runs-on: ubuntu-latest
-        steps:
-            -   name: Checkout Repository
-                uses: actions/checkout@master
-            -   name: Setup Enviroment
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: '8'
-                    ini-values: memory_limit=-1
-            -   name: Install dependencies
-                uses: php-actions/composer@v6
-                with:
-                    version: 2
-                    dev: no
-            -   name: Install Packages
-                run: sudo composer install --no-dev
-            -   name: Laravel deploy 2 from laravel deploy
-                uses: khorramk/laravel-deploy@v0.0.5
-                with:
-                    user: root
-                    host: 66.29.130.69
-                    port: 22
-                    path: /home/bismillah/public_html/api/
-                env:
-                    DEPLOY_KEY: matrimony
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Deploy to production
+      uses: appleboy/ssh-action@master
+      with:
+        username: root
+        host: 66.29.130.69
+        password: ${{ secrets.SSH_PASSWORD }}
+        script: './server_deploy.sh'
