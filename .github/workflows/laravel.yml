@@ -17,5 +17,6 @@ jobs:
                       username: root
                       host: 66.29.130.69
                       password: ${{ secrets.SSH_PASSWORD }}
-                      script: 'cd ~/ && git clone git@github.com:khorramk/mat-backend.git;
+                      script: 'cd ~/ && sudo git clone git@github.com:khorramk/mat-backend.git;
                        cd mat_backend && composer install;'
+                      debug: true
