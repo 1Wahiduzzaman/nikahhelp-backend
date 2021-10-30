@@ -24,7 +24,7 @@ jobs:
             -   name: Install Packages
                 run: sudo composer install --no-dev
             -   name: Laravel deploy 2 from laravel deploy
-                uses: khorramk/laravel-deploy@v0.0.3
+                uses: khorramk/laravel-deploy@v0.0.4
                 with:
                     user: root
                     host: 66.29.130.69
