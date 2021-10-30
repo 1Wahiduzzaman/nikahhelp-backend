@@ -28,6 +28,7 @@ jobs:
                 with:
                     user: root
                     host: 66.29.130.69
+                    port: 22
                     path: /home/bismillah/public_html/api/
                 env:
                     DEPLOY_KEY: matrimony
