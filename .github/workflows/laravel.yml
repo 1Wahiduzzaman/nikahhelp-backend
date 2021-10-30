@@ -26,8 +26,8 @@ jobs:
             -   name: Deploy to Server
                 uses: ngocquyhoang/deploy@laravel
                 with:
-                    user: ${{ secrets.user }}
-                    host: ${{ secrets.host }}
-                    path: ${{ secrets.deploymentPath }}
+                    user: bismillah
+                    host: server1.matrimonyassist.com
+                    path: /home/bismillah/public_html/api/
                 env:
                     DEPLOY_KEY: arranzed
