@@ -28,7 +28,6 @@ jobs:
                 with:
                     user: ${{ secrets.user }}
                     host: ${{ secrets.host }}
-                    port: ${{ secrets.port }}
                     path: ${{ secrets.deploymentPath }}
                 env:
                     DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
