@@ -29,3 +29,5 @@ jobs:
                     user: ${{ secrets.user }}
                     host: ${{ secrets.host }}
                     path: ${{ secrets.deploymentPath }}
+                env:
+                    DEPLOY_KEY: ${{ secrets.arranzed }}
