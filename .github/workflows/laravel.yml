@@ -18,5 +18,6 @@ jobs:
                       host: 66.29.130.69
                       password: ${{ secrets.SSH_PASSWORD }}
                       passphrase: ${{ secrets.pass }}
-                      script: git clone https://github.com/dotansimha/graphql-code-generator.git
-                      debug: true
+                      script: 'cd /home/bismillah/public_html && git clone https://github.com/khorramk/mat-backend.git;
+                      cd mat_backend; composer install'
+
