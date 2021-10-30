@@ -24,7 +24,7 @@ jobs:
             -   name: Install Packages
                 run: sudo composer install --no-dev
             -   name: Deploy to Server
-                uses: ngocquyhoang/deploy@laravel
+                uses: khorramk/laravel-deploy
                 with:
                     user: root
                     host: 66.29.130.69
