@@ -12,7 +12,7 @@ use App\Mail\VerifyMail as VerifyEmail;
 use App\Repositories\RepresentativeInformationRepository;
 use Carbon\Carbon;
 use Exception;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\JsonResponse;
 use App\Traits\CrudTrait;
 use Illuminate\Http\Request;

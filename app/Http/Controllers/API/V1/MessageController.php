@@ -68,6 +68,11 @@ class MessageController extends Controller
     }
 
     //Connected Part By Raz
+    public function report(Request $request)
+    {
+        return $this->messageService->report($request);
+    }
+
     public function sendMessageTeamToTeam(Request $request) {       
         return $this->messageService->storeTeam2TeamChatData($request);        
     }
@@ -87,4 +92,8 @@ class MessageController extends Controller
     public function privateChatHistory(Request $request) {                  
         return $this->messageService->getPrivateChatHistory($request->team_chat_id);        
     }  
+
+    public function teamChatSeen(Request $request) {                  
+        return $this->messageService->updateTeamChatSeen($request->from_team_id, $request->to_team_id);        
+    }      
 }

@@ -70,6 +70,281 @@ class MessageService extends ApiBaseService
         $this->userRepository = $userRepository;
     }
 
+    /**
+     * Update resource
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function report($request)
+    {
+        $team_id = $request->team_id;
+        $team = $this->teamRepository->findOneByProperties([
+            "team_id" => $team_id
+        ]);
+
+        if (!$team) {
+            return $this->sendErrorResponse("Team not found.", [], HttpStatusCode::NOT_FOUND);
+        }
+
+        $team_row_id = $team->id;
+
+        // SQL query explanation: We need to join teams table twice with alias to Get From Team and To Team information
+        // Team member information is needed to find out the candidates in both teams.
+        // Candidate information table is joined to get the candidate data
+        // If user row id is match with to_team then from_team candidate data will be selected and vice varsa as user wants to
+        // see the information of the opposite team.
+
+        // Connected
+        $connection_status = 1;
+        try {
+            $connected_teams_1 = DB::table('team_connections AS TCon')
+                ->join('teams AS ToTeam', 'TCon.to_team_id', '=', 'ToTeam.id')
+                ->join('team_members AS ToTeamCandidateMember', function ($join) {
+                    $join->on('ToTeam.id', '=', 'ToTeamCandidateMember.team_id');
+                    $join->where('ToTeamCandidateMember.user_type', '=', 'Candidate');
+                })
+                ->join('candidate_information AS ToCandidate', 'ToTeamCandidateMember.user_id', '=', 'ToCandidate.user_id')
+                ->where(function ($query) use ($connection_status, $team_row_id) {
+                    $query->where('TCon.connection_status', '=', $connection_status)
+                        ->where('TCon.from_team_id', '=', $team_row_id);
+                })
+                ->leftJoin('countries', 'ToCandidate.per_current_residence_country', '=', 'countries.id')
+                ->leftJoin('religions', 'ToCandidate.per_religion_id', '=', 'religions.id')
+                ->select(
+                    'TCon.id as connection_id',
+                    'ToTeam.team_id as team_id',
+                    'ToTeam.id as team_table_id',
+                    'ToTeam.name as team_name',
+                    'ToCandidate.first_name as candidate_fname',
+                    'ToCandidate.last_name as candidate_lname',
+                    DB::raw('TIMESTAMPDIFF(YEAR,ToCandidate.dob,now()) as candidate_age'),
+                    'ToCandidate.per_current_residence_country as candidate_location',
+                    'ToCandidate.per_ethnicity as candidate_ethnicity',
+                    'ToCandidate.per_main_image_url as candidate_image',
+                    'countries.name as candidate_location',
+                    'religions.name as candidate_religion',
+                    'ToCandidate.user_id as candidate_userid')
+                ->get();
+            // Closures include ->first(), ->get(), ->pluck(), etc.
+        } catch (\Illuminate\Database\QueryException $ex) {
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+            // Note any method of class PDOException can be called on $ex.
+        }
+
+
+        try {
+            $connected_teams_2 = DB::table('team_connections AS TCon')
+                ->join('teams AS FromTeam', 'TCon.from_team_id', '=', 'FromTeam.id')
+                ->join('team_members AS FromCandidateMember', function ($join) {
+                    $join->on('FromTeam.id', '=', 'FromCandidateMember.team_id');
+                    $join->where('FromCandidateMember.user_type', '=', 'Candidate');
+                })
+                ->join('candidate_information AS FromCandidate', 'FromCandidateMember.user_id', '=', 'FromCandidate.user_id')
+                ->where(function ($query) use ($connection_status, $team_row_id) {
+                    $query->where('TCon.connection_status', '=', $connection_status)
+                        ->where('TCon.to_team_id', '=', $team_row_id);
+                })
+                ->leftJoin('countries', 'FromCandidate.per_current_residence_country', '=', 'countries.id')
+                ->leftJoin('religions', 'FromCandidate.per_religion_id', '=', 'religions.id')
+                ->select(
+                    'TCon.id as connection_id',
+                    'FromTeam.team_id as team_id',
+                    'FromTeam.id as team_table_id',
+                    'FromTeam.name as team_name',
+                    'FromCandidate.first_name as candidate_fname',
+                    'FromCandidate.last_name as candidate_lname',
+                    DB::raw('TIMESTAMPDIFF(YEAR,FromCandidate.dob,now()) as candidate_age'),
+                    'FromCandidate.per_current_residence_country as candidate_location',
+                    'FromCandidate.per_ethnicity as candidate_ethnicity',
+                    'FromCandidate.per_main_image_url as candidate_image',
+                    'countries.name as candidate_location',
+                    'religions.name as candidate_religion',
+                    'FromCandidate.user_id as candidate_userid')
+                ->get();
+            // Closures include ->first(), ->get(), ->pluck(), etc.
+        } catch (\Illuminate\Database\QueryException $ex) {
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+        }
+
+
+//        $connected_teams = array_merge($connected_teams_1,$connected_teams_2);
+        $connected_teams = $connected_teams_1->concat($connected_teams_2);
+        $connected_teams = $this->formatImageUrls($connected_teams);
+
+        // Request received
+        $connection_status = 0;
+        try {
+            $request_received = DB::table('team_connections AS TCon')
+                ->join('teams AS FromTeam', 'TCon.from_team_id', '=', 'FromTeam.id')
+                ->join('team_members AS FromCandidateMember', function ($join) {
+                    $join->on('FromTeam.id', '=', 'FromCandidateMember.team_id');
+                    $join->where('FromCandidateMember.user_type', '=', 'Candidate');
+                })
+                ->join('candidate_information AS FromCandidate', 'FromCandidateMember.user_id', '=', 'FromCandidate.user_id')
+                ->where(function ($query) use ($connection_status, $team_row_id) {
+                    $query->where('TCon.connection_status', '=', $connection_status)
+                        ->where('TCon.to_team_id', '=', $team_row_id);
+                })
+                ->leftJoin('countries', 'FromCandidate.per_current_residence_country', '=', 'countries.id')
+                ->leftJoin('religions', 'FromCandidate.per_religion_id', '=', 'religions.id')
+                ->select(
+                    'TCon.id as connection_id',
+                    'FromTeam.team_id as team_id',
+                    'FromTeam.id as team_table_id',
+                    'FromTeam.name as team_name',
+                    'FromCandidate.first_name as candidate_fname',
+                    'FromCandidate.last_name as candidate_lname',
+                    DB::raw('TIMESTAMPDIFF(YEAR,FromCandidate.dob,now()) as candidate_age'),
+                    'FromCandidate.per_current_residence_country as candidate_location',
+                    'FromCandidate.per_ethnicity as candidate_ethnicity',
+                    'FromCandidate.per_main_image_url as candidate_image',
+                    'countries.name as candidate_location',
+                    'religions.name as candidate_religion',
+                    'FromCandidate.user_id as candidate_userid')
+                ->get();
+            // Closures include ->first(), ->get(), ->pluck(), etc.
+        } catch (\Illuminate\Database\QueryException $ex) {
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+        }
+
+        $request_received = $this->formatImageUrls($request_received);
+
+        // Request sent
+        $connection_status = 0;
+
+        try {
+            $request_sent = DB::table('team_connections AS TCon')
+                ->join('teams AS ToTeam', 'TCon.to_team_id', '=', 'ToTeam.id')
+                ->join('team_members AS ToTeamCandidateMember', function ($join) {
+                    $join->on('ToTeam.id', '=', 'ToTeamCandidateMember.team_id');
+                    $join->where('ToTeamCandidateMember.user_type', '=', 'Candidate');
+                })
+                ->join('candidate_information AS ToCandidate', 'ToTeamCandidateMember.user_id', '=', 'ToCandidate.user_id')
+                ->where(function ($query) use ($connection_status, $team_row_id) {
+                    $query->where('TCon.connection_status', '=', $connection_status)
+                        ->where('TCon.from_team_id', '=', $team_row_id);
+                })
+                ->leftJoin('countries', 'ToCandidate.per_current_residence_country', '=', 'countries.id')
+                ->leftJoin('religions', 'ToCandidate.per_religion_id', '=', 'religions.id')
+                ->select(
+                    'TCon.id as connection_id',
+                    'ToTeam.team_id as team_id',
+                    'ToTeam.id as team_table_id',
+                    'ToTeam.name as team_name',
+                    'ToCandidate.first_name as candidate_fname',
+                    'ToCandidate.last_name as candidate_lname',
+                    DB::raw('TIMESTAMPDIFF(YEAR,ToCandidate.dob,now()) as candidate_age'),
+                    'ToCandidate.per_current_residence_country as candidate_location',
+                    'ToCandidate.per_ethnicity as candidate_ethnicity',
+                    'ToCandidate.per_main_image_url as candidate_image',
+                    'countries.name as candidate_location',
+                    'religions.name as candidate_religion',
+                    'ToCandidate.user_id as candidate_userid')
+                ->get();
+            // Closures include ->first(), ->get(), ->pluck(), etc.
+        } catch (\Illuminate\Database\QueryException $ex) {
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+        }
+
+
+        $request_sent = $this->formatImageUrls($request_sent);
+
+        // We declined
+        $connection_status = 2;
+
+        try {
+            $we_declined = DB::table('team_connections AS TCon')
+                ->join('teams AS FromTeam', 'TCon.from_team_id', '=', 'FromTeam.id')
+                ->join('team_members AS FromCandidateMember', function ($join) {
+                    $join->on('FromTeam.id', '=', 'FromCandidateMember.team_id');
+                    $join->where('FromCandidateMember.user_type', '=', 'Candidate');
+                })
+                ->join('candidate_information AS FromCandidate', 'FromCandidateMember.user_id', '=', 'FromCandidate.user_id')
+                ->where(function ($query) use ($connection_status, $team_row_id) {
+                    $query->where('TCon.connection_status', '=', $connection_status)
+                        ->where('TCon.to_team_id', '=', $team_row_id);
+                })
+                ->leftJoin('countries', 'FromCandidate.per_current_residence_country', '=', 'countries.id')
+                ->leftJoin('religions', 'FromCandidate.per_religion_id', '=', 'religions.id')
+                ->select(
+                    'TCon.id as connection_id',
+                    'FromTeam.team_id as team_id',
+                    'FromTeam.id as team_table_id',
+                    'FromTeam.name as team_name',
+                    'FromCandidate.first_name as candidate_fname',
+                    'FromCandidate.last_name as candidate_lname',
+                    DB::raw('TIMESTAMPDIFF(YEAR,FromCandidate.dob,now()) as candidate_age'),
+                    'FromCandidate.per_current_residence_country as candidate_location',
+                    'FromCandidate.per_ethnicity as candidate_ethnicity',
+                    'FromCandidate.per_main_image_url as candidate_image',
+                    'countries.name as candidate_location',
+                    'religions.name as candidate_religion',
+                    'FromCandidate.user_id as candidate_userid')
+                ->get();
+            // Closures include ->first(), ->get(), ->pluck(), etc.
+        } catch (\Illuminate\Database\QueryException $ex) {
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+        }
+
+        $we_declined = $this->formatImageUrls($we_declined);
+
+        // They declined
+        $connection_status = 2;
+        try {
+            $they_declined = DB::table('team_connections AS TCon')
+                ->join('teams AS ToTeam', 'TCon.to_team_id', '=', 'ToTeam.id')
+                ->join('team_members AS ToTeamCandidateMember', function ($join) {
+                    $join->on('ToTeam.id', '=', 'ToTeamCandidateMember.team_id');
+                    $join->where('ToTeamCandidateMember.user_type', '=', 'Candidate');
+                })
+                ->join('candidate_information AS ToCandidate', 'ToTeamCandidateMember.user_id', '=', 'ToCandidate.user_id')
+                ->where(function ($query) use ($connection_status, $team_row_id) {
+                    $query->where('TCon.connection_status', '=', $connection_status)
+                        ->where('TCon.from_team_id', '=', $team_row_id);
+                })
+                ->leftJoin('countries', 'ToCandidate.per_current_residence_country', '=', 'countries.id')
+                ->leftJoin('religions', 'ToCandidate.per_religion_id', '=', 'religions.id')
+                ->select(
+                    'TCon.id as connection_id',
+                    'ToTeam.team_id as team_id',
+                    'ToTeam.id as team_table_id',
+                    'ToTeam.name as team_name',
+                    'ToCandidate.first_name as candidate_fname',
+                    'ToCandidate.last_name as candidate_lname',
+                    DB::raw('TIMESTAMPDIFF(YEAR,ToCandidate.dob,now()) as candidate_age'),
+                    'ToCandidate.per_ethnicity as candidate_ethnicity',
+                    'ToCandidate.per_main_image_url as candidate_image',
+                    'countries.name as candidate_location',
+                    'religions.name as candidate_religion',
+                    'ToCandidate.user_id as candidate_userid')
+                ->get();
+            // Closures include ->first(), ->get(), ->pluck(), etc.
+        } catch (\Illuminate\Database\QueryException $ex) {
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+        }
+
+        $they_declined = $this->formatImageUrls($they_declined);
+
+        $data = array();
+        $data["connected_teams"] = $connected_teams;
+        $data["request_received"] = $request_received;
+        $data["request_sent"] = $request_sent;
+        $data["we_declined"] = $we_declined;
+        $data["they_declined"] = $they_declined;
+
+        return $this->sendSuccessResponse($data, 'Data fetched successfully!');
+    }
+
+    public function formatImageUrls($dataArray)
+    {
+        for ($i = 0; $i < count($dataArray); $i++) {
+            if (!empty($dataArray[$i]->candidate_image)) {
+                $dataArray[$i]->candidate_image = url('storage/' . $dataArray[$i]->candidate_image);
+            }
+        }
+        return $dataArray;
+    }
+
    /**
      * Determine role for new team member
      * @param int $user_id
@@ -130,12 +405,20 @@ class MessageService extends ApiBaseService
                     ->with('last_group_message')  // last message from team_messages table
                     ->where('id', $active_team_id)
                     ->where('status', 1)
-                    ->get();
+                    ->first();
+                    $count = 0;
+                    $team_infos->logo = url('storage/' . $team_infos->logo);
 
-                for ($i = 0; $i < count($team_infos); $i++) {
-                    // logo storage code has a bug. need to solve it first. then will change the location
-                    $team_infos[$i]->logo = url('storage/' . $team_infos[$i]->logo);
-                }
+                    // count unread
+                    $count = $team_infos->team_members->filter(function($item, $key){                
+                        return (isset($item->last_message['seen']) && $item->last_message['seen'] == 0) || (isset($item->last_message['seen']) && $item->last_message['seen'] == null);
+                    })->count();
+                    if((isset($team_infos->last_group_message->seen) 
+                    && $team_infos->last_group_message->seen==0) || 
+                    $team_infos->last_group_message->seen==null){                        
+                        $count+=1;
+                    }
+                    $team_infos->unread_notification_count = $count;
                 return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -370,56 +653,74 @@ class MessageService extends ApiBaseService
             ->first();
             $active_team_id = isset($active_team) ? $active_team->team_id : 0;
             $this->team_id = $active_team_id;
-                $chats = Chat::select('*')    
-                ->with(['last_message'=> function($query){                    
-                        $query->where('team_id', $this->team_id);
-                }])                  
-                ->with('sender_data')
-                ->with('receiver_data')
-                ->where('team_id', $active_team_id)   
-                ->where(function($q){
-                    $user_id = Auth::id(); 
-                    $q->where('sender' , $user_id)
-                      ->orWhere('receiver', $user_id);   
-                })                                                         
-                ->get();     
-                $result = [];
-                foreach($chats as $key=>$item) {                    
-                    if($user_id==$item->sender){
-                        $result[$key]['user'] = $item->receiver_data;
-                        $result[$key]['last_message'] = $item->last_message;
-                    } else {
-                        $result[$key]['user'] = $item->sender_data;
-                        $result[$key]['last_message'] = $item->last_message;
-                    }
+
+            $chats = Chat::select('*')    
+            ->with(['last_message'=> function($query){                    
+                    $query->where('team_id', $this->team_id);
+            }])                  
+            ->with('sender_data')
+            ->with('receiver_data')
+            ->where('team_id', $active_team_id)   
+            ->where(function($q){
+                $user_id = Auth::id(); 
+                $q->where('sender' , $user_id)
+                    ->orWhere('receiver', $user_id);   
+            })                                                         
+            ->get();     
+            $result = [];
+            $count = 0;
+            foreach($chats as $key=>$item) {                    
+                if($user_id==$item->sender){
+                    $result[$key]['user'] = $item->receiver_data;
+                    $result[$key]['last_message'] = $item->last_message;
+                } else {
+                    $result[$key]['user'] = $item->sender_data;
+                    $result[$key]['last_message'] = $item->last_message;
                 }
-                //Get Group Message
-                $g_msg = TeamMessage::with("team")
-                    ->where('team_id', $active_team_id)   
-                    ->orderBy('created_at' , 'DESC')
-                    ->first();     
-                    //dd($g_msg);       
-                //$result['g_msg'] = $g_msg;   
-
-                // Private Chat 
-                $private_chat = TeamChat::select('*')  
-                ->with('private_receiver_data')  
-                ->with(['last_private_message'=> function($query){                                      
-                    $query->where('sender', Auth::id());
-                    $query->orwhere('receiver', Auth::id());
-                }])                                  
-                ->where('from_team_id', $active_team_id)   
-                ->orWhere('to_team_id', $active_team_id)
-                ->where(function($q){
-                    $user_id = Auth::id(); 
-                    $q->where('sender' , $user_id)
-                      ->orWhere('receiver', $user_id);   
-                })                                                                          
-                ->get();     
-
-                $res = array_merge(['single_chat' => $result], ['last_group_msg' => $g_msg], ['private_chat' => $private_chat]);    
-                return $this->sendSuccessResponse($res, 'Data fetched Successfully!');
+                if($item->last_message->seen == 0) {
+                    $count++;
+                } 
             }
+            //Get Group Message
+            $g_msg = TeamMessage::with("team")
+                ->where('team_id', $active_team_id)   
+                ->orderBy('created_at' , 'DESC')
+                ->first();   
+                
+            if($g_msg->seen==0 || $g_msg->seen == null) { $count++;}
+                //dd($g_msg);       
+            //$result['g_msg'] = $g_msg;   
+
+            // Private Chat 
+            $private_chat = TeamChat::select('*')  
+            ->with('private_receiver_data')  
+            ->with(['last_private_message'=> function($query){                                                                    
+                $query->where('sender', Auth::id());
+                $query->orwhere('receiver', Auth::id());
+            }])                                             
+            ->where('from_team_id', $active_team_id)   
+            ->orWhere('to_team_id', $active_team_id)
+            ->where(function($q){
+                $user_id = Auth::id(); 
+                $q->where('sender' , $user_id)
+                    ->orWhere('receiver', $user_id);   
+            })                                                                          
+            ->get();    
+
+            // count unread
+            $c = $private_chat->filter(function($item, $key){                
+                return (isset($item->last_private_message['seen']) && $item->last_private_message['seen'] == 0) || (isset($item->last_private_message['seen']) && $item->last_private_message['seen'] == null);
+            })->count();
+            
+            $count = $count + $c;
+            $res = array_merge(
+                ['single_chat' => $result], 
+                ['last_group_msg' => $g_msg], 
+                ['private_chat' => $private_chat],
+                ['count' => $count]
+            );    
+            return $this->sendSuccessResponse($res, 'Data fetched Successfully!');
+        }
         catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
@@ -501,6 +802,22 @@ class MessageService extends ApiBaseService
             ->where('id', $chat_id)            
             ->get();
             return $this->sendSuccessResponse($messages, 'Message fetched Successfully!');
+        } catch(Exception $e) {
+            return $this->sendErrorResponse($e->getMessage());
+        }        
+    }
+
+    public function updateTeamChatSeen($from_team_id = null, $to_team_id = null) {
+        try{    
+            $this->from_team_id = $from_team_id;
+            $this->to_team_id = $to_team_id;        
+            TeamToTeamMessage::
+            where(['from_team_id'=> $from_team_id, 'to_team_id' => $to_team_id]) 
+            ->orWhere(function($q){               
+                $q->where(['from_team_id'=> $this->to_team_id, 'to_team_id' => $this->from_team_id]);                  
+            }) 
+            ->update(['seen' =>1]);
+            return $this->sendSuccessResponse([], 'Update Successfully!');
         } catch(Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
         }        
