@@ -10,6 +10,6 @@ class TeamToTeamPrivateMessage extends Model
     use HasFactory;
 
     public function team_chat() {
-        return $this->belongsTo(TeamChat::class, 'chat_chat_id', 'id');
-    }    
+        return $this->belongsTo(TeamChat::class, 'team_chat_id', 'id');
+    }        
 }

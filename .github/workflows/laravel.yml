@@ -18,6 +18,7 @@ jobs:
                       host: ${{ secrets.host }}
                       password: ${{ secrets.SSH_PASSWORD }}
                       passphrase: ${{ secrets.pass }}
-                      script: 'cd public_html; rm -rf mat-backend; git clone https://github.com/khorramk/mat-backend.git;
-                      cd mat-backend && composer install'
+                      script: 'cd public_html; rm -rf api; git clone git@github.com:khorramk/mat-backend.git api;
+                      cp .env api/;
+                      cd api && composer install'
 
