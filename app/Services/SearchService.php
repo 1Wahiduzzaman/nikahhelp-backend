@@ -85,8 +85,16 @@ class SearchService extends ApiBaseService
      */
     public function filter($request)
     {
+        //first priority gender
+        //second priority age
+        //third priority country
+        //fourth priority religious
+
         try {
-            $candidates = $this->candidateRepository->where(function($query) use ($request) {
+            $candidates = $this->candidateRepository->getModel()->get();
+
+
+/*            $candidates = $this->candidateRepository->where(function($query) use ($request) {
                 $query->where('per_gender', $request->get('gender'))
                     ->where('dob', Carbon::parse($request->get('min_age'))->diff(Carbon::now()))
                     ->orWhere('dob', Carbon::parse($request->get('max_age'))->diff(Carbon::now()))
@@ -98,7 +106,7 @@ class SearchService extends ApiBaseService
                 ->orWhere('per_gender', $request->get('gender'))
                 ->orWhere('country', $request->get('country'))
                 ->orWhere('religion', $request->get('religion'))
-                ->get();
+                ->get();*/
 
             if(count($candidates) === 0) {
                 return $this->sendErrorResponse('No Candidates Registered', [], HttpStatusCode::NOT_FOUND);

@@ -8,7 +8,7 @@ use App\Models\CandidateInformation;
 use App\Repositories\SearchRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
-use App\Http\Requests\API\CreateSearchAPIRequest as APICreateSearchAPIRequest;
+use App\Http\Requests\Search\CreateSearchAPIRequest as APICreateSearchAPIRequest;
 use Response;
 use App\Services\SearchService;
 
