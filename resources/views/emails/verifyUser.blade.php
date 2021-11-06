@@ -11,7 +11,7 @@ Your registered email-id is {{$user['email']}} , Please click on the below link 
 @php
     $domain=env('WEB_DOMAIN');
 @endphp
-<a href="{{$domain}}/v1/emailVerify/{{$user->verifyUser->token}}">Verify Email</a>
+<a href="{{$domain}}/emailVerify/{{$user->verifyUser->token}}">Verify Email</a>
 <!-- <a href="{{$domain}}/emailVerify/{{$user->verifyUser->token}}">Verify Email</a> -->
 </body>
 </html>
