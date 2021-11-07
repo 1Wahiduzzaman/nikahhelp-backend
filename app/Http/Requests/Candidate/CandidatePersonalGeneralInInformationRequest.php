@@ -27,10 +27,10 @@ class CandidatePersonalGeneralInInformationRequest extends APIRequest
     public function rules()
     {
         return [
-            'per_ethnicity'=> 'required',
+            'per_ethnicity'=> 'nullable',
             'per_mother_tongue'=> 'nullable|string',
-            'per_nationality'=> 'required',
-            'per_country_of_birth'=> 'required',
+            'per_nationality'=> 'nullable',
+            'per_country_of_birth'=> 'nullable',
             'per_health_condition'=> 'nullable|string'
         ];
     }
