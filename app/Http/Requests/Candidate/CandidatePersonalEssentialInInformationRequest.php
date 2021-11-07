@@ -26,13 +26,13 @@ class CandidatePersonalEssentialInInformationRequest  extends APIRequest
     public function rules()
     {
         return [
-            'dob' => 'required|date|before:'.date('Y-m-d'),
-            'per_gender'=> 'required',
-            'per_height'=> 'required',
-            'per_employment_status'=> 'required',
-            'per_education_level_id'=> 'required',
-            'per_religion_id'=> 'required',
-            'per_occupation'=> 'required',
+            'dob' => 'nullable|date|before:'.date('Y-m-d'),
+            'per_gender'=> 'nullable',
+            'per_height'=> 'nullable',
+            'per_employment_status'=> 'nullable',
+            'per_education_level_id'=> 'nullable',
+            'per_religion_id'=> 'nullable',
+            'per_occupation'=> 'nullable',
         ];
     }
 

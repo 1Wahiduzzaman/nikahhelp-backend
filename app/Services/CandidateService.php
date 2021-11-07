@@ -266,17 +266,20 @@ class CandidateService extends ApiBaseService
             $candidate = $this->candidateRepository->findOneByProperties([
                 'user_id' => $userId
             ]);
-
-            dd(User::find(1));
             if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
-            $input = $request->all(CandidateInformation::PERSONAL_ESSENTIAL_INFO);
 
-            // As BaseRepository update method has bug that's why we have to fallback to model default methods.
-//            $input = $candidate->fill($input)->toArray();
-            $this->candidateRepository->update($input);
-//            $candidate->save($input);
+            $candidate->dob= $request->input('dob');
+            $candidate->per_gender= $request->input('per_gender');
+            $candidate->per_height= $request->input('per_height');
+            $candidate->per_employment_status= $request->input('per_employment_status');
+            $candidate->per_education_level_id= $request->input('per_education_level_id');
+            $candidate->per_religion_id= $request->input('per_religion_id',1);
+            $candidate->per_occupation= $request->input('per_occupation');
+
+
+            $candidate->save();
             $personal_info = $this->candidateTransformer->transformPersonalEssential($candidate);
             return $this->sendSuccessResponse($personal_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
         } catch (Exception $exception) {
