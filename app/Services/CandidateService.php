@@ -460,19 +460,19 @@ class CandidateService extends ApiBaseService
 
             $candidate->pre_partner_age_min = $request->input('pre_partner_age_min') ?? 18;
             $candidate->pre_partner_age_max = $request->input('pre_partner_age_max') ?? 68;
-            $candidate->pre_height_min = $request->input('pre_height_min') ?? 5.00;
-            $candidate->pre_height_max = $request->input('pre_height_max') ?? 7.00;
-            $candidate->pre_has_country_allow_preference = $request->input('pre_has_country_allow_preference') ?? 0;
-            $candidate->pre_has_country_disallow_preference = $request->input('pre_has_country_disallow_preference') ?? 0;
-            $candidate->pre_partner_religions = $request->input('pre_partner_religions') ?? 0;
-            $candidate->pre_ethnicities = $request->input('pre_ethnicities') ?? 0;
-            $candidate->pre_study_level_id = $request->input('pre_study_level_id') ?? 0;
-            $candidate->pre_employment_status = $request->input('pre_employment_status') ?? 0;
-            $candidate->pre_occupation = $request->input('pre_occupation') ?? 0;
+            $candidate->pre_height_min = $request->input('pre_height_min');
+            $candidate->pre_height_max = $request->input('pre_height_max');
+            $candidate->pre_has_country_allow_preference = $request->input('pre_has_country_allow_preference');
+            $candidate->pre_has_country_disallow_preference = $request->input('pre_has_country_disallow_preference');
+            $candidate->pre_partner_religions = $request->input('pre_partner_religions');
+            $candidate->pre_ethnicities = $request->input('pre_ethnicities');
+            $candidate->pre_study_level_id = $request->input('pre_study_level_id');
+            $candidate->pre_employment_status = $request->input('pre_employment_status');
+            $candidate->pre_occupation = $request->input('pre_occupation');
             $candidate->pre_preferred_divorcee = $request->input('pre_preferred_divorcee') ?? 0;
             $candidate->pre_preferred_divorcee_child = $request->input('pre_preferred_divorcee_child') ?? 0;
-            $candidate->pre_other_preference = $request->input('pre_other_preference') ?? null;
-            $candidate->pre_description = $request->input('pre_description') ?? null;
+            $candidate->pre_other_preference = $request->input('pre_other_preference');
+            $candidate->pre_description = $request->input('pre_description');
 
             DB::beginTransaction();
             $candidate->save();
