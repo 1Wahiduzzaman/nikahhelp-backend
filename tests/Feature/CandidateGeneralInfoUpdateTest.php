@@ -29,19 +29,6 @@ class CandidateGeneralInfoUpdateTest extends TestCase
     }
 
     /**
-     * Per ethnicity required Test
-     * @return void
-     */
-    public function test_candidate_per_ethnicity_is_required()
-    {
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/personal-generalinformation', []);
-
-        $this->response->assertJsonFragment(['per_ethnicity' => ['The ethnicity field is required.']]);
-    }
-
-    /**
      * Per mother tongue must be string Test
      * @return void
      */
@@ -54,32 +41,6 @@ class CandidateGeneralInfoUpdateTest extends TestCase
         ]);
 
         $this->response->assertJsonFragment(['per_mother_tongue' => ['The per mother tongue must be a string.']]);
-    }
-
-    /**
-     * Per nationality required Test
-     * @return void
-     */
-    public function test_candidate_per_nationality_is_required()
-    {
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/personal-generalinformation', []);
-
-        $this->response->assertJsonFragment(['per_nationality' => ['The nationality field is required.']]);
-    }
-
-    /**
-     * Per country of birth required Test
-     * @return void
-     */
-    public function test_candidate_per_country_of_birth_is_required()
-    {
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/personal-generalinformation', []);
-
-        $this->response->assertJsonFragment(['per_country_of_birth' => ['The country of birth field is required.']]);
     }
 
     /**
@@ -111,22 +72,13 @@ class CandidateGeneralInfoUpdateTest extends TestCase
             'screen_name'=>'rabbilarabbi',
         ]);
 
-        $data = [
-            'per_ethnicity' => 'very good',
-            'per_mother_tongue' => Null,
-            'per_nationality' => 1,
-            'per_country_of_birth' => 1,
-            'per_health_condition' => Null,
-        ];
-
+        /* Request with no parameter to check each and every input field with null value can be accepted*/
         $this->response = $this->withHeaders([
             'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/personal-generalinformation', $data);
+        ])->post('/api/v1/candidate/personal-generalinformation');
 
-        $responseData = $this->response['data']['general'];
 
         $this->assertApiSuccess();
-        $this->assertEquals($data, $responseData);
 
     }
 
