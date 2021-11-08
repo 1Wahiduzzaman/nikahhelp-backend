@@ -26,19 +26,19 @@ class CandidatePreferenceRatingRequest  extends APIRequest
     public function rules()
     {
         return [
-            "pre_pros_part_status" => 'nullable|numeric|between:1,3',
-            'pre_strength_of_character_rate' => 'nullable|numeric|between:1,5',
-            'pre_look_and_appearance_rate' => 'nullable|numeric|between:1,5',
-            'pre_religiosity_or_faith_rate' => 'nullable|numeric|between:1,5',
-            'pre_manners_socialskill_ethics_rate' => 'nullable|numeric|between:1,5',
-            'pre_emotional_maturity_rate' => 'nullable|numeric|between:1,5',
-            'pre_good_listener_rate' => 'nullable|numeric|between:1,5',
-            'pre_good_talker_rate' => 'nullable|numeric|between:1,5',
-            'pre_wiling_to_learn_rate' => 'nullable|numeric|between:1,5',
-            'pre_family_social_status_rate' => 'nullable|numeric|between:1,5',
-            'pre_employment_wealth_rate' => 'nullable|numeric|between:1,5',
-            'pre_education_rate' => 'nullable|numeric|between:1,5',
-            'pre_things_important_status' => 'nullable|numeric|between:1,5',
+            "pre_pros_part_status" => 'nullable|numeric|between:0,3',
+            'pre_strength_of_character_rate' => 'nullable|numeric|between:0,5',
+            'pre_look_and_appearance_rate' => 'nullable|numeric|between:0,5',
+            'pre_religiosity_or_faith_rate' => 'nullable|numeric|between:0,5',
+            'pre_manners_socialskill_ethics_rate' => 'nullable|numeric|between:0,5',
+            'pre_emotional_maturity_rate' => 'nullable|numeric|between:0,5',
+            'pre_good_listener_rate' => 'nullable|numeric|between:0,5',
+            'pre_good_talker_rate' => 'nullable|numeric|between:0,5',
+            'pre_wiling_to_learn_rate' => 'nullable|numeric|between:0,5',
+            'pre_family_social_status_rate' => 'nullable|numeric|between:0,5',
+            'pre_employment_wealth_rate' => 'nullable|numeric|between:0,5',
+            'pre_education_rate' => 'nullable|numeric|between:0,5',
+            'pre_things_important_status' => 'nullable|numeric|between:0,5',
         ];
     }
 
