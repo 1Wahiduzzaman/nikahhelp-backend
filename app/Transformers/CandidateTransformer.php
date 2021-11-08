@@ -329,7 +329,6 @@ class CandidateTransformer extends TransformerAbstract
      */
     private function contactInfo(CandidateInformation $item): array
     {
-        /* edo Below + sign causes the problem */
         return [
             'per_email' => $item->per_email,
             'per_current_residence_country' => $item->per_current_residence_country,
