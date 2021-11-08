@@ -482,7 +482,10 @@ class CandidateService extends ApiBaseService
                 $city = [];
                 foreach ($request->pre_partner_comes_from as $key => $county) {
                     $country[] = ['candidate_pre_country_id' => $county['country'], 'candidate_pre_city_id' => $county['city']];
-                    $city[] = ['city_id' => $county['city'], 'country_id' => $county['country']];
+                    /* avoid city with null or 0 value */
+                    if($county['city']){
+                        $city[] = ['city_id' => $county['city'], 'country_id' => $county['country']];
+                    }
                 }
                 if ($request->pre_has_country_allow_preference) {
                     if (count($country) > 0):
