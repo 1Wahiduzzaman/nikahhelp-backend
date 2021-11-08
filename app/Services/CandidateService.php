@@ -361,7 +361,7 @@ class CandidateService extends ApiBaseService
             }
             $input = $request->all(CandidateInformation::PERSONAL_MOREABOUT_INFO);
 
-            $input = $candidate->fill($input)->toArray();
+//            $input = $candidate->fill($input)->toArray();
             $candidate->save($input);
             $personal_info = $this->candidateTransformer->transformPersonalMoreAbout($candidate);
             return $this->sendSuccessResponse($personal_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
