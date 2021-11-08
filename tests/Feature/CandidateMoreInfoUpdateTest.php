@@ -30,27 +30,6 @@ class CandidateMoreInfoUpdateTest extends TestCase
     }
 
     /**
-     * Candidate marital status is required Test
-     * @return void
-     */
-    public function test_candidate_marital_status_is_required()
-    {
-        $userInfo = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/create',[
-            'first_name'=>'Rabbial',
-            'last_name'=>' Anower',
-            'screen_name'=>'rabbilarabbi',
-        ]);
-
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/personal-more-about',[]);
-
-        $this->response->assertJsonFragment(['per_marital_status' => ['The per marital status field is required.']]);
-    }
-
-    /**
      * Candidate marital status type Test
      * @return void
      */
@@ -72,52 +51,6 @@ class CandidateMoreInfoUpdateTest extends TestCase
 
         $this->response->assertJsonFragment(['per_marital_status' => ['The per marital status must be a string.']]);
 
-    }
-
-    /**
-     * Candidate have children is required Test
-     * @return void
-     */
-    public function test_candidate_have_children_is_required()
-    {
-        $userInfo = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/create',[
-            'first_name'=>'Rabbial',
-            'last_name'=>' Anower',
-            'screen_name'=>'rabbilarabbi',
-        ]);
-
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/personal-more-about',[
-            'per_marital_status'=>'divorced_with_children' /* per_have_children is required when per_marital_status is 'divorced_with_children' */
-        ]);
-
-        $this->response->assertJsonFragment(['per_have_children' => ['The per have children field is required when per marital status is divorced_with_children.']]);
-    }
-
-    /**
-     * Candidate children is required when per_have_children is 1 Test
-     * @return void
-     */
-    public function test_candidate_children_is_required()
-    {
-        $userInfo = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/create',[
-            'first_name'=>'Rabbial',
-            'last_name'=>' Anower',
-            'screen_name'=>'rabbilarabbi',
-        ]);
-
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/personal-more-about',[
-            'per_have_children'=>'1' /* per_have_children is required when per_have_children is '1' */
-        ]);
-
-        $this->response->assertJsonFragment(['per_children' => ['The per children field is required when per have children is 1.']]);
     }
 
     /**
@@ -144,48 +77,6 @@ class CandidateMoreInfoUpdateTest extends TestCase
     }
 
     /**
-     * Candidate willing to relocate is required Test
-     * @return void
-     */
-    public function test_candidate_willing_to_relocate_is_required()
-    {
-        $userInfo = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/create',[
-            'first_name'=>'Rabbial',
-            'last_name'=>' Anower',
-            'screen_name'=>'rabbilarabbi',
-        ]);
-
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/personal-more-about',[]);
-
-        $this->response->assertJsonFragment(['per_willing_to_relocate' => ['The willing to relocate field is required.']]);
-    }
-
-    /**
-     * Candidate smoker is required Test
-     * @return void
-     */
-    public function test_candidate_per_smoker_is_required()
-    {
-        $userInfo = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/create',[
-            'first_name'=>'Rabbial',
-            'last_name'=>' Anower',
-            'screen_name'=>'rabbilarabbi',
-        ]);
-
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/personal-more-about',[]);
-
-        $this->response->assertJsonFragment(['per_smoker' => ['The smoker field is required.']]);
-    }
-
-    /**
      * Candidate per_smoker must be string Test
      * @return void
      */
@@ -206,27 +97,6 @@ class CandidateMoreInfoUpdateTest extends TestCase
         ]);
 
         $this->response->assertJsonFragment(['per_smoker' => ['The per smoker must be a string.']]);
-    }
-
-    /**
-     * Candidate per_language_speak is required Test
-     * @return void
-     */
-    public function test_candidate_language_speak_is_required()
-    {
-        $userInfo = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/create',[
-            'first_name'=>'Rabbial',
-            'last_name'=>' Anower',
-            'screen_name'=>'rabbilarabbi',
-        ]);
-
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->post('/api/v1/candidate/personal-more-about',[]);
-
-        $this->response->assertJsonFragment(['per_language_speak' => ['The language speak field is required.']]);
     }
 
     /**

@@ -28,10 +28,10 @@ class CandidatePersonalAboutMoreRequest extends APIRequest
     public function rules()
     {
         return [
-            'per_marital_status' => 'required|string',
-            'per_have_children' => 'required_if:per_marital_status,divorced_with_children| boolean',
+            'per_marital_status' => 'nullable|string',
+            'per_have_children' => 'nullable|boolean',
             'per_children' => [
-                'required_if:per_have_children,1',
+                'nullable',
                 'array',
                 function ($attribute, $values, $fail) {
                     if (!empty($values)):
@@ -50,9 +50,9 @@ class CandidatePersonalAboutMoreRequest extends APIRequest
 
                 }],
             'per_currently_living_with' => 'nullable|string',
-            'per_willing_to_relocate' => 'required',
-            'per_smoker' => 'required|string',
-            'per_language_speak' => 'required|string',
+            'per_willing_to_relocate' => 'nullable',
+            'per_smoker' => 'nullable|string',
+            'per_language_speak' => 'nullable|string',
             'per_hobbies_interests' => 'nullable|string',
             'per_food_cuisine_like' => 'nullable|string',
             'per_things_enjoy' => 'nullable|string',
