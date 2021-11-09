@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\API;
+namespace App\Http\Requests\Search;
 
-use InfyOm\Generator\Request\APIRequest;
+use App\Http\Requests\APIRequest;
 
 class CreateSearchAPIRequest extends APIRequest
 {
@@ -24,13 +24,13 @@ class CreateSearchAPIRequest extends APIRequest
     public function rules()
     {
         return [
-            "page" => 'numeric',
-            "perpage" => 'numeric',
-            "min_age" => 'required|numeric',
-            "max_age" => 'required|numeric',
-            "gender" => 'required|boolean',
-            "country" => 'string',
-            "religion" => 'required|string',
+//            "page" => 'numeric',
+//            "perpage" => 'numeric',
+//            "min_age" => 'required|numeric|min:18',
+//            "max_age" => 'required|numeric|max:80',
+//            "gender" => 'required|boolean',
+//            "country" => 'string',
+//            "religion" => 'required|string',
         ];
     }
 }
