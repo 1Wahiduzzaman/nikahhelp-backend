@@ -214,7 +214,7 @@ class CandidateService extends ApiBaseService
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
             $data['user'] = $this->candidateTransformer->transform($candidate);
-            $data['personal_info '] = $this->candidateTransformer->transformPersonal($candidate);
+            $data['personal_info'] = $this->candidateTransformer->transformPersonal($candidate);
             $country = $this->countryRepository->findAll()->where('status','=',1);
             $data['countries'] = CountryCityResource::collection($country);
             $data['studylevels'] = StudyLevel::orderBy('name')->get();
