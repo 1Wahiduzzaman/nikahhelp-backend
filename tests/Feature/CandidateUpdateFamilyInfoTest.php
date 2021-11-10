@@ -29,32 +29,6 @@ class CandidateUpdateFamilyInfoTest extends TestCase
     }
 
     /**
-     * Candidate User ID is required Test
-     * @return void
-     */
-    public function test_candidate_uid_is_required()
-    {
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->patch('/api/v1/candidate/family-info',[]);
-
-        $this->response->assertJsonFragment(['uid' => ['User ID is required']]);
-    }
-
-    /**
-     * Candidate father name is required Test
-     * @return void
-     */
-    public function test_candidate_father_name_is_required()
-    {
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->patch('/api/v1/candidate/family-info',[]);
-
-        $this->response->assertJsonFragment(['father_name' => ['Father name is required.']]);
-    }
-
-    /**
      * Candidate father name type Test
      * @return void
      */
@@ -115,19 +89,6 @@ class CandidateUpdateFamilyInfoTest extends TestCase
 
         $this->response->assertJsonMissing(['father_profession' => ['The father profession must be a string.']]);
         $this->response->assertJsonFragment(['father_profession' => ['Father profession length can not be more than 255 characters.']]);
-    }
-
-    /**
-     * Candidate mother name is required Test
-     * @return void
-     */
-    public function test_candidate_mother_name_is_required()
-    {
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->patch('/api/v1/candidate/family-info',[]);
-
-        $this->response->assertJsonFragment(['mother_name' => ['Mother name is required.']]);
     }
 
     /**
@@ -221,19 +182,6 @@ class CandidateUpdateFamilyInfoTest extends TestCase
 
         $this->response->assertJsonMissing(['siblings_desc' => ['The siblings desc must be a string.']]);
         $this->response->assertJsonFragment(['siblings_desc' => ['Siblings Description length can not be more than 255 characters.']]);
-    }
-
-    /**
-     * Candidate country of origin is required Test
-     * @return void
-     */
-    public function test_candidate_country_of_origin_is_required()
-    {
-        $this->response = $this->withHeaders([
-            'Authorization' => 'Bearer' . $this->token
-        ])->patch('/api/v1/candidate/family-info',[]);
-
-        $this->response->assertJsonFragment(['country_of_origin' => ['Country of origin is required.']]);
     }
 
     /**

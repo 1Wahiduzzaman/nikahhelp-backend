@@ -25,13 +25,13 @@ class CandidateFamilyInfoRequest extends APIRequest
     public function rules()
     {
         return [
-            'uid' => 'required',
-            'father_name' => 'required|string|max:255',
+            'uid' => 'nullable',
+            'father_name' => 'nullable|string|max:255',
             'father_profession' => 'nullable|string|max:255',
-            'mother_name' => 'required|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
             'mother_profession' => 'nullable|string|max:255',
             'siblings_desc' => 'nullable|string|max:255',
-            'country_of_origin' => 'required|string',
+            'country_of_origin' => 'nullable|string',
             'family_info' => 'nullable|string|max:255',
             'is_publish' => 'nullable|boolean'
         ];
