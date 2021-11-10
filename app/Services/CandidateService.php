@@ -30,7 +30,9 @@ use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
-use Nnjeim\World\World;
+use Nnjeim\World\Models\Country;
+use Nnjeim\World\Models\City;
+
 
 class CandidateService extends ApiBaseService
 {
@@ -217,8 +219,8 @@ class CandidateService extends ApiBaseService
             $data['user'] = $this->candidateTransformer->transform($candidate);
             $data['personal_info'] = $this->candidateTransformer->transformPersonal($candidate);
             // $country = $this->countryRepository->findAll()->where('status','=',1);
-            $data['countries'] = $this->world->countries();
-            $data['cities'] = $this->world->cities();
+            $data['countries'] = Country::all()->pluck(['name']);
+            $data['cities'] = City::all()->pluck(['name']);
             // $data['countries'] = CountryCityResource::collection($country);
             $data['studylevels'] = StudyLevel::orderBy('name')->get();
             $data['religions'] = Religion::where('status', 1)->orderBy('name')->get();
