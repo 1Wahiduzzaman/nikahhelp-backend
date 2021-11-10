@@ -739,7 +739,7 @@ class CandidateService extends ApiBaseService
                 }
             }
             DB::commit();
-            $checkRepresentative->per_avatar_url = (!empty($checkRepresentative->per_avatar_url) ? 'api.arranzed.com/api' . $checkRepresentative->per_avatar_url : '');
+//            $checkRepresentative->per_avatar_url = (!empty($checkRepresentative->per_avatar_url) ? 'api.arranzed.com/api' . $checkRepresentative->per_avatar_url : '');
             return $this->sendSuccessResponse($checkRepresentative, self::INFORMATION_UPDATED_SUCCESSFULLY);
         } catch (Exception $exception) {
             DB::rollBack();

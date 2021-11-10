@@ -27,11 +27,11 @@ class CandidateImageUploadRequest extends APIRequest
     {
         $request = $this->request->all();
         $rules = [
-            CandidateImage::IMAGE_AVATAR => 'sometimes|required|image|mimes:jpeg,png,jpg|max:2042',
-            CandidateImage::IMAGE_MAIN => 'sometimes|required|image|mimes:jpeg,png,jpg|max:2048',
-            'image.*.image' => 'sometimes|required|image|mimes:jpeg,png,jpg|max:2048',
-            'image.*.type' => ['sometimes','required','numeric', 'between:1,8'],
-            'image.*.visibility' => ['sometimes','required', 'numeric', 'between:1,4'],
+            CandidateImage::IMAGE_AVATAR => 'sometimes|image|mimes:jpeg,png,jpg|max:2042',
+            CandidateImage::IMAGE_MAIN => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
+            'image.*.image' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
+            'image.*.type' => 'sometimes|numeric|between:1,8',
+            'image.*.visibility' => 'sometimes|numeric|between:1,4',
 //            CandidateImage::IMAGE  => 'required|image|mimes:jpeg,png,jpg|max:3072',
 //            CandidateImage::IMAGE_TYPE => [ 'required','numeric','between:1,8'],
 //            CandidateImage::IMAGE_VISIBILITY => [ 'sometimes','numeric','between:1,4'],
