@@ -4,7 +4,6 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
-use App\Http\Resources\CountryCityResource;
 use App\Http\Resources\RecentJoinCandidateResource;
 use App\Http\Resources\SearchResource;
 use App\Models\Occupation;
@@ -31,7 +30,7 @@ use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
-
+use Nnjeim\World\World;
 
 class CandidateService extends ApiBaseService
 {
@@ -78,13 +77,15 @@ class CandidateService extends ApiBaseService
      */
     private $countryRepository;
 
+    private $world;
+
     public function __construct(
         CandidateRepository $candidateRepository,
         CandidateImageRepository $imageRepository,
         CandidateTransformer $candidateTransformer,
         BlockListService $blockListService,
         RepresentativeRepository $representativeRepository,
-        CountryRepository $countryRepository
+        World $world
     )
     {
         $this->candidateRepository = $candidateRepository;
@@ -93,7 +94,7 @@ class CandidateService extends ApiBaseService
         $this->blockListService = $blockListService;
         $this->representativeRepository = $representativeRepository;
         $this->setActionRepository($candidateRepository);
-        $this->countryRepository = $countryRepository;
+        $this->world = $world;
     }
 
     /**
@@ -215,8 +216,10 @@ class CandidateService extends ApiBaseService
             }
             $data['user'] = $this->candidateTransformer->transform($candidate);
             $data['personal_info'] = $this->candidateTransformer->transformPersonal($candidate);
-            $country = $this->countryRepository->findAll()->where('status','=',1);
-            $data['countries'] = CountryCityResource::collection($country);
+            // $country = $this->countryRepository->findAll()->where('status','=',1);
+            $data['countries'] = $this->world->countries();
+            $data['cities'] = $this->world->cities();
+            // $data['countries'] = CountryCityResource::collection($country);
             $data['studylevels'] = StudyLevel::orderBy('name')->get();
             $data['religions'] = Religion::where('status', 1)->orderBy('name')->get();
             $data['occupations'] = Occupation::pluck('name', 'id');
@@ -736,7 +739,7 @@ class CandidateService extends ApiBaseService
                 }
             }
             DB::commit();
-            $checkRepresentative->per_avatar_url = (!empty($checkRepresentative->per_avatar_url) ? HttpStatusCode::IMAGE_UPLOAD_LOCATION . $checkRepresentative->per_avatar_url : '');
+            $checkRepresentative->per_avatar_url = (!empty($checkRepresentative->per_avatar_url) ? 'api.arranzed.com/api' . $checkRepresentative->per_avatar_url : '');
             return $this->sendSuccessResponse($checkRepresentative, self::INFORMATION_UPDATED_SUCCESSFULLY);
         } catch (Exception $exception) {
             DB::rollBack();
