@@ -86,8 +86,7 @@ class CandidateService extends ApiBaseService
         CandidateImageRepository $imageRepository,
         CandidateTransformer $candidateTransformer,
         BlockListService $blockListService,
-        RepresentativeRepository $representativeRepository,
-        World $world
+        RepresentativeRepository $representativeRepository
     )
     {
         $this->candidateRepository = $candidateRepository;
@@ -96,7 +95,6 @@ class CandidateService extends ApiBaseService
         $this->blockListService = $blockListService;
         $this->representativeRepository = $representativeRepository;
         $this->setActionRepository($candidateRepository);
-        $this->world = $world;
     }
 
     /**
