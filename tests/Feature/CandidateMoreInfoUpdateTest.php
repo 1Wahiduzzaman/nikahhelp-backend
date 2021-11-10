@@ -253,9 +253,11 @@ class CandidateMoreInfoUpdateTest extends TestCase
         ]);
 
         $data =[
-            'per_marital_status' => 'single',
-            'per_have_children'=> '0',
-            'per_children'=> [],
+            'per_marital_status' => 'married',
+            'per_have_children'=> true,
+            'per_children'=> [['type'=> 1,
+						'count'=> 1,
+						'age'=> 10]],
             'per_currently_living_with'=> 'Uncle',
             'per_willing_to_relocate'=> 1,
             'per_smoker'=> '0',
@@ -263,7 +265,7 @@ class CandidateMoreInfoUpdateTest extends TestCase
             'per_hobbies_interests'=> 'Traveling',
             'per_food_cuisine_like'=> 'Ice-cream',
             'per_things_enjoy'=> 'Coding',
-            'per_thankfull_for'=> Null,
+            'per_thankfull_for'=> 'Everything',
             'per_about'=> 'I\'m very good boy',
         ];
 

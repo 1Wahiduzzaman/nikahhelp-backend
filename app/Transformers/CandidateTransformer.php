@@ -355,7 +355,7 @@ class CandidateTransformer extends TransformerAbstract
             'per_have_children' => $item->per_have_children,
             'per_children' => $item->per_children,
             'per_currently_living_with' => $item->per_currently_living_with,
-            'per_willing_to_relocate' => $item->per_willing_to_relocate,
+            'per_willing_to_relocate' => (int)$item->per_willing_to_relocate,
             'per_smoker' => $item->per_smoker,
             'per_language_speak' => $item->per_language_speak,
             'per_hobbies_interests' => $item->per_hobbies_interests,

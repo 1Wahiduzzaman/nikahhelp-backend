@@ -360,9 +360,9 @@ class CandidateService extends ApiBaseService
             if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
-            $input = $request->all(CandidateInformation::PERSONAL_MOREABOUT_INFO);
+            $input = $request->only(CandidateInformation::PERSONAL_MOREABOUT_INFO);
 
-//            $input = $candidate->fill($input)->toArray();
+            $input = $candidate->fill($input)->toArray();
             $candidate->save($input);
             $personal_info = $this->candidateTransformer->transformPersonalMoreAbout($candidate);
             return $this->sendSuccessResponse($personal_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
