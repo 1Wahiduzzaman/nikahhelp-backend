@@ -262,7 +262,7 @@ class MessageService extends ApiBaseService
                 ->join('candidate_information AS FromCandidate', 'FromCandidateMember.user_id', '=', 'FromCandidate.user_id')
                 ->where(function ($query) use ($connection_status, $team_row_id) {
                     $query->where('TCon.connection_status', '=', $connection_status)
-                        ->where('TCon.to_team_id', '=', $team_row_id);
+                        ->where('TCon.to_team_id', '=', "$team_row_id");
                 })
                 ->leftJoin('countries', 'FromCandidate.per_current_residence_country', '=', 'countries.id')
                 ->leftJoin('religions', 'FromCandidate.per_religion_id', '=', 'religions.id')
@@ -300,7 +300,7 @@ class MessageService extends ApiBaseService
                 ->join('candidate_information AS ToCandidate', 'ToTeamCandidateMember.user_id', '=', 'ToCandidate.user_id')
                 ->where(function ($query) use ($connection_status, $team_row_id) {
                     $query->where('TCon.connection_status', '=', $connection_status)
-                        ->where('TCon.from_team_id', '=', $team_row_id);
+                        ->where('TCon.from_team_id', '=', "$team_row_id");
                 })
                 ->leftJoin('countries', 'ToCandidate.per_current_residence_country', '=', 'countries.id')
                 ->leftJoin('religions', 'ToCandidate.per_religion_id', '=', 'religions.id')
