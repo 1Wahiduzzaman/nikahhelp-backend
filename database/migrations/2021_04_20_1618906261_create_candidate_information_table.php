@@ -26,7 +26,7 @@ class CreateCandidateInformationTable extends Migration
             $table->float('per_height')->nullable();
             $table->string('per_employment_status')->nullable();
             $table->unsignedBigInteger('per_education_level_id')->nullable();
-            $table->unsignedBigInteger('per_religion_id')->nullable(false)->default(63);
+            $table->unsignedBigInteger('per_religion_id')->nullable(false)->default(1);
             $table->string('per_occupation')->nullable();
             $table->string('per_ethnicity')->nullable();
             $table->string('per_mother_tongue', 100)->nullable();
@@ -107,6 +107,23 @@ class CreateCandidateInformationTable extends Migration
             $table->tinyInteger('anybody_can_see')->comment('0=No,1=Yes')->default(0);
             $table->tinyInteger('only_team_can_see')->comment('0=No,1=Yes')->default(0);
             $table->tinyInteger('team_connection_can_see')->comment('0=No,1=Yes')->default(0);
+
+
+            // Verification
+            $table->unsignedBigInteger('ver_country_id')->nullable();
+            $table->unsignedBigInteger('ver_city_id')->nullable();
+            $table->string('ver_document_type')->nullable();
+            $table->text('ver_image_front')->nullable();
+            $table->text('ver_image_back')->nullable();
+            $table->string('ver_recommences_title')->nullable();
+            $table->string('ver_recommences_first_name')->nullable();
+            $table->string('ver_recommences_last_name')->nullable();
+            $table->string('ver_recommences_occupation')->nullable();
+            $table->string('ver_recommences_address')->nullable();
+            $table->string('ver_recommences_mobile_no')->nullable();
+            $table->tinyInteger('ver_status')->default(0)->comment('0 for not verified 1 for verified');
+
+
             // Image upload
             $table->string('per_avatar_url', 2083)->nullable();
             $table->string('per_main_image_url', 2083)->nullable();

@@ -80,6 +80,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('candidate/personal-generalinformation', [CandidateController::class, 'updatePersonalGeneralInInformation'])->name('update.candidate.personal.general.information');
         Route::POST('candidate/personal-cotactinformation', [CandidateController::class, 'updatePersonalContactInformation'])->name('update.candidate.personal.contact.information');
         Route::POST('candidate/personal-more-about', [CandidateController::class, 'updatePersonalInformationMoreAbout'])->name('update.candidate.personal.information.moreabout');
+        Route::get('candidate/personal-verification-info', [CandidateController::class, 'getCandidatePersonalVerification'])->name('get.candidate.personal.verification');
+        Route::post('candidate/personal-verification-info', [CandidateController::class, 'updateCandidatePersonalVerification'])->name('update.candidate.personal.verification');
 
         // Candidate Preference Information
         Route::get('candidate/preference/{user_id}', [CandidateController::class, 'fetchCandidatePreference'])->name('candidate.preference.information');
@@ -105,17 +107,17 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::GET('team-chat', [MessageController::class, 'teamChatList'])->name('team-chat.list');
         Route::GET('chat-history', [MessageController::class, 'chatHistory'])->name('team-chat.chat-history');
         //will be use for both single and group msg history
-        Route::POST('individual-chat-history', [MessageController::class, 'individualChatHistory'])->name('team-chat.individual-chat-history'); 
+        Route::POST('individual-chat-history', [MessageController::class, 'individualChatHistory'])->name('team-chat.individual-chat-history');
         Route::POST('send-message', [MessageController::class, 'sendMessage'])->name('team-chat.send-message');
         Route::POST('send-message-to-team', [MessageController::class, 'sendMessageToTeam'])->name('team-chat.send-message-to-team');
         //Connected (Team to Team chat)
         Route::POST('connection-list-chat', [MessageController::class, 'report'])->name('connected-team.chat.connection-list-chat');
         Route::POST('send-message-team-to-team', [MessageController::class, 'sendMessageTeamToTeam'])->name('connected-team-chat.send-message-team-to-team');
         Route::POST('private-chat-request-accept-reject', [MessageController::class, 'privateChatRequestAcceptOrReject'])->name('connected-team-chat.private-chat-request-accept-reject');
-        Route::POST('connected-team-chat-history', [MessageController::class, 'connectedTeamChatHistory'])->name('connected-team-chat.connected-team-chat-history'); 
-        Route::POST('connected-send-private-message', [MessageController::class, 'sendPrivateMessage'])->name('connected-team-chat.connected-send-private-message'); 
-        Route::POST('connected-private-chat-history', [MessageController::class, 'privateChatHistory'])->name('connected-team-chat.connected-private-chat-history'); 
-        Route::POST('connected-team-chat-seen', [MessageController::class, 'teamChatSeen'])->name('connected-team-chat.connected-team-chat-seen'); 
+        Route::POST('connected-team-chat-history', [MessageController::class, 'connectedTeamChatHistory'])->name('connected-team-chat.connected-team-chat-history');
+        Route::POST('connected-send-private-message', [MessageController::class, 'sendPrivateMessage'])->name('connected-team-chat.connected-send-private-message');
+        Route::POST('connected-private-chat-history', [MessageController::class, 'privateChatHistory'])->name('connected-team-chat.connected-private-chat-history');
+        Route::POST('connected-team-chat-seen', [MessageController::class, 'teamChatSeen'])->name('connected-team-chat.connected-team-chat-seen');
         // Teams API
 
         Route::GET('team-information/{id}', [TeamController::class, 'teamInformation'])->name('team.information');

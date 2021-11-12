@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Candidate\CandidatePersonalVerificationRequest;
 use App\Http\Requests\CandidateImageUploadRequest;
 use App\Http\Requests\CandidatePreferenceInfoRequest;
 use App\Http\Requests\Candidate\CandidatePreferenceAboutRequest;
@@ -193,6 +194,25 @@ class CandidateController extends Controller
     public function storeCandidatePreferenceRating(CandidatePreferenceRatingRequest $request): JsonResponse
     {
         return $this->candidateService->storePreferenceRate($request);
+    }
+
+    /**
+     * Get Candidate Validation info
+     * @return JsonResponse
+     */
+    public function getCandidatePersonalVerification(): JsonResponse
+    {
+        return $this->candidateService->getVerificationInfo();
+    }
+
+    /**
+     * Store Candidate Validation info
+     * @param CandidatePersonalVerificationRequest $request
+     * @return JsonResponse
+     */
+    public function updateCandidatePersonalVerification(CandidatePersonalVerificationRequest $request): JsonResponse
+    {
+        return $this->candidateService->updateVerificationInfo($request);
     }
 
     /**
