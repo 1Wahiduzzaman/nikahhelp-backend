@@ -719,6 +719,37 @@ class CandidateService extends ApiBaseService
     }
 
     /**
+     * This function is for update candidate info status ( DB field candidate_information.data_input_status ) update
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateInfoStatus(Request $request) : JsonResponse
+    {
+        $userId = self::getUserId();
+
+        try {
+            $candidate = $this->candidateRepository->findOneByProperties([
+                'user_id' => $userId
+            ]);
+
+            if (!$candidate) {
+                throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
+            }
+            DB::beginTransaction();
+            $info['data_input_status']= $request->data_input_status;
+            $candidate->update($info);
+
+            $candidate_basic_info = $this->candidateTransformer->transformPersonalBasic($candidate);
+            DB::commit();
+            return $this->sendSuccessResponse($candidate_basic_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
+        }catch (Exception $exception) {
+            DB::rollBack();
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+
+    }
+
+    /**
      * @return JsonResponse
      */
     public function listImage(array $searchCriteria): JsonResponse

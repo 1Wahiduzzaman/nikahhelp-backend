@@ -80,6 +80,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('candidate/personal-generalinformation', [CandidateController::class, 'updatePersonalGeneralInInformation'])->name('update.candidate.personal.general.information');
         Route::POST('candidate/personal-cotactinformation', [CandidateController::class, 'updatePersonalContactInformation'])->name('update.candidate.personal.contact.information');
         Route::POST('candidate/personal-more-about', [CandidateController::class, 'updatePersonalInformationMoreAbout'])->name('update.candidate.personal.information.moreabout');
+        Route::patch('candidate/personal-info-status', [CandidateController::class, 'updateCandidateInfoStatus'])->name('update.candidate.info.status');
         Route::get('candidate/personal-verification-info', [CandidateController::class, 'getCandidatePersonalVerification'])->name('get.candidate.personal.verification');
         Route::post('candidate/personal-verification-info', [CandidateController::class, 'updateCandidatePersonalVerification'])->name('update.candidate.personal.verification');
 

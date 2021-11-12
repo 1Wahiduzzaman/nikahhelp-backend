@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Candidate\CandidateInfoStatusUpdateRequest;
 use App\Http\Requests\Candidate\CandidatePersonalVerificationRequest;
 use App\Http\Requests\CandidateImageUploadRequest;
 use App\Http\Requests\CandidatePreferenceInfoRequest;
@@ -213,6 +214,16 @@ class CandidateController extends Controller
     public function updateCandidatePersonalVerification(CandidatePersonalVerificationRequest $request): JsonResponse
     {
         return $this->candidateService->updateVerificationInfo($request);
+    }
+
+    /**
+     * Update Candidate info status
+     * @param CandidateInfoStatusUpdateRequest $request
+     * @return JsonResponse
+     */
+    public function updateCandidateInfoStatus(CandidateInfoStatusUpdateRequest $request): JsonResponse
+    {
+        return $this->candidateService->updateInfoStatus($request);
     }
 
     /**

@@ -262,7 +262,9 @@ class CandidateInformation extends Model
         "only_team_can_see",
         "team_connection_can_see",
         "per_avatar_url" .
-        "per_main_image_url"
+        "per_main_image_url",
+
+        'data_input_status',
     ];
 
     /**
