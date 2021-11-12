@@ -16,7 +16,7 @@ class ChangePreHeightMinToCandidateInformationsTable extends Migration
         Schema::table('candidate_information', function (Blueprint $table) {
             $table->string('pre_height_min',20)->default(91.44)->change();
             $table->string('pre_height_max',20)->default(304.8)->change();
-            $table->string('pre_partner_religions',255)->default(63)->change();
+            $table->string('pre_partner_religions',255)->default(1)->change();
         });
     }
 

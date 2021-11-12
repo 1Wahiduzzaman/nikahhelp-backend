@@ -145,6 +145,21 @@ class CandidateInformation extends Model
         'per_about',
     ];
 
+    public const PERSONAL_VERIFICATION_INFO = [
+        'ver_country_id',
+        'ver_city_id',
+        'ver_document_type',
+        'ver_image_front',
+        'ver_image_back',
+        'ver_recommences_title',
+        'ver_recommences_first_name',
+        'ver_recommences_last_name',
+        'ver_recommences_occupation',
+        'ver_recommences_address',
+        'ver_recommences_mobile_no',
+        'ver_status',
+    ];
+
     protected $fillable = [
         'user_id',
         'first_name',
@@ -227,6 +242,20 @@ class CandidateInformation extends Model
         "fi_siblings_desc",
         "fi_country_of_origin",
         "fi_family_info",
+
+        // Verification
+        'ver_country_id',
+        'ver_city_id',
+        'ver_document_type',
+        'ver_image_front',
+        'ver_image_back',
+        'ver_recommences_title',
+        'ver_recommences_first_name',
+        'ver_recommences_last_name',
+        'ver_recommences_occupation',
+        'ver_recommences_address',
+        'ver_recommences_mobile_no',
+        'ver_status',
 
         "is_publish",
         "anybody_can_see",

@@ -53,6 +53,16 @@ class CandidateTransformer extends TransformerAbstract
         );
     }
 
+    public function transformPersonalVerification(CandidateInformation $item): array
+    {
+        return array_merge(
+            $this->basicInfo($item),
+            [
+                'verification' => $this->personalVerification($item)
+            ]
+        );
+    }
+
     /**
      * @param CandidateInformation $item
      * @return array
@@ -383,6 +393,29 @@ class CandidateTransformer extends TransformerAbstract
             "country_of_origin" => $item->fi_country_of_origin,
             "family_info" => $item->fi_family_info,
             "is_publish" => boolval($item->is_publish),
+        ];
+    }
+
+    /**
+     * Extract verification info only
+     * @param CandidateInformation $item
+     * @return array
+     */
+    private function personalVerification(CandidateInformation $item): array
+    {
+        return [
+            'ver_country_id' => $item->ver_country_id,
+            'ver_city_id' => $item->ver_city_id,
+            'ver_document_type' => $item->ver_document_type,
+            'ver_image_front' => $item->ver_image_front,
+            'ver_image_back' => $item->ver_image_back,
+            'ver_recommences_title' => $item->ver_recommences_title,
+            'ver_recommences_first_name' => $item->ver_recommences_first_name,
+            'ver_recommences_last_name' => $item->ver_recommences_last_name,
+            'ver_recommences_occupation' => $item->ver_recommences_occupation,
+            'ver_recommences_address' => $item->ver_recommences_address,
+            'ver_recommences_mobile_no' => $item->ver_recommences_mobile_no,
+            'ver_status' => $item->ver_status,
         ];
     }
 }

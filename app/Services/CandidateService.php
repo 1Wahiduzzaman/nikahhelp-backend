@@ -662,6 +662,63 @@ class CandidateService extends ApiBaseService
     }
 
     /**
+     * this function is used for candidate personal validation information
+     * @return JsonResponse
+     */
+    public function getVerificationInfo(): JsonResponse
+    {
+        $userId = self::getUserId();
+        $candidate = $this->candidateRepository->findOneByProperties([
+            'user_id' => $userId
+        ]);
+        if (!$candidate) {
+            throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
+        }
+
+        $candidate_verification_info = $this->candidateTransformer->transformPersonalVerification($candidate);
+        return $this->sendSuccessResponse($candidate_verification_info, self::INFORMATION_FETCHED_SUCCESSFULLY);
+    }
+
+    /**
+     * this function is used for store candidate personal validation information
+     * @return JsonResponse
+     */
+    public function updateVerificationInfo(Request $request): JsonResponse
+    {
+        $userId = self::getUserId();
+        try {
+            $candidate = $this->candidateRepository->findOneByProperties([
+                'user_id' => $userId
+            ]);
+
+            if (!$candidate) {
+                throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
+            }
+            $input = $request->only(CandidateInformation::PERSONAL_VERIFICATION_INFO);
+
+            if ($request->hasFile('ver_image_front')) {
+                $image = $this->singleImageUploadFile($request->file('ver_image_front'),'verification');
+                $input['ver_image_front'] = $image['image_path'] ;
+            }
+            if ($request->hasFile('ver_image_back')) {
+                $image = $this->singleImageUploadFile($request->file('ver_image_back'),'verification');
+                $input['ver_image_back'] = $image['image_path'];
+            }
+
+            $input = $candidate->fill($input)->toArray();
+
+            DB::beginTransaction();
+            $candidate->save($input);
+            $candidate_verification_info = $this->candidateTransformer->transformPersonalVerification($candidate);
+            DB::commit();
+            return $this->sendSuccessResponse($candidate_verification_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+    }
+
+    /**
      * @return JsonResponse
      */
     public function listImage(array $searchCriteria): JsonResponse
@@ -873,12 +930,12 @@ class CandidateService extends ApiBaseService
     private function singleImageUploadFile($requestFile, $imageType = null)
     {
         $userId = self::getUserId();
-        $image_type = 'gallery';//CandidateImage::getImageType($imageType);
+        $image_type = $imageType ? : 'gallery'; //CandidateImage::getImageType($imageType);
         $file = 'candidate-' . $userId;
         $disk = config('filesystems.default', 'local');
-        $status = $requestFile->storeAs($file, $image_type . '-' . $requestFile->getClientOriginalName(), $disk);
+        $status = $requestFile->storeAs($file, $image_type . '-' . $requestFile->getClientOriginalName(), $disk); // storeAs(PATH,NAME,OPTION)
         return [
-            CandidateImage::IMAGE_PATH => $status,
+            CandidateImage::IMAGE_PATH => asset('/') . '/images/'. $status,
             CandidateImage::IMAGE_DISK => $disk
         ];
 
