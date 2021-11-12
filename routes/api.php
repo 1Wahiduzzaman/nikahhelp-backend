@@ -172,9 +172,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('religions/update/{id}', [ReligionController::class, 'update'])->name('update.religions');
 
         // Countries API
-
-        Route::get('v1/utilities/countries', [CountryController::class, 'index'])->name('utilities.countries.lists');
-        Route::POST('v1/utilities/create-city', [CountryController::class, 'createCity'])->name('utilities.countries.City');
+        Route::get('utilities/countries', [CountryController::class, 'index'])->name('utilities.countries.lists');
+        Route::get('utilities/cities/{country}', [CountryController::class, 'getCities'])->name('utilities.cities.of.country');
+        Route::POST('utilities/create-city', [CountryController::class, 'createCity'])->name('utilities.countries.City');
 
         // Short listed
 

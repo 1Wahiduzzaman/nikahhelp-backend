@@ -3,29 +3,11 @@
 
 namespace App\Services;
 
-
-use App\Enums\HttpStatusCode;
-use App\Models\User;
-use App\Models\VerifyUser;
-use App\Mail\VerifyMail as VerifyEmail;
 use App\Models\City;
 use App\Repositories\CountryRepository;
-use Carbon\Carbon;
 use Exception;
-use Mail;
 use Illuminate\Http\JsonResponse;
-use App\Traits\CrudTrait;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use App\Repositories\UserRepository;
-use App\Repositories\EmailVerificationRepository as EmailVerifyRepository;
-use DB;
-use Symfony\Component\HttpFoundation\Response as FResponse;
-use App\Http\Resources\CountryCityResource;
+
 
 
 class CountryService extends ApiBaseService
@@ -33,7 +15,7 @@ class CountryService extends ApiBaseService
 
 
     /**
-     * @var UserRepository
+     * @var CountryRepository
      */
     protected $countryRepository;
 
@@ -49,14 +31,30 @@ class CountryService extends ApiBaseService
     }
 
     /**
+     * Get all country list
      * @return JsonResponse
      */
     public function getCountries(): JsonResponse
     {
         try {
             $data = $this->countryRepository->findAll()->where('status','=',1);
-            $data = CountryCityResource::collection($data);
+//            $data = CountryCityResource::collection($data); //commented by rabbi
             return $this->sendSuccessResponse($data, 'Information fetched Successfully!');
+        }catch (Exception $exception){
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+    }
+
+    /**
+     * Get all cities of the country (id)
+     * @param $countryId
+     * @return JsonResponse
+     */
+    public function getCities($countryId): JsonResponse
+    {
+        try {
+            $cities = City::where('country_id',$countryId)->get();
+            return $this->sendSuccessResponse($cities, 'Information fetched Successfully!');
         }catch (Exception $exception){
             return $this->sendErrorResponse($exception->getMessage());
         }

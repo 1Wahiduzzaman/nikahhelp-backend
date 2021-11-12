@@ -35,6 +35,16 @@ class CountryController extends Controller
     }
 
     /**
+     * Get cities of country
+     * @param int $countryIid
+     * @return JsonResponse
+     */
+    public function getCities(int $countryId): JsonResponse
+    {
+        return $this->countryService->getCities($countryId);
+    }
+
+    /**
      * @return JsonResponse
      */
     public function createCity(CityRequest $request)
