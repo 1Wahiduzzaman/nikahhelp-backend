@@ -508,7 +508,11 @@ class CandidateService extends ApiBaseService
                 foreach ($request->pre_disallow_preference as $key => $bcounty) {
 
                     $bcountry[] = ['candidate_pre_country_id' => $bcounty['country'], 'candidate_pre_city_id' => $bcounty['city'], 'allow' => '0'];
-                    $bcity[] = ['city_id' => $bcounty['city'], 'country_id' => $bcounty['country'], 'allow' => 0];
+
+                    /* avoid city with null or 0 value */
+                    if($county['city']) {
+                        $bcity[] = ['city_id' => $bcounty['city'], 'country_id' => $bcounty['country'], 'allow' => 0];
+                    }
 
                 }
                 if ($request->pre_has_country_disallow_preference) {
