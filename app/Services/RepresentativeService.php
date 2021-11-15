@@ -5,9 +5,11 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Helpers\Notificationhelpers;
+use App\Models\Occupation;
 use App\Models\RepresentativeInformation;
 use App\Models\CandidateImage;
 use App\Models\User;
+use App\Repositories\CountryRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -40,10 +42,15 @@ class RepresentativeService extends ApiBaseService
      * @var RepresentativeRepository
      */
     protected $representativeRepository;
+    protected $countryRepository;
 
-    public function __construct(RepresentativeRepository $representativeRepository)
+    public function __construct(
+        RepresentativeRepository $representativeRepository,
+        CountryRepository $countryRepository
+    )
     {
         $this->representativeRepository = $representativeRepository;
+        $this->countryRepository = $countryRepository;
 
     }
 
@@ -142,8 +149,10 @@ class RepresentativeService extends ApiBaseService
         $representativeInformation = $this->representativeRepository->findBy(['user_id' => $userId]);
 
         if ($representativeInformation) {
-            $result = RepresentativeResource::collection($representativeInformation);
-            return $this->sendSuccessResponse($result, 'Representative Information', [], HttpStatusCode::SUCCESS);
+            $data['representative'] = RepresentativeResource::collection($representativeInformation);
+            $data['countries'] = $this->countryRepository->findAll()->where('status', '=', 1);
+            $data['occupations'] = Occupation::pluck('name', 'id');
+            return $this->sendSuccessResponse($data, 'Representative Information', [], HttpStatusCode::SUCCESS);
         } else {
             return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_NOT_FOUND);
         }
