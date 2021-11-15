@@ -215,7 +215,7 @@ class CandidateService extends ApiBaseService
             }
             $data['user'] = $this->candidateTransformer->transform($candidate);
             $data['personal_info'] = $this->candidateTransformer->transformPersonal($candidate);
-            $data['countries'] = $this->countryRepository->findAll()->where('status','=',1);
+            $data['countries'] = $this->countryRepository->findAll()->where('status', '=', 1);
             $data['studylevels'] = StudyLevel::orderBy('name')->get();
             $data['religions'] = Religion::where('status', 1)->orderBy('name')->get();
             $data['occupations'] = Occupation::pluck('name', 'id');
@@ -270,13 +270,13 @@ class CandidateService extends ApiBaseService
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
 
-            $candidate->dob= $request->input('dob');
-            $candidate->per_gender= $request->input('per_gender');
-            $candidate->per_height= $request->input('per_height');
-            $candidate->per_employment_status= $request->input('per_employment_status');
-            $candidate->per_education_level_id= $request->input('per_education_level_id');
-            $candidate->per_religion_id= $request->input('per_religion_id',1);
-            $candidate->per_occupation= $request->input('per_occupation');
+            $candidate->dob = $request->input('dob');
+            $candidate->per_gender = $request->input('per_gender');
+            $candidate->per_height = $request->input('per_height');
+            $candidate->per_employment_status = $request->input('per_employment_status');
+            $candidate->per_education_level_id = $request->input('per_education_level_id');
+            $candidate->per_religion_id = $request->input('per_religion_id', 1);
+            $candidate->per_occupation = $request->input('per_occupation');
 
 
             $candidate->save();
@@ -481,9 +481,9 @@ class CandidateService extends ApiBaseService
                 $country = [];
                 $city = [];
                 foreach ($request->pre_partner_comes_from as $key => $county) {
-                    $country[] = ['candidate_pre_country_id' => $county['country'], 'candidate_pre_city_id' => $county['city']];
+                    $country[] = ['candidate_pre_country_id' => $county['country'], 'candidate_pre_city_id' => isset($county['city']) ? $county['city'] : null];
                     /* avoid city with null or 0 value */
-                    if($county['city']){
+                    if (isset($county['city'])) {
                         $city[] = ['city_id' => $county['city'], 'country_id' => $county['country']];
                     }
                 }
@@ -510,7 +510,7 @@ class CandidateService extends ApiBaseService
                     $bcountry[] = ['candidate_pre_country_id' => $bcounty['country'], 'candidate_pre_city_id' => $bcounty['city'], 'allow' => '0'];
 
                     /* avoid city with null or 0 value */
-                    if($county['city']) {
+                    if (isset($bcounty['city'])) {
                         $bcity[] = ['city_id' => $bcounty['city'], 'country_id' => $bcounty['country'], 'allow' => 0];
                     }
 
@@ -697,11 +697,11 @@ class CandidateService extends ApiBaseService
             $input = $request->only(CandidateInformation::PERSONAL_VERIFICATION_INFO);
 
             if ($request->hasFile('ver_image_front')) {
-                $image = $this->singleImageUploadFile($request->file('ver_image_front'),'verification');
-                $input['ver_image_front'] = $image['image_path'] ;
+                $image = $this->singleImageUploadFile($request->file('ver_image_front'), 'verification');
+                $input['ver_image_front'] = $image['image_path'];
             }
             if ($request->hasFile('ver_image_back')) {
-                $image = $this->singleImageUploadFile($request->file('ver_image_back'),'verification');
+                $image = $this->singleImageUploadFile($request->file('ver_image_back'), 'verification');
                 $input['ver_image_back'] = $image['image_path'];
             }
 
@@ -723,7 +723,7 @@ class CandidateService extends ApiBaseService
      * @param Request $request
      * @return JsonResponse
      */
-    public function updateInfoStatus(Request $request) : JsonResponse
+    public function updateInfoStatus(Request $request): JsonResponse
     {
         $userId = self::getUserId();
 
@@ -736,13 +736,13 @@ class CandidateService extends ApiBaseService
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
             DB::beginTransaction();
-            $info['data_input_status']= $request->data_input_status;
+            $info['data_input_status'] = $request->data_input_status;
             $candidate->update($info);
 
             $candidate_basic_info = $this->candidateTransformer->transformPersonalBasic($candidate);
             DB::commit();
             return $this->sendSuccessResponse($candidate_basic_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
-        }catch (Exception $exception) {
+        } catch (Exception $exception) {
             DB::rollBack();
             return $this->sendErrorResponse($exception->getMessage());
         }
@@ -961,12 +961,12 @@ class CandidateService extends ApiBaseService
     private function singleImageUploadFile($requestFile, $imageType = null)
     {
         $userId = self::getUserId();
-        $image_type = $imageType ? : 'gallery'; //CandidateImage::getImageType($imageType);
+        $image_type = $imageType ?: 'gallery'; //CandidateImage::getImageType($imageType);
         $file = 'candidate-' . $userId;
         $disk = config('filesystems.default', 'local');
         $status = $requestFile->storeAs($file, $image_type . '-' . $requestFile->getClientOriginalName(), $disk); // storeAs(PATH,NAME,OPTION)
         return [
-            CandidateImage::IMAGE_PATH => asset('/') . '/images/'. $status,
+            CandidateImage::IMAGE_PATH => asset('/') . '/images/' . $status,
             CandidateImage::IMAGE_DISK => $disk
         ];
 
@@ -1007,11 +1007,14 @@ class CandidateService extends ApiBaseService
         }
 
         $searchCriteria = ["user_id" => $user_id];
-        $avatar_image_url = url('storage/' . $candidate->per_avatar_url);
-        $main_image_url = url('storage/' . $candidate->per_main_image_url);
+        $avatar_image_url = $candidate->per_avatar_url;
+        $main_image_url = $candidate->per_main_image_url;
+//        $avatar_image_url = url('storage/' . $candidate->per_avatar_url);
+//        $main_image_url = url('storage/' . $candidate->per_main_image_url);
         $images = $this->imageRepository->findBy($searchCriteria);
         for ($i = 0; $i < count($images); $i++) {
-            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
+//            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
+            $images[$i]->image_path = $images[$i]->image_path;
         }
 
         $data = array();
