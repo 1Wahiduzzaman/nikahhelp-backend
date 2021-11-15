@@ -219,6 +219,7 @@ class CandidateService extends ApiBaseService
             $data['studylevels'] = StudyLevel::orderBy('name')->get();
             $data['religions'] = Religion::where('status', 1)->orderBy('name')->get();
             $data['occupations'] = Occupation::pluck('name', 'id');
+            $data['validation_info'] = $this->candidateTransformer->transformPersonalVerification($candidate);;
 
             return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
         } catch (Exception $exception) {
@@ -759,11 +760,11 @@ class CandidateService extends ApiBaseService
                 'user_id' => $searchCriteria['user_id']
             ]);
 
-            $avatar_image_url = url('storage/' . $candidate->per_avatar_url);
-            $main_image_url = url('storage/' . $candidate->per_main_image_url);
+            $avatar_image_url = $candidate->per_avatar_url;
+            $main_image_url = $candidate->per_main_image_url;
             $images = $this->imageRepository->findBy($searchCriteria);
             for ($i = 0; $i < count($images); $i++) {
-                $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
+                $images[$i]->image_path = $images[$i]->image_path;
             }
 
             $data = array();
@@ -794,8 +795,6 @@ class CandidateService extends ApiBaseService
             if (!$checkRepresentative) {
                 return $this->sendErrorResponse('Candidate information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
-            // update data input status
-            $checkRepresentative->data_input_status = 1;
 
             if ($request->hasFile('per_avatar_url')) {
                 $per_avatar_url = $this->singleImageUploadFile($request->file('per_avatar_url'));
@@ -966,7 +965,7 @@ class CandidateService extends ApiBaseService
         $disk = config('filesystems.default', 'local');
         $status = $requestFile->storeAs($file, $image_type . '-' . $requestFile->getClientOriginalName(), $disk); // storeAs(PATH,NAME,OPTION)
         return [
-            CandidateImage::IMAGE_PATH => asset('/') . '/images/' . $status,
+            CandidateImage::IMAGE_PATH => asset('/images/'.$status),
             CandidateImage::IMAGE_DISK => $disk
         ];
 
