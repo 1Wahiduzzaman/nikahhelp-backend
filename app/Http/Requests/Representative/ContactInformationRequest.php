@@ -26,17 +26,17 @@ class ContactInformationRequest extends APIRequest
     public function rules()
     {
         return [
-            'per_email' => 'required|max:255',
-            'per_current_residence_country' => 'required|max:255',
-            'per_current_residence_city' => 'required|max:255',
-            'per_permanent_country' => 'required|max:255',
-            'per_permanent_city' => 'required|max:255',
-            'per_county' => 'required|max:255',
-            'per_telephone_no' => 'required|max:255',
-            'mobile_number' => 'required|max:255',
-            'mobile_country_code' => 'required|max:255',
-            'per_permanent_post_code' => 'required|max:255',
-            'per_permanent_address' => 'required|max:255'
+            'per_email' => 'nullable|email|max:255',
+            'per_current_residence_country' => 'nullable|max:255',
+            'per_current_residence_city' => 'nullable|max:255',
+            'per_permanent_country' => 'nullable|max:255',
+            'per_permanent_city' => 'nullable|max:255',
+            'per_county' => 'nullable|max:255',
+            'per_telephone_no' => 'nullable|max:255',
+            'mobile_number' => 'nullable|max:255',
+            'mobile_country_code' => 'nullable|max:255',
+            'per_permanent_post_code' => 'nullable|max:255',
+            'per_permanent_address' => 'nullable|max:255'
         ];
     }
 

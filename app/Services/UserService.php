@@ -67,11 +67,17 @@ class UserService extends ApiBaseService
 
 
     protected $domain;
+
     /**
      * UserService constructor.
      *
      * @param UserRepository $UserRepository
      * @param EmailVerifyRepository $emailVerifyRepository
+     * @param RepresentativeRepository $representativeRepository
+     * @param CandidateTransformer $candidateTransformer
+     * @param CandidateRepository $candidateRepository
+     * @param ProfileLogRepository $profileLogRepository
+     * @param Domain $domain
      */
     public function __construct(
         UserRepository $UserRepository,
@@ -104,15 +110,21 @@ class UserService extends ApiBaseService
             /* Data set for user table */
             $inputData['email'] = $request->get('email');
             $inputData['password'] = Hash::make($request->get('password'));
+            $inputData['full_name'] = $request->get('first_name') . ' '. $request->get('last_name');
             $inputData['account_type'] = $request->get('account_type');
             $user = $this->userRepository->save($inputData);
 
-            /* Data set for Candidate information table */
-            $candidateInfo['user_id'] = $user->id;
-            $candidateInfo['first_name'] = $request->get('first_name');
-            $candidateInfo['last_name'] = $request->get('last_name');
-            $candidateInfo['screen_name'] = $request->get('screen_name');
-            $candidateInfoResponse = $this->candidateRepository->save($candidateInfo);
+            /* Data set for user information table */
+            $registerUser['user_id'] = $user->id;
+            $registerUser['first_name'] = $request->get('first_name');
+            $registerUser['last_name'] = $request->get('last_name');
+            $registerUser['screen_name'] = $request->get('screen_name');
+
+            if($request->get('account_type') === 1){ // 1 for candidate
+                $candidateInfoResponse = $this->candidateRepository->save($registerUser);
+            }elseif ($request->get('account_type') === 2){ // 2 for representative
+                $representativeInfoResponse = $this->representativeRepository->save($registerUser);
+            }
 
             if ($user) {
                 $token = JWTAuth::fromUser($user);
