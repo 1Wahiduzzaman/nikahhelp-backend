@@ -26,9 +26,9 @@ class EssentialInformationRequest extends APIRequest
     public function rules()
     {
         return [
-            'per_gender' => 'required|max:255',
-            'dob' => 'sometimes|required|string|max:255',
-            'per_occupation' => 'required|max:255',
+            'per_gender' => 'nullable|max:255',
+            'dob' => 'nullable|max:255',
+            'per_occupation' => 'nullable|max:255',
         ];
     }
 
