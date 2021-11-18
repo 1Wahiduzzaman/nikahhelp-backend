@@ -10,6 +10,7 @@ use App\Models\RepresentativeInformation;
 use App\Models\CandidateImage;
 use App\Models\User;
 use App\Repositories\CountryRepository;
+use App\Transformers\RepresentativeTransformer;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -36,7 +37,11 @@ class RepresentativeService extends ApiBaseService
         '3' => 'Residence permit'
     ];
 
-    use CrudTrait;
+
+    const INFORMATION_FETCHED_SUCCESSFULLY = 'Information fetched Successfully!';
+    const INFORMATION_UPDATED_SUCCESSFULLY = 'Information updated Successfully!';
+    const IMAGE_DELETED_SUCCESSFULLY = 'Image Deleted successfully!';
+
 
     /**
      * @var RepresentativeRepository
@@ -44,14 +49,21 @@ class RepresentativeService extends ApiBaseService
     protected $representativeRepository;
     protected $countryRepository;
 
+    /**
+     * @var RepresentativeTransformer
+     */
+    private $representativeTransformer;
+
+
     public function __construct(
         RepresentativeRepository $representativeRepository,
-        CountryRepository $countryRepository
+        CountryRepository $countryRepository,
+        RepresentativeTransformer $representativeTransformer
     )
     {
         $this->representativeRepository = $representativeRepository;
         $this->countryRepository = $countryRepository;
-
+        $this->representativeTransformer = $representativeTransformer;
     }
 
     /**
@@ -146,16 +158,18 @@ class RepresentativeService extends ApiBaseService
     public function getRepresentativeInformation():JsonResponse
     {
         $userId = self::getUserId();
-        $representativeInformation = $this->representativeRepository->findBy(['user_id' => $userId]);
+        $representativeInformation = $this->representativeRepository->findOneByProperties(['user_id' => $userId]);
 
-        if ($representativeInformation) {
-            $data['representative'] = RepresentativeResource::collection($representativeInformation);
-            $data['countries'] = $this->countryRepository->findAll()->where('status', '=', 1);
-            $data['occupations'] = Occupation::pluck('name', 'id');
-            return $this->sendSuccessResponse($data, 'Representative Information', [], HttpStatusCode::SUCCESS);
-        } else {
-            return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_NOT_FOUND);
+        if (!$representativeInformation) {
+            throw (new ModelNotFoundException)->setModel(get_class($this->representativeRepository->getModel()), [$userId]);
         }
+
+        $data['representative'] = $representativeInformation;
+        $data['representative_info'] = $this->representativeTransformer->transform($representativeInformation);
+        $data['countries'] = $this->countryRepository->findAll()->where('status', '=', 1);
+        $data['occupations'] = Occupation::pluck('name', 'id');
+        return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
+
     }
 
     /**
@@ -273,6 +287,39 @@ class RepresentativeService extends ApiBaseService
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
+    }
+
+    /**
+     * This function is for update Representative info status ( DB field representative_information.data_input_status ) update
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateInfoStatus(Request $request): JsonResponse
+    {
+
+        $userId = self::getUserId();
+
+        try {
+            $representative = $this->representativeRepository->findOneByProperties([
+                'user_id' => $userId
+            ]);
+
+            if (!$representative) {
+                throw (new ModelNotFoundException)->setModel(get_class($this->representativeRepository->getModel()), $userId);
+            }
+
+            DB::beginTransaction();
+            $info['data_input_status'] = $request->data_input_status;
+            $representative->update($info);
+
+            $candidate_basic_info = $this->representativeTransformer->transformPersonalBasic($representative);
+            DB::commit();
+            return $this->sendSuccessResponse($candidate_basic_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+
     }
 
 }

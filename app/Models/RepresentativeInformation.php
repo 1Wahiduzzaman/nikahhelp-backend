@@ -28,6 +28,57 @@ class RepresentativeInformation extends Model
     /**
      * @var string[]
      */
+    public const BASIC_INFO = [
+        'user_id',
+        'first_name',
+        'last_name',
+        'screen_name',
+    ];
+
+    public const ESSENTIAL_INFO = [
+        'per_gender',
+        'dob',
+        'per_occupation',
+    ];
+
+    public const PERSONAL_INFO = [
+        'per_email',
+        'per_current_residence_country',
+        'per_current_residence_city',
+        'per_permanent_country',
+        'per_permanent_city',
+        'per_county',
+        'per_telephone_no',
+        'mobile_number',
+        'mobile_country_code',
+        'per_permanent_post_code',
+        'per_permanent_address',
+    ];
+
+    public const VERIFICATION_INFO = [
+        'is_document_upload',
+        'ver_country',
+        'ver_city',
+        'ver_document_type',
+        'ver_document_frontside',
+        'ver_document_backside',
+        'ver_recommender_title',
+        'ver_recommender_first_name',
+        'ver_recommender_last_name',
+        'ver_recommender_occupation',
+        'ver_recommender_address',
+        'ver_recommender_mobile_no',
+    ];
+
+    public const IMAGE_UPLOAD_INFO = [
+        'per_avatar_url',
+        'per_main_image_url',
+        'anybody_can_see',
+        'only_team_can_see',
+        'team_connection_can_see',
+        'is_agree',
+    ];
+
 
     public $fillable = [
         'user_id',

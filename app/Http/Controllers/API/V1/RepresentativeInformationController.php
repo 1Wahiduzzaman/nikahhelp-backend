@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Representative\CreateRepresentativeInformationAPIRequest;
+use App\Http\Requests\Representative\RepresentativeInfoStatusUpdateRequest;
 use App\Http\Requests\Representative\UpdateRepresentativeInformationAPIRequest;
 use App\Http\Requests\Representative\EssentialInformationRequest;
 use App\Http\Requests\Representative\ContactInformationRequest;
@@ -11,6 +12,7 @@ use App\Http\Requests\Representative\VerifyIdentityRequest;
 use App\Http\Requests\Representative\ImageUploadRequest;
 use App\Models\RepresentativeInformation;
 use App\Repositories\RepresentativeInformationRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use Response;
@@ -190,5 +192,15 @@ class RepresentativeInformationController extends Controller
     public function finalSubmit(Request $request)
     {
         return $this->representativeService->finalSubmit($request->all());
+    }
+
+    /**
+     * Update Representative info status
+     * @param RepresentativeInfoStatusUpdateRequest $request
+     * @return JsonResponse
+     */
+    public function updateRepresentativeInfoStatus(RepresentativeInfoStatusUpdateRequest $request) : JsonResponse
+    {
+        return $this->representativeService->updateInfoStatus($request);
     }
 }
