@@ -200,6 +200,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('representative/image/upload', [RepresentativeInformationController::class, 'imageUpload'])->name('representative.image.upload');
         Route::POST('representative/final/submit', [RepresentativeInformationController::class, 'finalSubmit'])->name('representative.final.submit');
 
+        Route::patch('representative/personal-info-status', [RepresentativeInformationController::class, 'updateRepresentativeInfoStatus'])->name('update.candidate.info.status');
+
 
 
         // Matchmaker
