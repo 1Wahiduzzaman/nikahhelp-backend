@@ -119,6 +119,14 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('connected-send-private-message', [MessageController::class, 'sendPrivateMessage'])->name('connected-team-chat.connected-send-private-message');
         Route::POST('connected-private-chat-history', [MessageController::class, 'privateChatHistory'])->name('connected-team-chat.connected-private-chat-history');
         Route::POST('connected-team-chat-seen', [MessageController::class, 'teamChatSeen'])->name('connected-team-chat.connected-team-chat-seen');
+        //End Chat Module
+
+        //Support Chat
+        Route::POST('support-send-message', [MessageController::class, 'sendMessageToSupport'])->name('support.support-send-message');
+        Route::POST('individual-support-user-chat-history', [MessageController::class, 'individualSupportChatHistory'])->name('support.individual-support-user-chat-history');
+        Route::GET('support-chat-list', [MessageController::class, 'supportChatHistory'])->name('support.support-chat-list');
+        //End Support Chat
+
         // Teams API
 
         Route::GET('team-information/{id}', [TeamController::class, 'teamInformation'])->name('team.information');

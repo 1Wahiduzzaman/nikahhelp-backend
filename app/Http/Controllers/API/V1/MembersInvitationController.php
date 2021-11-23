@@ -27,7 +27,7 @@ class MembersInvitationController extends Controller
      * @return JsonResponse
      */
     public function store(MemberInvitationRequest $request): JsonResponse
-    {
+    {        
         return $this->memberInvitationService->save($request->all());
     }
 

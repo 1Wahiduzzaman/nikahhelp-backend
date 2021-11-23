@@ -472,7 +472,7 @@ class TeamService extends ApiBaseService
      * @return JsonResponse
      */
     public function deleteTeam(Request $request)
-    {
+    {        
         $user_id = Auth::id();
         $team_id = $request->team_id;
         $team_password = $request->team_password;
@@ -480,9 +480,8 @@ class TeamService extends ApiBaseService
 
         // Get Team
         $team = $this->teamRepository->findOneByProperties([
-            "team_id" => $team_id
-        ]);
-
+            "team_id" => "$team_id"
+        ]);        
         if (!$team) {
             return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
         }
