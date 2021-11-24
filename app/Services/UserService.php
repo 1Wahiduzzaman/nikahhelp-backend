@@ -119,12 +119,15 @@ class UserService extends ApiBaseService
             $registerUser['first_name'] = $request->get('first_name');
             $registerUser['last_name'] = $request->get('last_name');
             $registerUser['screen_name'] = $request->get('screen_name');
+            $registerUser['data_input_status'] = 0;
 
-            if($request->get('account_type') === 1){ // 1 for candidate
-                $candidateInfoResponse = $this->candidateRepository->save($registerUser);
-            }elseif ($request->get('account_type') === 2){ // 2 for representative
-                $representativeInfoResponse = $this->representativeRepository->save($registerUser);
+            if($request->get('account_type') == 1){ // 1 for candidate
+                $userInfoResponse = $this->candidateRepository->save($registerUser);
+            }elseif ($request->get('account_type') == 2){ // 2 for representative
+                $userInfoResponse = $this->representativeRepository->save($registerUser);
             }
+
+            $user['data_input_status'] = $userInfoResponse->data_input_status;
 
             if ($user) {
                 $token = JWTAuth::fromUser($user);
@@ -162,6 +165,8 @@ class UserService extends ApiBaseService
         try {
 
             $userInfo = User::where('email', $request->input('email'))->first();
+            $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
+
             if (empty($userInfo)) {
                 return $this->sendErrorResponse(
                     'You are not a registered you should registration first ',
