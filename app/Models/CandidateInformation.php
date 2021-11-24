@@ -427,4 +427,26 @@ class CandidateInformation extends Model
         return $this->belongsTo(EducationLevel::class, 'pre_study_level_id', 'id');
 
     }
+
+    public static function getGender ($id)
+    {
+        $gender = null;
+
+        switch ($id){
+            case 1:
+                $gender = 'Male';
+                break;
+            case 2:
+                $gender = 'Female';
+                break;
+            case 3:
+                $gender = 'Others';
+                break;
+            default:
+                $gender = "Do not disclose";
+        }
+
+        return $gender ;
+
+    }
 }

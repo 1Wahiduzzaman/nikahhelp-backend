@@ -680,6 +680,7 @@ class CandidateService extends ApiBaseService
         return $this->sendSuccessResponse($candidate_verification_info, self::INFORMATION_FETCHED_SUCCESSFULLY);
     }
 
+    /* edo work*/
     /**
      * this function is used for store candidate personal validation information
      * @return JsonResponse
@@ -695,22 +696,31 @@ class CandidateService extends ApiBaseService
             if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
+
+            DB::beginTransaction();
+
             $input = $request->only(CandidateInformation::PERSONAL_VERIFICATION_INFO);
 
-            if ($request->hasFile('ver_image_front')) {
-                $image = $this->singleImageUploadFile($request->file('ver_image_front'), 'verification');
-                $input['ver_image_front'] = $image['image_path'];
+            if($request->hasFile('ver_image_front')){
+                $image = $this->uploadImageThrowGuzzle([
+                    'ver_image_front'=>$request->file('ver_image_front'),
+                ]);
+                $input['ver_image_front'] = $image->ver_image_front;
             }
-            if ($request->hasFile('ver_image_back')) {
-                $image = $this->singleImageUploadFile($request->file('ver_image_back'), 'verification');
-                $input['ver_image_back'] = $image['image_path'];
+
+            if($request->hasFile('ver_image_back')){
+                $image = $this->uploadImageThrowGuzzle([
+                    'ver_image_back'=>$request->file('ver_image_back')
+                ]);
+                $input['ver_image_back'] = $image->ver_image_back ;
             }
 
             $input = $candidate->fill($input)->toArray();
 
-            DB::beginTransaction();
             $candidate->save($input);
+
             $candidate_verification_info = $this->candidateTransformer->transformPersonalVerification($candidate);
+
             DB::commit();
             return $this->sendSuccessResponse($candidate_verification_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
         } catch (Exception $exception) {
@@ -969,6 +979,44 @@ class CandidateService extends ApiBaseService
             CandidateImage::IMAGE_DISK => $disk
         ];
 
+    }
+
+    /*edo work*/
+    public function uploadImageThrowGuzzle(array $images)
+    {
+        $userId = self::getUserId();
+
+        $output = [];
+        $i = 0;
+        foreach ($images as $key=>$image){
+            $data[$i] = [
+                [
+                    'name'     => 'image['.$i.'][name]',
+                    'contents' => $key,
+                ],
+                [
+                    'name'     => 'image['.$i.'][file]',
+                    'contents' => file_get_contents($image),
+                    'filename' => 'verification-font.png'
+                ],
+                [
+                    'name'     => 'image['.$i.'][path]',
+                    'contents' => 'candidate/candidate_'.$userId.'/',
+                ],
+            ];
+            $output = array_merge($output,$data[$i]);
+
+            $i++;
+        }
+
+
+        $client = new \GuzzleHttp\Client();
+        $requestc = $client->post('http://mat-assets.test/img',[
+            'multipart' => $output
+        ]);
+        $response = $requestc->getBody();
+
+        return json_decode($response);
     }
 
     /**

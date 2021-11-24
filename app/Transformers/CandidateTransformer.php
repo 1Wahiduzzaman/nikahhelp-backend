@@ -4,6 +4,7 @@
 namespace App\Transformers;
 
 use App\Models\CandidateInformation;
+use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
 /**
@@ -94,6 +95,25 @@ class CandidateTransformer extends TransformerAbstract
             ],
         );
     }
+
+    /**
+     * @param CandidateInformation $item
+     * @return array
+     */
+    public function transformSearchResult(CandidateInformation $item): array
+    {
+        return [
+            'first_name'=> $item->first_name,
+            'last_name'=> $item->last_name,
+            'screen_name'=> $item->screen_name,
+            'per_age'=> Carbon::now()->diffInYears($item->dob),
+            'per_gender'=> CandidateInformation::getGender($item->per_gender),
+            'per_nationality' =>  $item->getNationality->name,
+            'per_religion'=> $item->getReligion->name,
+            'per_ethnicity'=> $item->per_ethnicity,
+        ];
+    }
+
 
     /**
      * @param CandidateInformation $item
@@ -407,8 +427,8 @@ class CandidateTransformer extends TransformerAbstract
             'ver_country_id' => $item->ver_country_id,
             'ver_city_id' => $item->ver_city_id,
             'ver_document_type' => $item->ver_document_type,
-            'ver_image_front' => $item->ver_image_front,
-            'ver_image_back' => $item->ver_image_back,
+            'ver_image_front' => $item->ver_image_front ? env('IMAGE_SERVER') .'/'. $item->ver_image_front : '',
+            'ver_image_back' => $item->ver_image_back ? env('IMAGE_SERVER') .'/'. $item->ver_image_back: '',
             'ver_recommences_title' => $item->ver_recommences_title,
             'ver_recommences_first_name' => $item->ver_recommences_first_name,
             'ver_recommences_last_name' => $item->ver_recommences_last_name,
