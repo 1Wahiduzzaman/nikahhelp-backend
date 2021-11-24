@@ -36,7 +36,7 @@ class SearchAPIController extends AppBaseController
      */
     public function filter(APICreateSearchAPIRequest $request)
     {
-        return  $this->searchService->filter($request->all());
+        return  $this->searchService->filter($request);
     }
 
     /**

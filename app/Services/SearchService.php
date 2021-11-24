@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Models\Team;
+use App\Transformers\CandidateTransformer;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use App\Traits\CrudTrait;
@@ -51,6 +52,10 @@ class SearchService extends ApiBaseService
      * @var TeamTransformer
      */
     protected $teamTransformer;
+    /**
+     * @var CandidateTransformer
+     */
+    private $candidateTransformer;
 
     /**
      * TeamService constructor.
@@ -65,7 +70,8 @@ class SearchService extends ApiBaseService
         TeamMemberRepository $teamMemberRepository,
         UserRepository $userRepository,
         CandidateRepository $candidateRepository,
-        BlockListService $blockListService
+        BlockListService $blockListService,
+        CandidateTransformer $candidateTransformer
     )
     {
         $this->teamRepository = $teamRepository;
@@ -75,6 +81,7 @@ class SearchService extends ApiBaseService
         $this->candidateRepository = $candidateRepository;
         $this->blockListService = $blockListService;
         $this->setActionRepository($candidateRepository);
+        $this->candidateTransformer = $candidateTransformer;
     }
 
 
@@ -90,29 +97,66 @@ class SearchService extends ApiBaseService
         //third priority country
         //fourth priority religious
 
+
         try {
-            $candidates = $this->candidateRepository->getModel()->get();
 
+            $candidates = $this->candidateRepository->getModel();
 
-/*            $candidates = $this->candidateRepository->where(function($query) use ($request) {
-                $query->where('per_gender', $request->get('gender'))
-                    ->where('dob', Carbon::parse($request->get('min_age'))->diff(Carbon::now()))
-                    ->orWhere('dob', Carbon::parse($request->get('max_age'))->diff(Carbon::now()))
-                    ->where('country', $request->get('country'))
-                    ->where('religion', $request->get('religion'));
-
-                })->orWhere('dob',Carbon::parse($request->get('min_age'))->diff(Carbon::now()))
-                ->orWhere('dob', Carbon::parse($request->get('max_age'))->diff(Carbon::now()))
-                ->orWhere('per_gender', $request->get('gender'))
-                ->orWhere('country', $request->get('country'))
-                ->orWhere('religion', $request->get('religion'))
-                ->get();*/
-
-            if(count($candidates) === 0) {
-                return $this->sendErrorResponse('No Candidates Registered', [], HttpStatusCode::NOT_FOUND);
+            if (isset($request->gender)) {
+                $candidates = $candidates->where('per_gender', $request->gender);
             }
 
-            return $this->sendSuccessResponse($candidates, "Candidates fetched successfully");
+            if (isset($request->min_age) && isset($request->max_age)) {
+                $dateRange['max'] = Carbon::now()->subYears($request->max_age);
+                $dateRange['min'] = Carbon::now()->subYears($request->mim_age);
+//                dd($dateRange);
+
+                $candidates = $candidates->whereBetween('dob', [$dateRange]);
+            }
+
+            if (isset($request->country)) {
+                $candidates = $candidates->where('per_nationality', $request->country);
+            }
+
+            if (isset($request->religion)) {
+                $candidates = $candidates->where('per_religion_id', $request->religion);
+            }
+
+            $candidates = $candidates->with('getNationality','getReligion')->get();
+
+            $candidatesResponse = [];
+
+            foreach ($candidates as $candidate) {
+                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
+            }
+
+//            dd($candidatesResponse);
+            if (!count($candidatesResponse)) {
+                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND);
+            }
+//
+            return $this->sendSuccessResponse($candidatesResponse, "Candidates fetched successfully");
+
+
+            /*            $candidates = $this->candidateRepository->where(function($query) use ($request) {
+                            $query->where('per_gender', $request->get('gender'))
+                                ->where('dob', Carbon::parse($request->get('min_age'))->diff(Carbon::now()))
+                                ->orWhere('dob', Carbon::parse($request->get('max_age'))->diff(Carbon::now()))
+                                ->where('country', $request->get('country'))
+                                ->where('religion', $request->get('religion'));
+
+                            })->orWhere('dob',Carbon::parse($request->get('min_age'))->diff(Carbon::now()))
+                            ->orWhere('dob', Carbon::parse($request->get('max_age'))->diff(Carbon::now()))
+                            ->orWhere('per_gender', $request->get('gender'))
+                            ->orWhere('country', $request->get('country'))
+                            ->orWhere('religion', $request->get('religion'))
+                            ->get();*/
+
+//            if (!count($candidates)) {
+//                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND);
+//            }
+//
+//            return $this->sendSuccessResponse($candidates, "Candidates fetched successfully");
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
         }
