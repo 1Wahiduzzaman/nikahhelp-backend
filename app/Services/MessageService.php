@@ -8,6 +8,8 @@ use App\Http\Requests\TeamFromRequest;
 use App\Models\CandidateInformation;
 use App\Models\Chat;
 use App\Models\Message;
+use App\Models\SupportChat;
+use App\Models\SupportMessage;
 use App\Models\Team;
 use App\Models\TeamChat;
 use App\Models\TeamMember;
@@ -407,7 +409,7 @@ class MessageService extends ApiBaseService
                     ->where('status', 1)
                     ->first();
                     $count = 0;
-                    $team_infos->logo = url('storage/' . $team_infos->logo);
+                    $team_infos->logo = url('storage/' . @$team_infos->logo);
 
                     // count unread
                     $count = $team_infos->team_members->filter(function($item, $key){                
@@ -644,8 +646,7 @@ class MessageService extends ApiBaseService
     /**
      * Recent | Single and Group chat history with last messgae
      */   
-    public function chatHistory(array $data): JsonResponse
-    {      
+    public function chatHistory(array $data): JsonResponse {      
         $user_id = Auth::id();                
         try {
             $active_team = TeamMember::where('user_id', $user_id)
@@ -821,6 +822,103 @@ class MessageService extends ApiBaseService
         } catch(Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
         }        
+    }
+
+    //Support Chat start here
+    /**
+     * For One to One Support Chat
+     */
+    public function storeSupportChatData($request_data) {
+        try{                        
+            $sender = $request_data->sender;
+            $receiver = $request_data->receiver;
+    
+            $user_id = Auth::id();
+            $is_friend = SupportChat::where('sender', $user_id)
+            ->orWhere('receiver', $user_id)
+            ->first();            
+            if(!$is_friend) {
+                $cm = new SupportChat();                
+                $cm->sender = $sender;
+                $cm->receiver = $receiver;
+                if($cm->save()) {
+                    $md = new SupportMessage();                   
+                    $md->chat_id = $cm->id;
+                    $md->sender = $request_data->sender;
+                    $md->receiver = $request_data->receiver;
+                    $md->body = $request_data->message;
+                    if($md->save()) {
+                        return $this->sendSuccessResponse([], 'Message Sent Successfully!');
+                    } else {
+                        return $this->sendErrorResponse('Something went Wrong!Please try again.');
+                    }
+                }
+            } else {
+                $md = new SupportMessage();                
+                $md->chat_id = $is_friend->id;
+                $md->sender = $request_data->sender;
+                $md->receiver = $request_data->receiver;
+                $md->body = $request_data->message;
+                if($md->save()) {
+                    return $this->sendSuccessResponse([], 'Message Sent Successfully!');
+                } else {
+                    return $this->sendErrorResponse('Something went Wrong!Please try again.');
+                }
+            }
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }       
+    }
+
+    public function getUsersSupportChatHistory($chat_id = null) {
+        try{
+            $messages = SupportMessage::select('body', 'seen', 'attachment')
+            ->where('chat_id', $chat_id)            
+            ->get();
+            return $this->sendSuccessResponse($messages, 'Message fetched Successfully!');
+        } catch(Exception $e) {
+            return $this->sendErrorResponse($e->getMessage());
+        }        
+    }
+
+    public function supportChatHistory(array $data): JsonResponse {      
+        $user_id = Auth::id();                
+        try {            
+
+            $chats = SupportChat::select('*')    
+            ->with('last_message')                  
+            ->with('sender_data')
+            ->with('receiver_data')            
+            ->where(function($q){
+                $user_id = Auth::id(); 
+                $q->where('sender' , $user_id)
+                    ->orWhere('receiver', $user_id);   
+            })                                                         
+            ->get();     
+            $result = [];
+            $count = 0;
+            foreach($chats as $key=>$item) {                    
+                if($user_id==$item->sender){
+                    $result[$key]['user'] = $item->receiver_data;
+                    $result[$key]['last_message'] = $item->last_message;
+                } else {
+                    $result[$key]['user'] = $item->sender_data;
+                    $result[$key]['last_message'] = $item->last_message;
+                }
+                if($item->last_message->seen == 0) {
+                    $count++;
+                } 
+            }            
+                        
+            $res = array_merge(
+                ['chat_list' => $result],           
+                ['count' => $count]
+            );    
+            return $this->sendSuccessResponse($res, 'Data fetched Successfully!');
+        }
+        catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
     }
 
 }

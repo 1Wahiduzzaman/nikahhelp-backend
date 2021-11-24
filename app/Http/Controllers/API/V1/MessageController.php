@@ -96,4 +96,22 @@ class MessageController extends Controller
     public function teamChatSeen(Request $request) {                  
         return $this->messageService->updateTeamChatSeen($request->from_team_id, $request->to_team_id);        
     }      
+
+
+
+    //Suppor Chat Start here
+    public function sendMessageToSupport(Request $request) {       
+        return $this->messageService->storeSupportChatData($request);        
+    }
+
+    public function individualSupportChatHistory(Request $request)
+    {            
+        $chat_id = $request->chat_id;        
+        return $this->messageService->getUsersSupportChatHistory($chat_id);  
+    }
+
+    public function supportChatHistory(Request $request)
+    {        
+        return $this->messageService->supportChatHistory($request->all());
+    }
 }

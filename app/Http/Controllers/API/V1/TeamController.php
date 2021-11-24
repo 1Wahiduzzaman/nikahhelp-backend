@@ -118,7 +118,7 @@ class TeamController extends Controller
      */
     public function destroy(Request $request)
     {
-        //
+        //        
         return $this->teamService->deleteTeam($request);
     }
 
