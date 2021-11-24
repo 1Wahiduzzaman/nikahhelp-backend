@@ -680,7 +680,6 @@ class CandidateService extends ApiBaseService
         return $this->sendSuccessResponse($candidate_verification_info, self::INFORMATION_FETCHED_SUCCESSFULLY);
     }
 
-    /* edo work*/
     /**
      * this function is used for store candidate personal validation information
      * @return JsonResponse
@@ -981,7 +980,6 @@ class CandidateService extends ApiBaseService
 
     }
 
-    /*edo work*/
     public function uploadImageThrowGuzzle(array $images)
     {
         $userId = self::getUserId();
@@ -1011,7 +1009,7 @@ class CandidateService extends ApiBaseService
 
 
         $client = new \GuzzleHttp\Client();
-        $requestc = $client->post('http://mat-assets.test/img',[
+        $requestc = $client->post(env('IMAGE_SERVER').'/img',[
             'multipart' => $output
         ]);
         $response = $requestc->getBody();
