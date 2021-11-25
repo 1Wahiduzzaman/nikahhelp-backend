@@ -433,11 +433,16 @@ class MessageService extends ApiBaseService
         try{                        
             $sender = $request_data->sender;
             $receiver = $request_data->receiver;
+            $this->receiver = $receiver;
     
             $user_id = Auth::id();
-            $is_friend = Chat::where('sender', $user_id)
-            ->orWhere('receiver', $user_id)
-            ->first();            
+            $is_friend = Chat::where(['sender'=> $user_id, 'receiver' => $receiver])
+            ->orWhere(function($q) {
+                $receiver = $this->receiver;
+                $user_id = Auth::id();
+                $q->where(['sender'=> $receiver, 'receiver' => $user_id]);
+            })
+            ->first();                      
             if(!$is_friend) {
                 $cm = new Chat();
                 $cm->team_id = $request_data->team_id;
@@ -758,7 +763,7 @@ class MessageService extends ApiBaseService
         try{
             $messages = Chat::with('message_history')
             ->where('id', $chat_id)            
-            ->get();
+            ->first();
             return $this->sendSuccessResponse($messages, 'Message fetched Successfully!');
         } catch(Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
