@@ -122,8 +122,8 @@ class TeamController extends Controller
         return $this->teamService->deleteTeam($request);
     }
 
-    public function teamInformation(Request $request, $id)
+    public function teamInformation($id)
     {
         return $this->teamService->getTeamInformation($id);
-    }
+    }    
 }

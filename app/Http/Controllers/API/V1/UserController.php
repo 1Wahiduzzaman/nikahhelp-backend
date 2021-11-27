@@ -60,6 +60,11 @@ class UserController extends Controller
     public function getUserProfile(Request $request)
     {
         return $this->userService->getUserProfile($request);
+    }    
+
+    public function getUserInfo(Request $request)
+    {        
+        return $this->userService->findUserInfo($request);
     }
 
     /**
