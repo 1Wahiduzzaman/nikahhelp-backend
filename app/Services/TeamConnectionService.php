@@ -97,7 +97,7 @@ class TeamConnectionService extends ApiBaseService
         $from_team_id = $from_team->id;
         $from_team_candidate = TeamMember::select("*")
             ->with("user")
-            ->where('team_id', $from_team_id)
+            ->where('team_id', "$from_team_id")
             ->where('user_type', "Candidate")
             ->get();
 //        dd($from_team_id,$from_team_candidate);
@@ -114,7 +114,7 @@ class TeamConnectionService extends ApiBaseService
         $to_team_id = $to_team->id;
         $to_team_candidate = TeamMember::select("*")
             ->with("user")
-            ->where('team_id', $to_team_id)
+            ->where('team_id', "$to_team_id")
             ->where('user_type', "Candidate")
             ->get();
 
@@ -280,7 +280,7 @@ class TeamConnectionService extends ApiBaseService
         $they_declined = 0;
         $teamId = $request->team_id;
         $userId = self::getUserId();
-        $teamInformation = Team::where("team_id", '=', $teamId)->first();
+        $teamInformation = Team::where("team_id", '=', "$teamId")->first();
         if (empty($teamInformation)) {
             return $this->sendErrorResponse('Active team information not found', [], HttpStatusCode::NOT_FOUND);
         }
@@ -367,8 +367,8 @@ class TeamConnectionService extends ApiBaseService
                 })
                 ->join('candidate_information AS ToCandidate', 'ToTeamCandidateMember.user_id', '=', 'ToCandidate.user_id')
                 ->where(function ($query) use ($connection_status, $team_row_id) {
-                    $query->where('TCon.connection_status', '=', $connection_status)
-                        ->where('TCon.from_team_id', '=', $team_row_id);
+                    $query->where('TCon.connection_status', '=', "$connection_status")
+                        ->where('TCon.from_team_id', '=', "$team_row_id");
                 })
                 ->leftJoin('countries', 'ToCandidate.per_current_residence_country', '=', 'countries.id')
                 ->leftJoin('religions', 'ToCandidate.per_religion_id', '=', 'religions.id')
@@ -403,8 +403,8 @@ class TeamConnectionService extends ApiBaseService
                 })
                 ->join('candidate_information AS FromCandidate', 'FromCandidateMember.user_id', '=', 'FromCandidate.user_id')
                 ->where(function ($query) use ($connection_status, $team_row_id) {
-                    $query->where('TCon.connection_status', '=', $connection_status)
-                        ->where('TCon.to_team_id', '=', $team_row_id);
+                    $query->where('TCon.connection_status', '=', "$connection_status")
+                        ->where('TCon.to_team_id', '=', "$team_row_id");
                 })
                 ->leftJoin('countries', 'FromCandidate.per_current_residence_country', '=', 'countries.id')
                 ->leftJoin('religions', 'FromCandidate.per_religion_id', '=', 'religions.id')
@@ -444,8 +444,8 @@ class TeamConnectionService extends ApiBaseService
                 })
                 ->join('candidate_information AS FromCandidate', 'FromCandidateMember.user_id', '=', 'FromCandidate.user_id')
                 ->where(function ($query) use ($connection_status, $team_row_id) {
-                    $query->where('TCon.connection_status', '=', $connection_status)
-                        ->where('TCon.to_team_id', '=', $team_row_id);
+                    $query->where('TCon.connection_status', '=', "$connection_status")
+                        ->where('TCon.to_team_id', '=', "$team_row_id");
                 })
                 ->leftJoin('countries', 'FromCandidate.per_current_residence_country', '=', 'countries.id')
                 ->leftJoin('religions', 'FromCandidate.per_religion_id', '=', 'religions.id')
@@ -483,8 +483,8 @@ class TeamConnectionService extends ApiBaseService
                 })
                 ->join('candidate_information AS ToCandidate', 'ToTeamCandidateMember.user_id', '=', 'ToCandidate.user_id')
                 ->where(function ($query) use ($connection_status, $team_row_id) {
-                    $query->where('TCon.connection_status', '=', $connection_status)
-                        ->where('TCon.from_team_id', '=', $team_row_id);
+                    $query->where('TCon.connection_status', '=', "$connection_status")
+                        ->where('TCon.from_team_id', '=', "$team_row_id");
                 })
                 ->leftJoin('countries', 'ToCandidate.per_current_residence_country', '=', 'countries.id')
                 ->leftJoin('religions', 'ToCandidate.per_religion_id', '=', 'religions.id')
@@ -523,8 +523,8 @@ class TeamConnectionService extends ApiBaseService
                 })
                 ->join('candidate_information AS FromCandidate', 'FromCandidateMember.user_id', '=', 'FromCandidate.user_id')
                 ->where(function ($query) use ($connection_status, $team_row_id) {
-                    $query->where('TCon.connection_status', '=', $connection_status)
-                        ->where('TCon.to_team_id', '=', $team_row_id);
+                    $query->where('TCon.connection_status', '=', "$connection_status")
+                        ->where('TCon.to_team_id', '=', "$team_row_id");
                 })
                 ->leftJoin('countries', 'FromCandidate.per_current_residence_country', '=', 'countries.id')
                 ->leftJoin('religions', 'FromCandidate.per_religion_id', '=', 'religions.id')
@@ -561,8 +561,8 @@ class TeamConnectionService extends ApiBaseService
                 })
                 ->join('candidate_information AS ToCandidate', 'ToTeamCandidateMember.user_id', '=', 'ToCandidate.user_id')
                 ->where(function ($query) use ($connection_status, $team_row_id) {
-                    $query->where('TCon.connection_status', '=', $connection_status)
-                        ->where('TCon.from_team_id', '=', $team_row_id);
+                    $query->where('TCon.connection_status', '=', "$connection_status")
+                        ->where('TCon.from_team_id', '=', "$team_row_id");
                 })
                 ->leftJoin('countries', 'ToCandidate.per_current_residence_country', '=', 'countries.id')
                 ->leftJoin('religions', 'ToCandidate.per_religion_id', '=', 'religions.id')
@@ -717,7 +717,7 @@ class TeamConnectionService extends ApiBaseService
         // check user capability
         $user_role = $team_member_info->role;
         $access_rules = new AccessRulesDefinitionService();
-        $disconnection_rights = $access_rules->hasDisconnectionRights();
+        $disconnection_rights = $access_rules->hasDisconnectionRights();        
         if (!in_array($user_role, $disconnection_rights)) {
             return $this->sendErrorResponse("You dont have rights to disconnect team.", [], HttpStatusCode::VALIDATION_ERROR);
         }

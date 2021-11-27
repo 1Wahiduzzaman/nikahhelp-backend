@@ -145,6 +145,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('change-team-member-access', [TeamMembersController::class, 'changeTeamMemberAccess'])->name('team.members.change.access');
         Route::POST('delete-reason-submit', [DeleteReasonController::class, 'store'])->name('team.delete.reason.submit');
         Route::POST('leave-team', [TeamMembersController::class, 'teamLeave'])->name('team.leave');
+        Route::POST('user-info', [UserController::class, 'getUserInfo'])->name('team.user_info');
 
         // Team Connection API
         Route::POST('send-connection-request', [TeamConnectionController::class, 'store'])->name('send.team.connection.request');
@@ -158,6 +159,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         // Chat
         Route::POST('chat-info', [ChatInfoController::class, 'getInfo'])->name('chat.info');
+        Route::POST('chat-user-info', [ChatInfoController::class, 'getUserInfoList'])->name('chat.user.info');
         Route::POST('chat-user-info', [ChatInfoController::class, 'getUserInfoList'])->name('chat.user.info');
 
 

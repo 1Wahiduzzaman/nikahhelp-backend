@@ -247,7 +247,7 @@ class TeamService extends ApiBaseService
         try {
             // Get Team Data
             $team = $this->teamRepository->findOneByProperties([
-                "id" => $teamId
+                "team_id" => $teamId
             ]);
 
             /// Team not found exception throw
@@ -257,7 +257,7 @@ class TeamService extends ApiBaseService
 
             $team_infos = Team::select("*")
                 ->with("team_members", 'team_invited_members','created_by')
-                ->where('id', '=', $teamId)
+                ->where('team_id', '=', $teamId)
                 ->get();
             $team_infos[0]['logo'] = url('storage/' . $team_infos[0]['logo']);
             return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');

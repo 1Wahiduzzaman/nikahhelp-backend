@@ -331,6 +331,45 @@ class UserService extends ApiBaseService
 
     }
 
+    public function findUserInfo($request)
+    {
+        try {
+
+            $user = $this->userRepository->findOneByProperties([
+                "email" => $request->email
+            ]);           
+            if (!$user) {
+                return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND);
+            } else {
+                $candidate = $this->candidateRepository->findOneByProperties([
+                    'id' => $user->id
+                ]);
+                if (!$candidate) {
+                    $candidateInformation = array();
+                } else {
+                    $candidateInformation = $this->candidateTransformer->transform($candidate);
+                }
+
+                $representativeInformation = $this->representativeRepository->findBy(['id' => $user->id]);
+            }
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'FAIL',
+                'status_code' => $e->getStatusCode(),
+                'message' => $e->getMessage(),
+                'error' => ['details' => $e->getMessage()]
+            ], $e->getStatusCode());
+
+        }       
+        $data = array();
+        $data['user'] = $user;
+        $data['candidate_information'] = $candidateInformation;
+        $data['representative_information'] = $representativeInformation;
+
+        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS);
+
+    }
+
     /**
      * Refresh a token.
      *
