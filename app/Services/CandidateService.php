@@ -806,12 +806,17 @@ class CandidateService extends ApiBaseService
             }
 
             if ($request->hasFile('per_avatar_url')) {
-                $per_avatar_url = $this->singleImageUploadFile($request->file('per_avatar_url'));
-                $checkRepresentative->per_avatar_url = $per_avatar_url['image_path'];
+                $image = $this->uploadImageThrowGuzzle([
+                    'per_avatar_url'=>$request->file('per_avatar_url'),
+                ]);
+                $checkRepresentative->per_avatar_url = $image->per_avatar_url;
             }
+
             if ($request->hasFile('per_main_image_url')) {
-                $per_main_image_url = $this->singleImageUploadFile($request->file('per_main_image_url'));
-                $checkRepresentative->per_main_image_url = $per_main_image_url['image_path'];
+                $image = $this->uploadImageThrowGuzzle([
+                    'per_main_image_url'=>$request->file('per_main_image_url'),
+                ]);
+                $checkRepresentative->per_main_image_url = $image->per_main_image_url;
             }
             if (!empty($request['anybody_can_see'])) {
                 $checkRepresentative->anybody_can_see = $request['anybody_can_see'];
@@ -825,18 +830,40 @@ class CandidateService extends ApiBaseService
             $checkRepresentative->save();
             if (isset($request['image']) && count($request['image']) > 0) {
                 foreach ($request['image'] as $key => $file) {
-                    $requestFile = $request->file("image.$key.image");
+//                    $requestFile = $request->file("image.$key.image");
                     $requestFileType = $file['type'];
-                    $input = $this->singleImageUploadFile($requestFile, $requestFileType);
+//                    $input = $this->singleImageUploadFile($requestFile, $requestFileType);
+                    $randNumb = 'image_'.mt_rand(10000,99999);
+                    $image = $this->uploadImageThrowGuzzle([
+                        $randNumb=>$request->file("image.$key.image"),
+                    ]);
                     $request['user_id'] = $userId;
                     $request['image_type'] = $requestFileType;
-                    $input = array_merge($request->all(), $input);
+                    $request['image_path'] = $image->$randNumb;
+                    $request['disk'] = 'remote';
+                    $input = array_merge($request->all(), []);
                     $upload = $this->imageRepository->save($input);
                 }
             }
+
+            $searchCriteria = ["user_id" => $checkRepresentative->id];
+            $avatar_image_url = $checkRepresentative->per_avatar_url;
+            $main_image_url = $checkRepresentative->per_main_image_url;
+
+            $images = $this->imageRepository->findBy($searchCriteria);
+            for ($i = 0; $i < count($images); $i++) {
+//            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
+                $images[$i]->image_path = env('IMAGE_SERVER') .'/'. $images[$i]->image_path;
+            }
+
+            $data = array();
+            $data["avatar_image_url"] = env('IMAGE_SERVER') .'/'.$avatar_image_url;
+            $data["main_image_url"] = env('IMAGE_SERVER') .'/'.$main_image_url;
+            $data["other_images"] = $images;
+
             DB::commit();
 //            $checkRepresentative->per_avatar_url = (!empty($checkRepresentative->per_avatar_url) ? 'api.arranzed.com/api' . $checkRepresentative->per_avatar_url : '');
-            return $this->sendSuccessResponse($checkRepresentative, self::INFORMATION_UPDATED_SUCCESSFULLY);
+            return $this->sendSuccessResponse($data, self::INFORMATION_UPDATED_SUCCESSFULLY);
         } catch (Exception $exception) {
             DB::rollBack();
             return $this->sendErrorResponse($exception->getMessage());
@@ -1059,12 +1086,12 @@ class CandidateService extends ApiBaseService
         $images = $this->imageRepository->findBy($searchCriteria);
         for ($i = 0; $i < count($images); $i++) {
 //            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
-            $images[$i]->image_path = $images[$i]->image_path;
+            $images[$i]->image_path = env('IMAGE_SERVER') .'/'. $images[$i]->image_path;
         }
 
         $data = array();
-        $data["avatar_image_url"] = $avatar_image_url;
-        $data["main_image_url"] = $main_image_url;
+        $data["avatar_image_url"] = env('IMAGE_SERVER') .'/'. $avatar_image_url;
+        $data["main_image_url"] = env('IMAGE_SERVER') .'/'. $main_image_url;
         $data["other_images"] = $images;
 
         return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
