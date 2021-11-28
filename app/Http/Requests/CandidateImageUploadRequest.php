@@ -25,9 +25,8 @@ class CandidateImageUploadRequest extends APIRequest
      */
     public function rules()
     {
-        $request = $this->request->all();
         $rules = [
-            CandidateImage::IMAGE_AVATAR => 'sometimes|image|mimes:jpeg,png,jpg|max:2042',
+            CandidateImage::IMAGE_AVATAR => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
             CandidateImage::IMAGE_MAIN => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
             'image.*.image' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
             'image.*.type' => 'sometimes|numeric|between:1,8',

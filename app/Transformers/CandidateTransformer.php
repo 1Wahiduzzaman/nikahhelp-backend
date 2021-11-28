@@ -54,6 +54,10 @@ class CandidateTransformer extends TransformerAbstract
         );
     }
 
+    /**
+     * @param CandidateInformation $item
+     * @return array
+     */
     public function transformPersonalVerification(CandidateInformation $item): array
     {
         return array_merge(
