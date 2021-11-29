@@ -28,17 +28,17 @@ class VerifyIdentityRequest extends APIRequest
     public function rules()
     {
         return [
-            'is_document_upload' => 'boolean|max:2',
-            'ver_country' => 'max:255',
-            'ver_city' => 'max:255',
-            'ver_document_frontside' => 'image|mimes:jpeg,png,jpg,gif,svg,pdf,PDF|max:2048',
-            'ver_document_backside' => 'image|mimes:jpeg,png,jpg,gif,svg,pdf,PDF|max:2048',
-            'ver_recommender_title' => 'max:255',
-            'ver_recommender_first_name' => 'max:255',
-            'ver_recommender_last_name' => 'max:255',
-            'ver_recommender_occupation' => 'max:255',
-            'ver_recommender_address' => 'max:255',
-            'ver_recommender_mobile_no' => 'max:255',
+            'is_document_upload' => 'nullable|boolean|max:2',
+            'ver_country' => 'nullable|max:255',
+            'ver_city' => 'nullable|max:255',
+            'ver_document_frontside' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg,pdf,PDF|max:2048',
+            'ver_document_backside' => 'sometimes|image|mimes:jpeg,png,jpg,gif,svg,pdf,PDF|max:2048',
+            'ver_recommender_title' => 'nullable|max:255',
+            'ver_recommender_first_name' => 'nullable|max:255',
+            'ver_recommender_last_name' => 'nullable|max:255',
+            'ver_recommender_occupation' => 'nullable|max:255',
+            'ver_recommender_address' => 'nullable|max:255',
+            'ver_recommender_mobile_no' => 'nullable|max:255',
         ];
     }
 

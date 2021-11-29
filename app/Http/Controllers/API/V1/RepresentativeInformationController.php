@@ -173,7 +173,7 @@ class RepresentativeInformationController extends Controller
     public function verifyIdentity(VerifyIdentityRequest $request)
     {
 
-        return $this->representativeService->storeVerifyIdentity($request->all());
+        return $this->representativeService->storeVerifyIdentity($request);
     }
 
     /**
@@ -182,7 +182,7 @@ class RepresentativeInformationController extends Controller
 
     public function imageUpload(ImageUploadRequest $request)
     {
-        return $this->representativeService->imageUpload($request->all());
+        return $this->representativeService->imageUpload($request);
     }
 
     /**

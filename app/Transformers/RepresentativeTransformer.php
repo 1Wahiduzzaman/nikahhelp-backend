@@ -91,6 +91,20 @@ class RepresentativeTransformer extends TransformerAbstract
      * @param RepresentativeInformation $item
      * @return array
      */
+    public function transformGallery(RepresentativeInformation $item): array
+    {
+        return array_merge(
+            $this->basicInfo($item),
+            [
+                'gallery' => $this->galleryInfo($item),
+            ],
+        );
+    }
+
+    /**
+     * @param RepresentativeInformation $item
+     * @return array
+     */
     public function transformPersonalBasic(RepresentativeInformation $item): array
     {
         return array_merge(
@@ -277,6 +291,16 @@ class RepresentativeTransformer extends TransformerAbstract
             'only_team_can_see' => $item->only_team_can_see,
             'team_connection_can_see' => $item->team_connection_can_see,
             'is_agree' => $item->is_agree,
+        ];
+    }
+
+    private function galleryInfo(RepresentativeInformation $item)
+    {
+        return [
+            'ver_document_frontside' => $item->ver_document_frontside ? env('IMAGE_SERVER') .'/'. $item->ver_document_frontside : '',
+            'ver_document_backside' => $item->ver_document_backside ? env('IMAGE_SERVER') .'/'. $item->ver_document_backside : '',
+            'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
+            'per_main_image_url' => $item->per_main_image_url ? env('IMAGE_SERVER') .'/'. $item->per_main_image_url : '',
         ];
     }
 }
