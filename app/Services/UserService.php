@@ -165,7 +165,12 @@ class UserService extends ApiBaseService
         try {
 
             $userInfo = User::where('email', $request->input('email'))->first();
-            $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
+            if($userInfo->account_type == 1){
+                $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
+            }elseif ($userInfo->account_type == 1){
+                $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
+            }
+
 
             if (empty($userInfo)) {
                 return $this->sendErrorResponse(
@@ -337,7 +342,7 @@ class UserService extends ApiBaseService
 
             $user = $this->userRepository->findOneByProperties([
                 "email" => $request->email
-            ]);           
+            ]);
             if (!$user) {
                 return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND);
             } else {
@@ -360,7 +365,7 @@ class UserService extends ApiBaseService
                 'error' => ['details' => $e->getMessage()]
             ], $e->getStatusCode());
 
-        }       
+        }
         $data = array();
         $data['user'] = $user;
         $data['candidate_information'] = $candidateInformation;

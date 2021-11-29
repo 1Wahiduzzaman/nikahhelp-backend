@@ -1007,43 +1007,6 @@ class CandidateService extends ApiBaseService
 
     }
 
-    public function uploadImageThrowGuzzle(array $images)
-    {
-        $userId = self::getUserId();
-
-        $output = [];
-        $i = 0;
-        foreach ($images as $key=>$image){
-            $data[$i] = [
-                [
-                    'name'     => 'image['.$i.'][name]',
-                    'contents' => $key,
-                ],
-                [
-                    'name'     => 'image['.$i.'][file]',
-                    'contents' => file_get_contents($image),
-                    'filename' => 'verification-font.png'
-                ],
-                [
-                    'name'     => 'image['.$i.'][path]',
-                    'contents' => 'candidate/candidate_'.$userId.'/',
-                ],
-            ];
-            $output = array_merge($output,$data[$i]);
-
-            $i++;
-        }
-
-
-        $client = new \GuzzleHttp\Client();
-        $requestc = $client->post(env('IMAGE_SERVER').'/img',[
-            'multipart' => $output
-        ]);
-        $response = $requestc->getBody();
-
-        return json_decode($response);
-    }
-
     /**
      * Write code on Construct
      *

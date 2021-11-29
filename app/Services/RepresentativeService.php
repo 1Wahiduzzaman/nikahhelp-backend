@@ -179,27 +179,35 @@ class RepresentativeService extends ApiBaseService
 
     public function storeVerifyIdentity($request)
     {
+        $representative = [];
         if ($request['is_document_upload'] == 1 && !empty($request['ver_document_frontside'])) {
-            $ver_document_frontside = self::uploadFile($request, 'ver_document_frontside');
-            $request['ver_document_frontside'] = $ver_document_frontside['image_path'];
+            $image = $this->uploadImageThrowGuzzle([
+                'ver_document_frontside'=>$request->file('ver_document_frontside'),
+            ]);
+            $representative['ver_document_frontside'] = $image->ver_document_frontside;
         }
         if ($request['is_document_upload'] == 1 && !empty($request['ver_document_backside'])) {
-            $ver_document_backside = self::uploadFile($request, 'ver_document_backside');
-            $request['ver_document_backside'] = $ver_document_backside['image_path'];
+            $image = $this->uploadImageThrowGuzzle([
+                'ver_document_backside'=>$request->file('ver_document_backside'),
+            ]);
+            $representative['ver_document_backside'] = $image->ver_document_backside;
         }
         try {
             $userId = self::getUserId();
-            $representativeInfomation = $this->representativeRepository->findOneByProperties([
+            $representativeInformation = $this->representativeRepository->findOneByProperties([
                 'user_id' => $userId
             ]);
-            if (!$representativeInfomation) {
+            if (!$representativeInformation) {
                 return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
-            $request['user_id'] = $userId;
-            $representative = $representativeInfomation->update($request);
+
+            $representative = $representativeInformation->update($representative);
+
+            $data = $this->representativeTransformer->transformGallery($representativeInformation);
+
             if ($representative) {
 
-                return $this->sendSuccessResponse($representativeInfomation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($data, 'Information save Successfully!', [], HttpStatusCode::CREATED);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
@@ -212,31 +220,35 @@ class RepresentativeService extends ApiBaseService
      * @param $request
      * @return JsonResponse
      */
-
     public function imageUpload($request)
     {
         if (!empty($request['per_avatar_url'])) {
-            $per_avatar_url = self::uploadFile($request, 'per_avatar_url');
-            $request['per_avatar_url'] = $per_avatar_url['image_path'];
+            $image = $this->uploadImageThrowGuzzle([
+                'per_avatar_url'=>$request->file('per_avatar_url'),
+            ]);
+            $representative['per_avatar_url'] = $image->per_avatar_url;
         }
         if (!empty($request['per_main_image_url'])) {
-            $per_main_image_url = self::uploadFile($request, 'per_main_image_url');
-            $request['per_main_image_url'] = $per_main_image_url['image_path'];
+            $image = $this->uploadImageThrowGuzzle([
+                'per_main_image_url'=>$request->file('per_main_image_url'),
+            ]);
+            $representative['per_main_image_url'] = $image->per_main_image_url;
         }
         try {
             $userId = self::getUserId();
-            $representativeInfomation = $this->representativeRepository->findOneByProperties([
+            $representativeInformation = $this->representativeRepository->findOneByProperties([
                 'user_id' => $userId
             ]);
-            if (!$representativeInfomation) {
+            if (!$representativeInformation) {
                 return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
-            $request['data_input_status'] = 1;
-            $request['user_id'] = $userId;
-            $representative = $representativeInfomation->update($request);
+
+            $representative = $representativeInformation->update($representative);
+            $data = $this->representativeTransformer->transformGallery($representativeInformation);
+
             Notificationhelpers::add('Picture update successfully complete', 'single', null, $userId);
             if ($representative) {
-                return $this->sendSuccessResponse($representativeInfomation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($data, 'Information save Successfully!', [], HttpStatusCode::CREATED);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
