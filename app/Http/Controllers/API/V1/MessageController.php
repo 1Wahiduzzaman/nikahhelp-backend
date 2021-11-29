@@ -83,10 +83,9 @@ class MessageController extends Controller
         return $this->messageService->createTeamChatAsFriend($request);        
     }
     
-    public function connectedTeamChatHistory(Request $request) {          
-        $from_team_id = $request->from_team_id;
+    public function connectedTeamChatHistory(Request $request) {                  
         $to_team_id = $request->to_team_id;
-        return $this->messageService->getConnectedTeamChatHistory($from_team_id, $to_team_id);        
+        return $this->messageService->getConnectedTeamChatHistory($to_team_id);        
     }  
     
     public function privateChatHistory(Request $request) {                  

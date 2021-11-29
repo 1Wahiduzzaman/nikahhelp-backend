@@ -128,7 +128,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         //End Support Chat
 
         // Teams API
-
+        Route::GET('team-invitation-information/{link}', [TeamMembersController::class, 'teamInvitationInformation'])->name('team.invitation_information');
         Route::GET('team-information/{id}', [TeamController::class, 'teamInformation'])->name('team.information');
         Route::GET('team-list', [TeamController::class, 'teamList'])->name('team.list');
         Route::GET('check-team-active-status/{id}', [TeamController::class, 'teamActiveStatusCheck'])->name('team.active.status.check');

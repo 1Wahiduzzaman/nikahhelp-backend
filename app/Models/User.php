@@ -119,5 +119,5 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function last_message()
     {
         return $this->hasOne(Message::class, 'receiver', 'id')->orderBy('created_at', 'desc');
-    }  
+    }      
 }

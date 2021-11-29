@@ -73,6 +73,7 @@ class MemberInvitationService extends ApiBaseService
             foreach ($members as $invitation) {
                 $tempinvitation = array();
                 $tempinvitation["team_id"] = $team_row_id;
+                $tempinvitation["email"] = @$invitation["email"];
                 $tempinvitation["role"] = $invitation["role"];
                 $tempinvitation["link"] = $invitation["invitation_link"];
                 $tempinvitation["user_type"] = $invitation["add_as_a"];
