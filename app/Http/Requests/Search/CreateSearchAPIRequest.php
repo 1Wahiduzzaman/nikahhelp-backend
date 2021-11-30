@@ -24,13 +24,13 @@ class CreateSearchAPIRequest extends APIRequest
     public function rules()
     {
         return [
-            "page" => 'numeric',
-            "perpage" => 'numeric',
-            "min_age" => 'required|numeric|min:18',
-            "max_age" => 'required|numeric|max:80',
-            "gender" => 'required|boolean',
-            "country" => 'string',
-            "religion" => 'required|string',
+//            "page" => 'numeric',
+//            "perpage" => 'numeric',
+//            "min_age" => 'required|numeric|min:18',
+//            "max_age" => 'required|numeric|max:80',
+//            "gender" => 'required|boolean',
+//            "country" => 'string',
+//            "religion" => 'required|string',
         ];
     }
 }

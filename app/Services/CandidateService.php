@@ -218,7 +218,7 @@ class CandidateService extends ApiBaseService
             $data['countries'] = $this->countryRepository->findAll()->where('status', '=', 1);
             $data['studylevels'] = StudyLevel::orderBy('name')->get();
             $data['religions'] = Religion::where('status', 1)->orderBy('name')->get();
-            $data['occupations'] = Occupation::pluck('name', 'id');
+            $data['occupations'] = Occupation::all();
             $data['validation_info'] = $this->candidateTransformer->transformPersonalVerification($candidate);;
 
             return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);

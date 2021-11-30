@@ -107,6 +107,7 @@ class CandidateTransformer extends TransformerAbstract
     public function transformSearchResult(CandidateInformation $item): array
     {
         return [
+            'image'=> $item->per_avatar_url,
             'first_name'=> $item->first_name,
             'last_name'=> $item->last_name,
             'screen_name'=> $item->screen_name,
@@ -115,6 +116,7 @@ class CandidateTransformer extends TransformerAbstract
             'per_nationality' =>  $item->getNationality->name,
             'per_religion'=> $item->getReligion->name,
             'per_ethnicity'=> $item->per_ethnicity,
+            'height'=> $item->per_height,
         ];
     }
 

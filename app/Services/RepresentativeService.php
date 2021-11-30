@@ -180,13 +180,13 @@ class RepresentativeService extends ApiBaseService
     public function storeVerifyIdentity($request)
     {
         $representative = [];
-        if ($request['is_document_upload'] == 1 && !empty($request['ver_document_frontside'])) {
+        if (!empty($request['ver_document_frontside'])) {
             $image = $this->uploadImageThrowGuzzle([
                 'ver_document_frontside'=>$request->file('ver_document_frontside'),
             ]);
             $representative['ver_document_frontside'] = $image->ver_document_frontside;
         }
-        if ($request['is_document_upload'] == 1 && !empty($request['ver_document_backside'])) {
+        if (!empty($request['ver_document_backside'])) {
             $image = $this->uploadImageThrowGuzzle([
                 'ver_document_backside'=>$request->file('ver_document_backside'),
             ]);
