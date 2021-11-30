@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             OccupationSeeder::class,
             WorldSeeder::class,
             UserSeeder::class,
-            CandidateSeeder::class,
+//            CandidateSeeder::class,
         ]);
     }
 }

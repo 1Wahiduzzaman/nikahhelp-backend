@@ -285,8 +285,8 @@ class RepresentativeTransformer extends TransformerAbstract
     private function imageUploadInfo(RepresentativeInformation $item): array
     {
         return [
-            'per_avatar_url' => $item->per_avatar_url,
-            'per_main_image_url' => $item->per_main_image_url,
+            'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
+            'per_main_image_url' => $item->per_main_image_url ? env('IMAGE_SERVER') .'/'. $item->per_main_image_url : '',
             'anybody_can_see' => $item->anybody_can_see,
             'only_team_can_see' => $item->only_team_can_see,
             'team_connection_can_see' => $item->team_connection_can_see,

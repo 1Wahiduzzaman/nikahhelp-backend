@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Occupation extends Model
 {
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     protected $fillable = [
         'name',

@@ -26,7 +26,7 @@ class CreateCandidateInformationTable extends Migration
             $table->float('per_height')->nullable();
             $table->string('per_employment_status')->nullable();
             $table->unsignedBigInteger('per_education_level_id')->nullable();
-            $table->unsignedBigInteger('per_religion_id')->nullable(false)->default(1);
+            $table->unsignedBigInteger('per_religion_id')->nullable();
             $table->string('per_occupation')->nullable();
             $table->string('per_ethnicity')->nullable();
             $table->string('per_mother_tongue', 100)->nullable();
@@ -50,11 +50,11 @@ class CreateCandidateInformationTable extends Migration
 //            $table->unsignedBigInteger('per_current_residence')->nullable();
 //            $table->string('per_address')->nullable();
             $table->enum('per_marital_status',['single','married','divorced','divorced_with_children','separated','widowed','others'])->default('single');
-            $table->boolean('per_have_children')->default(0)->comment('0=no,1=yes');
+            $table->boolean('per_have_children')->nullable()->comment('0=no,1=yes');
             $table->string('per_children')->nullable()->comment('Json value for children');
             $table->string('per_currently_living_with')->nullable();
-            $table->enum('per_willing_to_relocate',[1,2,3,4])->default(1);
-            $table->boolean('per_smoker')->default(0)->comment('0=No,1=Yes');
+            $table->enum('per_willing_to_relocate',[1,2,3,4])->nullable();
+            $table->boolean('per_smoker')->nullable()->comment('0=No,1=Yes');
             $table->string('per_language_speak')->nullable();
             $table->string('per_hobbies_interests')->nullable();
             $table->string('per_food_cuisine_like')->nullable();
@@ -64,11 +64,11 @@ class CreateCandidateInformationTable extends Migration
 
 
             // Candidate Preference
-            $table->tinyInteger('pre_partner_age_min')->default(18);
-            $table->tinyInteger('pre_partner_age_max')->default(100);
+            $table->tinyInteger('pre_partner_age_min')->nullable();
+            $table->tinyInteger('pre_partner_age_max')->nullable();
             $table->float('pre_height_min', 4, 2)->nullable();
             $table->float('pre_height_max', 4, 2)->nullable();
-            $table->boolean('pre_has_country_allow_preference')->default(1)->nullable();
+            $table->boolean('pre_has_country_allow_preference')->default(0)->nullable();
             $table->boolean('pre_has_country_disallow_preference')->default(0)->nullable();
             //$table->string('pre_countries'); See candidate_country_user
             //$table->string('pre_cities'); See candidate_city
@@ -82,7 +82,7 @@ class CreateCandidateInformationTable extends Migration
             $table->boolean('pre_preferred_divorcee_child')->default(false)->comment('divorcee with child');
             $table->string('pre_other_preference',255)->nullable();
             $table->string('pre_description',255)->nullable();
-            $table->tinyInteger('pre_pros_part_status')->default(1)->comment('1=Initial phase, 2= partially complicated, 3= completed');
+            $table->tinyInteger('pre_pros_part_status')->nullable()->comment('1=Initial phase, 2= partially complicated, 3= completed');
 
             $table->tinyInteger('pre_strength_of_character_rate')->nullable();
             $table->tinyInteger('pre_look_and_appearance_rate')->nullable();
@@ -96,7 +96,7 @@ class CreateCandidateInformationTable extends Migration
             $table->tinyInteger('pre_employment_wealth_rate')->nullable();
             $table->tinyInteger('pre_education_rate')->nullable();
 
-            $table->tinyInteger('pre_things_important_status')->default(1)->comment('1=Initial phase, 2= partially complicated, 3= completed');           // Family Information
+            $table->tinyInteger('pre_things_important_status')->nullable()->comment('1=Initial phase, 2= partially complicated, 3= completed');           // Family Information
             $table->string('fi_father_name')->nullable();
             $table->string('fi_father_profession')->nullable();
             $table->string('fi_mother_name')->nullable();
