@@ -164,10 +164,13 @@ class RepresentativeService extends ApiBaseService
             throw (new ModelNotFoundException)->setModel(get_class($this->representativeRepository->getModel()), [$userId]);
         }
 
+        $representativeInformation['ver_document_frontside'] =  env('IMAGE_SERVER') .'/'. $representativeInformation->ver_document_frontside;
+        $representativeInformation['per_main_image_url'] =  env('IMAGE_SERVER') .'/'. $representativeInformation->per_main_image_url;
+
         $data['representative'] = $representativeInformation;
         $data['representative_info'] = $this->representativeTransformer->transform($representativeInformation);
         $data['countries'] = $this->countryRepository->findAll()->where('status', '=', 1);
-        $data['occupations'] = Occupation::pluck('name', 'id');
+        $data['occupations'] = Occupation::all();
         return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
 
     }

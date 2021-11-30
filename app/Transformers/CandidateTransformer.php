@@ -107,7 +107,7 @@ class CandidateTransformer extends TransformerAbstract
     public function transformSearchResult(CandidateInformation $item): array
     {
         return [
-            'image'=> $item->per_avatar_url,
+            'image'=> $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
             'first_name'=> $item->first_name,
             'last_name'=> $item->last_name,
             'screen_name'=> $item->screen_name,
@@ -351,8 +351,8 @@ class CandidateTransformer extends TransformerAbstract
             'per_things_enjoy' => $item->per_things_enjoy,
             'per_thankfull_for' => $item->per_thankfull_for,
             'per_about' => $item->per_about,
-            'per_avatar_url' => $item->per_avatar_url,
-            'per_main_image_url' => $item->per_avatar_url,
+            'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
+            'per_main_image_url' => $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
             'anybody_can_see' => $item->anybody_can_see,
             'only_team_can_see' => $item->only_team_can_see,
             'team_connection_can_see' => $item->team_connection_can_see,
