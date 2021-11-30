@@ -122,6 +122,55 @@ class SearchService extends ApiBaseService
                 $candidates = $candidates->where('per_religion_id', $request->religion);
             }
 
+            if(isset($request->min_height) && isset($request->max_height)){
+                $heightRange['min'] = $request->min_height;
+                $heightRange['max'] = $request->max_height;
+                $candidates = $candidates->whereBetween('per_height', [$heightRange]);
+            }
+
+//            if(isset($request->country)){
+//                dd($request->country);
+//            }
+//            if(isset($request->religion)){
+//                dd($request->religion);
+//            }
+//            if(isset($request->ethnicity)){
+//                dd($request->ethnicity);
+//            }
+//            if(isset($request->marital_status)){
+//                dd($request->marital_status);
+//            }
+//            if(isset($request->employment_status)){
+//                dd($request->employment_status);
+//            }
+//            if(isset($request->per_occupation)){
+//                dd($request->per_occupation);
+//            }
+//            if(isset($request->education_level_id)){
+//                dd($request->education_level_id);
+//            }
+//            if(isset($request->mother_tongue)){
+//                dd($request->mother_tongue);
+//            }
+//            if(isset($request->nationality)){
+//                dd($request->nationality);
+//            }
+//            if(isset($request->country)){
+//                dd($request->country);
+//            }
+//            if(isset($request->current_residence_country)){
+//                dd($request->current_residence_country);
+//            }
+//            if(isset($request->currently_living_with)){
+//                dd($request->currently_living_with);
+//            }
+//            if(isset($request->smoker)){
+//                dd($request->smoker);
+//            }
+//            if(isset($request->hobbies_interests)){
+//                dd($request->hobbies_interests);
+//            }
+
             $candidates = $candidates->with('getNationality','getReligion')->get();
 
             $candidatesResponse = [];

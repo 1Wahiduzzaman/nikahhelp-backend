@@ -167,7 +167,7 @@ class UserService extends ApiBaseService
             $userInfo = User::where('email', $request->input('email'))->first();
             if($userInfo->account_type == 1){
                 $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
-            }elseif ($userInfo->account_type == 1){
+            }elseif ($userInfo->account_type == 2){
                 $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
             }
 

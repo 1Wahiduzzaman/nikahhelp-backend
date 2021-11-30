@@ -27,6 +27,7 @@ class CandidateInformationFactory extends Factory
             'screen_name'=> $this->faker->userName,
             'user_id'=>1,
             'dob'=> $this->randDate(),
+            'per_height'=> $this->faker->numberBetween(90,200),
             'per_gender'=>$this->faker->randomElement([1,2]),
             "per_nationality" => $this->faker->randomElement([1,2,3,4,5]),
             'per_religion_id'=>$this->faker->randomElement([1,2,3]),
