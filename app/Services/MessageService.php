@@ -483,8 +483,7 @@ class MessageService extends ApiBaseService
      *  Connected Tab
      */
     public function storeTeam2TeamChatData($request_data) {
-        try{                        
-            $from_team_id = $request_data->from_team_id;
+        try{                                    
             $to_team_id = $request_data->to_team_id;
     
             $user_id = Auth::id();      
@@ -492,7 +491,7 @@ class MessageService extends ApiBaseService
             ->where('status', 1)
             ->first();
             $active_team_id = isset($active_team) ? $active_team->team_id : 0;
-
+            $from_team_id = $active_team_id;
             $is_friend = TeamChat::where('from_team_id', $active_team_id)
             ->orWhere('to_team_id', $active_team_id)
             ->first();            
@@ -785,12 +784,17 @@ class MessageService extends ApiBaseService
     }
     public $from_team_id, $to_team_id;
     //Connected Part By raz
-    public function getConnectedTeamChatHistory($from_team_id = null, $to_team_id = null) {
+    public function getConnectedTeamChatHistory($to_team_id = null) {
         try{
-            $this->from_team_id = $from_team_id;
+            $user_id = Auth::id();
+            $active_team = TeamMember::where('user_id', $user_id)
+            ->where('status', 1)
+            ->first();    
+            $active_team_id = isset($active_team) ? $active_team->team_id : 0;
+            $this->from_team_id = $active_team_id;
             $this->to_team_id = $to_team_id;
             $messages = TeamToTeamMessage::with('sender')
-            ->where(['from_team_id'=> $from_team_id, 'to_team_id' => $to_team_id]) 
+            ->where(['from_team_id'=> $active_team_id, 'to_team_id' => $to_team_id]) 
             ->orWhere(function($q){               
                 $q->where(['from_team_id'=> $this->to_team_id, 'to_team_id' => $this->from_team_id]);                  
             })                

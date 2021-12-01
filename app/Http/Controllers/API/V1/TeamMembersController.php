@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TeamMemberFromRequest;
 use App\Http\Requests\Team\TeamLeaveRequest;
 use App\Models\TeamMember;
+use App\Models\TeamMemberInvitation;
 use App\Services\TeamMemberService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -74,5 +75,14 @@ class TeamMembersController extends Controller
     public function teamLeave(TeamLeaveRequest $request)
     {
         return $this->teamMemberService->leaveTeam($request);
+    }
+
+    public function teamInvitationInformation($link = null) {        
+        $data = TeamMemberInvitation::with(['team'=> function($q){
+            $q->with('created_by');
+        }])
+        ->where('link', $link)->first();
+        return $this->sendSuccessResponse($data, 'Success');
+        //dd($data);
     }
 }
