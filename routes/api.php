@@ -58,6 +58,7 @@ Route::get('v1/religions', [ReligionController::class, 'index'])->name('religion
 // Countries API
 
 Route::get('v1/utilities/countries', [CountryController::class, 'index'])->name('utilities.countries.lists');//ok
+Route::get('v1/utilities/cities', [CountryController::class, 'getCityList'])->name('utilities.city.lists');//ok
 Route::get('v1/utilities/religions', [ReligionController::class, 'index'])->name('utilities.religions.lists');//ok
 
 Route::group(['middleware' => ['jwt.verify']], function () {
