@@ -177,18 +177,18 @@ class RepresentativeService extends ApiBaseService
 
     public function storeVerifyIdentity($request)
     {
-        $representative = [];
+        $requestData = $request->all();
         if (!empty($request['ver_document_frontside'])) {
             $image = $this->uploadImageThrowGuzzle([
                 'ver_document_frontside'=>$request->file('ver_document_frontside'),
             ]);
-            $representative['ver_document_frontside'] = $image->ver_document_frontside;
+            $requestData['ver_document_frontside'] = $image->ver_document_frontside;
         }
         if (!empty($request['ver_document_backside'])) {
             $image = $this->uploadImageThrowGuzzle([
                 'ver_document_backside'=>$request->file('ver_document_backside'),
             ]);
-            $representative['ver_document_backside'] = $image->ver_document_backside;
+            $requestData['ver_document_backside'] = $image->ver_document_backside;
         }
         try {
             $userId = self::getUserId();
@@ -199,7 +199,7 @@ class RepresentativeService extends ApiBaseService
                 return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
 
-            $representative = $representativeInformation->update($representative);
+            $representative = $representativeInformation->update($requestData);
 
             $data = $this->representativeTransformer->transformVerificationInformation($representativeInformation);
 
