@@ -232,10 +232,7 @@ class CandidateController extends Controller
      */
     public function viewImage(Request $request): JsonResponse
     {
-        $filter = [
-            'user_id' => $request->user()->id
-        ];
-        return $this->candidateService->listImage($filter);
+        return $this->candidateService->listImage();
     }
 
     /**
