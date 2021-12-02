@@ -201,7 +201,7 @@ class RepresentativeService extends ApiBaseService
 
             $representative = $representativeInformation->update($representative);
 
-            $data = $this->representativeTransformer->transformGallery($representativeInformation);
+            $data = $this->representativeTransformer->transformVerificationInformation($representativeInformation);
 
             if ($representative) {
 
