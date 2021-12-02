@@ -59,12 +59,12 @@ class RepresentativeTransformer extends TransformerAbstract
         );
     }
 
-    public function transformPersonalVerification(RepresentativeInformation $item): array
+    public function transformVerificationInformation(RepresentativeInformation $item): array
     {
         return array_merge(
             $this->basicInfo($item),
             [
-                'verification' => $this->personalVerification($item)
+                'verification' => $this->verificationInfo($item)
             ]
         );
     }
