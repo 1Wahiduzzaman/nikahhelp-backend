@@ -185,4 +185,16 @@ class MemberInvitationService extends ApiBaseService
         $this->memberInvitationRepository->delete($invitation);
         return $this->sendSuccessResponse(array(), 'Information inserted Successfully!');
     }
+
+    public function delete($request)
+    {
+        # code...
+        $row = $this->memberInvitationRepository->findOneByProperties(
+            [
+                "id" => $request->id
+            ]
+        );        
+        $this->memberInvitationRepository->delete($row);
+        return $this->sendSuccessResponse(array(), 'Invitation Request Deleted Successfully!');
+    }
 }

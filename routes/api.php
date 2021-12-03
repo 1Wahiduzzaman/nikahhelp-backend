@@ -130,6 +130,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         //End Support Chat
 
         // Teams API
+        Route::DELETE('member-invitation-delete', [MembersInvitationController::class, 'destroy'])->name('team.member-invitation-delete');
         Route::GET('team-invitation-information/{link}', [TeamMembersController::class, 'teamInvitationInformation'])->name('team.invitation_information');
         Route::GET('team-information/{id}', [TeamController::class, 'teamInformation'])->name('team.information');
         Route::GET('team-list', [TeamController::class, 'teamList'])->name('team.list');

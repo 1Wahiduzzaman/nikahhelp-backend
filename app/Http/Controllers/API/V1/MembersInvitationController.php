@@ -42,4 +42,9 @@ class MembersInvitationController extends Controller
         return $this->memberInvitationService->join($request->all());
     }
 
+    public function destroy(Request $request): JsonResponse
+    {        
+        return $this->memberInvitationService->delete($request);
+    }
+
 }
