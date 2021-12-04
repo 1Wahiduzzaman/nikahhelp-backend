@@ -222,11 +222,11 @@ class CandidateService extends ApiBaseService
             $data['validation_info'] = $this->candidateTransformer->transformPersonalVerification($candidate);;
             $images = $this->imageRepository->findBy(['user_id'=>$userId]);
             for ($i = 0; $i < count($images); $i++) {
-                $images[$i]->image_path = env('IMAGE_SERVER') .'/'. $images[$i]->image_path;
+                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
             }
 
-            $data['candidate_image']["avatar_image_url"] = env('IMAGE_SERVER') .'/'. $candidate->per_avatar_url;
-            $data['candidate_image']["main_image_url"] = env('IMAGE_SERVER') .'/'. $candidate->per_main_image_url;
+            $data['candidate_image']["avatar_image_url"] = $candidate->per_avatar_url? env('IMAGE_SERVER') .'/'. $candidate->per_avatar_url : '';
+            $data['candidate_image']["main_image_url"] = $candidate->per_main_image_url ? env('IMAGE_SERVER') .'/'. $candidate->per_main_image_url : '';
             $data['candidate_image']["other_images"] = $images;
 
             return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
@@ -782,12 +782,12 @@ class CandidateService extends ApiBaseService
             $main_image_url = $candidate->per_main_image_url;
             $images = $this->imageRepository->findBy(['user_id'=>$userId]);
             for ($i = 0; $i < count($images); $i++) {
-                $images[$i]->image_path = env('IMAGE_SERVER') .'/'. $images[$i]->image_path;
+                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
             }
 
             $data = array();
-            $data["avatar_image_url"] = env('IMAGE_SERVER') .'/'. $avatar_image_url;
-            $data["main_image_url"] = env('IMAGE_SERVER') .'/'. $main_image_url;
+            $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
+            $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'. $main_image_url : '';
             $data["other_images"] = $images;
 
 
@@ -862,12 +862,12 @@ class CandidateService extends ApiBaseService
             $images = $this->imageRepository->findBy($searchCriteria);
             for ($i = 0; $i < count($images); $i++) {
 //            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
-                $images[$i]->image_path = env('IMAGE_SERVER') .'/'. $images[$i]->image_path;
+                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
             }
 
             $data = array();
-            $data["avatar_image_url"] = env('IMAGE_SERVER') .'/'.$avatar_image_url;
-            $data["main_image_url"] = env('IMAGE_SERVER') .'/'.$main_image_url;
+            $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'.$avatar_image_url : '';
+            $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'.$main_image_url : '';
             $data["other_images"] = $images;
 
             DB::commit();
@@ -1058,12 +1058,12 @@ class CandidateService extends ApiBaseService
         $images = $this->imageRepository->findBy($searchCriteria);
         for ($i = 0; $i < count($images); $i++) {
 //            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
-            $images[$i]->image_path = env('IMAGE_SERVER') .'/'. $images[$i]->image_path;
+            $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
         }
 
         $data = array();
-        $data["avatar_image_url"] = env('IMAGE_SERVER') .'/'. $avatar_image_url;
-        $data["main_image_url"] = env('IMAGE_SERVER') .'/'. $main_image_url;
+        $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
+        $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'. $main_image_url : '';
         $data["other_images"] = $images;
 
         return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
