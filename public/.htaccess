@@ -3,10 +3,6 @@
         Options -MultiViews -Indexes
     </IfModule>
 
-    RewriteEngine On
-    RewriteCond %{HTTP_HOST} api\.arranzed\.com [NC]
-    RewriteCond %{SERVER_PORT} 80
-    RewriteRule ^(.*)$ https://api.arranzed.com/$1 [R,L]
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
