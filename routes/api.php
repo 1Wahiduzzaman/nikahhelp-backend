@@ -20,6 +20,7 @@ use App\Http\Controllers\API\V1\TeamConnectionController;
 use App\Http\Controllers\API\SearchAPIController;
 use App\Http\Controllers\API\UserDashboardController;
 use App\Http\Controllers\API\AdminDashboardController;
+use App\Http\Controllers\API\V1\AllNotificationController;
 use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\API\V1\ChatInfoController;
@@ -122,6 +123,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('connected-private-chat-history', [MessageController::class, 'privateChatHistory'])->name('connected-team-chat.connected-private-chat-history');
         Route::POST('connected-team-chat-seen', [MessageController::class, 'teamChatSeen'])->name('connected-team-chat.connected-team-chat-seen');
         //End Chat Module
+
+        //Send Notification | By Raz
+        Route::POST('send-notification', [AllNotificationController::class, 'saveNotifications'])->name('all-notification.send-notification');
+        // End Notification
 
         //Support Chat
         Route::POST('support-send-message', [MessageController::class, 'sendMessageToSupport'])->name('support.support-send-message');
