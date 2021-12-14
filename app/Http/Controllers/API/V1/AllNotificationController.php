@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AllNotification;
+use App\Models\TeamMember;
+use Illuminate\Support\Facades\Auth;
 
 class AllNotificationController extends Controller
 {
@@ -18,5 +20,16 @@ class AllNotificationController extends Controller
         $model->description = $request->description;
         $model->save();
         return $this->sendSuccessResponse([], 'Data fetched Successfully!');
+    }
+
+    public function listNotifications(Request $request){  
+        $user_id = Auth::id();      
+        $active_team = TeamMember::where('user_id', $user_id)
+        ->where('status', 1)
+        ->first();
+        $active_team_id = isset($active_team) ? $active_team->team_id : 0;        
+        $data = AllNotification::with('sender')->with('team')
+            ->where('team_id', $active_team_id)->get();
+        return $this->sendSuccessResponse($data, 'Data fetched Successfully!');
     }
 }

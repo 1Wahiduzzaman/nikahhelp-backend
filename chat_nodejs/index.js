@@ -15,8 +15,8 @@ const {Server} = require("socket.io");
 const io = new Server(server, { 
     allowEIO3: true,
     cors: { 
-        // origin: "http://localhost:3001",  //['*'] OR ['URL1', 'URL2'] https://nikah.arranzed.com/
-        origin: "https://nikah.arranzed.com",  //['*'] OR ['URL1', 'URL2'] https://nikah.arranzed.com/
+        origin: "http://localhost:8080",  //['*'] OR ['URL1', 'URL2'] https://nikah.arranzed.com/
+        // origin: "https://nikah.arranzed.com",  //['*'] OR ['URL1', 'URL2'] https://nikah.arranzed.com/
         methods: ["GET", "POST"],
         transports: ['websocket', 'polling'],
         credentials: true
@@ -24,6 +24,8 @@ const io = new Server(server, {
 });
 
 const users = {};
+
+var online_users = [];
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
@@ -38,18 +40,17 @@ io.on('connection', (socket) => {
     socket.on('ping', function (data) {
         //console.log(data)
         var userid = data.user_id;
-        users[userid] = socket;        
+        users[userid] = socket;     
+        online_users = Object.keys(users);
         io.emit('ping_success', {
             'success': true,
-            'online_users': Object.keys(users)
+            'online_users': online_users
         });
     });
     socket.on('send_message', (data) => {
-        var to = data.to == '1' ? '2' : '1';
-        console.log(to)
-        var msg = data.msg;
-        console.log(data);
-        users[to].emit('receive_message', msg);
+        var to = data.to;
+        if(online_users.includes(to))
+            users[to].emit('receive_message', data);
     });
 
     //Notification
@@ -63,14 +64,13 @@ io.on('connection', (socket) => {
     
     //Group Chat Start
     socket.on('send_message_in_group', (data) => {
-        var receiver = ['2','3'];
-        
-        var msg = data.msg;
-        console.log(data);
+        var receiver = data.receivers;
+        console.log(data)
+         console.log(receiver)
         _.each(receiver, function(to, key) {    
-            console.log(to)        
-            users[to].emit('receive_message', msg);
-                //users[user_id].emit('msg-reach', msgObject);
+             console.log(to)
+            if(online_users.includes(to))
+                users[to].emit('receive_message', data);
         });        
     });
 
@@ -103,9 +103,10 @@ io.on('connection', (socket) => {
         for (user_id in users) {
             if (users[user_id] == socket) {
                 delete(users[user_id]);
+                online_users = Object.keys(users);
                 io.emit('ping_success', {
                     'success': true,
-                    'online_users': Object.keys(users)
+                    'online_users': online_users
                 });
                 break;
             }
