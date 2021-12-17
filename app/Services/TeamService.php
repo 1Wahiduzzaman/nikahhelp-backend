@@ -70,7 +70,7 @@ class TeamService extends ApiBaseService
     public function save($request): JsonResponse
     {
         $userInfo = self::getUserInfo();
-        $countTeamList = $this->teamRepository->findByProperties(["created_by" => $userInfo->id]);
+        $countTeamList = $this->teamRepository->findByProperties(["created_by" => $userInfo->id, 'status' =>1]);
         if (count($countTeamList) >= env('CANDIDATE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 1) {
             $createLimit = env('CANDIDATE_TEAM_CREATE_LIMIT');
             return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
