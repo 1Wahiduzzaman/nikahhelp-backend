@@ -109,13 +109,12 @@ class SearchService extends ApiBaseService
             if (isset($request->min_age) && isset($request->max_age)) {
                 $dateRange['max'] = Carbon::now()->subYears($request->max_age);
                 $dateRange['min'] = Carbon::now()->subYears($request->mim_age);
-//                dd($dateRange);
 
                 $candidates = $candidates->whereBetween('dob', [$dateRange]);
             }
 
             if (isset($request->country)) {
-                $candidates = $candidates->where('per_nationality', $request->country);
+                $candidates = $candidates->where('per_country_of_birth', $request->country);
             }
 
             if (isset($request->religion)) {
@@ -128,48 +127,39 @@ class SearchService extends ApiBaseService
                 $candidates = $candidates->whereBetween('per_height', [$heightRange]);
             }
 
-//            if(isset($request->country)){
-//                dd($request->country);
-//            }
-//            if(isset($request->religion)){
-//                dd($request->religion);
-//            }
-//            if(isset($request->ethnicity)){
-//                dd($request->ethnicity);
-//            }
-//            if(isset($request->marital_status)){
-//                dd($request->marital_status);
-//            }
-//            if(isset($request->employment_status)){
-//                dd($request->employment_status);
-//            }
-//            if(isset($request->per_occupation)){
-//                dd($request->per_occupation);
-//            }
-//            if(isset($request->education_level_id)){
-//                dd($request->education_level_id);
-//            }
-//            if(isset($request->mother_tongue)){
-//                dd($request->mother_tongue);
-//            }
-//            if(isset($request->nationality)){
-//                dd($request->nationality);
-//            }
-//            if(isset($request->country)){
-//                dd($request->country);
-//            }
-//            if(isset($request->current_residence_country)){
-//                dd($request->current_residence_country);
-//            }
-//            if(isset($request->currently_living_with)){
-//                dd($request->currently_living_with);
-//            }
-//            if(isset($request->smoker)){
-//                dd($request->smoker);
-//            }
-//            if(isset($request->hobbies_interests)){
-//                dd($request->hobbies_interests);
-//            }
+            if(isset($request->ethnicity)){
+                $candidates = $candidates->where('per_ethnicity', $request->ethnicity);
+            }
+            if(isset($request->marital_status)){
+                $candidates = $candidates->where('per_marital_status', $request->marital_status);
+            }
+            if(isset($request->employment_status)){
+                $candidates = $candidates->where('pre_employment_status', $request->employment_status);
+            }
+            if(isset($request->per_occupation)){
+                $candidates = $candidates->where('per_occupation', $request->per_occupation);
+            }
+            if(isset($request->education_level_id)){
+                $candidates = $candidates->where('per_education_level_id', $request->education_level_id);
+            }
+            if(isset($request->mother_tongue)){
+                $candidates = $candidates->where('per_mother_tongue', $request->mother_tongue);
+            }
+            if(isset($request->nationality)){
+                $candidates = $candidates->where('per_nationality', $request->nationality);
+            }
+            if(isset($request->current_residence_country)){
+                $candidates = $candidates->where('per_current_residence_country', $request->country);
+            }
+            if(isset($request->currently_living_with)){
+                $candidates = $candidates->where('per_currently_living_with', $request->currently_living_with);
+            }
+            if(isset($request->smoker)){
+                $candidates = $candidates->where('per_smoker ', $request->smoker);
+            }
+            if(isset($request->hobbies_interests)){
+                $candidates = $candidates->where('per_hobbies_interests', $request->smoker);
+            }
 
             $candidates = $candidates->with('getNationality','getReligion')->get();
 
@@ -181,7 +171,7 @@ class SearchService extends ApiBaseService
 
 //            dd($candidatesResponse);
             if (!count($candidatesResponse)) {
-                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::SUCCESS);
             }
 //
             return $this->sendSuccessResponse($candidatesResponse, "Candidates fetched successfully");

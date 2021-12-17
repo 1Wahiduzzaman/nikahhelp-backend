@@ -165,12 +165,6 @@ class UserService extends ApiBaseService
         try {
 
             $userInfo = User::where('email', $request->input('email'))->first();
-            if($userInfo->account_type == 1){
-                $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
-            }elseif ($userInfo->account_type == 2){
-                $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
-            }
-
 
             if (empty($userInfo)) {
                 return $this->sendErrorResponse(
@@ -179,6 +173,12 @@ class UserService extends ApiBaseService
                     HttpStatusCode::BAD_REQUEST
                 );
 //                throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $request['email']);
+            }
+
+            if($userInfo->account_type == 1){
+                $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
+            }elseif ($userInfo->account_type == 2){
+                $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
             }
             // if ($userInfo->is_verified == 0) {
             //     return $this->sendErrorResponse(
