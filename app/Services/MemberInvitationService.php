@@ -78,10 +78,11 @@ class MemberInvitationService extends ApiBaseService
                 $tempinvitation["link"] = $invitation["invitation_link"];
                 $tempinvitation["user_type"] = $invitation["add_as_a"];
                 $tempinvitation["relationship"] = $invitation["relationship"];
-                $this->memberInvitationRepository->save($tempinvitation);
+                $res = $this->memberInvitationRepository->save($tempinvitation);             
 
                 // For clarity sending always string team_id column of team table as team_id to frontend
                 $tempinvitation["team_id"] = $team_id;
+                $tempinvitation["invitation_id"] = $res->id;
                 array_push($response, $tempinvitation);
             }
 
@@ -89,6 +90,16 @@ class MemberInvitationService extends ApiBaseService
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
+    }
+
+    public function edit($data)
+    {
+        try{            
+            TeamMemberInvitation::where('id', $data['invitation_id'])->update(['email'=> $data['email']]);
+            return $this->sendSuccessResponse([], 'Information Updated Successfully!');
+        } catch(Exception $exception){
+            return $this->sendErrorResponse($exception->getMessage());
+        }        
     }
 
     /**

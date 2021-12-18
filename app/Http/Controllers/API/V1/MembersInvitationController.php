@@ -31,6 +31,11 @@ class MembersInvitationController extends Controller
         return $this->memberInvitationService->save($request->all());
     }
 
+    public function update(Request $request)
+    {        
+        return $this->memberInvitationService->edit($request->all());
+    }
+
     /**
      * Store a newly created resource in storage.
      *
