@@ -31,6 +31,7 @@ use Symfony\Component\HttpFoundation\Response as FResponse;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use \App\Domain;
+use App\Models\TeamMember;
 use App\Models\TeamMemberInvitation;
 
 class UserService extends ApiBaseService
@@ -359,7 +360,8 @@ class UserService extends ApiBaseService
 
                 //$representativeInformation = $this->representativeRepository->findBy(['user_id' => $user->id]);
 
-                $invitation_data = TeamMemberInvitation::where('email', $request->email)->first();
+                $invitation_data = TeamMemberInvitation::where('email', $request->email)->first();                
+                $joined_data = TeamMember::where('user_id', $user->id)->first();                
             }
         } catch (Exception $e) {
             return response()->json([
@@ -374,7 +376,15 @@ class UserService extends ApiBaseService
         $data['user'] = $user;
         $data['candidate_information'] = $candidateInformation;
         //$data['representative_information'] = $representativeInformation;
-        $data['invitation_status'] = isset($invitation_data->status) ? $invitation_data->status : 'N/A';
+        $status = 0;
+        if(!$invitation_data && !$joined_data) {
+            $status = 0;
+        } elseif($invitation_data && !$joined_data) {
+            $status = 1;
+        } elseif(!$invitation_data && $joined_data) {
+            $status = 2;
+        }
+        $data['invitation_status'] = $status;
 
         return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS);
 
