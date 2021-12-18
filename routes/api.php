@@ -150,6 +150,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::DELETE('team-members-delete', [TeamMembersController::class, 'destroy'])->name('team.members.delete');
         Route::DELETE('delete-team', [TeamController::class, 'destroy'])->name('team.delete');
         Route::POST('invite-team-members', [MembersInvitationController::class, 'store'])->name('team.members.invitations.add');
+        Route::POST('invite-team-member-update', [MembersInvitationController::class, 'update'])->name('team.members.invitations.edit');
         Route::POST('join-team-by-invitation', [MembersInvitationController::class, 'joinTeamByInvitation'])->name('team.members.invitations.join');
         Route::POST('change-team-member-access', [TeamMembersController::class, 'changeTeamMemberAccess'])->name('team.members.change.access');
         Route::POST('delete-reason-submit', [DeleteReasonController::class, 'store'])->name('team.delete.reason.submit');
