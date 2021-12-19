@@ -360,8 +360,11 @@ class UserService extends ApiBaseService
 
                 //$representativeInformation = $this->representativeRepository->findBy(['user_id' => $user->id]);
 
-                $invitation_data = TeamMemberInvitation::where('email', $request->email)->first();                
-                $joined_data = TeamMember::where('user_id', $user->id)->first();                
+                $invitation_data = TeamMemberInvitation::
+                where('email', $request->email)
+                ->where('team_id', $request->team_id)
+                ->first();                
+                $joined_data = TeamMember::where('user_id', $user->id)->where('team_id', $request->team_id)->first();                
             }
         } catch (Exception $e) {
             return response()->json([
