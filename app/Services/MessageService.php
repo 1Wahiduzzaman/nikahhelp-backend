@@ -416,8 +416,8 @@ class MessageService extends ApiBaseService
                         return (isset($item->last_message['seen']) && $item->last_message['seen'] == 0) || (isset($item->last_message['seen']) && $item->last_message['seen'] == null);
                     })->count();
                     if((isset($team_infos->last_group_message->seen) 
-                    && $team_infos->last_group_message->seen==0) || 
-                    $team_infos->last_group_message->seen==null){                        
+                    && isset($team_infos->last_group_message->seen)==0) || 
+                    isset($team_infos->last_group_message->seen)==null){                        
                         $count+=1;
                     }
                     $team_infos->unread_notification_count = $count;
@@ -682,7 +682,7 @@ class MessageService extends ApiBaseService
                     $result[$key]['user'] = $item->sender_data;
                     $result[$key]['last_message'] = $item->last_message;
                 }
-                if($item->last_message->seen == 0) {
+                if(isset($item->last_message->seen) && $item->last_message->seen == 0) {
                     $count++;
                 } 
             }
@@ -692,7 +692,7 @@ class MessageService extends ApiBaseService
                 ->orderBy('created_at' , 'DESC')
                 ->first();   
                 
-            if($g_msg->seen==0 || $g_msg->seen == null) { $count++;}
+            if((isset($g_msg->seen) && $g_msg->seen==0) || (isset($g_msg->seen) && $g_msg->seen == null)) { $count++;}
                 //dd($g_msg);       
             //$result['g_msg'] = $g_msg;   
 
