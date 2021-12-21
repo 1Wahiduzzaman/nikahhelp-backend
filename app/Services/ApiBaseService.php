@@ -99,6 +99,7 @@ class ApiBaseService implements ApiBaseServiceInterface
     }
 
     /**
+     * Upload image Throw Guzzle
      * @param array $images
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -118,7 +119,7 @@ class ApiBaseService implements ApiBaseServiceInterface
                 [
                     'name'     => 'image['.$i.'][file]',
                     'contents' => file_get_contents($image),
-                    'filename' => 'verification-font.png'
+                    'filename' => $key.'.'.$image->getClientOriginalExtension()
                 ],
                 [
                     'name'     => 'image['.$i.'][path]',

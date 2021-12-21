@@ -386,6 +386,10 @@ class CandidateTransformer extends TransformerAbstract
      */
     private function moreabout(CandidateInformation $item): array
     {
+        $per_improve_myself = [];
+        if (!empty($item->per_improve_myself)) {
+            $per_improve_myself = json_decode($item->per_improve_myself);
+        }
         return [
             'per_marital_status' => $item->per_marital_status,
             'per_have_children' => $item->per_have_children,
@@ -399,6 +403,9 @@ class CandidateTransformer extends TransformerAbstract
             'per_things_enjoy' => $item->per_things_enjoy,
             'per_thankfull_for' => $item->per_thankfull_for,
             'per_about' => $item->per_about,
+            'per_improve_myself' => $per_improve_myself,
+            'per_additional_info_text' => $item->per_additional_info_text,
+            'per_additional_info_doc' => $item->per_additional_info_doc ? env('IMAGE_SERVER') .'/'. $item->per_additional_info_doc : '',
         ];
     }
 

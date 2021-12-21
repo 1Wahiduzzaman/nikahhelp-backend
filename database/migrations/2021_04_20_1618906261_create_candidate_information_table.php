@@ -61,6 +61,9 @@ class CreateCandidateInformationTable extends Migration
             $table->string('per_things_enjoy')->nullable();
             $table->string('per_thankfull_for')->nullable();
             $table->string('per_about')->nullable();
+            $table->string('per_improve_myself')->nullable()->comment('Json value of improve myself');
+            $table->text('per_additional_info_text')->nullable();
+            $table->text('per_additional_info_doc')->nullable();
 
 
             // Candidate Preference

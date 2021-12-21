@@ -370,6 +370,15 @@ class CandidateService extends ApiBaseService
             }
             $input = $request->only(CandidateInformation::PERSONAL_MOREABOUT_INFO);
 
+            $input['per_improve_myself'] = json_encode($request->per_improve_myself);
+
+            if($request->hasFile('per_additional_info_doc')){
+                $candidateFile = $this->uploadImageThrowGuzzle([
+                    'per_additional_info_doc'=>$request->file('per_additional_info_doc'),
+                ]);
+                $input['per_additional_info_doc'] = $candidateFile->per_additional_info_doc;
+            }
+
             $input = $candidate->fill($input)->toArray();
             $candidate->save($input);
             $personal_info = $this->candidateTransformer->transformPersonalMoreAbout($candidate);
