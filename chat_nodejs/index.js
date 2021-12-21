@@ -53,6 +53,13 @@ io.on('connection', (socket) => {
             users[to].emit('receive_message', data);
     });
 
+    // tYPING
+    socket.on('typing', (data) => {
+        var to = data.to;
+        if(online_users.includes(to))
+            users[to].emit('lis_typing', data);
+    });
+
     //Notification
     socket.on('notification', (data) => {
         var to = data.to == '1' ? '2' : '1';
