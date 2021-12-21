@@ -58,6 +58,9 @@ class CandidatePersonalAboutMoreRequest extends APIRequest
             'per_things_enjoy' => 'nullable|string',
             'per_thankfull_for' => 'nullable|string',
             'per_about' => 'nullable|string',
+            'per_improve_myself' => 'nullable|array',
+            'per_additional_info_text' => 'nullable|string',
+            'per_additional_info_doc' => 'nullable|file|max:5120|mimes:doc,docx,pdf',
         ];
     }
 

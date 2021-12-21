@@ -143,6 +143,9 @@ class CandidateInformation extends Model
         'per_things_enjoy',
         'per_thankfull_for',
         'per_about',
+        'per_improve_myself',
+        'per_additional_info_text',
+        'per_additional_info_doc',
     ];
 
     public const PERSONAL_VERIFICATION_INFO = [
@@ -203,6 +206,9 @@ class CandidateInformation extends Model
         'per_things_enjoy',
         'per_thankfull_for',
         'per_about',
+        'per_improve_myself',
+        'per_additional_info_text',
+        'per_additional_info_doc',
 
         // Preference
         'pre_partner_age_min',
