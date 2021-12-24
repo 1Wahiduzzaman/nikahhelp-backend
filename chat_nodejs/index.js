@@ -62,11 +62,14 @@ io.on('connection', (socket) => {
 
     //Notification
     socket.on('notification', (data) => {
-        var to = data.to == '1' ? '2' : '1';
-        console.log(to)
-        var msg = data.msg;
-        console.log(data);
-        users[to].emit('receive_message', msg);
+        var receiver = data.receivers;
+        console.log(data)
+         console.log(receiver)
+        _.each(receiver, function(to, key) {    
+             console.log(to)
+            if(online_users.includes(to))
+                users[to].emit('receive_notification', data);
+        });  
     });
     
     //Group Chat Start
