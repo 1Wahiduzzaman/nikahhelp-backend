@@ -19,7 +19,7 @@ class AllNotificationController extends Controller
         $model->title = $request->title;
         $model->description = $request->description;
         $model->save();
-        return $this->sendSuccessResponse([], 'Data fetched Successfully!');
+        return $this->sendSuccessResponse([], 'Data Saved Successfully!');
     }
 
     public function listNotifications(Request $request){  
