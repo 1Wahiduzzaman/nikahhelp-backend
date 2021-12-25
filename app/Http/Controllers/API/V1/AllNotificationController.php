@@ -29,7 +29,13 @@ class AllNotificationController extends Controller
         ->first();
         $active_team_id = isset($active_team) ? $active_team->team_id : 0;        
         $data = AllNotification::with('sender')->with('team')
-            ->where('team_id', $active_team_id)->get();
+            ->where('team_id', $active_team_id)
+            ->where('receiver', $user_id)
+            ->orWhere(function($q){               
+                $q->where(['team_id'=> null, 'receiver' => Auth::id()]);                  
+            })   
+            ->orderBy('created_at', 'desc')    
+            ->get();
         return $this->sendSuccessResponse($data, 'Data fetched Successfully!');
     }
 }
