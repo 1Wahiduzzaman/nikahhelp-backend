@@ -42,8 +42,22 @@ class CandidateInformationFactory extends Factory
             'per_currently_living_with'=>$this->faker->randomElement(['parents','live in my own home','live in others home','other']),
             'per_smoker'=>$this->faker->randomElement([1,2,3]),
             'per_hobbies_interests'=>$this->faker->randomElement($this->hobbies()),
-//            'per_avatar_url'=>'https://randomuser.me/api/portraits/men/'.mt_rand(1,99).'.jpg',
-//            'per_main_image_url'=>'https://randomuser.me/api/portraits/men/'.mt_rand(1,99).'.jpg',
+            'per_avatar_url'=>$this->faker->randomElement([
+                'users/user1-128x128.jpg',
+                'users/user2-128x128.jpg',
+                'users/user3-128x128.jpg',
+                'users/user4-128x128.jpg',
+                'users/user5-128x128.jpg',
+                'users/user6-128x128.jpg',
+            ]),
+            'per_main_image_url'=>$this->faker->randomElement([
+                'users/user1-128x128.jpg',
+                'users/user2-128x128.jpg',
+                'users/user3-128x128.jpg',
+                'users/user4-128x128.jpg',
+                'users/user5-128x128.jpg',
+                'users/user6-128x128.jpg',
+            ]),
         ];
     }
 

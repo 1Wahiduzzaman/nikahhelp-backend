@@ -23,5 +23,8 @@ Route::get('/migration', function () {
     if(env('APP_ENV') === 'local'){
         Artisan::call('migrate:fresh', ['--seed'=>true]);
         echo "Migration and seed done successfully";
+    }else {
+        echo "Production Mode, Unable to Fresh database";
     }
+
 });

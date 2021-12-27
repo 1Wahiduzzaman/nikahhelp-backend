@@ -13,11 +13,19 @@ class StudyLevelTableSeeder extends Seeder
     {
         DB::table('study_level')->delete();
 
-        $religions = array(
-            array('name' => 'Undergraduate'),
-            array('name' => 'Graduate'),
-            array('name' => 'Postgraduate')
-        );
+        $religions = [
+            ['name' => 'Elementary education'],
+            ['name'=>"Primary education"],
+            ['name'=>"Secondary education or high school"],
+            ['name'=>"General educational diploma"],
+            ['name'=>"Vocational qualification"],
+            ['name'=>"Professional qualification"],
+            ['name'=>"Bachelor's degree or Equivalent"],
+            ['name'=>"Master's degree or Equivalent"],
+            ['name'=>"PhD (Doctorate)"],
+            ['name'=>"Degree + professional qualification"],
+            ['name'=>"Other"]
+            ];
 
         DB::table('study_level')->insert($religions);
     }
