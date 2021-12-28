@@ -161,20 +161,23 @@ class SearchService extends ApiBaseService
                 $candidates = $candidates->where('per_hobbies_interests', $request->smoker);
             }
 
-            $candidates = $candidates->with('getNationality','getReligion')->get();
+            $parPage = $request->input('parpage',10);
+
+            $candidates = $candidates->with('getNationality','getReligion')->paginate($parPage);
+
+            if(!count($candidates->items())){
+                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::SUCCESS);
+            }
 
             $candidatesResponse = [];
 
             foreach ($candidates as $candidate) {
                 $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
             }
+            $searchResult['data'] = $candidatesResponse;
+            $searchResult['pagination'] = $this->paginationResponse($candidates);
 
-//            dd($candidatesResponse);
-            if (!count($candidatesResponse)) {
-                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::SUCCESS);
-            }
-//
-            return $this->sendSuccessResponse($candidatesResponse, "Candidates fetched successfully");
+            return $this->sendSuccessResponse($searchResult, "Candidates fetched successfully");
 
 
             /*            $candidates = $this->candidateRepository->where(function($query) use ($request) {
