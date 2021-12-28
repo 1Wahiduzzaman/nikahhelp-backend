@@ -717,7 +717,7 @@ class TeamConnectionService extends ApiBaseService
         // check user capability
         $user_role = $team_member_info->role;
         $access_rules = new AccessRulesDefinitionService();
-        $disconnection_rights = $access_rules->hasDisconnectionRights();        
+        $disconnection_rights = $access_rules->hasDisconnectionRights();
         if (!in_array($user_role, $disconnection_rights)) {
             return $this->sendErrorResponse("You dont have rights to disconnect team.", [], HttpStatusCode::VALIDATION_ERROR);
         }
