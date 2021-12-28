@@ -723,7 +723,7 @@ class TeamConnectionService extends ApiBaseService
         }
 
         // Proceed to disconnect
-        $connection_row->connection_status = '2';
+        $connection_row->connection_status = $request->connection_status;
         $connection_row->responded_by = self::getUserId();
         $connection_row->responded_at = Carbon::now()->toDateTimeString();
 
