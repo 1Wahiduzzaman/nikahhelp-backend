@@ -27,6 +27,10 @@ class MessageController extends Controller
         return $this->messageService->storeChatData($request);        
     }
 
+    public function seenMessage(Request $request) {       
+        return $this->messageService->seenMessage($request);        
+    }
+
     public function sendMessageToTeam(Request $request) {       
         return $this->messageService->storeTeamChatData($request);        
     }     

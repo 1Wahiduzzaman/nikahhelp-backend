@@ -122,11 +122,15 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('connected-send-private-message', [MessageController::class, 'sendPrivateMessage'])->name('connected-team-chat.connected-send-private-message');
         Route::POST('connected-private-chat-history', [MessageController::class, 'privateChatHistory'])->name('connected-team-chat.connected-private-chat-history');
         Route::POST('connected-team-chat-seen', [MessageController::class, 'teamChatSeen'])->name('connected-team-chat.connected-team-chat-seen');
+
+        //Seen Message
+        Route::POST('seen-message', [MessageController::class, 'seenMessage'])->name('team-chat.seen-message');
         //End Chat Module
 
         //Send Notification | By Raz
         Route::POST('send-notification', [AllNotificationController::class, 'saveNotifications'])->name('all-notification.send-notification');
         Route::GET('list-notification', [AllNotificationController::class, 'listNotifications'])->name('all-notification.list-notification');
+        Route::GET('seen-notification', [AllNotificationController::class, 'seenNotification'])->name('all-notification.seen-notification');
         // End Notification
 
         //Support Chat
