@@ -930,4 +930,9 @@ class MessageService extends ApiBaseService
         }
     }
 
+    public function seenMessage(Request $request){
+        Message::where('id', $request->id)->update(['seen' =>1]);
+        return $this->sendSuccessResponse([], 'Message Seen Successfully!');
+    }
+
 }

@@ -38,4 +38,19 @@ class AllNotificationController extends Controller
             ->get();
         return $this->sendSuccessResponse($data, 'Data fetched Successfully!');
     }
+
+    public function seenNotification(){
+        $user_id = Auth::id();      
+        $active_team = TeamMember::where('user_id', $user_id)
+        ->where('status', 1)
+        ->first();
+        $active_team_id = isset($active_team) ? $active_team->team_id : 0; 
+        AllNotification::where('team_id', $active_team_id)
+        ->where('receiver', $user_id)
+        ->orWhere(function($q){               
+            $q->where(['team_id'=> null, 'receiver' => Auth::id()]);                  
+        })   
+        ->update(['seen' =>1]);
+        return $this->sendSuccessResponse([], 'Notification Seen Successfully!');
+    }
 }
