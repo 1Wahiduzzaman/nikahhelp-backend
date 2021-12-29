@@ -13,8 +13,12 @@ class CreateChatsTable extends Migration
      */
     public function up()
     {
-        Schema::table('chats', function (Blueprint $table) {
-            DB::statement('CREATE TABLE `chats` ( `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT, `team_id` bigint(20) DEFAULT NULL, `sender` bigint(20) DEFAULT NULL, `receiver` bigint(20) DEFAULT NULL, `created_at` datetime DEFAULT NULL, `updated_at` datetime DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci');
+        Schema::create('chats', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('team_id')->nullable();
+            $table->bigInteger('sender')->nullable();
+            $table->bigInteger('receiver')->nullable();
+            $table->timestamps();
         });
     }
 
