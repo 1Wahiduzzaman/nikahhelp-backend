@@ -4,13 +4,13 @@ Navicat MySQL Data Transfer
 Source Server         : localhost
 Source Server Version : 50733
 Source Host           : localhost:3306
-Source Database       : mat_v2
+Source Database       : mat_v2_live
 
 Target Server Type    : MYSQL
 Target Server Version : 50733
 File Encoding         : 65001
 
-Date: 2021-12-25 18:36:39
+Date: 2021-12-29 21:08:24
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -35,7 +35,3 @@ CREATE TABLE `all_notifications` (
 -- ----------------------------
 -- Records of all_notifications
 -- ----------------------------
-INSERT INTO `all_notifications` VALUES ('1', '2', '82', '98', 'Test', 'Ok', '0', '2021-12-13 06:38:56', '2021-12-13 06:38:56');
-INSERT INTO `all_notifications` VALUES ('2', '1', '101', '98', 'Test', 'Ok', '0', '2021-12-25 12:30:18', '2021-12-25 12:30:18');
-INSERT INTO `all_notifications` VALUES ('3', '1', '101', '98', 'Test', 'Ok', '0', '2021-12-25 12:31:01', '2021-12-25 12:31:01');
-INSERT INTO `all_notifications` VALUES ('4', '2', '101', '98', 'Test', 'Ok', '0', '2021-12-25 12:35:13', '2021-12-25 12:35:13');
