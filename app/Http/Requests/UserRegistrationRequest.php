@@ -23,6 +23,20 @@ class UserRegistrationRequest extends APIRequest
      */
     public function rules()
     {
+        //use Illuminate\Validation\Rules\Password;
+
+/*$rules = [
+    'password' => [
+        'required',
+        'string',
+        Password::min(8)
+            ->mixedCase()
+            ->numbers()
+            ->symbols()
+            ->uncompromised(),
+        'confirmed'
+    ],
+]**/
         return [
             // "full_name" => 'required|max:800|min:3',
             "email" => 'required|email|unique:users',
