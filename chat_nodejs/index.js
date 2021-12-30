@@ -15,8 +15,8 @@ const {Server} = require("socket.io");
 const io = new Server(server, {
     allowEIO3: true,
     cors: {
-        origin: "http://localhost:8080",  //['*'] OR ['URL1', 'URL2'] https://nikah.arranzed.com/
-        // origin: "https://nikah.arranzed.com",  //['*'] OR ['URL1', 'URL2'] https://nikah.arranzed.com/
+       // origin: "http://localhost:8080",  //['*'] OR ['URL1', 'URL2'] https://nikah.arranzed.com/
+         origin: "https://nikah.arranzed.com",  //['*'] OR ['URL1', 'URL2'] https://nikah.arranzed.com/
         methods: ["GET", "POST"],
         transports: ['websocket', 'polling'],
         credentials: true
