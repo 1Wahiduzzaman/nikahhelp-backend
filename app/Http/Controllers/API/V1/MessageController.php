@@ -4,6 +4,9 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Chat;
+use App\Models\Generic;
+use App\Models\Message;
+use App\Models\TeamMessage;
 use App\Services\MessageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -61,12 +64,24 @@ class MessageController extends Controller
     public function individualChatHistory(Request $request)
     {    
         $type = $request->type;        
-          
+        $user_id = Auth::id();
         if($type =='single') {
-            $chat_id = $request->chat_id;        
+            $chat_id = $request->chat_id;    
+            // Manage Seen            
+            Message::where('team_id', Generic::getActiveTeamId())
+            ->where('chat_id', $chat_id)
+            ->where('receiver', $user_id)
+            ->update(['seen' =>1]);        
+            // Manage Seen
             return $this->messageService->getUsersChatHistory($chat_id);
         } else {
             $team_id = $request->team_id;
+
+            // Manage Seen            
+            TeamMessage::where('team_id', Generic::getActiveTeamId())                        
+            ->update(['seen' =>1]);        
+            // Manage Seen
+
             return $this->messageService->getTeamChatHistory($team_id);
         }      
     }
