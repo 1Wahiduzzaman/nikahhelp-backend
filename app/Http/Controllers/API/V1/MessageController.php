@@ -88,8 +88,13 @@ class MessageController extends Controller
 
     //Connected Part By Raz
     public function report(Request $request)
-    {
+    {        
         return $this->messageService->report($request);
+    }
+
+    public function connectedTeamData(Request $request)
+    {        
+        return $this->messageService->connectedTeamData($request);
     }
 
     public function sendMessageTeamToTeam(Request $request) {       

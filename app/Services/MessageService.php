@@ -7,11 +7,13 @@ use App\Enums\HttpStatusCode;
 use App\Http\Requests\TeamFromRequest;
 use App\Models\CandidateInformation;
 use App\Models\Chat;
+use App\Models\Generic;
 use App\Models\Message;
 use App\Models\SupportChat;
 use App\Models\SupportMessage;
 use App\Models\Team;
 use App\Models\TeamChat;
+use App\Models\TeamConnection;
 use App\Models\TeamMember;
 use App\Models\TeamMessage;
 use App\Models\TeamToTeamMessage;
@@ -72,6 +74,20 @@ class MessageService extends ApiBaseService
         $this->userRepository = $userRepository;
     }
 
+    public function connectedTeamData($request){
+        $active_team_id = Generic::getActiveTeamId();
+        $data = TeamConnection::with(['from_team', 'to_team'])
+       ->with(['team_chat' => function($q){
+            $q->with('last_message');
+       }])
+        ->where(['from_team_id'=> $active_team_id]) 
+        ->orWhere(function($q){             
+            $active_team_id = Generic::getActiveTeamId();  
+            $q->where([ 'to_team_id' => $active_team_id]);                  
+        }) 
+        ->get();
+        return $this->sendSuccessResponse($data, 'Data fetched Successfully!');
+    }
     /**
      * Update resource
      * @param Request $request
@@ -485,6 +501,8 @@ class MessageService extends ApiBaseService
     public function storeTeam2TeamChatData($request_data) {
         try{                                    
             $to_team_id = $request_data->to_team_id;
+            $team_connection_id = $request_data->team_connection_id;
+            $sender = $request_data->sender;
     
             $user_id = Auth::id();      
             $active_team = TeamMember::where('user_id', $user_id)
@@ -495,15 +513,17 @@ class MessageService extends ApiBaseService
             $is_friend = TeamChat::where('from_team_id', $active_team_id)
             ->orWhere('to_team_id', $active_team_id)
             ->first();            
-            if(!$is_friend) {
+            if(!$is_friend) {             
                 $cm = new TeamChat();                
                 $cm->from_team_id = $from_team_id;
                 $cm->to_team_id = $to_team_id;
+                $cm->team_connection_id = $team_connection_id;
+                $cm->sender = $sender;
                 if($cm->save()) {
                     $md = new TeamToTeamMessage();                    
                     $md->team_chat_id = $cm->id;
                     $md->sender = $cm->sender;
-                    $md->from_team_id = $request_data->from_team_id;
+                    $md->from_team_id = $from_team_id;
                     $md->to_team_id = $request_data->to_team_id;
                     $md->body = $request_data->message;
                     if($md->save()) {
@@ -516,7 +536,7 @@ class MessageService extends ApiBaseService
                 $md = new TeamToTeamMessage();                
                 $md->team_chat_id = $is_friend->id;               
                 $md->sender = $user_id;               
-                $md->from_team_id = $request_data->from_team_id;
+                $md->from_team_id = $from_team_id;
                 $md->to_team_id = $request_data->to_team_id;
                 $md->body = $request_data->message;
                 if($md->save()) {
