@@ -451,4 +451,19 @@ class CandidateTransformer extends TransformerAbstract
             'ver_status' => $item->ver_status,
         ];
     }
+
+    /**
+     * Candidate Other information Only as array
+     * @param CandidateInformation $item
+     * @return array
+     */
+    public function candidateOtherImage(object $item): object
+    {
+        $item = $item;
+        for ($i = 0; $i < count($item); $i++) {
+            $item[$i]->image_path = $item[$i]->image_path ? env('IMAGE_SERVER') .'/'. $item[$i]->image_path : '';
+        }
+        return  $item;
+    }
+
 }

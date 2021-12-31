@@ -7,7 +7,7 @@ use App\Models\RepresentativeInformation;
 use League\Fractal\TransformerAbstract;
 
 /**
- * Class CandidateTransformer
+ * Class RepresentativeTransformer
  * @package App\Transformers
  */
 class RepresentativeTransformer extends TransformerAbstract

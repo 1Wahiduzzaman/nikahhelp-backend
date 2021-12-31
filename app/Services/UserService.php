@@ -169,30 +169,16 @@ class UserService extends ApiBaseService
 
             $userInfo = User::where('email', $request->input('email'))->first();
 
+            /* Check the user is exist */
             if (empty($userInfo)) {
                 return $this->sendErrorResponse(
                     'You are not a registered you should registration first ',
                     [],
                     HttpStatusCode::BAD_REQUEST
                 );
-//                throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $request['email']);
             }
-
-            if($userInfo->account_type == 1){
-                $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
-            }elseif ($userInfo->account_type == 2){
-                $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
-            }
-            // if ($userInfo->is_verified == 0) {
-            //     return $this->sendErrorResponse(
-            //         'Please check your email to verify your account ( ' . $userInfo->email . ' )',
-            //         [],
-            //         HttpStatusCode::BAD_REQUEST
-            //     );
-            // }
-
+            /* Check the user is not delete */
             if ($userInfo->status == 2) {
-                //  status == 2 delete account
                 return $this->sendErrorResponse(
                     'This account hase been deleted ( ' . $userInfo->email . ' )',
                     [],
@@ -200,6 +186,16 @@ class UserService extends ApiBaseService
                 );
             }
 
+            /* Load data input status */
+            if($userInfo->account_type == 1){
+                $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
+                $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
+            }elseif ($userInfo->account_type == 2){
+                $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
+                $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
+            }
+
+            /* attempt login */
             if (!$token = JWTAuth::attempt($credentials)) {
                 return $this->sendErrorResponse(
                     'Invalid credentials',
@@ -363,8 +359,8 @@ class UserService extends ApiBaseService
                 $invitation_data = TeamMemberInvitation::
                 where('email', $request->email)
                 ->where('team_id', $request->team_id)
-                ->first();                
-                $joined_data = TeamMember::where('user_id', $user->id)->where('team_id', $request->team_id)->first();                
+                ->first();
+                $joined_data = TeamMember::where('user_id', $user->id)->where('team_id', $request->team_id)->first();
             }
         } catch (Exception $e) {
             return response()->json([
