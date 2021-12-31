@@ -43,4 +43,10 @@ class TeamConnection extends Model
     {
         return $this->hasOne(User::class,'id','responded_by');
     }
+
+    public function team_chat()
+    {
+        return $this->hasOne(TeamChat::class,'team_connection_id', 'id');
+    }
+
 }

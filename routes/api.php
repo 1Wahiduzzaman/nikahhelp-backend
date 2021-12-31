@@ -115,7 +115,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('send-message', [MessageController::class, 'sendMessage'])->name('team-chat.send-message');
         Route::POST('send-message-to-team', [MessageController::class, 'sendMessageToTeam'])->name('team-chat.send-message-to-team');
         //Connected (Team to Team chat)
-        Route::POST('connection-list-chat', [MessageController::class, 'report'])->name('connected-team.chat.connection-list-chat');
+        Route::POST('connection-list-chat', [MessageController::class, 'connectedTeamData'])->name('connected-team.chat.connection-list-chat');
         Route::POST('send-message-team-to-team', [MessageController::class, 'sendMessageTeamToTeam'])->name('connected-team-chat.send-message-team-to-team');
         Route::POST('private-chat-request-accept-reject', [MessageController::class, 'privateChatRequestAcceptOrReject'])->name('connected-team-chat.private-chat-request-accept-reject');
         Route::POST('connected-team-chat-history', [MessageController::class, 'connectedTeamChatHistory'])->name('connected-team-chat.connected-team-chat-history');
