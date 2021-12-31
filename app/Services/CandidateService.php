@@ -143,9 +143,17 @@ class CandidateService extends ApiBaseService
         if (!$candidate) {
             throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
         }
-
+        $images = $this->imageRepository->findBy(['user_id'=>$userId]);
         $candidate_info = $this->candidateTransformer->transform($candidate);
-        return $this->sendSuccessResponse($candidate_info, self::INFORMATION_FETCHED_SUCCESSFULLY);
+        $candidate_image = $this->candidateTransformer->candidateOtherImage($images);
+
+        $candidate_details = array_merge(
+            $candidate_info,
+            [
+                'other_images' => $candidate_image
+            ]
+        );
+        return $this->sendSuccessResponse($candidate_details, self::INFORMATION_FETCHED_SUCCESSFULLY);
     }
 
     /**
@@ -221,9 +229,10 @@ class CandidateService extends ApiBaseService
             $data['occupations'] = Occupation::all();
             $data['validation_info'] = $this->candidateTransformer->transformPersonalVerification($candidate);;
             $images = $this->imageRepository->findBy(['user_id'=>$userId]);
-            for ($i = 0; $i < count($images); $i++) {
-                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
-            }
+            $images = $this->candidateTransformer->candidateOtherImage($images);
+//            for ($i = 0; $i < count($images); $i++) {
+//                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
+//            }
 
             $data['candidate_image']["avatar_image_url"] = $candidate->per_avatar_url? env('IMAGE_SERVER') .'/'. $candidate->per_avatar_url : '';
             $data['candidate_image']["main_image_url"] = $candidate->per_main_image_url ? env('IMAGE_SERVER') .'/'. $candidate->per_main_image_url : '';
@@ -790,9 +799,10 @@ class CandidateService extends ApiBaseService
             $avatar_image_url = $candidate->per_avatar_url;
             $main_image_url = $candidate->per_main_image_url;
             $images = $this->imageRepository->findBy(['user_id'=>$userId]);
-            for ($i = 0; $i < count($images); $i++) {
-                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
-            }
+            $images = $this->candidateTransformer->candidateOtherImage($images);
+//            for ($i = 0; $i < count($images); $i++) {
+//                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
+//            }
 
             $data = array();
             $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
@@ -869,10 +879,13 @@ class CandidateService extends ApiBaseService
             $main_image_url = $checkRepresentative->per_main_image_url;
 
             $images = $this->imageRepository->findBy($searchCriteria);
-            for ($i = 0; $i < count($images); $i++) {
-//            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
-                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
-            }
+
+            $images = $this->candidateTransformer->candidateOtherImage($images);
+
+//            for ($i = 0; $i < count($images); $i++) {
+////            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
+//                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
+//            }
 
             $data = array();
             $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'.$avatar_image_url : '';
@@ -1062,13 +1075,13 @@ class CandidateService extends ApiBaseService
         $searchCriteria = ["user_id" => $user_id];
         $avatar_image_url = $candidate->per_avatar_url;
         $main_image_url = $candidate->per_main_image_url;
-//        $avatar_image_url = url('storage/' . $candidate->per_avatar_url);
-//        $main_image_url = url('storage/' . $candidate->per_main_image_url);
+
         $images = $this->imageRepository->findBy($searchCriteria);
-        for ($i = 0; $i < count($images); $i++) {
-//            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
-            $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
-        }
+
+        $images = $this->candidateTransformer->candidateOtherImage($images);
+//        for ($i = 0; $i < count($images); $i++) {
+//            $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
+//        }
 
         $data = array();
         $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';

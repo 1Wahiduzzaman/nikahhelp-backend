@@ -16,3 +16,4 @@ yarn-error.log
 phpunit.xml
 
 composer.lock
+config/cors.php
