@@ -76,7 +76,14 @@ class MessageService extends ApiBaseService
 
     public function connectedTeamData($request){
         $active_team_id = Generic::getActiveTeamId();
-        $data = TeamConnection::with(['from_team', 'to_team'])
+        $data = TeamConnection::with([
+            'from_team' => function($t1){
+                $t1->with('team_members');
+            }
+            , 'to_team' => function($t2){
+                $t2->with('team_members');
+            }
+            ])
        ->with(['team_chat' => function($q){
             $q->with('last_message');
        }])
