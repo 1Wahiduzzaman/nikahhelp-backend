@@ -97,14 +97,16 @@ io.on('connection', (socket) => {
 
     // Accept / Recject Chat Request
     socket.on('accept_or_reject_chat_request', (data) => {
-        var to = data.to == '1' ? '2' : '1';
+        var to = data.to;
         var status = data.accept_or_reject == '1' ? 'Accepted' : 'Rejected';
         var notification = {
             success:true,
-            msg : status+' private chat request'
+            msg : status+' private chat request',
+            data : data
         };
-
-        users[to].emit('accept_or_reject_chat_request_notf', notification);
+        if(online_users.includes(to)) {
+            users[to].emit('accept_or_reject_chat_request_notf', notification);
+        }        
     });
 
     //if user leave
