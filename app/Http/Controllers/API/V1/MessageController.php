@@ -106,7 +106,11 @@ class MessageController extends Controller
     public function privateChatRequestAcceptOrReject(Request $request) {       
         return $this->messageService->createTeamChatAsFriend($request);        
     }
-    
+
+    public function getAllPrivateChatRequest() {       
+        return $this->messageService->getAllPrivateChatRequest();        
+    }
+        
     public function connectedTeamChatHistory(Request $request) {                  
         $to_team_id = $request->to_team_id;
         return $this->messageService->getConnectedTeamChatHistory($to_team_id);        

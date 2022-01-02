@@ -84,25 +84,29 @@ io.on('connection', (socket) => {
 
     // Private Chat Request Send
     socket.on('private_chat_request', (data) => {
-        var to = data.to == '1' ? '2' : '1';
-        var notification = {
-            success:true,
-            msg : 'You have received private chat request'
-        };
-
-        users[to].emit('private_chat_request_receive', notification);
+        var to = data.to;
+        if(online_users.includes(to)) {
+            var notification = {
+                success:true,
+                msg : 'You have received private chat request',
+                data : data
+            };
+            users[to].emit('private_chat_request_receive', notification);
+        }            
     });
 
     // Accept / Recject Chat Request
     socket.on('accept_or_reject_chat_request', (data) => {
-        var to = data.to == '1' ? '2' : '1';
+        var to = data.to;
         var status = data.accept_or_reject == '1' ? 'Accepted' : 'Rejected';
         var notification = {
             success:true,
-            msg : status+' private chat request'
+            msg : status+' private chat request',
+            data : data
         };
-
-        users[to].emit('accept_or_reject_chat_request_notf', notification);
+        if(online_users.includes(to)) {
+            users[to].emit('accept_or_reject_chat_request_notf', notification);
+        }        
     });
 
     //if user leave

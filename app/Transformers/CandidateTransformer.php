@@ -104,9 +104,12 @@ class CandidateTransformer extends TransformerAbstract
      * @param CandidateInformation $item
      * @return array
      */
-    public function transformSearchResult(CandidateInformation $item): array
+    public function transformSearchResult(CandidateInformation $item,$userInfo=[]): array
     {
+        $shortList = $userInfo['shortList'] ?? [];
+        $blockList = $userInfo['blockList'] ?? [];
         return [
+            'user_id' => $item->id,
             'image'=> $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
             'first_name'=> $item->first_name,
             'last_name'=> $item->last_name,
@@ -117,6 +120,8 @@ class CandidateTransformer extends TransformerAbstract
             'per_religion'=> $item->getReligion->name,
             'per_ethnicity'=> $item->per_ethnicity,
             'height'=> $item->per_height,
+            'is_short_listed'=> in_array($item->id,$shortList),
+            'is_block_listed'=> in_array($item->id,$blockList),
         ];
     }
 
@@ -406,6 +411,7 @@ class CandidateTransformer extends TransformerAbstract
             'per_improve_myself' => $per_improve_myself,
             'per_additional_info_text' => $item->per_additional_info_text,
             'per_additional_info_doc' => $item->per_additional_info_doc ? env('IMAGE_SERVER') .'/'. $item->per_additional_info_doc : '',
+            'per_additional_info_doc_title' => $item->per_additional_info_doc_title,
         ];
     }
 

@@ -17,7 +17,7 @@ class CreateTeamToTeamMessagesTable extends Migration
             $table->id();
             $table->bigInteger('from_team_id')->nullable();
             $table->bigInteger('to_team_id')->nullable();
-            $table->bigInteger('team_chat_id')->nullable();
+            $table->bigInteger('team_private_chat_id')->nullable();
             $table->bigInteger('sender')->nullable();                     
             $table->longText('body')->nullable();   
             $table->string('attachment')->nullable();  
