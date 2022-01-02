@@ -771,7 +771,7 @@ class MessageService extends ApiBaseService
             //$result['g_msg'] = $g_msg;   
 
             // Private Chat 
-            $private_chat = TeamChat::select('*')  
+            $private_chat = TeamPrivateChat::select('*')  
             ->with('private_receiver_data')  
             ->with(['last_private_message'=> function($query){                                                                    
                 $query->where('sender', Auth::id());

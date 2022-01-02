@@ -27,12 +27,5 @@ class TeamChat extends Model
     }
     public function last_message() {
         return $this->hasOne(TeamToTeamMessage::class, 'team_chat_id', 'id')->orderBy('created_at', 'desc');
-    }
-    public function last_private_message() {
-        return $this->hasOne(TeamToTeamPrivateMessage::class, 'team_chat_id', 'id')->orderBy('created_at', 'desc');
     }    
-
-    public function message_history() {
-        return $this->hasMany(TeamToTeamPrivateMessage::class, 'team_chat_id', 'id')->orderBy('created_at', 'asc');
-    }
 }
