@@ -61,6 +61,7 @@ class CandidatePersonalAboutMoreRequest extends APIRequest
             'per_improve_myself' => 'nullable|array',
             'per_additional_info_text' => 'nullable|string',
             'per_additional_info_doc' => 'nullable|file|max:5120|mimes:doc,docx,pdf',
+            'per_additional_info_doc_title' => 'nullable|string',
         ];
     }
 

@@ -208,6 +208,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('short-listed-candidates/store', [ShortListedCandidateController::class, 'store'])->name('store.religions');
         Route::get('deleted-candidates', [ShortListedCandidateController::class, 'deletedCandidate'])->name('deleted_candidates');
         Route::get('delete-short-listed-candidates/{id}', [ShortListedCandidateController::class, 'destroy'])->name('delete_short_listed_candidates');
+        Route::delete('delete-short-listed-by-candidates', [ShortListedCandidateController::class, 'destroyByCandidate'])->name('delete.shortlisted.item.by.candidate');
         Route::PATCH('update-shortlisted-candidates/{id}', [ShortListedCandidateController::class, 'update'])->name('updateShortlistedcandidates');
 
         // Block listed

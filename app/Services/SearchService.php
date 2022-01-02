@@ -19,6 +19,8 @@ use App\Transformers\TeamTransformer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 class SearchService extends ApiBaseService
 {
 
@@ -97,10 +99,28 @@ class SearchService extends ApiBaseService
         //third priority country
         //fourth priority religious
 
-
         try {
-
             $candidates = $this->candidateRepository->getModel();
+            $userInfo = [];
+
+            /*Attempt log in */
+            try {
+                JWTAuth::parseToken()->authenticate();
+            }catch (\Exception $e){
+            }
+
+            if(Auth::check()){
+                $userId = self::getUserId();
+                $logedInCandidate = $this->candidateRepository->findOneByProperties([
+                    'user_id' => $userId
+                ]);
+
+                $userInfo['shortList'] = $logedInCandidate->shortList->pluck('id')->toArray();
+                $userInfo['blockList'] = $logedInCandidate->blockList->pluck('id')->toArray();
+
+                /*Excluded Own data*/
+                $candidates = $candidates->whereNotIn('id',[$userId]);
+            }
 
             if (isset($request->gender)) {
                 $candidates = $candidates->where('per_gender', $request->gender);
@@ -172,33 +192,13 @@ class SearchService extends ApiBaseService
             $candidatesResponse = [];
 
             foreach ($candidates as $candidate) {
-                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
+                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate,$userInfo);
             }
             $searchResult['data'] = $candidatesResponse;
             $searchResult['pagination'] = $this->paginationResponse($candidates);
 
             return $this->sendSuccessResponse($searchResult, "Candidates fetched successfully");
 
-
-            /*            $candidates = $this->candidateRepository->where(function($query) use ($request) {
-                            $query->where('per_gender', $request->get('gender'))
-                                ->where('dob', Carbon::parse($request->get('min_age'))->diff(Carbon::now()))
-                                ->orWhere('dob', Carbon::parse($request->get('max_age'))->diff(Carbon::now()))
-                                ->where('country', $request->get('country'))
-                                ->where('religion', $request->get('religion'));
-
-                            })->orWhere('dob',Carbon::parse($request->get('min_age'))->diff(Carbon::now()))
-                            ->orWhere('dob', Carbon::parse($request->get('max_age'))->diff(Carbon::now()))
-                            ->orWhere('per_gender', $request->get('gender'))
-                            ->orWhere('country', $request->get('country'))
-                            ->orWhere('religion', $request->get('religion'))
-                            ->get();*/
-
-//            if (!count($candidates)) {
-//                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND);
-//            }
-//
-//            return $this->sendSuccessResponse($candidates, "Candidates fetched successfully");
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
         }
