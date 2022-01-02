@@ -146,6 +146,7 @@ class CandidateInformation extends Model
         'per_improve_myself',
         'per_additional_info_text',
         'per_additional_info_doc',
+        'per_additional_info_doc_title',
     ];
 
     public const PERSONAL_VERIFICATION_INFO = [
@@ -209,6 +210,7 @@ class CandidateInformation extends Model
         'per_improve_myself',
         'per_additional_info_text',
         'per_additional_info_doc',
+        'per_additional_info_doc_title',
 
         // Preference
         'pre_partner_age_min',
@@ -422,7 +424,9 @@ class CandidateInformation extends Model
 
     public function blockList()
     {
-        return $this->belongsTo(CandidateInformation::class, 'block_by', 'user_id')->withTimestamps();
+//        return $this->belongsTo(CandidateInformation::class, 'block_by', 'user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id')->withTimestamps();
+
     }
 
     /**

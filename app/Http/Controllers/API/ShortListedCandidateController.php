@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Enums\HttpStatusCode;
 use App\Helpers\Notificationhelpers;
 use App\Http\Requests\API\CreateShortListedCandidateAPIRequest;
 use App\Http\Requests\API\UpdateShortListedCandidateAPIRequest;
@@ -9,9 +10,12 @@ use App\Models\BlockList;
 use App\Models\ShortListedCandidate;
 use App\Models\Team;
 use App\Models\TeamMember;
+use App\Repositories\CandidateRepository;
 use App\Repositories\ShortListedCandidateRepository;
 use App\Services\BlockListService;
 use App\Traits\CrudTrait;
+use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
 use Response;
@@ -35,9 +39,19 @@ class ShortListedCandidateController extends AppBaseController
     /** @var  ShortListedCandidateRepository */
     private $shortListedCandidateRepository;
 
-    public function __construct(ShortListedCandidateRepository $shortListedCandidateRepository, BlockListService $blockListService)
+    /**
+     * @var CandidateRepository
+     */
+    protected $candidateRepository;
+
+    public function __construct(
+        ShortListedCandidateRepository $shortListedCandidateRepository,
+        CandidateRepository $candidateRepository,
+        BlockListService $blockListService
+    )
     {
         $this->shortListedCandidateRepository = $shortListedCandidateRepository;
+        $this->candidateRepository = $candidateRepository;
         $this->blockListService = $blockListService;
         $this->setActionRepository($shortListedCandidateRepository);
     }
@@ -203,6 +217,29 @@ class ShortListedCandidateController extends AppBaseController
         $deletedCandidate = $this->shortListedCandidateRepository->deletedCandidate();
         $formatted_data = ShortlistedCandidateResource::collection($deletedCandidate);
         return $this->sendResponse($formatted_data, 'Deleted Candidate List');
+    }
+
+
+    public function destroyByCandidate(Request $request)
+    {
+        $userId = self::getUserId();
+
+        try {
+            $candidate = $this->candidateRepository->findOneByProperties([
+                'user_id' => $userId
+            ]);
+
+            if (!$candidate) {
+                throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
+            }
+
+            $candidate->shortList()->detach($request->user_id);
+
+            return $this->sendSuccessResponse([], 'Candidate remove from shortlist successfully!', [], HttpStatusCode::CREATED);
+
+        }catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
     }
 
 

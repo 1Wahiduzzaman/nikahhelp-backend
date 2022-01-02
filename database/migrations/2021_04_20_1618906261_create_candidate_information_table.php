@@ -18,7 +18,7 @@ class CreateCandidateInformationTable extends Migration
             $table->string('screen_name', 100)->nullable();
             $table->date('dob')->nullable();
             $table->string('mobile_number', 15)->nullable();
-            $table->string('mobile_country_code', 15)->nullable()->default('BD');
+            $table->string('mobile_country_code', 15)->nullable();
 //            $table->string('per_telephone_no', 15)->nullable();
             $table->tinyInteger('per_gender')->comment('1=Male,2=Female,3=Others,4=Do not disclose')->nullable();
 
@@ -49,7 +49,7 @@ class CreateCandidateInformationTable extends Migration
 
 //            $table->unsignedBigInteger('per_current_residence')->nullable();
 //            $table->string('per_address')->nullable();
-            $table->enum('per_marital_status',['single','married','divorced','divorced_with_children','separated','widowed','others'])->default('single');
+            $table->enum('per_marital_status',['single','married','divorced','divorced_with_children','separated','widowed','others'])->nullable();
             $table->boolean('per_have_children')->nullable()->comment('0=no,1=yes');
             $table->string('per_children')->nullable()->comment('Json value for children');
             $table->string('per_currently_living_with')->nullable();
@@ -64,6 +64,7 @@ class CreateCandidateInformationTable extends Migration
             $table->string('per_improve_myself')->nullable()->comment('Json value of improve myself');
             $table->text('per_additional_info_text')->nullable();
             $table->text('per_additional_info_doc')->nullable();
+            $table->text('per_additional_info_doc_title')->nullable();
 
 
             // Candidate Preference
