@@ -84,13 +84,15 @@ io.on('connection', (socket) => {
 
     // Private Chat Request Send
     socket.on('private_chat_request', (data) => {
-        var to = data.to == '1' ? '2' : '1';
-        var notification = {
-            success:true,
-            msg : 'You have received private chat request'
-        };
-
-        users[to].emit('private_chat_request_receive', notification);
+        var to = data.to;
+        if(online_users.includes(to)) {
+            var notification = {
+                success:true,
+                msg : 'You have received private chat request',
+                data : data
+            };
+            users[to].emit('private_chat_request_receive', notification);
+        }            
     });
 
     // Accept / Recject Chat Request

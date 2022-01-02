@@ -16,6 +16,7 @@ use App\Models\TeamChat;
 use App\Models\TeamConnection;
 use App\Models\TeamMember;
 use App\Models\TeamMessage;
+use App\Models\TeamPrivateChat;
 use App\Models\TeamToTeamMessage;
 use App\Models\TeamToTeamPrivateMessage;
 use Exception;
@@ -625,31 +626,77 @@ class MessageService extends ApiBaseService
     // End eonnected
 
     //Private Chat  Request
+    
     public function createTeamChatAsFriend($request_data) {
         try{                                    
+            $team_connection_id = $request_data->team_connection_id;
             $to_team_id = $request_data->to_team_id;
-            $status = $request_data->status;
-            if($status=='1') {
-                $user_id = Auth::id();      
-                $active_team = TeamMember::where('user_id', $user_id)
-                ->where('status', 1)
-                ->first();
-                $active_team_id = isset($active_team) ? $active_team->team_id : 0;
+            $this->sender = $request_data->sender;    // Candidate of team 1
+            $this->receiver = $request_data->receiver;    // Candidate of team 2
+            $type = $request_data->type;
+            if($type==0) {
+                $user_id = Auth::id();                  
+                $from_team_id = Generic::getActiveTeamId();
 
-                $cm = new TeamChat();                
-                $cm->from_team_id = $active_team_id;
-                $cm->to_team_id = $to_team_id;
-                if($cm->save()) {
-                    return $this->sendSuccessResponse([], 'Connection created Successfully!');
+                $this->from_team_id = $from_team_id;
+                $this->to_team_id = $to_team_id;
+
+                //Check already Friend
+                $is_friend = TeamPrivateChat::where('team_connection_id', $team_connection_id)
+                ->where([
+                    'from_team_id'=> $from_team_id, 'to_team_id' => $to_team_id, 
+                    'sender' => $this->sender, 'receiver' => $this->receiver
+                    ])            
+                ->orWhere(function($q){                   
+                    $from_team_id = $this->from_team_id;
+                    $to_team_id = $this->to_team_id;
+                    $q->where([
+                        'from_team_id'=> $to_team_id, 'to_team_id' => $from_team_id, 
+                        'sender' => $this->receiver, 'receiver' => $this->sender
+                    ]);   
+                })  
+                ->first();   
+                if(!$is_friend) {
+                    $cm = new TeamPrivateChat();                
+                    $cm->team_connection_id = $team_connection_id;
+                    $cm->from_team_id = $from_team_id;
+                    $cm->to_team_id = $to_team_id;
+                    $cm->sender = $this->sender;
+                    $cm->receiver = $this->receiver;
+                    if($cm->save()) {
+                        return $this->sendSuccessResponse([], 'Private Chat requested Successfully!');
+                    } else {
+                        return $this->sendErrorResponse('Something went Wrong!Please try again.');
+                    }
                 } else {
-                    return $this->sendErrorResponse('Something went Wrong!Please try again.');
-                }
-            }          
+                    return $this->sendErrorResponse('Already Requested!');
+                }                
+            } elseif($type==1) {
+                $team_private_chat_id = $request_data->team_private_chat_id;
+                TeamPrivateChat::where('id', $team_private_chat_id)->update(['is_friend' =>1]);
+                return $this->sendSuccessResponse([], 'Private Chat Accepted Successfully!');
+            } else {
+                $team_private_chat_id = $request_data->team_private_chat_id;
+                TeamPrivateChat::where('id', $team_private_chat_id)->delete();
+                return $this->sendSuccessResponse([], 'Private Chat Rejected Successfully!');
+            }         
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }       
     }
-
+    public function getAllPrivateChatRequest() {
+        try{   
+            $active_team_id = Generic::getActiveTeamId(); 
+            $data = TeamPrivateChat::with(['private_sender_data', 'private_receiver_data'])
+            ->where('from_team_id', $active_team_id)
+            ->orWhere('to_team_id', $active_team_id)
+            ->get();
+            return $this->sendSuccessResponse($data, 'All Chat request fetched Successfully!');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }    
+    }
+    
     //store Group message
     public function storeTeamChatData($request_data) {
         try{    

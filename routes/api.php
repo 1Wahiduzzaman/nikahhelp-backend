@@ -118,12 +118,13 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('connection-list-chat', [MessageController::class, 'connectedTeamData'])->name('connected-team.chat.connection-list-chat');
         Route::POST('send-message-team-to-team', [MessageController::class, 'sendMessageTeamToTeam'])->name('connected-team-chat.send-message-team-to-team');
         Route::POST('private-chat-request-accept-reject', [MessageController::class, 'privateChatRequestAcceptOrReject'])->name('connected-team-chat.private-chat-request-accept-reject');
+        Route::GET('get-all-private-chat-requests', [MessageController::class, 'getAllPrivateChatRequest'])->name('connected-team-chat.get-all-private-chat-requests');
         Route::POST('connected-team-chat-history', [MessageController::class, 'connectedTeamChatHistory'])->name('connected-team-chat.connected-team-chat-history');
         Route::POST('connected-send-private-message', [MessageController::class, 'sendPrivateMessage'])->name('connected-team-chat.connected-send-private-message');
         Route::POST('connected-private-chat-history', [MessageController::class, 'privateChatHistory'])->name('connected-team-chat.connected-private-chat-history');
         Route::POST('connected-team-chat-seen', [MessageController::class, 'teamChatSeen'])->name('connected-team-chat.connected-team-chat-seen');
 
-        //Seen Message (Managing from individual-chat-history so no needed)
+        //Seen Message (Managing from individual-chat-history so no needed)  
         //Route::POST('seen-message', [MessageController::class, 'seenMessage'])->name('team-chat.seen-message');
         //End Chat Module
 
