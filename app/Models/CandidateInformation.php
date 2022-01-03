@@ -438,6 +438,12 @@ class CandidateInformation extends Model
 
     }
 
+    public function candidateTeam()
+    {
+        return $this->hasMany(TeamMember::class,'user_id','user_id')
+            ->where('user_type','Candidate');
+    }
+
     public static function getGender ($id)
     {
         $gender = null;
