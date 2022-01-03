@@ -183,7 +183,7 @@ class SearchService extends ApiBaseService
 
             $parPage = $request->input('parpage',10);
 
-            $candidates = $candidates->with('getNationality','getReligion')->paginate($parPage);
+            $candidates = $candidates->with('getNationality','getReligion','candidateTeam')->paginate($parPage);
 
             if(!count($candidates->items())){
                 return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::SUCCESS);
