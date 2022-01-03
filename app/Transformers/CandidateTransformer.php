@@ -122,6 +122,7 @@ class CandidateTransformer extends TransformerAbstract
             'height'=> $item->per_height,
             'is_short_listed'=> in_array($item->id,$shortList),
             'is_block_listed'=> in_array($item->id,$blockList),
+            'team_id'=> $item->candidateTeam()->exists() ? $item->candidateTeam->first()->team_id : null,
         ];
     }
 
