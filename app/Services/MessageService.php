@@ -88,11 +88,11 @@ class MessageService extends ApiBaseService
        ->with(['team_chat' => function($q){
             $q->with('last_message');
        }])
-        ->where(['from_team_id'=> $active_team_id])
-        ->orWhere(function($q){
-            $active_team_id = Generic::getActiveTeamId();
-            $q->where([ 'to_team_id' => $active_team_id]);
-        })
+        ->where(['from_team_id'=> $active_team_id]) 
+        ->orWhere(function($q){             
+            $active_team_id = Generic::getActiveTeamId();  
+            $q->where([ 'to_team_id' => $active_team_id]);                  
+        }) 
         ->get();
         return $this->sendSuccessResponse($data, 'Data fetched Successfully!');
     }
@@ -150,7 +150,7 @@ class MessageService extends ApiBaseService
                     'countries.name as candidate_location',
                     'religions.name as candidate_religion',
                     'ToCandidate.user_id as candidate_userid')
-                ->get();
+                ->get();                
             // Closures include ->first(), ->get(), ->pluck(), etc.
         } catch (\Illuminate\Database\QueryException $ex) {
             return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
@@ -417,7 +417,7 @@ class MessageService extends ApiBaseService
      */
     public function getTeamList(array $data): JsonResponse
     {
-        $user_id = Auth::id();
+        $user_id = Auth::id();        
 
         try {
             $active_team = TeamMember::where('user_id', $user_id)
@@ -436,12 +436,12 @@ class MessageService extends ApiBaseService
                     $team_infos->logo = url('storage/' . @$team_infos->logo);
 
                     // count unread
-                    $count = $team_infos->team_members->filter(function($item, $key){
+                    $count = $team_infos->team_members->filter(function($item, $key){                
                         return (isset($item->last_message['seen']) && $item->last_message['seen'] == 0) || (isset($item->last_message['seen']) && $item->last_message['seen'] == null);
                     })->count();
-                    if((isset($team_infos->last_group_message->seen)
-                    && isset($team_infos->last_group_message->seen)==0) ||
-                    isset($team_infos->last_group_message->seen)==null){
+                    if((isset($team_infos->last_group_message->seen) 
+                    && isset($team_infos->last_group_message->seen)==0) || 
+                    isset($team_infos->last_group_message->seen)==null){                        
                         $count+=1;
                     }
                     $team_infos->unread_notification_count = $count;
@@ -454,11 +454,11 @@ class MessageService extends ApiBaseService
      * For One to One Chat
      */
     public function storeChatData($request_data) {
-        try{
+        try{                        
             $sender = $request_data->sender;
             $receiver = $request_data->receiver;
             $this->receiver = $receiver;
-
+    
             $user_id = Auth::id();
             $is_friend = Chat::where(['sender'=> $user_id, 'receiver' => $receiver])
             ->orWhere(function($q) {
@@ -466,7 +466,7 @@ class MessageService extends ApiBaseService
                 $user_id = Auth::id();
                 $q->where(['sender'=> $receiver, 'receiver' => $user_id]);
             })
-            ->first();
+            ->first();                      
             if(!$is_friend) {
                 $cm = new Chat();
                 $cm->team_id = $request_data->team_id;
@@ -500,19 +500,19 @@ class MessageService extends ApiBaseService
             }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }
+        }       
     }
     /**
      * For Team To Team Chat
      *  Connected Tab
      */
     public function storeTeam2TeamChatData($request_data) {
-        try{
+        try{                                    
             $to_team_id = $request_data->to_team_id;
             $team_connection_id = $request_data->team_connection_id;
             $sender = $request_data->sender;
-
-            $user_id = Auth::id();
+    
+            $user_id = Auth::id();      
             $active_team = TeamMember::where('user_id', $user_id)
             ->where('status', 1)
             ->first();
@@ -520,15 +520,15 @@ class MessageService extends ApiBaseService
             $from_team_id = $active_team_id;
             $is_friend = TeamChat::where('from_team_id', $active_team_id)
             ->orWhere('to_team_id', $active_team_id)
-            ->first();
-            if(!$is_friend) {
-                $cm = new TeamChat();
+            ->first();            
+            if(!$is_friend) {             
+                $cm = new TeamChat();                
                 $cm->from_team_id = $from_team_id;
                 $cm->to_team_id = $to_team_id;
                 $cm->team_connection_id = $team_connection_id;
                 $cm->sender = $sender;
                 if($cm->save()) {
-                    $md = new TeamToTeamMessage();
+                    $md = new TeamToTeamMessage();                    
                     $md->team_chat_id = $cm->id;
                     $md->sender = $cm->sender;
                     $md->from_team_id = $from_team_id;
@@ -541,9 +541,9 @@ class MessageService extends ApiBaseService
                     }
                 }
             } else {
-                $md = new TeamToTeamMessage();
-                $md->team_chat_id = $is_friend->id;
-                $md->sender = $user_id;
+                $md = new TeamToTeamMessage();                
+                $md->team_chat_id = $is_friend->id;               
+                $md->sender = $user_id;               
                 $md->from_team_id = $from_team_id;
                 $md->to_team_id = $request_data->to_team_id;
                 $md->body = $request_data->message;
@@ -555,60 +555,63 @@ class MessageService extends ApiBaseService
             }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }
+        }       
     }
 
     public $receiver;
     public function storePrivateChatData($request_data) {
-        try{
+        try{                        
             $from_team_id = $request_data->from_team_id;
             $to_team_id = $request_data->to_team_id;
-            $this->receiver = $request_data->receiver;
-            $user_id = Auth::id();
+            $this->receiver = $request_data->receiver;            
+            $user_id = Auth::id();      
             $active_team = TeamMember::where('user_id', $user_id)
             ->where('status', 1)
             ->first();
             $active_team_id = isset($active_team) ? $active_team->team_id : 0;
 
-            $is_friend = TeamChat::where([
-                'from_team_id'=> $from_team_id, 'to_team_id' => $to_team_id,
+            $is_friend = TeamPrivateChat::where([
+                'from_team_id'=> $from_team_id, 'to_team_id' => $to_team_id, 
                 'sender' => $user_id, 'receiver' => $this->receiver
-                ])
+                ])            
             ->orWhere(function($q){
-                $user_id = Auth::id();
+                $user_id = Auth::id(); 
                 $from_team_id = $this->from_team_id;
                 $to_team_id = $this->to_team_id;
                 $q->where([
-                    'from_team_id'=> $to_team_id, 'to_team_id' => $from_team_id,
+                    'from_team_id'=> $to_team_id, 'to_team_id' => $from_team_id, 
                     'sender' => $this->receiver, 'receiver' => $user_id
-                ]);
-            })
-            ->first();
+                ]);   
+            }) 
+            ->where('is_friend', 1) 
+            ->first();            
             if(!$is_friend) {
-                $cm = new TeamChat();
-                $cm->from_team_id = $from_team_id;
-                $cm->to_team_id = $to_team_id;
-                $cm->sender = $user_id;
-                $cm->receiver = $this->receiver;
-                if($cm->save()) {
-                    $md = new TeamToTeamPrivateMessage();
-                    $md->team_chat_id = $cm->id;
-                    $md->sender = $user_id;
-                    $md->receiver = $request_data->receiver;
-                    $md->from_team_id = $request_data->from_team_id;
-                    $md->to_team_id = $request_data->to_team_id;
-                    $md->body = $request_data->message;
-                    if($md->save()) {
-                        return $this->sendSuccessResponse([], 'Message Sent Successfully!');
-                    } else {
-                        return $this->sendErrorResponse('Something went Wrong!Please try again.');
-                    }
-                }
+                //
+                // $cm = new TeamPrivateChat();                
+                // $cm->from_team_id = $from_team_id;
+                // $cm->to_team_id = $to_team_id;
+                // $cm->sender = $user_id;
+                // $cm->receiver = $this->receiver;
+                // if($cm->save()) {
+                //     $md = new TeamToTeamPrivateMessage();                    
+                //     $md->team_private_chat_id = $cm->id;
+                //     $md->sender = $user_id;
+                //     $md->receiver = $request_data->receiver;
+                //     $md->from_team_id = $request_data->from_team_id;
+                //     $md->to_team_id = $request_data->to_team_id;
+                //     $md->body = $request_data->message;
+                //     if($md->save()) {
+                //         return $this->sendSuccessResponse([], 'Message Sent Successfully!');
+                //     } else {
+                //         return $this->sendErrorResponse('Something went Wrong!Please try again.');
+                //     }
+                // }
+                return $this->sendErrorResponse('Sorry! Yo are not allowed to chat untill accepted the request');
             } else {
-                $md = new TeamToTeamPrivateMessage();
-                $md->team_chat_id = $is_friend->id;
-                $md->sender = $user_id;
-                $md->receiver = $request_data->receiver;
+                $md = new TeamToTeamPrivateMessage();                
+                $md->team_private_chat_id = $is_friend->id;               
+                $md->sender = $user_id;                
+                $md->receiver = $request_data->receiver;           
                 $md->from_team_id = $request_data->from_team_id;
                 $md->to_team_id = $request_data->to_team_id;
                 $md->body = $request_data->message;
@@ -620,22 +623,22 @@ class MessageService extends ApiBaseService
             }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }
+        }       
     }
 
     // End eonnected
 
     //Private Chat  Request
-
+    
     public function createTeamChatAsFriend($request_data) {
-        try{
+        try{                                    
             $team_connection_id = $request_data->team_connection_id;
             $to_team_id = $request_data->to_team_id;
             $this->sender = $request_data->sender;    // Candidate of team 1
             $this->receiver = $request_data->receiver;    // Candidate of team 2
             $type = $request_data->type;
             if($type==0) {
-                $user_id = Auth::id();
+                $user_id = Auth::id();                  
                 $from_team_id = Generic::getActiveTeamId();
 
                 $this->from_team_id = $from_team_id;
@@ -644,20 +647,20 @@ class MessageService extends ApiBaseService
                 //Check already Friend
                 $is_friend = TeamPrivateChat::where('team_connection_id', $team_connection_id)
                 ->where([
-                    'from_team_id'=> $from_team_id, 'to_team_id' => $to_team_id,
+                    'from_team_id'=> $from_team_id, 'to_team_id' => $to_team_id, 
                     'sender' => $this->sender, 'receiver' => $this->receiver
-                    ])
-                ->orWhere(function($q){
+                    ])            
+                ->orWhere(function($q){                   
                     $from_team_id = $this->from_team_id;
                     $to_team_id = $this->to_team_id;
                     $q->where([
-                        'from_team_id'=> $to_team_id, 'to_team_id' => $from_team_id,
+                        'from_team_id'=> $to_team_id, 'to_team_id' => $from_team_id, 
                         'sender' => $this->receiver, 'receiver' => $this->sender
-                    ]);
-                })
-                ->first();
+                    ]);   
+                })  
+                ->first();   
                 if(!$is_friend) {
-                    $cm = new TeamPrivateChat();
+                    $cm = new TeamPrivateChat();                
                     $cm->team_connection_id = $team_connection_id;
                     $cm->from_team_id = $from_team_id;
                     $cm->to_team_id = $to_team_id;
@@ -670,7 +673,7 @@ class MessageService extends ApiBaseService
                     }
                 } else {
                     return $this->sendErrorResponse('Already Requested!');
-                }
+                }                
             } elseif($type==1) {
                 $team_private_chat_id = $request_data->team_private_chat_id;
                 TeamPrivateChat::where('id', $team_private_chat_id)->update(['is_friend' =>1]);
@@ -679,14 +682,14 @@ class MessageService extends ApiBaseService
                 $team_private_chat_id = $request_data->team_private_chat_id;
                 TeamPrivateChat::where('id', $team_private_chat_id)->delete();
                 return $this->sendSuccessResponse([], 'Private Chat Rejected Successfully!');
-            }
+            }         
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }
+        }       
     }
     public function getAllPrivateChatRequest() {
-        try{
-            $active_team_id = Generic::getActiveTeamId();
+        try{   
+            $active_team_id = Generic::getActiveTeamId(); 
             $data = TeamPrivateChat::with(['private_sender_data', 'private_receiver_data'])
             ->where('from_team_id', $active_team_id)
             ->orWhere('to_team_id', $active_team_id)
@@ -694,15 +697,15 @@ class MessageService extends ApiBaseService
             return $this->sendSuccessResponse($data, 'All Chat request fetched Successfully!');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }
+        }    
     }
-
+    
     //store Group message
     public function storeTeamChatData($request_data) {
-        try{
+        try{    
             $md = new TeamMessage();
-            $md->team_id = $request_data->team_id;
-            $md->sender = $request_data->sender;
+            $md->team_id = $request_data->team_id;         
+            $md->sender = $request_data->sender;                
             $md->body = $request_data->message;
             if($md->save()) {
                 return $this->sendSuccessResponse([], 'Message Sent Successfully!');
@@ -711,21 +714,21 @@ class MessageService extends ApiBaseService
             }
 
             //get team members
-            // $team_members = TeamMember::select('user_id')
+            // $team_members = TeamMember::select('user_id')             
             //     ->where('team_id', $request_data->team_id)
             //     ->where('status', 1)
-            //     ->get();
-
+            //     ->get();           
+               
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }
-    }
+        }       
+    }    
 
     /**
      * Recent | Single and Group chat history with last messgae
-     */
-    public function chatHistory(array $data): JsonResponse {
-        $user_id = Auth::id();
+     */   
+    public function chatHistory(array $data): JsonResponse {      
+        $user_id = Auth::id();                
         try {
             $active_team = TeamMember::where('user_id', $user_id)
             ->where('status', 1)
@@ -733,22 +736,22 @@ class MessageService extends ApiBaseService
             $active_team_id = isset($active_team) ? $active_team->team_id : 0;
             $this->team_id = $active_team_id;
 
-            $chats = Chat::select('*')
-            ->with(['last_message'=> function($query){
+            $chats = Chat::select('*')    
+            ->with(['last_message'=> function($query){                    
                     $query->where('team_id', $this->team_id);
-            }])
+            }])                  
             ->with('sender_data')
             ->with('receiver_data')
-            ->where('team_id', $active_team_id)
+            ->where('team_id', $active_team_id)   
             ->where(function($q){
-                $user_id = Auth::id();
+                $user_id = Auth::id(); 
                 $q->where('sender' , $user_id)
-                    ->orWhere('receiver', $user_id);
-            })
-            ->get();
+                    ->orWhere('receiver', $user_id);   
+            })                                                         
+            ->get();     
             $result = [];
             $count = 0;
-            foreach($chats as $key=>$item) {
+            foreach($chats as $key=>$item) {                    
                 if($user_id==$item->sender){
                     $result[$key]['user'] = $item->receiver_data;
                     $result[$key]['last_message'] = $item->last_message;
@@ -758,46 +761,46 @@ class MessageService extends ApiBaseService
                 }
                 if(isset($item->last_message->seen) && $item->last_message->seen == 0) {
                     $count++;
-                }
+                } 
             }
             //Get Group Message
             $g_msg = TeamMessage::with("team")
-                ->where('team_id', $active_team_id)
+                ->where('team_id', $active_team_id)   
                 ->orderBy('created_at' , 'DESC')
-                ->first();
-
+                ->first();   
+                
             if((isset($g_msg->seen) && $g_msg->seen==0) || (isset($g_msg->seen) && $g_msg->seen == null)) { $count++;}
-                //dd($g_msg);
-            //$result['g_msg'] = $g_msg;
+                //dd($g_msg);       
+            //$result['g_msg'] = $g_msg;   
 
-            // Private Chat
-            $private_chat = TeamPrivateChat::select('*')
-            ->with('private_receiver_data')
-            ->with(['last_private_message'=> function($query){
+            // Private Chat 
+            $private_chat = TeamPrivateChat::select('*')  
+            ->with('private_receiver_data')  
+            ->with(['last_private_message'=> function($query){                                                                    
                 $query->where('sender', Auth::id());
                 $query->orwhere('receiver', Auth::id());
-            }])
-            ->where('from_team_id', $active_team_id)
+            }])                                             
+            ->where('from_team_id', $active_team_id)   
             ->orWhere('to_team_id', $active_team_id)
             ->where(function($q){
-                $user_id = Auth::id();
+                $user_id = Auth::id(); 
                 $q->where('sender' , $user_id)
-                    ->orWhere('receiver', $user_id);
-            })
-            ->get();
+                    ->orWhere('receiver', $user_id);   
+            })                                                                          
+            ->get();    
 
             // count unread
-            $c = $private_chat->filter(function($item, $key){
+            $c = $private_chat->filter(function($item, $key){                
                 return (isset($item->last_private_message['seen']) && $item->last_private_message['seen'] == 0) || (isset($item->last_private_message['seen']) && $item->last_private_message['seen'] == null);
             })->count();
-
+            
             $count = $count + $c;
             $res = array_merge(
-                ['single_chat' => $result],
-                ['last_group_msg' => $g_msg],
+                ['single_chat' => $result], 
+                ['last_group_msg' => $g_msg], 
                 ['private_chat' => $private_chat],
                 ['count' => $count]
-            );
+            );    
             return $this->sendSuccessResponse($res, 'Data fetched Successfully!');
         }
         catch (Exception $exception) {
@@ -835,12 +838,12 @@ class MessageService extends ApiBaseService
     public function getUsersChatHistory($chat_id = null) {
         try{
             $messages = Chat::with('message_history')
-            ->where('id', $chat_id)
+            ->where('id', $chat_id)            
             ->first();
             return $this->sendSuccessResponse($messages, 'Message fetched Successfully!');
         } catch(Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
-        }
+        }        
     }
     /**
      * Chat History for a team
@@ -848,13 +851,13 @@ class MessageService extends ApiBaseService
     public function getTeamChatHistory($team_id = null) {
         try{
             $messages = TeamMessage::with('sender')
-            ->where('team_id', $team_id)
-            ->orderBy('created_at', 'asc')
+            ->where('team_id', $team_id) 
+            ->orderBy('created_at', 'asc')          
             ->get();
             return $this->sendSuccessResponse($messages, 'Group Message fetched Successfully!');
         } catch(Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
-        }
+        }        
     }
     public $from_team_id, $to_team_id;
     //Connected Part By raz
@@ -863,48 +866,48 @@ class MessageService extends ApiBaseService
             $user_id = Auth::id();
             $active_team = TeamMember::where('user_id', $user_id)
             ->where('status', 1)
-            ->first();
+            ->first();    
             $active_team_id = isset($active_team) ? $active_team->team_id : 0;
             $this->from_team_id = $active_team_id;
             $this->to_team_id = $to_team_id;
             $messages = TeamToTeamMessage::with('sender')
-            ->where(['from_team_id'=> $active_team_id, 'to_team_id' => $to_team_id])
-            ->orWhere(function($q){
-                $q->where(['from_team_id'=> $this->to_team_id, 'to_team_id' => $this->from_team_id]);
-            })
-            ->orderBy('created_at', 'asc')
+            ->where(['from_team_id'=> $active_team_id, 'to_team_id' => $to_team_id]) 
+            ->orWhere(function($q){               
+                $q->where(['from_team_id'=> $this->to_team_id, 'to_team_id' => $this->from_team_id]);                  
+            })                
+            ->orderBy('created_at', 'asc')          
             ->get();
             return $this->sendSuccessResponse($messages, 'Connected Team Messages fetched Successfully!');
         } catch(Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
-        }
+        }        
     }
 
     public function getPrivateChatHistory($chat_id = null) {
         try{
             $messages = TeamChat::with('message_history')
-            ->where('id', $chat_id)
+            ->where('id', $chat_id)            
             ->get();
             return $this->sendSuccessResponse($messages, 'Message fetched Successfully!');
         } catch(Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
-        }
+        }        
     }
 
     public function updateTeamChatSeen($from_team_id = null, $to_team_id = null) {
-        try{
+        try{    
             $this->from_team_id = $from_team_id;
-            $this->to_team_id = $to_team_id;
+            $this->to_team_id = $to_team_id;        
             TeamToTeamMessage::
-            where(['from_team_id'=> $from_team_id, 'to_team_id' => $to_team_id])
-            ->orWhere(function($q){
-                $q->where(['from_team_id'=> $this->to_team_id, 'to_team_id' => $this->from_team_id]);
-            })
+            where(['from_team_id'=> $from_team_id, 'to_team_id' => $to_team_id]) 
+            ->orWhere(function($q){               
+                $q->where(['from_team_id'=> $this->to_team_id, 'to_team_id' => $this->from_team_id]);                  
+            }) 
             ->update(['seen' =>1]);
             return $this->sendSuccessResponse([], 'Update Successfully!');
         } catch(Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
-        }
+        }        
     }
 
     //Support Chat start here
@@ -912,20 +915,20 @@ class MessageService extends ApiBaseService
      * For One to One Support Chat
      */
     public function storeSupportChatData($request_data) {
-        try{
+        try{                        
             $sender = $request_data->sender;
             $receiver = $request_data->receiver;
-
+    
             $user_id = Auth::id();
             $is_friend = SupportChat::where('sender', $user_id)
             ->orWhere('receiver', $user_id)
-            ->first();
+            ->first();            
             if(!$is_friend) {
-                $cm = new SupportChat();
+                $cm = new SupportChat();                
                 $cm->sender = $sender;
                 $cm->receiver = $receiver;
                 if($cm->save()) {
-                    $md = new SupportMessage();
+                    $md = new SupportMessage();                   
                     $md->chat_id = $cm->id;
                     $md->sender = $request_data->sender;
                     $md->receiver = $request_data->receiver;
@@ -937,7 +940,7 @@ class MessageService extends ApiBaseService
                     }
                 }
             } else {
-                $md = new SupportMessage();
+                $md = new SupportMessage();                
                 $md->chat_id = $is_friend->id;
                 $md->sender = $request_data->sender;
                 $md->receiver = $request_data->receiver;
@@ -950,37 +953,37 @@ class MessageService extends ApiBaseService
             }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }
+        }       
     }
 
     public function getUsersSupportChatHistory($chat_id = null) {
         try{
             $messages = SupportMessage::select('body', 'seen', 'attachment')
-            ->where('chat_id', $chat_id)
+            ->where('chat_id', $chat_id)            
             ->get();
             return $this->sendSuccessResponse($messages, 'Message fetched Successfully!');
         } catch(Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
-        }
+        }        
     }
 
-    public function supportChatHistory(array $data): JsonResponse {
-        $user_id = Auth::id();
-        try {
+    public function supportChatHistory(array $data): JsonResponse {      
+        $user_id = Auth::id();                
+        try {            
 
-            $chats = SupportChat::select('*')
-            ->with('last_message')
+            $chats = SupportChat::select('*')    
+            ->with('last_message')                  
             ->with('sender_data')
-            ->with('receiver_data')
+            ->with('receiver_data')            
             ->where(function($q){
-                $user_id = Auth::id();
+                $user_id = Auth::id(); 
                 $q->where('sender' , $user_id)
-                    ->orWhere('receiver', $user_id);
-            })
-            ->get();
+                    ->orWhere('receiver', $user_id);   
+            })                                                         
+            ->get();     
             $result = [];
             $count = 0;
-            foreach($chats as $key=>$item) {
+            foreach($chats as $key=>$item) {                    
                 if($user_id==$item->sender){
                     $result[$key]['user'] = $item->receiver_data;
                     $result[$key]['last_message'] = $item->last_message;
@@ -990,13 +993,13 @@ class MessageService extends ApiBaseService
                 }
                 if($item->last_message->seen == 0) {
                     $count++;
-                }
-            }
-
+                } 
+            }            
+                        
             $res = array_merge(
-                ['chat_list' => $result],
+                ['chat_list' => $result],           
                 ['count' => $count]
-            );
+            );    
             return $this->sendSuccessResponse($res, 'Data fetched Successfully!');
         }
         catch (Exception $exception) {
