@@ -117,7 +117,7 @@ class MessageController extends Controller
     }  
     
     public function privateChatHistory(Request $request) {                  
-        return $this->messageService->getPrivateChatHistory($request->team_chat_id);        
+        return $this->messageService->getPrivateChatHistory($request->team_private_chat_id);        
     }  
 
     public function teamChatSeen(Request $request) {                  
