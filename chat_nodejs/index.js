@@ -92,7 +92,7 @@ io.on('connection', (socket) => {
                 data : data
             };
             users[to].emit('private_chat_request_receive', notification);
-        }            
+        }
     });
 
     // Accept / Recject Chat Request
@@ -106,7 +106,7 @@ io.on('connection', (socket) => {
         };
         if(online_users.includes(to)) {
             users[to].emit('accept_or_reject_chat_request_notf', notification);
-        }        
+        }
     });
 
     //if user leave
