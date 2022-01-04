@@ -570,7 +570,7 @@ class MessageService extends ApiBaseService
             ->first();
             $active_team_id = isset($active_team) ? $active_team->team_id : 0;
 
-            $is_friend = TeamChat::where([
+            $is_friend = TeamPrivateChat::where([
                 'from_team_id'=> $from_team_id, 'to_team_id' => $to_team_id, 
                 'sender' => $user_id, 'receiver' => $this->receiver
                 ])            
@@ -582,31 +582,34 @@ class MessageService extends ApiBaseService
                     'from_team_id'=> $to_team_id, 'to_team_id' => $from_team_id, 
                     'sender' => $this->receiver, 'receiver' => $user_id
                 ]);   
-            })  
+            }) 
+            ->where('is_friend', 1) 
             ->first();            
             if(!$is_friend) {
-                $cm = new TeamChat();                
-                $cm->from_team_id = $from_team_id;
-                $cm->to_team_id = $to_team_id;
-                $cm->sender = $user_id;
-                $cm->receiver = $this->receiver;
-                if($cm->save()) {
-                    $md = new TeamToTeamPrivateMessage();                    
-                    $md->team_chat_id = $cm->id;
-                    $md->sender = $user_id;
-                    $md->receiver = $request_data->receiver;
-                    $md->from_team_id = $request_data->from_team_id;
-                    $md->to_team_id = $request_data->to_team_id;
-                    $md->body = $request_data->message;
-                    if($md->save()) {
-                        return $this->sendSuccessResponse([], 'Message Sent Successfully!');
-                    } else {
-                        return $this->sendErrorResponse('Something went Wrong!Please try again.');
-                    }
-                }
+                //
+                // $cm = new TeamPrivateChat();                
+                // $cm->from_team_id = $from_team_id;
+                // $cm->to_team_id = $to_team_id;
+                // $cm->sender = $user_id;
+                // $cm->receiver = $this->receiver;
+                // if($cm->save()) {
+                //     $md = new TeamToTeamPrivateMessage();                    
+                //     $md->team_private_chat_id = $cm->id;
+                //     $md->sender = $user_id;
+                //     $md->receiver = $request_data->receiver;
+                //     $md->from_team_id = $request_data->from_team_id;
+                //     $md->to_team_id = $request_data->to_team_id;
+                //     $md->body = $request_data->message;
+                //     if($md->save()) {
+                //         return $this->sendSuccessResponse([], 'Message Sent Successfully!');
+                //     } else {
+                //         return $this->sendErrorResponse('Something went Wrong!Please try again.');
+                //     }
+                // }
+                return $this->sendErrorResponse('Sorry! Yo are not allowed to chat untill accepted the request');
             } else {
                 $md = new TeamToTeamPrivateMessage();                
-                $md->team_chat_id = $is_friend->id;               
+                $md->team_private_chat_id = $is_friend->id;               
                 $md->sender = $user_id;                
                 $md->receiver = $request_data->receiver;           
                 $md->from_team_id = $request_data->from_team_id;
