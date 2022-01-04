@@ -88,6 +88,7 @@ class MessageService extends ApiBaseService
        ->with(['team_chat' => function($q){
             $q->with('last_message');
        }])
+       ->with('team_private_chat')
         ->where(['from_team_id'=> $active_team_id]) 
         ->orWhere(function($q){             
             $active_team_id = Generic::getActiveTeamId();  
@@ -770,6 +771,17 @@ class MessageService extends ApiBaseService
                 ->first();   
                 
             if((isset($g_msg->seen) && $g_msg->seen==0) || (isset($g_msg->seen) && $g_msg->seen == null)) { $count++;}
+
+            //Get Connected Group Message
+            $connected_team_msgs = TeamChat::with(["from_team", 'to_team','last_message'])
+                ->where('from_team_id', $active_team_id)   
+                ->orWhere('to_team_id', $active_team_id)
+                ->get();   
+            
+                foreach($connected_team_msgs as $connected_team_msg) {
+                    if((isset($connected_team_msg->seen) && $connected_team_msg->seen==0) || 
+                    (isset($connected_team_msg->seen) && $connected_team_msg->seen == null)) { $count++;}
+                }            
                 //dd($g_msg);       
             //$result['g_msg'] = $g_msg;   
 
@@ -799,7 +811,8 @@ class MessageService extends ApiBaseService
                 ['single_chat' => $result], 
                 ['last_group_msg' => $g_msg], 
                 ['private_chat' => $private_chat],
-                ['count' => $count]
+                ['connected_team_msgs' => $connected_team_msgs],
+                ['count' => $count]                
             );    
             return $this->sendSuccessResponse($res, 'Data fetched Successfully!');
         }
