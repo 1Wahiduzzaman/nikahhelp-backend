@@ -586,6 +586,7 @@ class MessageService extends ApiBaseService
             ->where('is_friend', 1) 
             ->first();            
             if(!$is_friend) {
+                //
                 // $cm = new TeamPrivateChat();                
                 // $cm->from_team_id = $from_team_id;
                 // $cm->to_team_id = $to_team_id;
