@@ -900,7 +900,7 @@ class MessageService extends ApiBaseService
         try{
             $messages = TeamPrivateChat::with('message_history')
             ->where('id', $chat_id)            
-            ->get();
+            ->first();
             return $this->sendSuccessResponse($messages, 'Message fetched Successfully!');
         } catch(Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
