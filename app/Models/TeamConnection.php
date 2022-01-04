@@ -49,4 +49,9 @@ class TeamConnection extends Model
         return $this->hasOne(TeamChat::class,'team_connection_id', 'id');
     }
 
+    public function team_private_chat()
+    {
+        return $this->hasOne(TeamPrivateChat::class,'team_connection_id', 'id');
+    }
+
 }
