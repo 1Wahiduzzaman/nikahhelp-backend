@@ -95,9 +95,16 @@ class TeamService extends ApiBaseService
             $team_id = $data['id'];
 
             // Process team logo image
-            if ($request->hasFile('logo')) {
-                $logo_url = $this->singleImageUploadFile($team_id, $request->file('logo'));
-                $team->logo = $logo_url['image_path'];
+            // if ($request->hasFile('logo')) {
+            //     $logo_url = $this->singleImageUploadFile($team_id, $request->file('logo'));
+            //     $team->logo = $logo_url['image_path'];
+            // }
+
+            if ($request->hasFile('logo')) {                
+                $image = $this->uploadImageThrowGuzzle([
+                    'logo'=>$request->file('logo')
+                ]);
+                $team->logo = $image->logo;
             }
 
             // Update logo url
@@ -227,7 +234,8 @@ class TeamService extends ApiBaseService
 
                 for ($i = 0; $i < count($team_infos); $i++) {
                     // logo storage code has a bug. need to solve it first. then will change the location
-                    $team_infos[$i]->logo = url('storage/' . $team_infos[$i]->logo);
+                    //$team_infos[$i]->logo = url('storage/' . $team_infos[$i]->logo);
+                    $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
                 }
                 return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
             } else {
@@ -259,7 +267,8 @@ class TeamService extends ApiBaseService
                 ->with("team_members", 'team_invited_members','created_by')
                 ->where('team_id', '=', $teamId)
                 ->get();
-            $team_infos[0]['logo'] = url('storage/' . $team_infos[0]['logo']);
+            $team_infos[0]->logo = isset($team_infos[0]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[0]->logo : '';
+            //$team_infos[0]['logo'] = url('storage/' . $team_infos[0]['logo']);
             return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -564,14 +573,20 @@ class TeamService extends ApiBaseService
                 }
                 // Process team logo image
                 if ($request->hasFile('logo')) {
-                    $logo_url = $this->singleImageUploadFile($team->id, $request->file('logo'));
-                    $team->logo = $logo_url['image_path'];
+                    // $logo_url = $this->singleImageUploadFile($team->id, $request->file('logo'));
+                    // $team->logo = $logo_url['image_path'];
+
+                    $image = $this->uploadImageThrowGuzzle([
+                        'logo'=>$request->file('logo')
+                    ]);
+                    $team->logo = $image->logo;
                 }
                 $team->update();
 
             }
             if (!empty($team->logo)) {
-                $team->logo = url('storage/' . $team->logo);
+                $team->logo = isset($team->logo) ? env('IMAGE_SERVER') .'/'. $team->logo : '';
+                //$team->logo = url('storage/' . $team->logo);
             }
             return $this->sendSuccessResponse($team, 'Successfully updated', [], HttpStatusCode::SUCCESS);
         } catch (\Illuminate\Database\QueryException $ex) {
