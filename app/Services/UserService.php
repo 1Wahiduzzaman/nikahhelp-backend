@@ -613,4 +613,15 @@ class UserService extends ApiBaseService
         }
     }
 
+    //Admin Panel Raz
+    public function getUserList() {
+        try{
+            $data = User::all();
+            return $this->sendSuccessResponse($data, 'User List Fetched successfully');
+        } catch(Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }        
+
+    }
+
 }
