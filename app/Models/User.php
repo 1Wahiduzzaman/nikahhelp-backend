@@ -100,6 +100,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasOne(CandidateInformation::class, 'user_id', 'id');
     }
 
+    public function candidate_info()
+    {
+        return $this->hasOne(CandidateInformation::class, 'user_id', 'id');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
