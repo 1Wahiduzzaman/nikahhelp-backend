@@ -111,7 +111,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            In order ot validate your account please click the link - <a href="{{ $domain }}/emailVerify/{{ $user->verifyUser->token }}" style="color: #1d68a7;">{{ $domain }}/emailVerify/{{ $user->verifyUser->token }}</a> or press the button below
+            In order to validate your account please click the link - <a href="{{ $domain }}/emailVerify/{{ $user->verifyUser->token }}" style="color: #1d68a7;">{{ $domain }}/emailVerify/{{ $user->verifyUser->token }}</a> or press the button below
         </p>
 
         <div style="text-align: center; margin-top: 28px;">
