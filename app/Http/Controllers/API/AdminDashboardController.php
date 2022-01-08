@@ -174,10 +174,15 @@ class AdminDashboardController extends AppBaseController
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function approveUaser(Request $request, $id)
+    public function verifyRejectUser(Request $request)
     {
-        if (!empty($id)) {
-            $userId = $id;
+        $status = [
+            'verified' => 3,
+            'rejected' => 4
+        ];
+        $ver_rej = $status[$request->status];
+        if (!empty($request->id)) {
+            $userId = $request->id;
         } else {
             return $this->sendError('User Id is required ', FResponse::HTTP_BAD_REQUEST);
         }
@@ -185,13 +190,31 @@ class AdminDashboardController extends AppBaseController
         if (!$userInfo) {
             throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $userId);
         }
-        $userInfo->status = 1;
+        $userInfo->status = $ver_rej;
         if ($userInfo->save()) {
-            return $this->sendSuccess($userInfo, 'User successfully Approved', [], FResponse::HTTP_OK);
+            return $this->sendSuccess($userInfo, 'User '. $request->status.' successfully', [], FResponse::HTTP_OK);
         } else {
             return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
         }
 
+    }
+
+    public function UserInfo($id = null) {
+        if (!empty($id)) {
+            $userId = $id;
+        } else {
+            return $this->sendError('User Id is required ', FResponse::HTTP_BAD_REQUEST);
+        }
+        $userInfo = User::with('candidate_info')->where('id', $userId)->first();
+        if (!$userInfo) {
+            throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $userId);
+        }
+        $userInfo->status = 1;
+        if ($userInfo) {
+            return $this->sendSuccess($userInfo, 'User successfully Approved', [], FResponse::HTTP_OK);
+        } else {
+            return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
+        }
     }
 
     /**

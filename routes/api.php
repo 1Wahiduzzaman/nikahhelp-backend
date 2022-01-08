@@ -279,10 +279,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
         Route::get('users-report', [AdminDashboardController::class, 'userReport'])->name('user.report');
         // Awating for approval list
-        Route::get('pending-user', [AdminDashboardController::class, 'pendingUserList'])->name('user.pending.user');
-        Route::get('verified-user-list', [AdminDashboardController::class, 'verifiedUserList'])->name('user.verified.user');
-        Route::get('rejected-user-list', [AdminDashboardController::class, 'rejectedUserList'])->name('user.rejected.user');
-        Route::get('user-approved/{id}', [AdminDashboardController::class, 'approveUaser'])->name('user.approved');
+        Route::get('pending-user', [AdminDashboardController::class, 'pendingUserList'])->name('user.pending');
+
+        Route::get('verified-user-list', [AdminDashboardController::class, 'verifiedUserList'])->name('user.verified');
+        Route::get('rejected-user-list', [AdminDashboardController::class, 'rejectedUserList'])->name('user.rejected');
+        Route::get('user-info/{id}', [AdminDashboardController::class, 'UserInfo'])->name('user.user-info');
+        Route::post('user-verify-reject', [AdminDashboardController::class, 'verifyRejectUser'])->name('user.verify_reject');
         Route::get('subscription-report', [AdminDashboardController::class, 'subscription'])->name('team.subscription.report');
 
     });
