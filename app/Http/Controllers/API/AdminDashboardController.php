@@ -120,9 +120,48 @@ class AdminDashboardController extends AppBaseController
         $search = $this->userRepository->getModel()->newQuery();
         if ($page) {
             $skip = $parpage * ($page - 1);
-            $userList = $search->where('status','=','0')->limit($parpage)->offset($skip)->get();
+            $userList = $search->where('status','=','2')->limit($parpage)->offset($skip)->get();
         } else {
-            $userList = $search->where('status','=','0')->limit($parpage)->offset(0)->get();
+            $userList = $search->where('status','=','2')->limit($parpage)->offset(0)->get();
+        }
+//        $userList=User::where('status','=',0)->paginate($parpage);
+        $formatted_data = UserReportResource::collection($userList);
+        return $this->sendResponse($formatted_data, 'Data retrieved successfully');
+
+    }
+    public function verifiedUserList(Request $request)
+    {
+        $parpage = 10;
+        $page = 1;
+        if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
+        if ($request->has('page')): $page = $request->input('page'); endif;
+
+        $search = $this->userRepository->getModel()->newQuery();
+        if ($page) {
+            $skip = $parpage * ($page - 1);
+            $userList = $search->where('status','=','3')->limit($parpage)->offset($skip)->get();
+        } else {
+            $userList = $search->where('status','=','3')->limit($parpage)->offset(0)->get();
+        }
+//        $userList=User::where('status','=',0)->paginate($parpage);
+        $formatted_data = UserReportResource::collection($userList);
+        return $this->sendResponse($formatted_data, 'Data retrieved successfully');
+
+    }
+
+    public function rejectedUserList(Request $request)
+    {
+        $parpage = 10;
+        $page = 1;
+        if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
+        if ($request->has('page')): $page = $request->input('page'); endif;
+
+        $search = $this->userRepository->getModel()->newQuery();
+        if ($page) {
+            $skip = $parpage * ($page - 1);
+            $userList = $search->where('status','=','4')->limit($parpage)->offset($skip)->get();
+        } else {
+            $userList = $search->where('status','=','4')->limit($parpage)->offset(0)->get();
         }
 //        $userList=User::where('status','=',0)->paginate($parpage);
         $formatted_data = UserReportResource::collection($userList);
