@@ -129,14 +129,14 @@
         </div>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Verify email is the first step of the account validate process. For new account, after your email is verified we
-            wil proceed to complete your <a style="color: #522e8e;">Candidate</a> registration form.
+            If you do not verify your email address by sent link within <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">30 minutes</span> then the sent verification link & your signup
+            information will automatically unenrolled from Matrimony Assist platform, you can rejoin Matrimony Assist
+            at any time by once again completing the Matrimony Assist signup process.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            If you do not verify your email address by sent link within <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">30 minutes</span> then the sent
-            verification link & your signup information will automatically unenrolled from Matrimony Assist platform, you can rejoin Matrimony Assist at any time by once again
-            completing the Matrimony Assist signup process.
+            Verify email is the first step of the account validate process. After your email is verified we will
+            proceed to complete your <a style="color: #522e8e;">Candidate</a> registration form.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
