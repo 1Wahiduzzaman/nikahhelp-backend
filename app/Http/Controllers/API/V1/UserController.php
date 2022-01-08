@@ -134,4 +134,9 @@ class UserController extends Controller
 
         dd("Email is Sent.");
     }
+
+    //Raz Start for Admin Panel
+    public function userList() {
+        return $this->userService->emailVerify($request);
+    }
 }
