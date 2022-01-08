@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Country;
+use App\Models\Occupation;
+use App\Models\Religion;
+use App\Models\StudyLevel;
 use App\Models\User;
 use App\Models\CandidateInformation;
 use App\Services\CandidateService;
@@ -73,5 +77,17 @@ class HomeController extends Controller
     public function filter(Request $request)
     {
         return $this->searchService->filter($request->all());
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function initialDropdowns()
+    {
+        $data['countries'] = Country::where('status', 1)->get();
+        $data['religions'] = Religion::where('status', 1)->orderBy('name')->get();
+        $data['occupations'] = Occupation::all();
+        $data['studylevels'] = StudyLevel::orderBy('name')->get();
+        return $this->sendSuccessResponse($data, "Information fetched successfully");
     }
 }

@@ -53,6 +53,7 @@ Route::post('v1/forgot/password', ForgotPasswordController::class)->name('forgot
 Route::post('v1/forgot/password/verify', [ForgotPasswordController::class, 'forgetPasswordTokenVerification'])->name('forgot.password.verify');//inspect
 Route::post('v1/forgot/password/update', [ForgotPasswordController::class, 'updatePassword'])->name('forgot.password.update');//inspect
 // Route::post('v1/recent-join-candidate', [ForgotPasswordController::class, 'recentJoinCandidate'])->name('recent.join.candidate');
+ Route::get('v1/initial-dropdowns', [HomeController::class, 'initialDropdowns'])->name('initial.dropdowns');
 Route::GET('v1/recent-join-candidate', [HomeController::class, 'recentJoinCandidate']);//need to update if traffic changes
 
 Route::get('v1/religions', [ReligionController::class, 'index'])->name('religion.list');//show all
@@ -124,7 +125,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('connected-private-chat-history', [MessageController::class, 'privateChatHistory'])->name('connected-team-chat.connected-private-chat-history');
         Route::POST('connected-team-chat-seen', [MessageController::class, 'teamChatSeen'])->name('connected-team-chat.connected-team-chat-seen');
 
-        //Seen Message (Managing from individual-chat-history so no needed)  
+        //Seen Message (Managing from individual-chat-history so no needed)
         //Route::POST('seen-message', [MessageController::class, 'seenMessage'])->name('team-chat.seen-message');
         //End Chat Module
 
