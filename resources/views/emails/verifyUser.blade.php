@@ -102,7 +102,7 @@
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
     <div style="width: 100%; margin-top: 30px;">
-        <h2 style="font-size: 20px; color: rgba(0,0,0,.5);">Verify your email address {{ $user['email'] }}</h2>
+        <h2 style="font-size: 20px; color: rgba(0,0,0,.5);">Verify your email address</h2>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear [Mr./Ms.] {{ $user['full_name'] }},</p>
 
