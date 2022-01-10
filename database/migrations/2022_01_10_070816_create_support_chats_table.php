@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTeamPrivateChats extends Migration
+class CreateSupportChatsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class CreateTeamPrivateChats extends Migration
      */
     public function up()
     {
-        Schema::create('team__private_chats', function (Blueprint $table) {
+        Schema::create('support_chats', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('team_id')->nullable();
+            $table->bigInteger('sender')->nullable();
+            $table->bigInteger('receiver')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ class CreateTeamPrivateChats extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('team__private_chats');
+        Schema::dropIfExists('support_chats');
     }
 }

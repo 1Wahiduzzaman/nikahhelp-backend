@@ -135,10 +135,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::GET('seen-notification', [AllNotificationController::class, 'seenNotification'])->name('all-notification.seen-notification');
         // End Notification
 
-        //Support Chat
+        //Support Chat By Raz
         Route::POST('support-send-message', [MessageController::class, 'sendMessageToSupport'])->name('support.support-send-message');
         Route::POST('individual-support-user-chat-history', [MessageController::class, 'individualSupportChatHistory'])->name('support.individual-support-user-chat-history');
         Route::GET('support-chat-list', [MessageController::class, 'supportChatHistory'])->name('support.support-chat-list');
+        Route::GET('support-admin', [UserController::class, 'getSuportUserId'])->name('support.support-admin');
         //End Support Chat
 
         // Teams API
@@ -288,8 +289,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('user-verify-reject', [AdminDashboardController::class, 'verifyRejectUser'])->name('user.verify_reject');
         Route::get('subscription-report', [AdminDashboardController::class, 'subscription'])->name('team.subscription.report');
 
-    });
-
+        //Team   
+        Route::GET('team-list', [TeamController::class, 'adminTeamList'])->name('team.list');
+        Route::GET('deleetd-team-list', [TeamController::class, 'adminDeletedTeamList'])->name('team.deleted-team-list');
+        Route::GET('connected-team-list/{id}', [TeamController::class, 'adminConnectedTeamList'])->name('team.connected-list'); // param team pk
+        Route::DELETE('team-del', [TeamController::class, 'adminTeamDelete'])->name('team.team-del'); // param team pk
+    });    
 });
 
 
