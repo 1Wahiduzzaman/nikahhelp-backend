@@ -7,6 +7,7 @@ use App\Enums\HttpStatusCode;
 use App\Http\Requests\TeamFromRequest;
 use App\Models\CandidateInformation;
 use App\Models\Team;
+use App\Models\TeamConnection;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -595,5 +596,58 @@ class TeamService extends ApiBaseService
 
     }
 
+
+    //Admin
+    public function getTeamListForBackend(array $data): JsonResponse
+    {        
+        try {
+            $team_infos = Team::with('created_by')->where('status',1)->paginate();
+
+            for ($i = 0; $i < count($team_infos); $i++) {                    
+                $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
+            }
+            return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+    }
+
+    public function getDeletedTeamListForBackend(array $data): JsonResponse
+    {        
+        try {
+            $team_infos = Team::with('created_by')->where('status',0)->paginate();
+
+            for ($i = 0; $i < count($team_infos); $i++) {                    
+                $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
+            }
+            return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+    }
+
+    public function getConnectedTeamListForBackend($team_id = null): JsonResponse
+    {        
+        try {
+            $team_infos = TeamConnection::where('from_team_id', $team_id)->orWhere('to_team_id', $team_id)
+            ->with(['requested_by_user', 'responded_by_user'])->paginate();
+
+            for ($i = 0; $i < count($team_infos); $i++) {                    
+                $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
+            }
+            return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+    }
+
+    public function adminTeamDelete($data) {
+        try{            
+            Team::where('id', $data->id)->update(['status'=> 0]);
+            return $this->sendSuccessResponse([], 'Team deleted Successfully!');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }        
+    }
 
 }

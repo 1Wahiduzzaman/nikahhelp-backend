@@ -126,4 +126,27 @@ class TeamController extends Controller
     {
         return $this->teamService->getTeamInformation($id);
     }    
+
+    //Admin started / Raz
+    public function adminTeamList(Request $request)
+    {
+        return $this->teamService->getTeamListForBackend($request->all());
+    }
+
+    public function adminDeletedTeamList(Request $request)
+    {
+        return $this->teamService->getDeletedTeamListForBackend($request->all());
+    }
+
+    public function adminConnectedTeamList($team_id = null)
+    {
+        return $this->teamService->getConnectedTeamListForBackend($team_id);
+    }    
+
+    public function adminTeamDelete(Request $request)
+    {
+        //        
+        return $this->teamService->adminTeamDelete($request);
+    }
+
 }

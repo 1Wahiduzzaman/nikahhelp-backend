@@ -10,7 +10,7 @@ use App\Http\Controllers\AppBaseController;
 use Response;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Http\Resources\UserReportResource;
-
+use App\Models\RejectedNote;
 use App\Services\AdminService;
 use App\Services\SubscriptionService;
 use App\Repositories\UserRepository;
@@ -192,6 +192,12 @@ class AdminDashboardController extends AppBaseController
         }
         $userInfo->status = $ver_rej;
         if ($userInfo->save()) {
+            if($ver_rej == '4') {
+                $rj = new RejectedNote();
+                $rj->user_id = $userId;
+                $rj->note = $request->note;
+                $rj->save();                
+            }
             return $this->sendSuccess($userInfo, 'User '. $request->status.' successfully', [], FResponse::HTTP_OK);
         } else {
             return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
@@ -205,13 +211,14 @@ class AdminDashboardController extends AppBaseController
         } else {
             return $this->sendError('User Id is required ', FResponse::HTTP_BAD_REQUEST);
         }
-        $userInfo = User::with('candidate_info')->where('id', $userId)->first();
+        $userInfo = User::with(['candidate_info', 'candidate_image', 'rejected_notes'])->where('id', $userId)->first();
         if (!$userInfo) {
             throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $userId);
         }
         $userInfo->status = 1;
+        $userInfo->image_server_base_url = env('IMAGE_SERVER');
         if ($userInfo) {
-            return $this->sendSuccess($userInfo, 'User successfully Approved', [], FResponse::HTTP_OK);
+            return $this->sendSuccess($userInfo, 'User info loaded successfully', [], FResponse::HTTP_OK);
         } else {
             return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
         }

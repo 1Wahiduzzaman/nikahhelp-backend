@@ -9,6 +9,7 @@ use App\Services\UserService;
 use App\Http\Requests\UserRegistrationRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
+use App\Models\User;
 use Mail;
 
 class UserController extends Controller
@@ -136,7 +137,9 @@ class UserController extends Controller
     }
 
     //Raz Start for Admin Panel
-    public function userList() {
-        return $this->userService->emailVerify($request);
+    public function getSuportUserId() {
+        $data = User::where('account_type', 11)->first();
+        return $this->sendSuccessResponse($data, 'Support Admin Loaded Successfully');
     }
+
 }
