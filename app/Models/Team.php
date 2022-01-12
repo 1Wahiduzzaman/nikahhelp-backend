@@ -128,4 +128,13 @@ class Team extends Model
         }
         return $RequestedConnectedList + $RequestedAcceptedConnectedList;
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function teamShortListedUser(){
+        return $this->belongsToMany( User::class,'short_listed_candidates', 'shortlisted_for', 'user_id')->withPivot('shortlisted_by','created_at');
+    }
+
+
 }

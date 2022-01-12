@@ -111,12 +111,15 @@ class SearchService extends ApiBaseService
 
             if(Auth::check()){
                 $userId = self::getUserId();
-                $logedInCandidate = $this->candidateRepository->findOneByProperties([
+                $loggedInCandidate = $this->candidateRepository->findOneByProperties([
                     'user_id' => $userId
                 ]);
 
-                $userInfo['shortList'] = $logedInCandidate->shortList->pluck('id')->toArray();
-                $userInfo['blockList'] = $logedInCandidate->blockList->pluck('id')->toArray();
+                $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('id')->toArray();
+                $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('id')->toArray();
+                $connectFrom = $loggedInCandidate->teamConnection->pluck('from_team_id')->toArray();
+                $connectTo = $loggedInCandidate->teamConnection->pluck('to_team_id')->toArray();
+                $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
 
                 /*Excluded Own data*/
                 $candidates = $candidates->whereNotIn('id',[$userId]);
@@ -192,7 +195,12 @@ class SearchService extends ApiBaseService
             $candidatesResponse = [];
 
             foreach ($candidates as $candidate) {
-                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate,$userInfo);
+                $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
+                $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
+                $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->team_id : null;
+                $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
+                $candidate->team_id = $teamId;
+                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
             }
             $searchResult['data'] = $candidatesResponse;
             $searchResult['pagination'] = $this->paginationResponse($candidates);

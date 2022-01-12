@@ -6,7 +6,10 @@ use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\BlockList\CreateBlockListAPIRequest;
 use App\Http\Resources\BlockListResource;
 use App\Repositories\BlockListRepository;
+use App\Repositories\CandidateRepository;
 use App\Services\BlockListService;
+use App\Transformers\CandidateTransformer;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Response;
 use Symfony\Component\HttpFoundation\Response as FResponse;
@@ -26,11 +29,20 @@ class BlockListAPIController extends AppBaseController
      * @var  BlockListService
      */
     private $blockListService;
+    /**
+     * @var CandidateRepository
+     */
+    private $candidateRepository;
 
-    public function __construct(BlockListRepository $blockListRepo, BlockListService $blockListService)
+    public function __construct(
+        BlockListRepository $blockListRepo,
+        BlockListService $blockListService,
+        CandidateRepository $candidateRepository
+    )
     {
         $this->blockListRepository = $blockListRepo;
         $this->blockListService = $blockListService;
+        $this->candidateRepository = $candidateRepository;
     }
 
     /**
@@ -41,7 +53,7 @@ class BlockListAPIController extends AppBaseController
      * @return Response
      */
     public function index(Request $request)
-    {        
+    {
         $userId = $this->getUserId();
         $blockLists = $this->blockListRepository->all(
             $request->except(['skip', 'limit']),
@@ -107,5 +119,29 @@ class BlockListAPIController extends AppBaseController
         $blockList->delete();
 
         return $this->sendResponse([], 'Candidate Un-Block successful', FResponse::HTTP_OK);
+    }
+
+    public function destroyByCandidate(Request $request)
+    {
+        $userId = self::getUserId();
+
+        try {
+            $candidate = $this->candidateRepository->findOneByProperties([
+                'user_id' => $userId
+            ]);
+
+            if (!$candidate) {
+                throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
+            }
+
+
+
+            $candidate->blockList()->detach($request->user_id);
+
+            return $this->sendSuccessResponse([], 'Candidate Un-Block successfully!', [], HttpStatusCode::CREATED);
+
+        }catch (\Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
     }
 }

@@ -4,6 +4,7 @@
 namespace App\Transformers;
 
 use App\Models\CandidateInformation;
+use App\Models\User;
 use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
@@ -104,25 +105,59 @@ class CandidateTransformer extends TransformerAbstract
      * @param CandidateInformation $item
      * @return array
      */
-    public function transformSearchResult(CandidateInformation $item,$userInfo=[]): array
+    public function transformSearchResult(CandidateInformation $item): array
     {
-        $shortList = $userInfo['shortList'] ?? [];
-        $blockList = $userInfo['blockList'] ?? [];
+        return $this->candidateSearchData($item);
+    }
+
+    /**
+     * @param CandidateInformation $item
+     * @return array
+     */
+    public function transformShortListUser(User $item): array
+    {
+        return array_merge(
+            $this->candidateSearchData($item->getCandidate),
+            $this->candidateShortListedAdditionalData($item->pivot)
+        );
+    }
+
+    /**
+     * @param CandidateInformation $item
+     * @return array
+     */
+    private function candidateSearchData(CandidateInformation $item): array
+    {
         return [
             'user_id' => $item->id,
-            'image'=> $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
-            'first_name'=> $item->first_name,
-            'last_name'=> $item->last_name,
-            'screen_name'=> $item->screen_name,
-            'per_age'=> Carbon::now()->diffInYears($item->dob),
-            'per_gender'=> CandidateInformation::getGender($item->per_gender),
-            'per_nationality' =>  $item->getNationality->name,
-            'per_religion'=> $item->getReligion->name,
-            'per_ethnicity'=> $item->per_ethnicity,
-            'height'=> $item->per_height,
-            'is_short_listed'=> in_array($item->id,$shortList),
-            'is_block_listed'=> in_array($item->id,$blockList),
-            'team_id'=> $item->candidateTeam()->exists() ? $item->candidateTeam->first()->team_id : null,
+            'image' => $item->per_avatar_url ? env('IMAGE_SERVER') . '/' . $item->per_avatar_url : '',
+            'first_name' => $item->first_name,
+            'last_name' => $item->last_name,
+            'screen_name' => $item->screen_name,
+            'per_age' => Carbon::now()->diffInYears($item->dob),
+            'per_gender' => CandidateInformation::getGender($item->per_gender),
+            'per_nationality' => $item->getNationality->name,
+            'per_religion' => $item->getReligion->name,
+            'per_ethnicity' => $item->per_ethnicity,
+            'height' => $item->per_height,
+            'is_short_listed' => $item->is_short_listed ?? null,
+            'is_block_listed' => $item->is_block_listed ?? null,
+            'is_connect' => $item->is_connect ?? null,
+            'is_teamListed' => $item->is_teamListed ?? null,
+            'team_id' => $item->team_id ?? null,
+        ];
+    }
+
+    /**
+     * @param array $item
+     * @return array
+     */
+    private function candidateShortListedAdditionalData($item): array
+    {
+        $shortListedByUser = CandidateInformation::where('user_id', $item->shortlisted_by)->first();
+        return [
+            'short_listed_by' => $shortListedByUser->first_name . ' ' . $shortListedByUser->last_name,
+            'short_listed_at' => $item->created_at,
         ];
     }
 
@@ -357,8 +392,8 @@ class CandidateTransformer extends TransformerAbstract
             'per_things_enjoy' => $item->per_things_enjoy,
             'per_thankfull_for' => $item->per_thankfull_for,
             'per_about' => $item->per_about,
-            'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
-            'per_main_image_url' => $item->per_main_image_url ? env('IMAGE_SERVER') .'/'. $item->per_main_image_url : '',
+            'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') . '/' . $item->per_avatar_url : '',
+            'per_main_image_url' => $item->per_main_image_url ? env('IMAGE_SERVER') . '/' . $item->per_main_image_url : '',
             'anybody_can_see' => $item->anybody_can_see,
             'only_team_can_see' => $item->only_team_can_see,
             'team_connection_can_see' => $item->team_connection_can_see,
@@ -411,7 +446,7 @@ class CandidateTransformer extends TransformerAbstract
             'per_about' => $item->per_about,
             'per_improve_myself' => $per_improve_myself,
             'per_additional_info_text' => $item->per_additional_info_text,
-            'per_additional_info_doc' => $item->per_additional_info_doc ? env('IMAGE_SERVER') .'/'. $item->per_additional_info_doc : '',
+            'per_additional_info_doc' => $item->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $item->per_additional_info_doc : '',
             'per_additional_info_doc_title' => $item->per_additional_info_doc_title,
         ];
     }
@@ -447,8 +482,8 @@ class CandidateTransformer extends TransformerAbstract
             'ver_country_id' => $item->ver_country_id,
             'ver_city_id' => $item->ver_city_id,
             'ver_document_type' => $item->ver_document_type,
-            'ver_image_front' => $item->ver_image_front ? env('IMAGE_SERVER') .'/'. $item->ver_image_front : '',
-            'ver_image_back' => $item->ver_image_back ? env('IMAGE_SERVER') .'/'. $item->ver_image_back: '',
+            'ver_image_front' => $item->ver_image_front ? env('IMAGE_SERVER') . '/' . $item->ver_image_front : '',
+            'ver_image_back' => $item->ver_image_back ? env('IMAGE_SERVER') . '/' . $item->ver_image_back : '',
             'ver_recommences_title' => $item->ver_recommences_title,
             'ver_recommences_first_name' => $item->ver_recommences_first_name,
             'ver_recommences_last_name' => $item->ver_recommences_last_name,
@@ -468,9 +503,9 @@ class CandidateTransformer extends TransformerAbstract
     {
         $item = $item;
         for ($i = 0; $i < count($item); $i++) {
-            $item[$i]->image_path = $item[$i]->image_path ? env('IMAGE_SERVER') .'/'. $item[$i]->image_path : '';
+            $item[$i]->image_path = $item[$i]->image_path ? env('IMAGE_SERVER') . '/' . $item[$i]->image_path : '';
         }
-        return  $item;
+        return $item;
     }
 
 }
