@@ -465,4 +465,12 @@ class CandidateInformation extends Model
         return $gender ;
 
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function teamConnection()
+    {
+        return $this->hasMany(TeamConnection::class,'requested_by','user_id')->where('connection_status',1);
+    }
 }

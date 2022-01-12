@@ -18,7 +18,7 @@ class CreateShortListedCandidatesTable extends Migration
             $table->id();
             $table->bigInteger('user_id'); // user id
             $table->bigInteger('shortlisted_by')->nullable(false); // user id
-            $table->bigInteger('shortlisted_for')->nullable(true); // team
+            $table->bigInteger('shortlisted_for')->nullable(true)->comment('team_id'); // team
             $table->date('shortlisted_date')->nullable(true); // date
             $table->tinyInteger('is_block')->default(0); // date
             $table->timestamps();

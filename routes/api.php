@@ -218,6 +218,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('block-list', [BlockListAPIController::class, 'index'])->name('block.list');
         Route::POST('store-block-list', [BlockListAPIController::class, 'store'])->name('block.create');
         Route::get('unblock-candidate/{id}', [BlockListAPIController::class, 'destroy'])->name('unblock.candidate');
+        Route::delete('unblock-by-candidate', [BlockListAPIController::class, 'destroyByCandidate'])->name('unblock.by.candidate');
 
         // Representative
         Route::get('representative-information', [RepresentativeInformationController::class, 'index'])->name('representativeInformation');
