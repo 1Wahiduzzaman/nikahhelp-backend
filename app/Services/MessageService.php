@@ -971,7 +971,7 @@ class MessageService extends ApiBaseService
 
     public function getUsersSupportChatHistory($chat_id = null) {
         try{
-            $messages = SupportMessage::select('body', 'seen', 'attachment')
+            $messages = SupportMessage::with(['sender', 'receiver'])
             ->where('chat_id', $chat_id)            
             ->get();
             return $this->sendSuccessResponse($messages, 'Message fetched Successfully!');
