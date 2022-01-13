@@ -8,6 +8,7 @@ use App\Http\Requests\TeamFromRequest;
 use App\Models\CandidateInformation;
 use App\Models\Team;
 use App\Models\TeamConnection;
+use App\Models\TeamMember;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -363,7 +364,7 @@ class TeamService extends ApiBaseService
         // Get Team Data
         $team = $this->teamRepository->findOneByProperties([
             "team_id" => $team_id,
-            "status" => 1
+           // "status" => 1
         ]);
 
         /// Team not found exception throw
@@ -385,6 +386,17 @@ class TeamService extends ApiBaseService
         if (count($checksubscription) == 0) {
             return $this->sendErrorResponse('Your subscription plan has expired.', [], HttpStatusCode::VALIDATION_ERROR);
         }
+
+        //Update Active Team Info
+
+        TeamMember::where('team_id','<>', $team->id)
+        ->where('user_id', Auth::id())
+        ->update(['status' => 0]);    
+
+        //update by 1
+        TeamMember::where('team_id', $team->id)
+        ->where('user_id', Auth::id())
+        ->update(['status' => 1]);    
 
         // Get Team info for response
         // In future we may need to send notification and messages regarding the team as well
