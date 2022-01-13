@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\TeamListedCandidateController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\CountryController;
 use App\Http\Controllers\API\V1\TeamController;
@@ -203,15 +204,20 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('utilities/cities/{country}', [CountryController::class, 'getCities'])->name('utilities.cities.of.country');
         Route::POST('utilities/create-city', [CountryController::class, 'createCity'])->name('utilities.countries.City');
 
-        // Short listed
-
-        Route::get('team-short-listed-candidates', [ShortListedCandidateController::class, 'teamShortListedCandidate'])->name('get_team_short_listed_candidates');
+        // Short listed | by Rabbi
         Route::get('short-listed-candidates', [ShortListedCandidateController::class, 'index'])->name('get_short_listed_candidates');
+        Route::POST('short-listed-candidates/store', [ShortListedCandidateController::class, 'store'])->name('short.list.store');
+        Route::delete('delete-short-listed-by-candidates', [ShortListedCandidateController::class, 'destroyByCandidate'])->name('delete.shortlisted.item.by.candidate');
+
+        // Team listed | by Rabbi
+        Route::get('team-short-listed-candidates', [ShortListedCandidateController::class, 'teamShortListedCandidate'])->name('get_team_short_listed_candidates');
+        Route::POST('team-short-listed-candidates/store', [TeamListedCandidateController::class, 'store'])->name('team.list.store');
+        Route::delete('delete-team-short-listed-by-candidates', [TeamListedCandidateController::class, 'destroyByCandidate'])->name('team.list.store');
+
+        // Short listed
         Route::get('show-short-listed-candidates/{id}', [ShortListedCandidateController::class, 'show'])->name('show_short_listed_candidates');
-        Route::POST('short-listed-candidates/store', [ShortListedCandidateController::class, 'store'])->name('store.religions');
         Route::get('deleted-candidates', [ShortListedCandidateController::class, 'deletedCandidate'])->name('deleted_candidates');
         Route::get('delete-short-listed-candidates/{id}', [ShortListedCandidateController::class, 'destroy'])->name('delete_short_listed_candidates');
-        Route::delete('delete-short-listed-by-candidates', [ShortListedCandidateController::class, 'destroyByCandidate'])->name('delete.shortlisted.item.by.candidate');
         Route::PATCH('update-shortlisted-candidates/{id}', [ShortListedCandidateController::class, 'update'])->name('updateShortlistedcandidates');
 
         // Block listed
@@ -290,12 +296,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('user-verify-reject', [AdminDashboardController::class, 'verifyRejectUser'])->name('user.verify_reject');
         Route::get('subscription-report', [AdminDashboardController::class, 'subscription'])->name('team.subscription.report');
 
-        //Team   
+        //Team
         Route::GET('team-list', [TeamController::class, 'adminTeamList'])->name('team.list');
         Route::GET('deleetd-team-list', [TeamController::class, 'adminDeletedTeamList'])->name('team.deleted-team-list');
         Route::GET('connected-team-list/{id}', [TeamController::class, 'adminConnectedTeamList'])->name('team.connected-list'); // param team pk
         Route::DELETE('team-del', [TeamController::class, 'adminTeamDelete'])->name('team.team-del'); // param team pk
-    });    
+    });
 });
 
 
