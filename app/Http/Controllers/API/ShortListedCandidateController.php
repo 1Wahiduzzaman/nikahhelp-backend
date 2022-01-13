@@ -94,13 +94,23 @@ class ShortListedCandidateController extends AppBaseController
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
 
-            $userInfo['shortList'] = $candidate->shortList->pluck('id')->toArray();
+            $activeTeamId = Generic::getActiveTeamId();
+
+            if (!$activeTeamId) {
+                throw new Exception('Team not found, Please create team first');
+            }
+
+            $activeTeam = $this->teamRepository->findOneByProperties([
+                'id' => $activeTeamId
+            ]);
+
+            $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
             $userInfo['blockList'] = $candidate->blockList->pluck('id')->toArray();
             $connectFrom = $candidate->teamConnection->pluck('from_team_id')->toArray();
             $connectTo = $candidate->teamConnection->pluck('to_team_id')->toArray();
             $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
 
-            $activeTeamId = Generic::getActiveTeamId();
+
 
             $singleBLockList = $this->blockListService->blockListByUser($userId)->toArray();
 
@@ -148,21 +158,20 @@ class ShortListedCandidateController extends AppBaseController
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
 
-            $userInfo['shortList'] = $candidate->shortList->pluck('id')->toArray();
+            /* Get Active Team instance */
+            $activeTeamId = Generic::getActiveTeamId();
+            if (!$activeTeamId) {
+                throw new Exception('Team not found, Please create team first');
+            }
+            $activeTeam = $this->teamRepository->findOneByProperties([
+                'id' => $activeTeamId
+            ]);
+
+            $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
             $userInfo['blockList'] = $candidate->blockList->pluck('id')->toArray();
             $connectFrom = $candidate->teamConnection->pluck('from_team_id')->toArray();
             $connectTo = $candidate->teamConnection->pluck('to_team_id')->toArray();
             $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
-
-
-
-            $activeTeam = $this->teamRepository->findOneByProperties([
-                'id' => $activeTeamId
-            ]);
-            if (!$activeTeam) {
-                throw (new ModelNotFoundException)->setModel(get_class($this->teamRepository->getModel()), $userId);
-            }
-
 
 
             $teamShortListUsers = $activeTeam->teamShortListedUser()->paginate($perPage) ;
@@ -173,7 +182,6 @@ class ShortListedCandidateController extends AppBaseController
             foreach ($teamShortListUsers as $teamShortListUser) {
                 $teamShortListUser->getCandidate->is_short_listed = in_array($teamShortListUser->id,$userInfo['shortList']);
                 $teamShortListUser->getCandidate->is_block_listed = in_array($teamShortListUser->id,$userInfo['blockList']);
-
                 $teamId = $teamShortListUser->getCandidate->candidateTeam()->exists() ? $teamShortListUser->getCandidate->candidateTeam->first()->team_id : null;
                 $teamShortListUser->getCandidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $teamShortListUser->getCandidate->team_id = $teamId;
@@ -304,7 +312,13 @@ class ShortListedCandidateController extends AppBaseController
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
 
-            $candidate->shortList()->detach($request->user_id);
+            /* Get Active Team instance */
+            $activeTeamId = Generic::getActiveTeamId();
+            if (!$activeTeamId) {
+                throw new Exception('Team not found, Please create team first');
+            }
+
+            $candidate->shortList()->wherePivot('shortlisted_for',$activeTeamId)->detach($request->user_id);
 
             return $this->sendSuccessResponse([], 'Candidate remove from shortlist successfully!', [], HttpStatusCode::CREATED);
 
