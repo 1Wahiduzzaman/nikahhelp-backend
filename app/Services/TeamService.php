@@ -363,10 +363,9 @@ class TeamService extends ApiBaseService
 
         // Get Team Data
         $team = $this->teamRepository->findOneByProperties([
-            "team_id" => $team_id,
+            "id" => $team_id,
            // "status" => 1
-        ]);
-
+        ]);       
         /// Team not found exception throw
         if (!$team) {
             return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
@@ -379,7 +378,7 @@ class TeamService extends ApiBaseService
 
         $current_date = Carbon::now()->toDateString();
         $checksubscription = DB::table('teams')
-            ->where('team_id', '=', $team_id)
+            ->where('id', '=', $team_id)
             ->where('subscription_expire_at', '>', $current_date)
             ->get();
 
@@ -402,7 +401,7 @@ class TeamService extends ApiBaseService
         // In future we may need to send notification and messages regarding the team as well
         $team_infos = Team::select("*")
             ->with("team_members", 'team_invited_members')
-            ->where('team_id', $team_id)
+            ->where('id', $team_id)
             ->where('status', 1)
             ->get();
         return $this->sendSuccessResponse($team_infos, 'Team is ready to turn on!');
