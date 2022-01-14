@@ -25,11 +25,7 @@ class RecentJoinCandidateResource extends JsonResource
             'study_level' => $this->candidateEducationLevel['name'] ?? "",
             'ethnicity' => $this->userinfo['per_ethnicity'] ?? "",
         ];
-        if(!empty($this->userInfo['per_main_image_url'])):
-            $image = url('storage/' . $this->userInfo['per_main_image_url']);
-        else:
-            $image=null;
-        endif;
+        $image = $this->userInfo['per_main_image_url'] ? env('IMAGE_SERVER') . '/' . $this->userInfo['per_main_image_url'] : null ;
         $candidateInfo['image']=$image;
         return $candidateInfo;
 

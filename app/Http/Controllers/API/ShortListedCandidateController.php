@@ -106,6 +106,7 @@ class ShortListedCandidateController extends AppBaseController
 
             $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
             $userInfo['blockList'] = $candidate->blockList->pluck('id')->toArray();
+            $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
             $connectFrom = $candidate->teamConnection->pluck('from_team_id')->toArray();
             $connectTo = $candidate->teamConnection->pluck('to_team_id')->toArray();
             $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
@@ -121,6 +122,7 @@ class ShortListedCandidateController extends AppBaseController
             foreach ($shortListCandidates as $candidate) {
                 $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
                 $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
+                $candidate->is_teamListed = in_array($candidate->id,$userInfo['teamList']);
                 $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $candidate->team_id = $teamId;
@@ -169,6 +171,7 @@ class ShortListedCandidateController extends AppBaseController
 
             $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
             $userInfo['blockList'] = $candidate->blockList->pluck('id')->toArray();
+            $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
             $connectFrom = $candidate->teamConnection->pluck('from_team_id')->toArray();
             $connectTo = $candidate->teamConnection->pluck('to_team_id')->toArray();
             $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
@@ -182,6 +185,7 @@ class ShortListedCandidateController extends AppBaseController
             foreach ($teamShortListUsers as $teamShortListUser) {
                 $teamShortListUser->getCandidate->is_short_listed = in_array($teamShortListUser->id,$userInfo['shortList']);
                 $teamShortListUser->getCandidate->is_block_listed = in_array($teamShortListUser->id,$userInfo['blockList']);
+                $teamShortListUser->getCandidate->is_teamListed = in_array($teamShortListUser->id,$userInfo['teamList']);
                 $teamId = $teamShortListUser->getCandidate->candidateTeam()->exists() ? $teamShortListUser->getCandidate->candidateTeam->first()->getTeam->team_id : null;
                 $teamShortListUser->getCandidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $teamShortListUser->getCandidate->team_id = $teamId;
