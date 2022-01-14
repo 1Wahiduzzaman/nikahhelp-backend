@@ -121,7 +121,7 @@ class ShortListedCandidateController extends AppBaseController
             foreach ($shortListCandidates as $candidate) {
                 $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
                 $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
-                $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->team_id : null;
+                $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $candidate->team_id = $teamId;
                 $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
@@ -174,7 +174,7 @@ class ShortListedCandidateController extends AppBaseController
             $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
 
 
-            $teamShortListUsers = $activeTeam->teamShortListedUser()->paginate($perPage) ;
+            $teamShortListUsers = $activeTeam->teamListedUser()->paginate($perPage) ;
             $teamShortListUsers->load('getCandidate') ;
 
             $candidatesResponse = [];
@@ -182,9 +182,11 @@ class ShortListedCandidateController extends AppBaseController
             foreach ($teamShortListUsers as $teamShortListUser) {
                 $teamShortListUser->getCandidate->is_short_listed = in_array($teamShortListUser->id,$userInfo['shortList']);
                 $teamShortListUser->getCandidate->is_block_listed = in_array($teamShortListUser->id,$userInfo['blockList']);
-                $teamId = $teamShortListUser->getCandidate->candidateTeam()->exists() ? $teamShortListUser->getCandidate->candidateTeam->first()->team_id : null;
+                $teamId = $teamShortListUser->getCandidate->candidateTeam()->exists() ? $teamShortListUser->getCandidate->candidateTeam->first()->getTeam->team_id : null;
                 $teamShortListUser->getCandidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $teamShortListUser->getCandidate->team_id = $teamId;
+                $shortListedBy = CandidateInformation::where('user_id', $teamShortListUser->pivot->team_listed_by)->first();
+                $teamShortListUser->pivot->shortlisted_by =$shortListedBy->first_name.' '. $shortListedBy->last_name;
                 $candidatesResponse[] = $this->candidateTransformer->transformShortListUser($teamShortListUser);
             }
 
