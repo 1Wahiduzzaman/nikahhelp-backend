@@ -14,6 +14,7 @@ use App\Models\CandidateImage;
 use App\Models\CandidateInformation;
 use App\Repositories\CandidateImageRepository;
 use App\Repositories\CountryRepository;
+use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -27,6 +28,7 @@ use \Illuminate\Support\Facades\DB;
 use App\Transformers\CandidateTransformer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use phpDocumentor\Reflection\Types\Collection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
@@ -76,6 +78,10 @@ class CandidateService extends ApiBaseService
      * @var CountryRepository
      */
     private $countryRepository;
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
 
 
     public function __construct(
@@ -84,7 +90,9 @@ class CandidateService extends ApiBaseService
         CandidateTransformer $candidateTransformer,
         BlockListService $blockListService,
         RepresentativeRepository $representativeRepository,
-        CountryRepository $countryRepository
+        CountryRepository $countryRepository,
+        UserRepository $userRepository
+        
     )
     {
         $this->candidateRepository = $candidateRepository;
@@ -94,6 +102,7 @@ class CandidateService extends ApiBaseService
         $this->representativeRepository = $representativeRepository;
         $this->setActionRepository($candidateRepository);
         $this->countryRepository = $countryRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -1102,11 +1111,20 @@ class CandidateService extends ApiBaseService
         //register complete (soft hard)
         //if registered they will show here
         //need to  have logic if traffic is low.
-        $shortListedCandidates = $this->candidateRepository->findBy([
-            'data_input_status' => 1,
-            'per_page' => 3,
-        ], null, ['column' => 'id', 'direction' => 'desc']);
+//        $shortListedCandidates = $this->candidateRepository->findBy([
+//            'data_input_status' => 1,
+//            'per_page' => 3,
+//        ], null, ['column' => 'id', 'direction' => 'desc']);
+
+        $recentJoinUsers = $this->userRepository->getModel()->with('getCandidate')->latest()->limit(12)->get();
+
+        $shortListedCandidates = [];
+        foreach ($recentJoinUsers as $user){
+            $shortListedCandidates[] = $user->getCandidate;
+        }
+
         $formatted_data = RecentJoinCandidateResource::collection($shortListedCandidates);
+
         return $this->sendSuccessResponse($formatted_data, 'Recently join candidate List');
     }
 

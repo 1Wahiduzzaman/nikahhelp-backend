@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Models\Generic;
 use App\Models\Team;
 use App\Transformers\CandidateTransformer;
 use Exception;
@@ -111,6 +112,7 @@ class SearchService extends ApiBaseService
 
             $userInfo['shortList'] = [];
             $userInfo['blockList'] = [];
+            $userInfo['teamList'] = [];
             $connectFrom = [];
             $connectTo = [];
             $userInfo['connectList'] = [];
@@ -121,7 +123,18 @@ class SearchService extends ApiBaseService
                     'user_id' => $userId
                 ]);
 
+                $activeTeamId = Generic::getActiveTeamId();
+
+                if (!$activeTeamId) {
+                    throw new Exception('Team not found, Please create team first');
+                }
+
+                $activeTeam = $this->teamRepository->findOneByProperties([
+                                                                             'id' => $activeTeamId
+                                                                         ]);
+
                 $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('id')->toArray();
+                $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
                 $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('id')->toArray();
                 $connectFrom = $loggedInCandidate->teamConnection->pluck('from_team_id')->toArray();
                 $connectTo = $loggedInCandidate->teamConnection->pluck('to_team_id')->toArray();
@@ -203,6 +216,7 @@ class SearchService extends ApiBaseService
             foreach ($candidates as $candidate) {
                 $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
                 $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
+                $candidate->is_teamListed = in_array($candidate->id,$userInfo['teamList']);
                 $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $candidate->team_id = $teamId;
