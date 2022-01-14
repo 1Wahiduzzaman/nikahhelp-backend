@@ -109,6 +109,12 @@ class SearchService extends ApiBaseService
             }catch (\Exception $e){
             }
 
+            $userInfo['shortList'] = [];
+            $userInfo['blockList'] = [];
+            $connectFrom = [];
+            $connectTo = [];
+            $userInfo['connectList'] = [];
+
             if(Auth::check()){
                 $userId = self::getUserId();
                 $loggedInCandidate = $this->candidateRepository->findOneByProperties([
@@ -197,7 +203,7 @@ class SearchService extends ApiBaseService
             foreach ($candidates as $candidate) {
                 $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
                 $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
-                $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->team_id : null;
+                $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $candidate->team_id = $teamId;
                 $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);

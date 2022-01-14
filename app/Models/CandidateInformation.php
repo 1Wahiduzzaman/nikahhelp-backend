@@ -421,6 +421,10 @@ class CandidateInformation extends Model
     {
         return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id')->withTimestamps();
     }
+    public function teamList()
+    {
+        return $this->belongsToMany(TeamListedCandidate::class, 'team_listed_candidates', 'team_listed_by', 'user_id')->withTimestamps();
+    }
 
     public function blockList()
     {

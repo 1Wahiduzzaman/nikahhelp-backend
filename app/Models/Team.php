@@ -136,5 +136,12 @@ class Team extends Model
         return $this->belongsToMany( User::class,'short_listed_candidates', 'shortlisted_for', 'user_id')->withPivot('shortlisted_by','created_at');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function teamListedUser(){
+        return $this->belongsToMany( User::class,'team_listed_candidates', 'team_listed_for', 'user_id')->withPivot('team_listed_by','created_at');
+    }
+
 
 }
