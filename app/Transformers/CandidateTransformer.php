@@ -156,7 +156,7 @@ class CandidateTransformer extends TransformerAbstract
     {
         $shortListedByUser = CandidateInformation::where('user_id', $item->shortlisted_by)->first();
         return [
-            'short_listed_by' => $shortListedByUser->first_name . ' ' . $shortListedByUser->last_name,
+            'short_listed_by' => $item->shortlisted_by,
             'short_listed_at' => $item->created_at,
         ];
     }
