@@ -178,7 +178,9 @@ class AdminDashboardController extends AppBaseController
     {
         $status = [
             'verified' => 3,
-            'rejected' => 4
+            'rejected' => 4,
+            'completed' => 2,
+            'incompleted' => 1,
         ];
         $ver_rej = $status[$request->status];
         if (!empty($request->id)) {
