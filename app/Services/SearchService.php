@@ -224,14 +224,17 @@ class SearchService extends ApiBaseService
                 /* Find Team Connection Status*/
                 if(in_array($teamId,$connectFrom)){
                     $teamConnectType = 1;
-                    $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->team_id)->where('from_team_id',$teamId)->first()->connection_status;
+                    $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->team_id)->where('from_team_id',$teamId)->first();
+                    $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
                 }elseif (in_array($teamId,$connectTo)){
                     $teamConnectType = 2;
-                    $teamConnectStatus = TeamConnection::where('from_team_id',$teamId)->where('from_team_id',$activeTeam->team_id)->first()->connection_status;
+                    $teamConnectStatus = TeamConnection::where('from_team_id',$teamId)->where('from_team_id',$activeTeam->team_id)->first();
+                    $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
                 }else{
                     $teamConnectType = null;
                     $teamConnectStatus = null;
                 }
+
                 $candidate->teamConnectType = $teamConnectType;
                 $candidate->teamConnectStatus = $teamConnectStatus;
                 $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
