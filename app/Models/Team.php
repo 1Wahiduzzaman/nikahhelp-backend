@@ -150,5 +150,15 @@ class Team extends Model
         return $this->belongsToMany( User::class,'block_lists', 'block_for', 'user_id')->withPivot('block_by','created_at');
     }
 
+    public function sentRequest()
+    {
+        return $this->belongsToMany(Team::class,'team_connections','from_team_id','to_team_id' );
+    }
+
+    public function receivedRequest()
+    {
+        return $this->belongsToMany(Team::class,'team_connections','to_team_id','from_team_id' );
+    }
+
 
 }
