@@ -136,7 +136,6 @@ class ShortListedCandidateController extends AppBaseController
         }catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
-        return $this->sendResponse($formatted_data, 'Short Listed Candidates retrieved successfully');
     }
 
     /**
@@ -147,7 +146,6 @@ class ShortListedCandidateController extends AppBaseController
     {
 
         $userId = self::getUserId();
-        $activeTeamId = Generic::getActiveTeamId();
 
         try {
             $perPage = $request->input('perpage',10);
@@ -201,8 +199,6 @@ class ShortListedCandidateController extends AppBaseController
         }catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
-
-        return $this->sendResponse($formatted_data, 'Team Short Listed Candidates retrieved successfully');
     }
 
 

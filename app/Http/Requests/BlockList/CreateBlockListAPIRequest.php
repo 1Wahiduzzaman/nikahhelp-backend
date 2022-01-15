@@ -25,7 +25,6 @@ class CreateBlockListAPIRequest extends APIRequest
     public function rules()
     {
         return [
-            'block_by' => 'required',
             'user_id' => 'required',
         ];
     }
@@ -36,7 +35,6 @@ class CreateBlockListAPIRequest extends APIRequest
     public function messages()
     {
         return [
-            'block_by.required' => 'Block By User ID is required',
             'user_id.required' => 'Candidate ID is required',
         ];
     }
