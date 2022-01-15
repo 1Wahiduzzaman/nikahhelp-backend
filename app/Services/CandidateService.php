@@ -1116,7 +1116,9 @@ class CandidateService extends ApiBaseService
 //            'per_page' => 3,
 //        ], null, ['column' => 'id', 'direction' => 'desc']);
 
-        $recentJoinUsers = $this->userRepository->getModel()->with('getCandidate')->latest()->limit(12)->get();
+        $recentJoinUsers = $this->userRepository->getModel()->with('getCandidate')->whereHas('getCandidate',function($q){
+            $q->where('data_input_status','>',1);
+        })->latest()->limit(12)->get();
 
         $shortListedCandidates = [];
         foreach ($recentJoinUsers as $user){
