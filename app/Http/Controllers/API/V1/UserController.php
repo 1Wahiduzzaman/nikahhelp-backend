@@ -142,4 +142,18 @@ class UserController extends Controller
         return $this->sendSuccessResponse($data, 'Support Admin Loaded Successfully');
     }
 
+    public function getRejectedNotes($id) {
+        if (!empty($id)) {
+            $userId = $id;
+        } else {
+            return $this->sendErrorResponse('User Id is required');
+        }
+        $userInfo = User::with(['rejected_notes'])->where('id', $userId)->first();         
+        if ($userInfo) {
+            return $this->sendSuccessResponse($userInfo, 'User info loaded successfully');
+        } else {
+            return $this->sendErrorResponse('Something went wrong please try again later');
+        }
+    }
+
 }
