@@ -301,6 +301,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::GET('deleetd-team-list', [TeamController::class, 'adminDeletedTeamList'])->name('team.deleted-team-list');
         Route::GET('connected-team-list/{id}', [TeamController::class, 'adminConnectedTeamList'])->name('team.connected-list'); // param team pk
         Route::DELETE('team-del', [TeamController::class, 'adminTeamDelete'])->name('team.team-del'); // param team pk
+
+        // Send Global Notification
+        Route::GET('all-user', [AllNotificationController::class, 'getAllUsers'])->name('all-notification.all-user');
+        Route::POST('send-notification', [AllNotificationController::class, 'sendGlobalNotification'])->name('all-notification.send-notification');
     });
 });
 
