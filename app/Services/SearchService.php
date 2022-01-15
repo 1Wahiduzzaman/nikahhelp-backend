@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Enums\HttpStatusCode;
 use App\Models\Generic;
 use App\Models\Team;
+use App\Models\TeamConnection;
 use App\Transformers\CandidateTransformer;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -136,8 +137,8 @@ class SearchService extends ApiBaseService
                 $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('id')->toArray();
                 $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
                 $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('id')->toArray();
-                $connectFrom = $loggedInCandidate->teamConnection->pluck('from_team_id')->toArray();
-                $connectTo = $loggedInCandidate->teamConnection->pluck('to_team_id')->toArray();
+                $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
+                $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
                 $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
 
                 /*Excluded Own data*/
@@ -220,6 +221,19 @@ class SearchService extends ApiBaseService
                 $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $candidate->team_id = $teamId;
+                /* Find Team Connection Status*/
+                if(in_array($teamId,$connectFrom)){
+                    $teamConnectType = 1;
+                    $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->team_id)->where('from_team_id',$teamId)->latest()->first()->connection_status;
+                }elseif (in_array($teamId,$connectTo)){
+                    $teamConnectType = 2;
+                    $teamConnectStatus = TeamConnection::where('from_team_id',$teamId)->where('from_team_id',$activeTeam->team_id)->latest()->first()->connection_status;
+                }else{
+                    $teamConnectType = null;
+                    $teamConnectStatus = null;
+                }
+                $candidate->teamConnectType = $teamConnectType;
+                $candidate->teamConnectStatus = $teamConnectStatus;
                 $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
             }
             $searchResult['data'] = $candidatesResponse;

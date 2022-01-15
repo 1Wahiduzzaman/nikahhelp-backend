@@ -145,6 +145,8 @@ class CandidateTransformer extends TransformerAbstract
             'is_connect' => $item->is_connect ?? null,
             'is_teamListed' => $item->is_teamListed ?? null,
             'team_id' => $item->team_id ?? null,
+            'teamConnectType' => $item->teamConnectType ?? null,
+            'teamConnectStatus' => $item->teamConnectStatus ?? null,
         ];
     }
 
