@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\AllNotification;
 use App\Models\TeamMember;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class AllNotificationController extends Controller
@@ -21,6 +22,39 @@ class AllNotificationController extends Controller
         $model->save();
         return $this->sendSuccessResponse([], 'Data Saved Successfully!');
     }
+
+    //Admin
+    public function sendGlobalNotification(Request $request){      
+        $u_data = Auth::user();
+        $role = $u_data->account_type;
+        if($role == 10 || $role == 11) {
+            $users = User::select('id')->where('account_type', '<>', 10)->where('account_type', '<>', 11)->get();        
+            $user_id = Auth::id();
+            foreach($users as $user) {
+                $model = new AllNotification();
+                $model->sender = $user_id;
+                $model->receiver = $user->id;            
+                $model->title = $request->title;
+                $model->description = $request->description;
+                $model->save();
+            }
+            return $this->sendSuccessResponse([], 'Data Saved Successfully!');
+        }  else {
+            return $this->sendErrorResponse('This feature is only for Admin or Support Admin');
+        }             
+    }
+    public function getAllUsers(Request $request){      
+        $u_data = Auth::user();
+        $role = $u_data->account_type;
+        if($role == 10 || $role == 11) {
+            $users = User::select('id')->where('account_type', '<>', 10)->where('account_type', '<>', 11)->pluck('id')->toArray();                            
+            return $this->sendSuccessResponse($users, 'Data fetched Successfully!');
+        }  else {
+            return $this->sendErrorResponse('This feature is only for Admin or Support Admin');
+        }             
+    }
+
+    // End Admin
 
     public function listNotifications(Request $request){  
         $user_id = Auth::id();      
