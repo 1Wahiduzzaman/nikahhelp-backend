@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Enums\HttpStatusCode;
 use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\BlockList\CreateBlockListAPIRequest;
 use App\Http\Resources\BlockListResource;
+use App\Models\CandidateInformation;
+use App\Models\Generic;
 use App\Repositories\BlockListRepository;
 use App\Repositories\CandidateRepository;
+use App\Repositories\TeamRepository;
 use App\Services\BlockListService;
 use App\Transformers\CandidateTransformer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -33,55 +37,181 @@ class BlockListAPIController extends AppBaseController
      * @var CandidateRepository
      */
     private $candidateRepository;
+    /**
+     * @var CandidateTransformer
+     */
+    private $candidateTransformer;
+    /**
+     * @var TeamRepository
+     */
+    private $teamRepository;
 
     public function __construct(
         BlockListRepository $blockListRepo,
         BlockListService $blockListService,
-        CandidateRepository $candidateRepository
-    )
-    {
+        CandidateRepository $candidateRepository,
+        CandidateTransformer $candidateTransformer,
+        TeamRepository $teamRepository
+    ) {
         $this->blockListRepository = $blockListRepo;
         $this->blockListService = $blockListService;
         $this->candidateRepository = $candidateRepository;
+        $this->candidateTransformer = $candidateTransformer;
+        $this->teamRepository = $teamRepository;
     }
 
     /**
      * Display a listing of the block_list.
      * GET|HEAD /blockLists
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return Response
      */
     public function index(Request $request)
     {
-        $userId = $this->getUserId();
-        $blockLists = $this->blockListRepository->all(
-            $request->except(['skip', 'limit']),
-            $request->get('skip'),
-            $request->get('limit')
-        )->where('block_by', '=', $userId);
-        $formatted_data = BlockListResource::collection($blockLists);
-        return $this->sendResponse($formatted_data, 'Block Lists retrieved successfully');
+        $userId = self::getUserId();
+
+        $perPage = $request->input('parpage', 10);
+
+        try {
+
+            $candidate = $this->candidateRepository->findOneByProperties([
+                'user_id' => $userId
+            ]);
+
+            if (!$candidate) {
+                throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
+            }
+
+            $activeTeamId = Generic::getActiveTeamId();
+
+            if (!$activeTeamId) {
+                throw new Exception('Team not found, Please create team first');
+            }
+
+            $activeTeam = $this->teamRepository->findOneByProperties([
+                'id' => $activeTeamId
+            ]);
+
+            $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
+            $userInfo['blockList'] = $candidate->blockList->pluck('id')->toArray();
+            $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
+            $connectFrom = $candidate->teamConnection->pluck('from_team_id')->toArray();
+            $connectTo = $candidate->teamConnection->pluck('to_team_id')->toArray();
+            $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
+
+            $blockListCandidates = $candidate->blockList()->paginate($perPage);
+
+            $candidatesResponse = [];
+
+            foreach ($blockListCandidates as $candidate) {
+                $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
+                $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
+                $candidate->is_teamListed = in_array($candidate->id,$userInfo['teamList']);
+                $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
+                $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
+                $candidate->team_id = $teamId;
+                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
+            }
+
+            $pagination = $this->paginationResponse($blockListCandidates);
+
+            return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED);
+
+
+        }catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+
+
+
+
+//        $userId = $this->getUserId();
+//        $blockLists = $this->blockListRepository->all(
+//            $request->except(['skip', 'limit']),
+//            $request->get('skip'),
+//            $request->get('limit')
+//        )->where('block_by', '=', $userId);
+//        $formatted_data = BlockListResource::collection($blockLists);
+//        return $this->sendResponse($formatted_data, 'Block Lists retrieved successfully');
+    }
+
+    public function blockByTeamList(Request $request)
+    {
+        $userId = self::getUserId();
+
+        try {
+            $perPage = $request->input('perpage',10);
+
+            $candidate = $this->candidateRepository->findOneByProperties([
+                'user_id' => $userId
+            ]);
+
+            if (!$candidate) {
+                throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
+            }
+
+            /* Get Active Team instance */
+            $activeTeamId = Generic::getActiveTeamId();
+            if (!$activeTeamId) {
+                throw new Exception('Team not found, Please create team first');
+            }
+            $activeTeam = $this->teamRepository->findOneByProperties([
+                'id' => $activeTeamId
+            ]);
+
+            $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
+            $userInfo['blockList'] = $candidate->blockList->pluck('id')->toArray();
+            $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
+            $connectFrom = $candidate->teamConnection->pluck('from_team_id')->toArray();
+            $connectTo = $candidate->teamConnection->pluck('to_team_id')->toArray();
+            $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
+
+
+            $teamShortListUsers = $activeTeam->blockListedUser()->paginate($perPage) ;
+            $teamShortListUsers->load('getCandidate') ;
+
+            $candidatesResponse = [];
+
+            foreach ($teamShortListUsers as $teamShortListUser) {
+                $teamShortListUser->getCandidate->is_short_listed = in_array($teamShortListUser->id,$userInfo['shortList']);
+                $teamShortListUser->getCandidate->is_block_listed = in_array($teamShortListUser->id,$userInfo['blockList']);
+                $teamShortListUser->getCandidate->is_teamListed = in_array($teamShortListUser->id,$userInfo['teamList']);
+                $teamId = $teamShortListUser->getCandidate->candidateTeam()->exists() ? $teamShortListUser->getCandidate->candidateTeam->first()->getTeam->team_id : null;
+                $teamShortListUser->getCandidate->is_connect = in_array($teamId,$userInfo['connectList']);
+                $teamShortListUser->getCandidate->team_id = $teamId;
+                $shortListedBy = CandidateInformation::where('user_id', $teamShortListUser->pivot->block_by)->first();
+                $teamShortListUser->pivot->shortlisted_by =$shortListedBy->first_name.' '. $shortListedBy->last_name;
+                $candidatesResponse[] = $this->candidateTransformer->transformShortListUser($teamShortListUser);
+            }
+
+            $pagination = $this->paginationResponse($teamShortListUsers);
+
+            return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!',$pagination, HttpStatusCode::CREATED);
+
+        }catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
     }
 
     /**
      * Store a newly created block_list in storage.
      * POST /blockLists
      *
-     * @param CreateBlockListAPIRequest $request
+     * @param  CreateBlockListAPIRequest  $request
      *
      * @return Response
      */
     public function store(CreateBlockListAPIRequest $request)
     {
-        return $blockList = $this->blockListService->store($request->all());
+        return $blockList = $this->blockListService->store($request);
     }
 
     /**
      * Display the specified block_list.
      * GET|HEAD /blockLists/{id}
      *
-     * @param int $id
+     * @param  int  $id
      *
      * @return Response
      */
@@ -102,7 +232,7 @@ class BlockListAPIController extends AppBaseController
      * Remove the specified block_list from storage.
      * DELETE /blockLists/{id}
      *
-     * @param int $id
+     * @param  int  $id
      *
      * @return Response
      * @throws \Exception
@@ -131,16 +261,14 @@ class BlockListAPIController extends AppBaseController
             ]);
 
             if (!$candidate) {
-                throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
+                throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()),
+                    $userId);
             }
-
-
 
             $candidate->blockList()->detach($request->user_id);
 
             return $this->sendSuccessResponse([], 'Candidate Un-Block successfully!', [], HttpStatusCode::CREATED);
-
-        }catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }

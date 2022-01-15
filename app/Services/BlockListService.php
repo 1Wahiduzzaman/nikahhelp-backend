@@ -3,6 +3,8 @@
 
 namespace App\Services;
 
+use App\Models\Generic;
+use App\Repositories\CandidateRepository;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -42,16 +44,25 @@ class BlockListService extends ApiBaseService
      * @var  ShortListedCandidateRepository
      */
     private $shortListedCandidateRepository;
+    /**
+     * @var CandidateRepository
+     */
+    private $candidateRepository;
 
     /**
      * CandidateService constructor.
      *
      * @param BlockListRepository $blockListRepository
      */
-    public function __construct(BlockListRepository $blockListRepository, ShortListedCandidateRepository $shortListedCandidateRepo)
+    public function __construct(
+        BlockListRepository $blockListRepository,
+        ShortListedCandidateRepository $shortListedCandidateRepo,
+        CandidateRepository $candidateRepository
+    )
     {
         $this->blockListRepository = $blockListRepository;
         $this->shortListedCandidateRepository = $shortListedCandidateRepo;
+        $this->candidateRepository = $candidateRepository;
     }
 
 
@@ -60,23 +71,40 @@ class BlockListService extends ApiBaseService
      * @param Request $request
      * @return JsonResponse
      */
-    public function store($request)
+    public function store(Request $request)
     {        
         $userId = self::getUserId();        
         try {
-            $candidate = $this->blockListRepository->findOneBy([              
-                'user_id' => $request['user_id'],
-                'block_by' => $request['block_by']
-            ]);
-            if ($candidate) {
-                return $this->sendErrorResponse('Information Already Exists', [], FResponse::HTTP_CONFLICT);
+
+            $candidate = $this->candidateRepository->findOneByProperties([
+                                                                             'user_id' => $userId
+                                                                         ]);
+
+            if (!$candidate) {
+                throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
-            self::checkShortListCanddate($candidate, $request);
-            $input = $request;
-            $input['block_date'] = Carbon::now()->format('Y-m-d');
-            $blocklist = $this->blockListRepository->save($input);
-            Notificationhelpers::add('Successfully blocked ! you can find this user in your block list', 'single', null, $userId);
-            return $this->sendSuccessResponse($blocklist->toArray(), self::INFORMATION_SAVE_SUCCESSFULLY);
+            
+            $activeTeamId = Generic::getActiveTeamId();
+
+            if (!$activeTeamId) {
+                throw new Exception('Team not found, Please create team first');
+            }
+
+            /* Remove blocked user form short list if any */
+            $candidate->shortList()->detach($request->user_id);
+
+            /* Remove blocked user form team list if any */
+            $candidate->teamList()->wherePivot('team_listed_for', $activeTeamId)->detach($request->user_id);
+
+            $blockCandidate = $this->blockListRepository->create([
+                'user_id' => $request['user_id'],
+                'block_by' => $candidate->id,
+                'block_for' => $activeTeamId,
+                'type' => 'single',
+                'block_date	' => now()
+            ]);
+            
+            return $this->sendSuccessResponse($blockCandidate->toArray(), self::INFORMATION_SAVE_SUCCESSFULLY);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }

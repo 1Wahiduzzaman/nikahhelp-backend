@@ -143,5 +143,12 @@ class Team extends Model
         return $this->belongsToMany( User::class,'team_listed_candidates', 'team_listed_for', 'user_id')->withPivot('team_listed_by','created_at');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function blockListedUser(){
+        return $this->belongsToMany( User::class,'block_lists', 'block_for', 'user_id')->withPivot('block_by','created_at');
+    }
+
 
 }

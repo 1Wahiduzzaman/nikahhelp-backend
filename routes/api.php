@@ -220,11 +220,14 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('delete-short-listed-candidates/{id}', [ShortListedCandidateController::class, 'destroy'])->name('delete_short_listed_candidates');
         Route::PATCH('update-shortlisted-candidates/{id}', [ShortListedCandidateController::class, 'update'])->name('updateShortlistedcandidates');
 
-        // Block listed
+        // Block listed | by Rabbi
         Route::get('block-list', [BlockListAPIController::class, 'index'])->name('block.list');
+        Route::get('block-by-team-list', [BlockListAPIController::class, 'blockByTeamList'])->name('block.list.by.team');
         Route::POST('store-block-list', [BlockListAPIController::class, 'store'])->name('block.create');
-        Route::get('unblock-candidate/{id}', [BlockListAPIController::class, 'destroy'])->name('unblock.candidate');
         Route::delete('unblock-by-candidate', [BlockListAPIController::class, 'destroyByCandidate'])->name('unblock.by.candidate');
+
+        // Block listed
+        Route::get('unblock-candidate/{id}', [BlockListAPIController::class, 'destroy'])->name('unblock.candidate');
 
         // Representative
         Route::get('representative-information', [RepresentativeInformationController::class, 'index'])->name('representativeInformation');
