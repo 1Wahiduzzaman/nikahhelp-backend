@@ -217,7 +217,7 @@ class AdminDashboardController extends AppBaseController
         if (!$userInfo) {
             throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $userId);
         }
-        $userInfo->status = 1;
+        //$userInfo->status = 1;
         $userInfo->image_server_base_url = env('IMAGE_SERVER');
         if ($userInfo) {
             return $this->sendSuccess($userInfo, 'User info loaded successfully', [], FResponse::HTTP_OK);
@@ -225,6 +225,7 @@ class AdminDashboardController extends AppBaseController
             return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
         }
     }
+    
 
     /**
      * @param Request $request
