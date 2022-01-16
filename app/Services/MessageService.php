@@ -564,7 +564,11 @@ class MessageService extends ApiBaseService
         try{                        
             $from_team_id = $request_data->from_team_id;
             $to_team_id = $request_data->to_team_id;
-            $this->receiver = $request_data->receiver;            
+            $this->receiver = $request_data->receiver; 
+            
+            //
+            $this->from_team_id = $from_team_id;
+            $this->to_team_id = $to_team_id;
             $user_id = Auth::id();      
             $active_team = TeamMember::where('user_id', $user_id)
             ->where('status', 1)
