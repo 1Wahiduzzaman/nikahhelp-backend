@@ -765,15 +765,22 @@ class MessageService extends ApiBaseService
                 } 
             }
             //Get Group Message
-            $g_msg = TeamMessage::with("team")
-                ->where('team_id', $active_team_id)   
-                ->orderBy('created_at' , 'DESC')
-                ->first();   
+            $g_msg = TeamMessage::with(["team" => function($q) {
+                $q->with('team_members');
+            }])
+            ->where('team_id', $active_team_id)   
+            ->orderBy('created_at' , 'DESC')
+            ->first();   
                 
             if((isset($g_msg->seen) && $g_msg->seen==0) || (isset($g_msg->seen) && $g_msg->seen == null)) { $count++;}
 
             //Get Connected Group Message
-            $connected_team_msgs = TeamChat::with(["from_team", 'to_team','last_message'])
+            $connected_team_msgs = TeamChat::with(["from_team" => function($q) {
+                    $q->with('team_members');
+                }])
+                ->with(['to_team' => function($q1) {
+                    $q1->with('team_members');
+                }])->with('last_message')
                 ->where('from_team_id', $active_team_id)   
                 ->orWhere('to_team_id', $active_team_id)
                 ->get();   
