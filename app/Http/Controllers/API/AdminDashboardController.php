@@ -90,6 +90,10 @@ class AdminDashboardController extends AppBaseController
             $search['account_type'] = $request->input('account_type');
         }
 
+        if ($request->has('name')) {
+            $search['name'] = $request->input('name');
+        }
+        //dd($search);
         if ($page) {
             $skip = $parpage * ($page - 1);
             $queryData = $this->userRepository->all($search, $skip, $parpage);
