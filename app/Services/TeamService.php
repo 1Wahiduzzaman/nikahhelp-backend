@@ -125,10 +125,11 @@ class TeamService extends ApiBaseService
             $team_member = array();
             $team_member['team_id'] = $team_id;
             $team_member['user_id'] = $user_id;
-            $team_member['user_type'] = $user_type;
+            $team_member['user_type'] = $request->user_type;
             $team_member['role'] = "Owner+Admin";
             $team_member['status'] =1;
-            $team_member['relationship'] ='Own';
+            // $team_member['relationship'] ='Own';
+            $team_member['relationship'] = $request->relationship;
 
             $newmember = $this->teamMemberRepository->save($team_member);
 
