@@ -79,34 +79,73 @@ class AdminDashboardController extends AppBaseController
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+    // public function userReport(Request $request)
+    // {
+
+    //     $search = [];
+    //     $page = $request['page'] ?: 1;
+    //     $parpage = $request['parpage'] ?: 10;
+    //     $userList = $this->userRepository->getModel()->newQuery();
+    //     if ($request->has('account_type')) {
+    //         $search['account_type'] = $request->input('account_type');
+    //     }
+
+    //     if ($request->has('full_name')) {
+    //         $search['full_name'] = $request->input('full_name');
+    //     }        
+    //     if ($page) {
+    //         $skip = $parpage * ($page - 1);
+    //         $queryData = $this->userRepository->all($search, $skip, $parpage);
+    //     } else {
+    //         $queryData = $this->userRepository->all($search, 0, $parpage);
+    //     }
+    //     //dd($queryData);
+    //     $PaginationCalculation = $userList->paginate($parpage);
+    //     $team_info = UserReportResource::collection($queryData);
+    //     $result['result'] = $team_info;
+    //     $result['pagination'] = self::pagination($PaginationCalculation);
+
+    //     return $this->sendResponse($result, 'Data retrieved successfully');
+
+    // }
+
     public function userReport(Request $request)
     {
-
-        $search = [];
-        $page = $request['page'] ?: 1;
-        $parpage = $request['parpage'] ?: 10;
-        $userList = $this->userRepository->getModel()->newQuery();
-        if ($request->has('account_type')) {
-            $search['account_type'] = $request->input('account_type');
+        $data = $this->getUserData($request, 1);
+        return $this->sendResponse($data, 'Data retrieved successfully');
+    }
+    private function getUserData(Request $request, $status)
+    {               
+        $keyword = @$request->input('keyword');
+        $account_type = @$request->input('account_type');
+        $status = $status;
+        if ($request->has('keyword') && $request->has('account_type')) {            
+            $data = User::where('status', $status)
+            ->where('account_type', $account_type)
+            ->where(function($q)use ($keyword){
+                $q->orWhere('full_name', 'LIKE','%'.$keyword.'%');
+                $q->orWhere('email', 'LIKE','%'.$keyword.'%');
+                $q->orWhere('id', $keyword);                
+            })
+            ->paginate();
+        } 
+        elseif ($request->has('account_type')) {
+            $data = User::where('status', $status)
+            ->where('account_type', $account_type)
+            ->paginate();
+        } elseif($request->has('keyword')) {
+            $data = User::where('status', $status)    
+            ->where(function($q)use ($keyword){
+                $q->orWhere('full_name', 'LIKE','%'.$keyword.'%');
+                $q->orWhere('email', 'LIKE','%'.$keyword.'%');
+                $q->orWhere('id', $keyword);                
+            })
+            ->paginate();
         }
-
-        if ($request->has('name')) {
-            $search['name'] = $request->input('name');
-        }
-        //dd($search);
-        if ($page) {
-            $skip = $parpage * ($page - 1);
-            $queryData = $this->userRepository->all($search, $skip, $parpage);
-        } else {
-            $queryData = $this->userRepository->all($search, 0, $parpage);
-        }
-
-        $PaginationCalculation = $userList->paginate($parpage);
-        $team_info = UserReportResource::collection($queryData);
-        $result['result'] = $team_info;
-        $result['pagination'] = self::pagination($PaginationCalculation);
-
-        return $this->sendResponse($result, 'Data retrieved successfully');
+        else {
+            $data = User::where('status', $status)->paginate();
+        }                
+        return $data;        
 
     }
 
@@ -116,62 +155,81 @@ class AdminDashboardController extends AppBaseController
      */
     public function pendingUserList(Request $request)
     {
-        $parpage = 10;
-        $page = 1;
-        if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
-        if ($request->has('page')): $page = $request->input('page'); endif;
-
-        $search = $this->userRepository->getModel()->newQuery();
-        if ($page) {
-            $skip = $parpage * ($page - 1);
-            $userList = $search->where('status','=','2')->limit($parpage)->offset($skip)->get();
-        } else {
-            $userList = $search->where('status','=','2')->limit($parpage)->offset(0)->get();
-        }
-//        $userList=User::where('status','=',0)->paginate($parpage);
-        $formatted_data = UserReportResource::collection($userList);
-        return $this->sendResponse($formatted_data, 'Data retrieved successfully');
-
+        $data = $this->getUserData($request, 2);
+        return $this->sendResponse($data, 'Data retrieved successfully');
     }
+
+//     public function pendingUserList(Request $request)
+//     {
+//         $parpage = 10;
+//         $page = 1;
+//         if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
+//         if ($request->has('page')): $page = $request->input('page'); endif;
+
+//         $search = $this->userRepository->getModel()->newQuery();
+//         if ($page) {
+//             $skip = $parpage * ($page - 1);
+//             $userList = $search->where('status','=','2')->limit($parpage)->offset($skip)->get();
+//         } else {
+//             $userList = $search->where('status','=','2')->limit($parpage)->offset(0)->get();
+//         }
+// //        $userList=User::where('status','=',0)->paginate($parpage);
+//         $formatted_data = UserReportResource::collection($userList);
+//         return $this->sendResponse($formatted_data, 'Data retrieved successfully');
+
+//     }
+
     public function verifiedUserList(Request $request)
     {
-        $parpage = 10;
-        $page = 1;
-        if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
-        if ($request->has('page')): $page = $request->input('page'); endif;
-
-        $search = $this->userRepository->getModel()->newQuery();
-        if ($page) {
-            $skip = $parpage * ($page - 1);
-            $userList = $search->where('status','=','3')->limit($parpage)->offset($skip)->get();
-        } else {
-            $userList = $search->where('status','=','3')->limit($parpage)->offset(0)->get();
-        }
-//        $userList=User::where('status','=',0)->paginate($parpage);
-        $formatted_data = UserReportResource::collection($userList);
-        return $this->sendResponse($formatted_data, 'Data retrieved successfully');
-
+       $data =  $this->getUserData($request, 3);
+       return $this->sendResponse($data, 'Data retrieved successfully');
     }
 
     public function rejectedUserList(Request $request)
     {
-        $parpage = 10;
-        $page = 1;
-        if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
-        if ($request->has('page')): $page = $request->input('page'); endif;
-
-        $search = $this->userRepository->getModel()->newQuery();
-        if ($page) {
-            $skip = $parpage * ($page - 1);
-            $userList = $search->where('status','=','4')->limit($parpage)->offset($skip)->get();
-        } else {
-            $userList = $search->where('status','=','4')->limit($parpage)->offset(0)->get();
-        }
-//        $userList=User::where('status','=',0)->paginate($parpage);
-        $formatted_data = UserReportResource::collection($userList);
-        return $this->sendResponse($formatted_data, 'Data retrieved successfully');
-
+       $data =  $this->getUserData($request, 4);
+       return $this->sendResponse($data, 'Data retrieved successfully');
     }
+
+//     public function verifiedUserList(Request $request)
+//     {
+//         $parpage = 10;
+//         $page = 1;
+//         if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
+//         if ($request->has('page')): $page = $request->input('page'); endif;
+
+//         $search = $this->userRepository->getModel()->newQuery();
+//         if ($page) {
+//             $skip = $parpage * ($page - 1);
+//             $userList = $search->where('status','=','3')->limit($parpage)->offset($skip)->get();
+//         } else {
+//             $userList = $search->where('status','=','3')->limit($parpage)->offset(0)->get();
+//         }
+// //        $userList=User::where('status','=',0)->paginate($parpage);
+//         $formatted_data = UserReportResource::collection($userList);
+//         return $this->sendResponse($formatted_data, 'Data retrieved successfully');
+
+//     }
+
+//     public function rejectedUserList(Request $request)
+//     {
+//         $parpage = 10;
+//         $page = 1;
+//         if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
+//         if ($request->has('page')): $page = $request->input('page'); endif;
+
+//         $search = $this->userRepository->getModel()->newQuery();
+//         if ($page) {
+//             $skip = $parpage * ($page - 1);
+//             $userList = $search->where('status','=','4')->limit($parpage)->offset($skip)->get();
+//         } else {
+//             $userList = $search->where('status','=','4')->limit($parpage)->offset(0)->get();
+//         }
+// //        $userList=User::where('status','=',0)->paginate($parpage);
+//         $formatted_data = UserReportResource::collection($userList);
+//         return $this->sendResponse($formatted_data, 'Data retrieved successfully');
+
+//     }
 
     /**
      * @param Request $request
