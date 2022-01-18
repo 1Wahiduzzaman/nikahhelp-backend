@@ -280,7 +280,9 @@ class TeamConnectionService extends ApiBaseService
         $they_declined = 0;
         $teamId = $request->team_id;
         $userId = self::getUserId();
-        $teamInformation = Team::where("team_id", '=', "$teamId")->first();
+        $teamInformation = Team::where("team_id", '=', "$teamId")
+        ->where('status',1)
+        ->first();
         if (empty($teamInformation)) {
             return $this->sendErrorResponse('Active team information not found', [], HttpStatusCode::NOT_FOUND);
         }
