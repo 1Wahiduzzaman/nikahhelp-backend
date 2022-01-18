@@ -8,8 +8,11 @@ use App\Http\Requests\TeamFromRequest;
 use App\Models\CandidateInformation;
 use App\Models\Generic;
 use App\Models\Team;
+use App\Models\TeamChat;
 use App\Models\TeamConnection;
 use App\Models\TeamMember;
+use App\Models\TeamMemberInvitation;
+use App\Models\TeamPrivateChat;
 use App\Transformers\CandidateTransformer;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -505,6 +508,7 @@ class TeamService extends ApiBaseService
      * Delete Team
      * @param Request $request
      * @return JsonResponse
+     * receivng string team_id not PK
      */
     public function deleteTeam(Request $request)
     {
@@ -554,6 +558,20 @@ class TeamService extends ApiBaseService
             // Notify members will be done after notification module is done.
 
         }
+
+        //Delete Associated data | By Raz  // using pk as $team->id
+        /**
+         * Invitation delete
+         * Member Delete
+         * Connection Delete
+         * Chat Delete
+         */
+        TeamConnection::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
+        TeamMemberInvitation::where('team_id', $team->id)->delete();
+        TeamMember::where('team_id', $team->id)->delete();
+        TeamChat::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
+        TeamPrivateChat::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
+
 
         // Send response
         return $this->sendSuccessResponse([], "Team successfully deleted.");
