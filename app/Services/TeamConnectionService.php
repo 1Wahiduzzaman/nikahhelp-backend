@@ -285,14 +285,14 @@ class TeamConnectionService extends ApiBaseService
         ->first();
         if (empty($teamInformation)) {
             return $this->sendErrorResponse('Active team information not found', [], HttpStatusCode::NOT_FOUND);
-        }
+        }    
         // Connected
         $connection_status = 1;
         $searchResult = $this->teamConnectionRepository->getModel()->newQuery();
 
         $searchResult->where('from_team_id', $teamInformation->id);
         $searchResult->orWhere('to_team_id', $teamInformation->id);
-        $queryData = $searchResult->get();
+        $queryData = $searchResult->get();        
         if (!empty($queryData) && count($queryData)) {
             foreach ($queryData as $key => $rInput) {
                 $queryData[$key]['active_teams'] = $teamInformation->id;
@@ -319,7 +319,7 @@ class TeamConnectionService extends ApiBaseService
         }
 
         $resultInfo = TeamConnectionResource::collection($queryData);
-
+        //dd($resultInfo);
         $data = array();
         $data['result'] = $resultInfo;
         $data["connected_teams"] = $connected_teams;
