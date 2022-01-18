@@ -12,6 +12,7 @@ use App\Models\CandidateInformation;
 use App\Models\Generic;
 use App\Models\ShortListedCandidate;
 use App\Models\Team;
+use App\Models\TeamListedCandidate;
 use App\Models\TeamMember;
 use App\Repositories\CandidateRepository;
 use App\Repositories\ShortListedCandidateRepository;
