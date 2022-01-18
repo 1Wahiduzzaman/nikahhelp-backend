@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Enums\HttpStatusCode;
 use App\Http\Resources\RecentJoinCandidateResource;
 use App\Http\Resources\SearchResource;
+use App\Models\Generic;
 use App\Models\Occupation;
 use App\Models\Religion;
 use App\Models\StudyLevel;
@@ -92,7 +93,6 @@ class CandidateService extends ApiBaseService
         RepresentativeRepository $representativeRepository,
         CountryRepository $countryRepository,
         UserRepository $userRepository
-        
     )
     {
         $this->candidateRepository = $candidateRepository;

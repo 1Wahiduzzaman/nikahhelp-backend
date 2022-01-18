@@ -86,6 +86,19 @@ class CandidateTransformer extends TransformerAbstract
             ],
         );
     }
+    /**
+     * @param CandidateInformation $item
+     * @return array
+     */
+    public function transformPersonalInfo(CandidateInformation $item): array
+    {
+        return array_merge(
+            $this->basicInfo($item),
+            [
+                'personal' => $this->personalInfo($item)
+            ],
+        );
+    }
 
     /**
      * @param CandidateInformation $item
@@ -147,6 +160,7 @@ class CandidateTransformer extends TransformerAbstract
             'team_id' => $item->team_id ?? null,
             'teamConnectType' => $item->teamConnectType ?? null,
             'teamConnectStatus' => $item->teamConnectStatus ?? null,
+            'data_input_status' => $item->data_input_status,
         ];
     }
 

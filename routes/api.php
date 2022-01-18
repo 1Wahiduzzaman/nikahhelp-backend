@@ -169,6 +169,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('delete-reason-submit', [DeleteReasonController::class, 'store'])->name('team.delete.reason.submit');
         Route::POST('leave-team', [TeamMembersController::class, 'teamLeave'])->name('team.leave');
         Route::POST('user-info', [UserController::class, 'getUserInfo'])->name('team.user_info');
+        Route::get('candidate-of-team', [TeamController::class, 'candidateOfTeam'])->name('candidate.of.team');
 
         // Team Connection API
         Route::POST('send-connection-request', [TeamConnectionController::class, 'store'])->name('send.team.connection.request');
