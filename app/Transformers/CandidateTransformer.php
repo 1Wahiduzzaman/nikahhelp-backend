@@ -142,7 +142,7 @@ class CandidateTransformer extends TransformerAbstract
     private function candidateSearchData(CandidateInformation $item): array
     {
         return [
-            'user_id' => $item->id,
+            'user_id' => $item->user_id,
             'image' => $item->per_avatar_url ? env('IMAGE_SERVER') . '/' . $item->per_avatar_url : '',
             'first_name' => $item->first_name,
             'last_name' => $item->last_name,
