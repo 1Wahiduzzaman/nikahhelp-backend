@@ -86,6 +86,16 @@ class TeamController extends Controller
     }
 
     /**
+     * Update a family info.
+     * @param CandidateFamilyInfoRequest $request
+     * @return JsonResponse
+     */
+    public function candidateOfTeam(): JsonResponse
+    {
+        return $this->teamService->candidateOfTeam();
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param \App\Models\Team $team
@@ -118,14 +128,14 @@ class TeamController extends Controller
      */
     public function destroy(Request $request)
     {
-        //        
+        //
         return $this->teamService->deleteTeam($request);
     }
 
     public function teamInformation($id)
     {
         return $this->teamService->getTeamInformation($id);
-    }    
+    }
 
     //Admin started / Raz
     public function adminTeamList(Request $request)
@@ -141,11 +151,11 @@ class TeamController extends Controller
     public function adminConnectedTeamList($team_id = null)
     {
         return $this->teamService->getConnectedTeamListForBackend($team_id);
-    }    
+    }
 
     public function adminTeamDelete(Request $request)
     {
-        //        
+        //
         return $this->teamService->adminTeamDelete($request);
     }
 

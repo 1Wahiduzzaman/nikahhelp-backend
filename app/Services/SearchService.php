@@ -142,7 +142,8 @@ class SearchService extends ApiBaseService
                 $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
 
                 /*Excluded Own data*/
-                $candidates = $candidates->whereNotIn('id',[$userId]);
+                $exceptIds = array_merge($userInfo['blockList'],[$userId]);
+                $candidates = $candidates->whereNotIn('id',$exceptIds);
             }
 
             if (isset($request->gender)) {

@@ -6,9 +6,11 @@ namespace App\Services;
 use App\Enums\HttpStatusCode;
 use App\Http\Requests\TeamFromRequest;
 use App\Models\CandidateInformation;
+use App\Models\Generic;
 use App\Models\Team;
 use App\Models\TeamConnection;
 use App\Models\TeamMember;
+use App\Transformers\CandidateTransformer;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -49,18 +51,29 @@ class TeamService extends ApiBaseService
      * @var TeamTransformer
      */
     protected $teamTransformer;
+    /**
+     * @var CandidateTransformer
+     */
+    private $candidateTransformer;
 
     /**
      * TeamService constructor.
      *
      * @param TeamRepository $teamRepository
      */
-    public function __construct(TeamRepository $teamRepository, TeamTransformer $teamTransformer, TeamMemberRepository $teamMemberRepository, UserRepository $userRepository)
+    public function __construct(
+        TeamRepository $teamRepository,
+        TeamTransformer $teamTransformer,
+        TeamMemberRepository $teamMemberRepository,
+        UserRepository $userRepository,
+        CandidateTransformer $candidateTransformer
+    )
     {
         $this->teamRepository = $teamRepository;
         $this->teamTransformer = $teamTransformer;
         $this->teamMemberRepository = $teamMemberRepository;
         $this->userRepository = $userRepository;
+        $this->candidateTransformer = $candidateTransformer;
     }
 
 
@@ -102,7 +115,7 @@ class TeamService extends ApiBaseService
             //     $team->logo = $logo_url['image_path'];
             // }
 
-            if ($request->hasFile('logo')) {                
+            if ($request->hasFile('logo')) {
                 $image = $this->uploadImageThrowGuzzle([
                     'logo'=>$request->file('logo')
                 ]);
@@ -366,7 +379,7 @@ class TeamService extends ApiBaseService
         $team = $this->teamRepository->findOneByProperties([
             "id" => $team_id,
            // "status" => 1
-        ]);       
+        ]);
         /// Team not found exception throw
         if (!$team) {
             return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
@@ -391,12 +404,12 @@ class TeamService extends ApiBaseService
 
         TeamMember::where('team_id','<>', $team->id)
         ->where('user_id', Auth::id())
-        ->update(['status' => 0]);    
+        ->update(['status' => 0]);
 
         //update by 1
         TeamMember::where('team_id', $team->id)
         ->where('user_id', Auth::id())
-        ->update(['status' => 1]);    
+        ->update(['status' => 1]);
 
         // Get Team info for response
         // In future we may need to send notification and messages regarding the team as well
@@ -611,11 +624,11 @@ class TeamService extends ApiBaseService
 
     //Admin
     public function getTeamListForBackend(array $data): JsonResponse
-    {        
+    {
         try {
             $team_infos = Team::with('created_by')->where('status',1)->paginate();
 
-            for ($i = 0; $i < count($team_infos); $i++) {                    
+            for ($i = 0; $i < count($team_infos); $i++) {
                 $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
             }
             return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
@@ -625,11 +638,11 @@ class TeamService extends ApiBaseService
     }
 
     public function getDeletedTeamListForBackend(array $data): JsonResponse
-    {        
+    {
         try {
             $team_infos = Team::with('created_by')->where('status',0)->paginate();
 
-            for ($i = 0; $i < count($team_infos); $i++) {                    
+            for ($i = 0; $i < count($team_infos); $i++) {
                 $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
             }
             return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
@@ -639,12 +652,12 @@ class TeamService extends ApiBaseService
     }
 
     public function getConnectedTeamListForBackend($team_id = null): JsonResponse
-    {        
+    {
         try {
             $team_infos = TeamConnection::where('from_team_id', $team_id)->orWhere('to_team_id', $team_id)
             ->with(['requested_by_user', 'responded_by_user'])->paginate();
 
-            for ($i = 0; $i < count($team_infos); $i++) {                    
+            for ($i = 0; $i < count($team_infos); $i++) {
                 $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
             }
             return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
@@ -654,12 +667,34 @@ class TeamService extends ApiBaseService
     }
 
     public function adminTeamDelete($data) {
-        try{            
+        try{
             Team::where('id', $data->id)->update(['status'=> 0]);
             return $this->sendSuccessResponse([], 'Team deleted Successfully!');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }        
+        }
+    }
+
+    public function candidateOfTeam()
+    {
+        try {
+            $activeTeamId = Generic::getActiveTeamId();
+
+            if (!$activeTeamId) {
+                throw new Exception('Team not found, Please create team first');
+            }
+
+            $activeTeam = $this->teamRepository->findOneByProperties([
+                'id' => $activeTeamId
+            ]);
+
+            $candidateOfTeam = $activeTeam->candidateOfTeam() ;
+
+            $personal_info = $this->candidateTransformer->transformPersonalInfo($candidateOfTeam);
+            return $this->sendSuccessResponse($personal_info, 'Get Candidate of team successfully');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
     }
 
 }

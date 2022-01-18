@@ -160,5 +160,9 @@ class Team extends Model
         return $this->belongsToMany(Team::class,'team_connections','to_team_id','from_team_id' );
     }
 
+    public function candidateOfTeam()
+    {
+        return $this->belongsToMany(CandidateInformation::class,'team_members','team_id','user_id')->wherePivot('user_type','Candidate')->first();
+    }
 
 }
