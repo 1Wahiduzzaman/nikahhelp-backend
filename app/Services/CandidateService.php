@@ -154,6 +154,7 @@ class CandidateService extends ApiBaseService
         }
         $images = $this->imageRepository->findBy(['user_id'=>$userId]);
         $candidate_info = $this->candidateTransformer->transform($candidate);
+        $candidate_info['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
         $candidate_image = $this->candidateTransformer->candidateOtherImage($images);
 
         $candidate_details = array_merge(

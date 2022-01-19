@@ -312,6 +312,7 @@ class UserService extends ApiBaseService
                     $candidateInformation = array();
                 } else {
                     $candidateInformation = $this->candidateTransformer->transform($candidate);
+                    $candidateInformation['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
                 }
 
                 $representativeInformation = $this->representativeRepository->findBy(['user_id' => $request->user_id]);
@@ -319,10 +320,10 @@ class UserService extends ApiBaseService
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'FAIL',
-                'status_code' => $e->getStatusCode(),
+                'status_code' => $e->getCode(),
                 'message' => $e->getMessage(),
                 'error' => ['details' => $e->getMessage()]
-            ], $e->getStatusCode());
+            ], $e->getCode());
 
         }
 
@@ -620,7 +621,7 @@ class UserService extends ApiBaseService
             return $this->sendSuccessResponse($data, 'User List Fetched successfully');
         } catch(Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }        
+        }
 
     }
 
