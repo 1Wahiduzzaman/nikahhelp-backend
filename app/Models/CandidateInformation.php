@@ -477,4 +477,12 @@ class CandidateInformation extends Model
     {
         return $this->hasMany(TeamConnection::class,'requested_by','user_id')->where('connection_status',1);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
