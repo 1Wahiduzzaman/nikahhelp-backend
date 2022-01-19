@@ -4,6 +4,7 @@
 namespace App\Transformers;
 
 use App\Models\CandidateInformation;
+use App\Models\Religion;
 use App\Models\User;
 use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
@@ -247,11 +248,11 @@ class CandidateTransformer extends TransformerAbstract
 //            'mobile_number' => $item->mobile_number,
 //            'mobile_country_code' => $item->mobile_country_code,
             'per_telephone_no' => $item->per_telephone_no,
-            'per_gender' => +$item->per_gender,
+            'per_gender' => CandidateInformation::getGender($item->per_gender),
             'per_height' => +$item->per_height,
             'per_employment_status' => $item->per_employment_status,
-            'per_education_level_id' => +$item->per_education_level_id,
-            'per_religion_id' => +$item->per_religion_id,
+            'per_education_level' => $item->candidateEducationLevel()->exists() ? $item->candidateEducationLevel->name : null,
+            'per_religion' => $item->getReligion()->exists() ? $item->getReligion->name : null,
         ];
     }
 
@@ -322,7 +323,8 @@ class CandidateTransformer extends TransformerAbstract
     {
         $pre_partner_religions = [];
         if (!empty($item->pre_partner_religions)) {
-            $pre_partner_religions = explode(",", $item->pre_partner_religions);
+            $religionsIdes = explode(",", $item->pre_partner_religions);
+            $pre_partner_religions = Religion::whereIn('id',$religionsIdes)->pluck('name')->toArray();
         }
 
         return [
@@ -339,7 +341,7 @@ class CandidateTransformer extends TransformerAbstract
             'preferred_nationality' => $item->preferred_nationality,
             'pre_partner_religion_id' => $pre_partner_religions,
             'pre_ethnicities' => $item->pre_ethnicities,
-            'pre_study_level_id' => $item->pre_study_level_id,
+            'pre_study_level' => $item->preEducationLevel()->exists() ? $item->preEducationLevel->name : null,
             'pre_employment_status' => $item->pre_employment_status,
             'pre_occupation' => $item->pre_occupation,
             'pre_preferred_divorcee' => $item->pre_preferred_divorcee,
