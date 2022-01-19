@@ -369,7 +369,6 @@ class CandidateInformation extends Model
     public function userInfo()
     {
         return $this->belongsTo(CandidateInformation::class, 'user_id', 'user_id');
-
     }
 
     /**
@@ -378,7 +377,6 @@ class CandidateInformation extends Model
     public function candidateEducationLevel()
     {
         return $this->belongsTo(EducationLevel::class, 'per_education_level_id', 'id');
-
     }
 
     /**
@@ -387,7 +385,6 @@ class CandidateInformation extends Model
     public function candidateTeamInfo()
     {
         return $this->hasOne(TeamMember::class, 'user_id', 'user_id')->where('user_type', '=', 'Candidate');
-
     }
 
     /**
@@ -396,7 +393,6 @@ class CandidateInformation extends Model
     public function getCountryOFBirth()
     {
         return $this->belongsTo(Country::class, 'per_country_of_birth', 'id');
-
     }
 
     /**
@@ -419,17 +415,16 @@ class CandidateInformation extends Model
 
     public function shortList()
     {
-        return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id','user_id','user_id')->withTimestamps();
     }
     public function teamList()
     {
-        return $this->belongsToMany(TeamListedCandidate::class, 'team_listed_candidates', 'team_listed_by', 'user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'team_listed_candidates', 'team_listed_by', 'user_id','user_id','user_id')->withTimestamps();
     }
 
     public function blockList()
     {
-//        return $this->belongsTo(CandidateInformation::class, 'block_by', 'user_id')->withTimestamps();
-        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id','user_id','user_id')->withTimestamps();
 
     }
 
