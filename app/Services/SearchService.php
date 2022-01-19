@@ -102,7 +102,7 @@ class SearchService extends ApiBaseService
         //fourth priority religious
 
         try {
-            $candidates = $this->candidateRepository->getModel();
+
             $userInfo = [];
 
             /*Attempt log in */
@@ -118,6 +118,9 @@ class SearchService extends ApiBaseService
             $connectTo = [];
             $userInfo['connectList'] = [];
 
+            $candidates = $this->candidateRepository->getModel();
+            $candidates = $candidates->where('data_input_status','>',2); // collect candidate with at list personal info given
+
             if(Auth::check()){
                 $userId = self::getUserId();
                 $loggedInCandidate = $this->candidateRepository->findOneByProperties([
@@ -131,8 +134,8 @@ class SearchService extends ApiBaseService
                 }
 
                 $activeTeam = $this->teamRepository->findOneByProperties([
-                                                                             'id' => $activeTeamId
-                                                                         ]);
+                    'id' => $activeTeamId
+                ]);
 
                 $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('id')->toArray();
                 $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();

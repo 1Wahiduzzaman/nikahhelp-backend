@@ -120,7 +120,7 @@ class CandidateTransformer extends TransformerAbstract
      */
     public function transformSearchResult(CandidateInformation $item): array
     {
-        return $this->candidateSearchData($item);
+        return $this->candidateCartData($item);
     }
 
     /**
@@ -130,7 +130,7 @@ class CandidateTransformer extends TransformerAbstract
     public function transformShortListUser(User $item): array
     {
         return array_merge(
-            $this->candidateSearchData($item->getCandidate),
+            $this->candidateCartData($item->getCandidate),
             $this->candidateShortListedAdditionalData($item->pivot)
         );
     }
@@ -139,18 +139,18 @@ class CandidateTransformer extends TransformerAbstract
      * @param CandidateInformation $item
      * @return array
      */
-    private function candidateSearchData(CandidateInformation $item): array
+    private function candidateCartData(CandidateInformation $item): array
     {
         return [
-            'user_id' => $item->user_id,
+            'user_id' => $item->id,
             'image' => $item->per_avatar_url ? env('IMAGE_SERVER') . '/' . $item->per_avatar_url : '',
             'first_name' => $item->first_name,
             'last_name' => $item->last_name,
             'screen_name' => $item->screen_name,
             'per_age' => Carbon::now()->diffInYears($item->dob),
             'per_gender' => CandidateInformation::getGender($item->per_gender),
-            'per_nationality' => $item->getNationality->name,
-            'per_religion' => $item->getReligion->name,
+            'per_nationality' => $item->getNationality()->exists() ? $item->getNationality->name : null,
+            'per_religion' => $item->getReligion()->exists() ? $item->getReligion->name : null,
             'per_ethnicity' => $item->per_ethnicity,
             'height' => $item->per_height,
             'is_short_listed' => $item->is_short_listed ?? null,
@@ -160,7 +160,7 @@ class CandidateTransformer extends TransformerAbstract
             'team_id' => $item->team_id ?? null,
             'teamConnectType' => $item->teamConnectType ?? null,
             'teamConnectStatus' => $item->teamConnectStatus ?? null,
-            'data_input_status' => $item->data_input_status,
+            'verification_status' => $item->user->status,
         ];
     }
 
