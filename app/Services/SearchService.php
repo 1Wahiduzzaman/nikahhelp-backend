@@ -96,11 +96,6 @@ class SearchService extends ApiBaseService
      */
     public function filter($request)
     {
-        //first priority gender
-        //second priority age
-        //third priority country
-        //fourth priority religious
-
         try {
 
             $userInfo = [];
@@ -241,7 +236,17 @@ class SearchService extends ApiBaseService
 
                 $candidate->teamConnectType = $teamConnectType;
                 $candidate->teamConnectStatus = $teamConnectStatus;
-                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
+
+                $candidatesResponse[] = array_merge(
+                    $this->candidateTransformer->transformSearchResult($candidate),
+                    [
+                        'personal' => $this->candidateTransformer->transform($candidate)['personal']
+                    ],
+                    [
+                        'preference' => $this->candidateTransformer->transform($candidate)['preference']
+                    ],
+                );
+
             }
             $searchResult['data'] = $candidatesResponse;
             $searchResult['pagination'] = $this->paginationResponse($candidates);

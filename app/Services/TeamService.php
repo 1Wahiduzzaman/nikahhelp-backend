@@ -708,7 +708,7 @@ class TeamService extends ApiBaseService
 
             $candidateOfTeam = $activeTeam->candidateOfTeam() ;
 
-            $personal_info = $this->candidateTransformer->transformPersonalInfo($candidateOfTeam);
+            $personal_info = $this->candidateTransformer->transformPreference($candidateOfTeam);
             return $this->sendSuccessResponse($personal_info, 'Get Candidate of team successfully');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
