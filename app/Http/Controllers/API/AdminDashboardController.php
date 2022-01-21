@@ -10,11 +10,13 @@ use App\Http\Controllers\AppBaseController;
 use Response;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Http\Resources\UserReportResource;
+use App\Models\CandidateInformation;
 use App\Models\RejectedNote;
 use App\Services\AdminService;
 use App\Services\SubscriptionService;
 use App\Repositories\UserRepository;
 use App\Models\User;
+use App\Transformers\CandidateTransformer;
 
 /**
  * Class ShortListedCandidateController
@@ -282,6 +284,9 @@ class AdminDashboardController extends AppBaseController
         //$userInfo->status = 1;
         $userInfo->image_server_base_url = env('IMAGE_SERVER');
         if ($userInfo) {
+            //dd($userInfo->candidate_info);
+            $ci = new CandidateTransformer();
+            $userInfo->candidate_info_modified = $ci->candidateSearchData($userInfo->candidate_info);
             return $this->sendSuccess($userInfo, 'User info loaded successfully', [], FResponse::HTTP_OK);
         } else {
             return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
