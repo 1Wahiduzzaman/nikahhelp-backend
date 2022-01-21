@@ -127,7 +127,7 @@ class AdminDashboardController extends AppBaseController
                 $q->orWhere('email', 'LIKE','%'.$keyword.'%');
                 $q->orWhere('id', $keyword);                
             })
-            ->paginate();
+            ->paginate(10);
         } 
         elseif ($request->has('account_type')) {
             $data = User::where('status', $status)
@@ -140,10 +140,10 @@ class AdminDashboardController extends AppBaseController
                 $q->orWhere('email', 'LIKE','%'.$keyword.'%');
                 $q->orWhere('id', $keyword);                
             })
-            ->paginate();
+            ->paginate(10);
         }
         else {
-            $data = User::where('status', $status)->paginate();
+            $data = User::where('status', $status)->paginate(10);
         }                
         return $data;        
 
