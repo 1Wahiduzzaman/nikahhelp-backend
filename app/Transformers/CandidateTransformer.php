@@ -150,7 +150,9 @@ class CandidateTransformer extends TransformerAbstract
             'screen_name' => $item->screen_name,
             'per_age' => Carbon::now()->diffInYears($item->dob),
             'per_gender' => CandidateInformation::getGender($item->per_gender),
+            'per_nationality_id' => $item->per_nationality,
             'per_nationality' => $item->getNationality()->exists() ? $item->getNationality->name : null,
+            'per_religion_id' => $item->per_religion_id,
             'per_religion' => $item->getReligion()->exists() ? $item->getReligion->name : null,
             'per_ethnicity' => $item->per_ethnicity,
             'height' => $item->per_height,
@@ -248,10 +250,13 @@ class CandidateTransformer extends TransformerAbstract
 //            'mobile_number' => $item->mobile_number,
 //            'mobile_country_code' => $item->mobile_country_code,
             'per_telephone_no' => $item->per_telephone_no,
+            'per_gender_id' => $item->per_gender,
             'per_gender' => CandidateInformation::getGender($item->per_gender),
             'per_height' => (int)$item->per_height,
             'per_employment_status' => $item->per_employment_status,
+            'per_education_level_id' => (int)$item->per_education_level_id,
             'per_education_level' => $item->candidateEducationLevel()->exists() ? $item->candidateEducationLevel->name : null,
+            'per_religion_id' => (int)$item->per_religion_id,
             'per_religion' => $item->getReligion()->exists() ? $item->getReligion->name : null,
         ];
     }
@@ -321,10 +326,11 @@ class CandidateTransformer extends TransformerAbstract
      */
     private function preferenceInfo(CandidateInformation $item): array
     {
+        $pre_partner_religions_id = [];
         $pre_partner_religions = [];
         if (!empty($item->pre_partner_religions)) {
-            $religionsIdes = explode(",", $item->pre_partner_religions);
-            $pre_partner_religions = Religion::whereIn('id',$religionsIdes)->pluck('name')->toArray();
+            $pre_partner_religions_id = explode(",", $item->pre_partner_religions);
+            $pre_partner_religions = Religion::whereIn('id',$pre_partner_religions_id)->pluck('name')->toArray();
         }
 
         return [
@@ -339,8 +345,10 @@ class CandidateTransformer extends TransformerAbstract
             'bloked_countries' => $item->bloked_countries,
             'blocked_cities' => $item->blocked_cities,
             'preferred_nationality' => $item->preferred_nationality,
-            'pre_partner_religion_id' => $pre_partner_religions,
+            'pre_partner_religion_id' => $pre_partner_religions_id,
+            'pre_partner_religion' => $pre_partner_religions,
             'pre_ethnicities' => $item->pre_ethnicities,
+            'pre_study_level_id' => $item->pre_study_level_id,
             'pre_study_level' => $item->preEducationLevel()->exists() ? $item->preEducationLevel->name : null,
             'pre_employment_status' => $item->pre_employment_status,
             'pre_occupation' => $item->pre_occupation,
@@ -385,9 +393,9 @@ class CandidateTransformer extends TransformerAbstract
             'per_mother_tongue' => $item->per_mother_tongue,
             'per_nationality' => (int)$item->per_nationality,
             'per_country_of_birth_id' => (int)$item->per_country_of_birth,
-            'per_country_of_birth' => $item->getCountryOFBirth->name,
+            'per_country_of_birth' => $item->getCountryOFBirth()->exists() ? $item->getCountryOFBirth->name : null,
             'per_current_residence_id' => (int)$item->per_current_residence_country,
-            'per_current_residence' => $item->getCurrentResidenceCountry->name,
+            'per_current_residence' => $item->getCurrentResidenceCountry()->exists() ? $item->getCurrentResidenceCountry->name : null,
             'per_address' => $item->per_address,
             'per_marital_status' => $item->per_marital_status,
             'per_have_children' => boolval($item->per_have_children),
@@ -504,15 +512,24 @@ class CandidateTransformer extends TransformerAbstract
     }
 
     /**
-     * Candidate Other information Only as array
-     * @param CandidateInformation $item
-     * @return array
+     * Create Candidate Other image Image data
+     * Change image to lock image if there is no permission to see
+     * @param object $item
+     * @param bool $isPermit
+     * @return object
      */
-    public function candidateOtherImage(object $item): object
+    public function candidateOtherImage(object $item,bool $isPermit = false): object
     {
-        $item = $item;
         for ($i = 0; $i < count($item); $i++) {
-            $item[$i]->image_path = $item[$i]->image_path ? env('IMAGE_SERVER') . '/' . $item[$i]->image_path : '';
+            if($item[$i]->image_type == 1){
+                $item[$i]->image_path = $item[$i]->image_path ? env('IMAGE_SERVER') . '/' . $item[$i]->image_path : '';
+            }else{
+                if($isPermit){
+                    $item[$i]->image_path = $item[$i]->image_path ? env('IMAGE_SERVER') . '/' . $item[$i]->image_path : '';
+                }else{
+                    $item[$i]->image_path = env('IMAGE_SERVER') . '/' . 'site_img/image_lock.jpg';
+                }
+            }
         }
         return $item;
     }
