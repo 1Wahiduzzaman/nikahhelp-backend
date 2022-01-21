@@ -66,7 +66,6 @@ Route::get('v1/utilities/religions', [ReligionController::class, 'index'])->name
 
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'v1'], function () {
-
         //  Settings
         Route::POST('switch-account', [UserController::class, 'switchAccount']);
         Route::POST('change-password', [UserController::class, 'changePassword']);
@@ -135,8 +134,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::GET('list-notification', [AllNotificationController::class, 'listNotifications'])->name('all-notification.list-notification');
         Route::GET('seen-notification', [AllNotificationController::class, 'seenNotification'])->name('all-notification.seen-notification');
         // End Notification
-        
-        
+
+
         //User / Raz
         Route::get('individual-rejected-notes/{id}', [UserController::class, 'getRejectedNotes'])->name('user.rejected-notes');
 
@@ -301,7 +300,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('rejected-user-list', [AdminDashboardController::class, 'rejectedUserList'])->name('user.rejected');
         Route::get('user-info/{id}', [AdminDashboardController::class, 'UserInfo'])->name('user.user-info');
         Route::post('user-verify-reject', [AdminDashboardController::class, 'verifyRejectUser'])->name('user.verify_reject');
-        Route::get('subscription-report', [AdminDashboardController::class, 'subscription'])->name('team.subscription.report');        
+        Route::get('subscription-report', [AdminDashboardController::class, 'subscription'])->name('team.subscription.report');
 
         //Team
         Route::GET('team-list', [TeamController::class, 'adminTeamList'])->name('team.list');

@@ -398,6 +398,14 @@ class CandidateInformation extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+    public function getCurrentResidenceCountry()
+    {
+        return $this->belongsTo(Country::class, 'per_current_residence_country', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function getPetnarReligion()
     {
         return $this->belongsTo(Religion::class, 'pre_partner_religions', 'id');
