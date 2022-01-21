@@ -561,10 +561,11 @@ class TeamService extends ApiBaseService
 
         //Delete Associated data | By Raz  // using pk as $team->id
         /**
-         * Invitation delete
+         * Invitation Data delete
          * Member Delete
          * Connection Delete
-         * Chat Delete
+         * Team Chat Delete
+         * Team Private Chat Delete
          */
         TeamConnection::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
         TeamMemberInvitation::where('team_id', $team->id)->delete();
