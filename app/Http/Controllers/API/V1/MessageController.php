@@ -44,7 +44,7 @@ class MessageController extends Controller
      *
      */
     public function teamChatList(Request $request)
-    {
+    {        
         return $this->messageService->getTeamList($request->all());
     }
 
