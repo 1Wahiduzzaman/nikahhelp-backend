@@ -272,7 +272,7 @@ class TeamMemberService extends ApiBaseService
         $newOwner = $request['new_owner'];
         $team = $this->teamRepository->findOneByProperties(
             [
-                "team_id" => $teamId
+                "id" => $teamId
             ]
         );
         $user = $this->teamMemberRepository->findOneByProperties([
