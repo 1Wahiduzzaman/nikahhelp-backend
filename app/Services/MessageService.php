@@ -417,26 +417,32 @@ class MessageService extends ApiBaseService
      * @return JsonResponse
      */
     public function getTeamList(array $data): JsonResponse
-    {
+    {        
         $user_id = Auth::id();        
 
         try {
             $active_team = TeamMember::where('user_id', $user_id)
             ->where('status', 1)
             ->first();
-            $active_team_id = isset($active_team) ? $active_team->team_id : 0;
+            $active_team_id = isset($active_team) ? $active_team->team_id : 0;                     
             $team_infos = Team::
-                    with(["team_members" => function($query) {
-                            $query->select('team_id', 'user_id')->with('last_message');  //last message from messages table
+            with(["team_members" => function($query) {
+                    $query->select('team_id', 'user_id')
+                    ->with(['user' => function($q) {
+                        $q->with(['candidate_info', 'representative_info']);
                     }])
-                    ->with('last_group_message')  // last message from team_messages table
-                    ->where('id', $active_team_id)
-                    ->where('status', 1)
-                    ->first();
-                    $count = 0;
-                    $team_infos->logo = url('storage/' . @$team_infos->logo);
-
-                    // count unread
+                    ->with('last_message');  //last message from messages table
+            }])
+            ->with('last_group_message')  // last message from team_messages table
+            ->where('id', $active_team_id)
+            ->where('status', 1)
+            ->first();                    
+            $count = 0;         
+            if(isset($team_infos)) {
+                $team_infos->logo = isset($team_infos->logo) ? env('IMAGE_SERVER') .'/'. $team_infos->logo : '';                    
+                $team_infos->base_image_url = @env('IMAGE_SERVER');                    
+                // count unread
+                if(isset($team_infos->team_members)) {
                     $count = $team_infos->team_members->filter(function($item, $key){                
                         return (isset($item->last_message['seen']) && $item->last_message['seen'] == 0) || (isset($item->last_message['seen']) && $item->last_message['seen'] == null);
                     })->count();
@@ -446,7 +452,11 @@ class MessageService extends ApiBaseService
                         $count+=1;
                     }
                     $team_infos->unread_notification_count = $count;
+                }                    
                 return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
+            } else {
+                return $this->sendErrorResponse('No Result Found!');
+            }                                               
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
@@ -861,7 +871,15 @@ class MessageService extends ApiBaseService
 
     public function getUsersChatHistory($chat_id = null) {
         try{
-            $messages = Chat::with('message_history')
+            $messages = Chat::with(['message_history' => function($q) {
+                $q->with(['sender'=>function($q1) {
+                    $q1->select(['full_name', 'id']);
+                }]);
+
+                $q->with(['receiver'=>function($q2) {
+                    $q2->select(['full_name', 'id']);
+                }]);
+            }])
             ->where('id', $chat_id)            
             ->first();
             return $this->sendSuccessResponse($messages, 'Message fetched Successfully!');
