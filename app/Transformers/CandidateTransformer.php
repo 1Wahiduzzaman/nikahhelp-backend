@@ -129,6 +129,15 @@ class CandidateTransformer extends TransformerAbstract
      * @param CandidateInformation $item
      * @return array
      */
+    public function candidateSearchData(CandidateInformation $item)
+    {
+        return $this->candidateCartData($item);
+    }
+
+    /**
+     * @param CandidateInformation $item
+     * @return array
+     */
     public function transformShortListUser(User $item): array
     {
         return array_merge(
