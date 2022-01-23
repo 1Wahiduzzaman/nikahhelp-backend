@@ -155,7 +155,7 @@ class CandidateService extends ApiBaseService
         $images = $this->imageRepository->findBy(['user_id'=>$userId]);
         $candidate_info = $this->candidateTransformer->transform($candidate);
         $candidate_info['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
-        $candidate_image = $this->candidateTransformer->candidateOtherImage($images);
+        $candidate_image = $this->candidateTransformer->candidateOtherImage($images,CandidateImage::getPermissionStatus($userId));
 
         $candidate_details = array_merge(
             $candidate_info,
@@ -239,7 +239,7 @@ class CandidateService extends ApiBaseService
             $data['occupations'] = Occupation::all();
             $data['validation_info'] = $this->candidateTransformer->transformPersonalVerification($candidate);;
             $images = $this->imageRepository->findBy(['user_id'=>$userId]);
-            $images = $this->candidateTransformer->candidateOtherImage($images);
+            $images = $this->candidateTransformer->candidateOtherImage($images,true);
 //            for ($i = 0; $i < count($images); $i++) {
 //                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
 //            }
@@ -809,7 +809,7 @@ class CandidateService extends ApiBaseService
             $avatar_image_url = $candidate->per_avatar_url;
             $main_image_url = $candidate->per_main_image_url;
             $images = $this->imageRepository->findBy(['user_id'=>$userId]);
-            $images = $this->candidateTransformer->candidateOtherImage($images);
+            $images = $this->candidateTransformer->candidateOtherImage($images,true);
 //            for ($i = 0; $i < count($images); $i++) {
 //                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
 //            }
@@ -890,7 +890,7 @@ class CandidateService extends ApiBaseService
 
             $images = $this->imageRepository->findBy($searchCriteria);
 
-            $images = $this->candidateTransformer->candidateOtherImage($images);
+            $images = $this->candidateTransformer->candidateOtherImage($images,true);
 
 //            for ($i = 0; $i < count($images); $i++) {
 ////            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
@@ -1084,18 +1084,14 @@ class CandidateService extends ApiBaseService
 
         $searchCriteria = ["user_id" => $user_id];
         $avatar_image_url = $candidate->per_avatar_url;
-        $main_image_url = $candidate->per_main_image_url;
 
         $images = $this->imageRepository->findBy($searchCriteria);
 
-        $images = $this->candidateTransformer->candidateOtherImage($images);
-//        for ($i = 0; $i < count($images); $i++) {
-//            $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
-//        }
+        $images = $this->candidateTransformer->candidateOtherImage($images,CandidateImage::getPermissionStatus($user_id));
 
         $data = array();
         $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
-        $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'. $main_image_url : '';
+        $data["main_image_url"] = CandidateImage::getCandidateMainImage($user_id);
         $data["other_images"] = $images;
 
         return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
@@ -1123,7 +1119,9 @@ class CandidateService extends ApiBaseService
 
         $shortListedCandidates = [];
         foreach ($recentJoinUsers as $user){
-            $shortListedCandidates[] = $user->getCandidate;
+            $candidate = $user->getCandidate;
+            $candidate->per_main_image_url = $candidate->per_avatar_url;
+            $shortListedCandidates[] = $candidate;
         }
 
         $formatted_data = RecentJoinCandidateResource::collection($shortListedCandidates);

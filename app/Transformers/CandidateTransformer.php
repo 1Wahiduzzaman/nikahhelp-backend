@@ -3,7 +3,9 @@
 
 namespace App\Transformers;
 
+use App\Models\CandidateImage;
 use App\Models\CandidateInformation;
+use App\Models\Religion;
 use App\Models\User;
 use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
@@ -120,7 +122,7 @@ class CandidateTransformer extends TransformerAbstract
      */
     public function transformSearchResult(CandidateInformation $item): array
     {
-        return $this->candidateSearchData($item);
+        return $this->candidateCartData($item);
     }
 
     /**
@@ -130,7 +132,7 @@ class CandidateTransformer extends TransformerAbstract
     public function transformShortListUser(User $item): array
     {
         return array_merge(
-            $this->candidateSearchData($item->getCandidate),
+            $this->candidateCartData($item->getCandidate),
             $this->candidateShortListedAdditionalData($item->pivot)
         );
     }
@@ -139,18 +141,20 @@ class CandidateTransformer extends TransformerAbstract
      * @param CandidateInformation $item
      * @return array
      */
-    public function candidateSearchData(CandidateInformation $item): array
+    private function candidateCartData(CandidateInformation $item): array
     {
         return [
-            'user_id' => $item->id,
-            'image' => $item->per_avatar_url ? env('IMAGE_SERVER') . '/' . $item->per_avatar_url : '',
+            'user_id' => $item->user_id,
+            'image' => CandidateImage::getCandidateMainImage($item->user_id),
             'first_name' => $item->first_name,
             'last_name' => $item->last_name,
             'screen_name' => $item->screen_name,
             'per_age' => Carbon::now()->diffInYears($item->dob),
             'per_gender' => CandidateInformation::getGender($item->per_gender),
-            'per_nationality' => $item->getNationality->name,
-            'per_religion' => $item->getReligion->name,
+            'per_nationality_id' => $item->per_nationality,
+            'per_nationality' => $item->getNationality()->exists() ? $item->getNationality->name : null,
+            'per_religion_id' => $item->per_religion_id,
+            'per_religion' => $item->getReligion()->exists() ? $item->getReligion->name : null,
             'per_ethnicity' => $item->per_ethnicity,
             'height' => $item->per_height,
             'is_short_listed' => $item->is_short_listed ?? null,
@@ -160,7 +164,7 @@ class CandidateTransformer extends TransformerAbstract
             'team_id' => $item->team_id ?? null,
             'teamConnectType' => $item->teamConnectType ?? null,
             'teamConnectStatus' => $item->teamConnectStatus ?? null,
-            'data_input_status' => $item->data_input_status,
+            'verification_status' => $item->user->status,
         ];
     }
 
@@ -229,8 +233,8 @@ class CandidateTransformer extends TransformerAbstract
         return [
             'per_ethnicity' => $item->per_ethnicity,
             'per_mother_tongue' => $item->per_mother_tongue,
-            'per_nationality' => +$item->per_nationality,
-            'per_country_of_birth' => +$item->per_country_of_birth,
+            'per_nationality' => (int)$item->per_nationality,
+            'per_country_of_birth' => (int)$item->per_country_of_birth,
             'per_health_condition' => $item->per_health_condition,
         ];
     }
@@ -247,11 +251,14 @@ class CandidateTransformer extends TransformerAbstract
 //            'mobile_number' => $item->mobile_number,
 //            'mobile_country_code' => $item->mobile_country_code,
             'per_telephone_no' => $item->per_telephone_no,
-            'per_gender' => +$item->per_gender,
-            'per_height' => +$item->per_height,
+            'per_gender_id' => $item->per_gender,
+            'per_gender' => CandidateInformation::getGender($item->per_gender),
+            'per_height' => (int)$item->per_height,
             'per_employment_status' => $item->per_employment_status,
-            'per_education_level_id' => +$item->per_education_level_id,
-            'per_religion_id' => +$item->per_religion_id,
+            'per_education_level_id' => (int)$item->per_education_level_id,
+            'per_education_level' => $item->candidateEducationLevel()->exists() ? $item->candidateEducationLevel->name : null,
+            'per_religion_id' => (int)$item->per_religion_id,
+            'per_religion' => $item->getReligion()->exists() ? $item->getReligion->name : null,
         ];
     }
 
@@ -320,16 +327,18 @@ class CandidateTransformer extends TransformerAbstract
      */
     private function preferenceInfo(CandidateInformation $item): array
     {
+        $pre_partner_religions_id = [];
         $pre_partner_religions = [];
         if (!empty($item->pre_partner_religions)) {
-            $pre_partner_religions = explode(",", $item->pre_partner_religions);
+            $pre_partner_religions_id = explode(",", $item->pre_partner_religions);
+            $pre_partner_religions = Religion::whereIn('id',$pre_partner_religions_id)->pluck('name')->toArray();
         }
 
         return [
-            'pre_partner_age_min' => +$item->pre_partner_age_min,
-            'pre_partner_age_max' => +$item->pre_partner_age_max,
-            'pre_height_min' => +$item->pre_height_min,
-            'pre_height_max' => +$item->pre_height_max,
+            'pre_partner_age_min' => (int)$item->pre_partner_age_min,
+            'pre_partner_age_max' => (int)$item->pre_partner_age_max,
+            'pre_height_min' => (int)$item->pre_height_min,
+            'pre_height_max' => (int)$item->pre_height_max,
             'pre_has_country_allow_preference' => boolval($item->pre_has_country_allow_preference),
             'preferred_countries' => $item->preferred_countries,
             'preferred_cities' => $item->preferred_cities,
@@ -337,9 +346,11 @@ class CandidateTransformer extends TransformerAbstract
             'bloked_countries' => $item->bloked_countries,
             'blocked_cities' => $item->blocked_cities,
             'preferred_nationality' => $item->preferred_nationality,
-            'pre_partner_religion_id' => $pre_partner_religions,
+            'pre_partner_religion_id' => $pre_partner_religions_id,
+            'pre_partner_religion' => $pre_partner_religions,
             'pre_ethnicities' => $item->pre_ethnicities,
             'pre_study_level_id' => $item->pre_study_level_id,
+            'pre_study_level' => $item->preEducationLevel()->exists() ? $item->preEducationLevel->name : null,
             'pre_employment_status' => $item->pre_employment_status,
             'pre_occupation' => $item->pre_occupation,
             'pre_preferred_divorcee' => $item->pre_preferred_divorcee,
@@ -347,29 +358,17 @@ class CandidateTransformer extends TransformerAbstract
             'pre_other_preference' => $item->pre_other_preference,
             'pre_description' => $item->pre_description,
             "pre_pros_part_status" => $item->pre_pros_part_status,
-
-            'pre_strength_of_character_rate' => +$item->pre_strength_of_character_rate,
-//            'pre_strength_of_character_rate_string' => $item->pre_strength_of_character_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_strength_of_character_rate] : '',
-            'pre_look_and_appearance_rate' => +$item->pre_look_and_appearance_rate,
-//            'pre_look_and_appearance_rate_string' => $item->pre_look_and_appearance_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_look_and_appearance_rate] : '',
-            'pre_religiosity_or_faith_rate' => +$item->pre_religiosity_or_faith_rate,
-//            'pre_religiosity_or_faith_rate_string' => $item->pre_religiosity_or_faith_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_religiosity_or_faith_rate] : '',
-            'pre_manners_socialskill_ethics_rate' => +$item->pre_manners_socialskill_ethics_rate,
-//            'pre_manners_socialskill_ethics_rate_string' => $item->pre_manners_socialskill_ethics_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_manners_socialskill_ethics_rate] : '',
-            'pre_emotional_maturity_rate' => +$item->pre_emotional_maturity_rate,
-//            'pre_emotional_maturity_rate_string' => $item->pre_emotional_maturity_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_emotional_maturity_rate] : '',
-            'pre_good_listener_rate' => +$item->pre_good_listener_rate,
-//            'pre_good_listener_rate_string' => $item->pre_good_listener_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_good_listener_rate] : '',
-            'pre_good_talker_rate' => +$item->pre_good_talker_rate,
-//            'pre_good_talker_rate_string' => $item->pre_good_talker_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_good_talker_rate] : '',
-            'pre_wiling_to_learn_rate' => +$item->pre_wiling_to_learn_rate,
-//            'pre_wiling_to_learn_rate_string' => $item->pre_wiling_to_learn_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_wiling_to_learn_rate] : '',
-            'pre_family_social_status_rate' => +$item->pre_family_social_status_rate,
-//            'pre_family_social_status_rate_string' => $item->pre_family_social_status_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_family_social_status_rate] : '',
-            'pre_employment_wealth_rate' => +$item->pre_employment_wealth_rate,
-//            'pre_employment_wealth_rate_string' => $item->pre_employment_wealth_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_employment_wealth_rate] : '',
-            'pre_education_rate' => +$item->pre_education_rate,
-//            'pre_education_rate_string' => $item->pre_education_rate ? CandidateInformation::RATE_TO_STRING[$item->pre_education_rate] : '',
+            'pre_strength_of_character_rate' => (int)$item->pre_strength_of_character_rate,
+            'pre_look_and_appearance_rate' => (int)$item->pre_look_and_appearance_rate,
+            'pre_religiosity_or_faith_rate' => (int)$item->pre_religiosity_or_faith_rate,
+            'pre_manners_socialskill_ethics_rate' => (int)$item->pre_manners_socialskill_ethics_rate,
+            'pre_emotional_maturity_rate' => (int)$item->pre_emotional_maturity_rate,
+            'pre_good_listener_rate' => (int)$item->pre_good_listener_rate,
+            'pre_good_talker_rate' => (int)$item->pre_good_talker_rate,
+            'pre_wiling_to_learn_rate' => (int)$item->pre_wiling_to_learn_rate,
+            'pre_family_social_status_rate' => (int)$item->pre_family_social_status_rate,
+            'pre_employment_wealth_rate' => (int)$item->pre_employment_wealth_rate,
+            'pre_education_rate' => (int)$item->pre_education_rate,
             'pre_things_important_status' => $item->pre_things_important_status,
         ];
     }
@@ -385,22 +384,25 @@ class CandidateTransformer extends TransformerAbstract
             'mobile_number' => $item->mobile_number,
             'mobile_country_code' => $item->mobile_country_code,
             'per_telephone_no' => $item->per_telephone_no,
-            'per_gender' => +$item->per_gender,
-            'per_height' => +$item->per_height,
+            'per_gender' => (int)$item->per_gender,
+            'per_height' => (int)$item->per_height,
             'per_employment_status' => $item->per_employment_status,
-            'per_education_level_id' => +$item->per_education_level_id,
-            'per_religion_id' => +$item->per_religion_id,
+            'per_education_level_id' => (int)$item->per_education_level_id,
+            'per_education_level' => $item->candidateEducationLevel()->exists() ? $item->candidateEducationLevel->name : null,
+            'per_religion_id' => (int)$item->per_religion_id,
             'per_ethnicity' => $item->per_ethnicity,
             'per_mother_tongue' => $item->per_mother_tongue,
-            'per_nationality' => +$item->per_nationality,
-            'per_country_of_birth' => +$item->per_country_of_birth,
-            'per_current_residence' => +$item->per_current_residence,
+            'per_nationality' => (int)$item->per_nationality,
+            'per_country_of_birth_id' => (int)$item->per_country_of_birth,
+            'per_country_of_birth' => $item->getCountryOFBirth()->exists() ? $item->getCountryOFBirth->name : null,
+            'per_current_residence_id' => (int)$item->per_current_residence_country,
+            'per_current_residence' => $item->getCurrentResidenceCountry()->exists() ? $item->getCurrentResidenceCountry->name : null,
             'per_address' => $item->per_address,
             'per_marital_status' => $item->per_marital_status,
             'per_have_children' => boolval($item->per_have_children),
             'per_children' => $item->per_children,
             'per_currently_living_with' => $item->per_currently_living_with,
-            'per_willing_to_relocate' => +$item->per_willing_to_relocate,
+            'per_willing_to_relocate' => (int)$item->per_willing_to_relocate,
             'per_smoker' => boolval($item->per_smoker),
             'per_language_speak' => $item->per_language_speak,
             'per_hobbies_interests' => $item->per_hobbies_interests,
@@ -409,7 +411,7 @@ class CandidateTransformer extends TransformerAbstract
             'per_thankfull_for' => $item->per_thankfull_for,
             'per_about' => $item->per_about,
             'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') . '/' . $item->per_avatar_url : '',
-            'per_main_image_url' => $item->per_main_image_url ? env('IMAGE_SERVER') . '/' . $item->per_main_image_url : '',
+            'per_main_image_url' => CandidateImage::getCandidateMainImage($item->user_id),
             'anybody_can_see' => $item->anybody_can_see,
             'only_team_can_see' => $item->only_team_can_see,
             'team_connection_can_see' => $item->team_connection_can_see,
@@ -511,15 +513,24 @@ class CandidateTransformer extends TransformerAbstract
     }
 
     /**
-     * Candidate Other information Only as array
-     * @param CandidateInformation $item
-     * @return array
+     * Create Candidate Other image Image data
+     * Change image to lock image if there is no permission to see
+     * @param object $item
+     * @param bool $isPermit
+     * @return object
      */
-    public function candidateOtherImage(object $item): object
+    public function candidateOtherImage(object $item,bool $isPermit = false): object
     {
-        $item = $item;
         for ($i = 0; $i < count($item); $i++) {
-            $item[$i]->image_path = $item[$i]->image_path ? env('IMAGE_SERVER') . '/' . $item[$i]->image_path : '';
+            if($item[$i]->image_type == 1){
+                $item[$i]->image_path = $item[$i]->image_path ? env('IMAGE_SERVER') . '/' . $item[$i]->image_path : '';
+            }else{
+                if($isPermit){
+                    $item[$i]->image_path = $item[$i]->image_path ? env('IMAGE_SERVER') . '/' . $item[$i]->image_path : '';
+                }else{
+                    $item[$i]->image_path = env('IMAGE_SERVER') . '/' . 'site_img/image_lock.jpg';
+                }
+            }
         }
         return $item;
     }

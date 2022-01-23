@@ -152,12 +152,12 @@ class Team extends Model
 
     public function sentRequest()
     {
-        return $this->belongsToMany(Team::class,'team_connections','from_team_id','to_team_id' );
+        return $this->belongsToMany(Team::class,'team_connections','from_team_id','to_team_id' )->wherePivot('connection_status',1);
     }
 
     public function receivedRequest()
     {
-        return $this->belongsToMany(Team::class,'team_connections','to_team_id','from_team_id' );
+        return $this->belongsToMany(Team::class,'team_connections','to_team_id','from_team_id' )->wherePivot('connection_status',1);
     }
 
     public function candidateOfTeam()

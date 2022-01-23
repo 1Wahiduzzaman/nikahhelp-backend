@@ -26,8 +26,19 @@ class UserFactory extends Factory
             'full_name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
             'email_verified_at' => now(),
+            "is_verified" => 1,
+            "status" => "1",
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            "locked_at" => null,
+            "locked_end" => null,
             'remember_token' => Str::random(10),
+            "created_at" => now(),
+            "updated_at" => now(),
+            "stripe_id" => null,
+            "card_brand" => null,
+            "card_last_four" => null,
+            "trial_ends_at" => null,
+            "account_type" => 1,
         ];
     }
 
