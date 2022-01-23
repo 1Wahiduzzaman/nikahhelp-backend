@@ -471,8 +471,8 @@ class MessageService extends ApiBaseService
             ->first();                    
             $count = 0;         
             if(isset($team_infos)) {
-                $team_infos->logo = isset($team_infos->logo) ? env('IMAGE_SERVER') .'/'. $team_infos->logo : '';                    
-                $team_infos->base_image_url = @env('IMAGE_SERVER');                    
+                // $team_infos->logo = isset($team_infos->logo) ? env('IMAGE_SERVER') .'/'. $team_infos->logo : '';                    
+                // $team_infos->base_image_url = @env('IMAGE_SERVER');                    
                 // count unread
                 if(isset($team_infos->team_members)) {
                     $count = $team_infos->team_members->filter(function($item, $key){                
