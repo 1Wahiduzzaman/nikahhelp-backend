@@ -112,7 +112,7 @@ class BlockListAPIController extends AppBaseController
                 $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $candidate->team_id = $teamId;
-                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);;
+                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
             }
 
             $pagination = $this->paginationResponse($blockListCandidates);
