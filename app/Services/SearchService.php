@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Models\CandidateImage;
 use App\Models\Generic;
 use App\Models\Team;
 use App\Models\TeamConnection;
@@ -217,7 +218,7 @@ class SearchService extends ApiBaseService
                 $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
                 $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
                 $candidate->is_teamListed = in_array($candidate->id,$userInfo['teamList']);
-                $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
+                $teamId = $candidate->active_team ? $candidate->active_team->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $candidate->team_id = $teamId;
                 /* Find Team Connection Status*/

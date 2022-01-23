@@ -709,7 +709,12 @@ class TeamService extends ApiBaseService
 
             $candidateOfTeam = $activeTeam->candidateOfTeam() ;
 
+            if(!$candidateOfTeam){
+                throw new Exception('Team has no candidate, please join candidate first');
+            }
+
             $personal_info = $this->candidateTransformer->transformPreference($candidateOfTeam);
+            $personal_info['personal']['per_gender'] = $this->candidateTransformer->transformSearchResult($candidateOfTeam)['per_gender'];
             return $this->sendSuccessResponse($personal_info, 'Get Candidate of team successfully');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());

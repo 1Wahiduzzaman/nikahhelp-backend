@@ -380,11 +380,12 @@ class CandidateInformation extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function candidateTeamInfo()
+    public function candidateTeam()
     {
-        return $this->hasOne(TeamMember::class, 'user_id', 'user_id')->where('user_type', '=', 'Candidate');
+        return $this->hasMany(TeamMember::class,'user_id','user_id')
+            ->where('user_type','Candidate');
     }
 
     /**
@@ -419,17 +420,27 @@ class CandidateInformation extends Model
         return $this->belongsTo(Religion::class, 'pre_partner_religions', 'id');
     }
 
-    /// Profile suggestions
-
+    /**
+     * @return BelongsToMany
+     */
     public function shortList()
     {
         return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id','user_id','user_id')->withTimestamps();
     }
+
+    /**
+     * Return Candidate information team listed by user
+     * @return BelongsToMany
+     */
     public function teamList()
     {
         return $this->belongsToMany(CandidateInformation::class, 'team_listed_candidates', 'team_listed_by', 'user_id','user_id','user_id')->withTimestamps();
     }
 
+    /**
+     * Return Candidate information block listed by user
+     * @return BelongsToMany
+     */
     public function blockList()
     {
         return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id','user_id','user_id')->withTimestamps();
@@ -445,13 +456,12 @@ class CandidateInformation extends Model
 
     }
 
-    public function candidateTeam()
-    {
-        return $this->hasMany(TeamMember::class,'user_id','user_id')
-            ->where('user_type','Candidate');
-    }
-
-    public static function getGender ($id)
+    /**
+     * Convert gender id to sting
+     * @param $id
+     * @return string
+     */
+    public static function getGender (int $id) : string
     {
         $gender = null;
 
@@ -488,4 +498,23 @@ class CandidateInformation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function teamMember()
+    {
+        return $this->hasMany(TeamMember::class,'user_id','user_id');
+    }
+
+    public function activeTeams()
+    {
+        return $this->belongsToMany(Team::class,'team_members','user_id','team_id','user_id','id')->wherePivot('status',1);
+    }
+
+    public function getActiveTeamAttribute()
+    {
+        return $this->activeTeams->first();
+    }
+
 }

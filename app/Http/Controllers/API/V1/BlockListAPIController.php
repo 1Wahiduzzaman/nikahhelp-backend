@@ -6,6 +6,7 @@ use App\Enums\HttpStatusCode;
 use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\BlockList\CreateBlockListAPIRequest;
 use App\Http\Resources\BlockListResource;
+use App\Models\CandidateImage;
 use App\Models\CandidateInformation;
 use App\Models\Generic;
 use App\Repositories\BlockListRepository;
@@ -111,7 +112,7 @@ class BlockListAPIController extends AppBaseController
                 $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $candidate->team_id = $teamId;
-                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
+                $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);;
             }
 
             $pagination = $this->paginationResponse($blockListCandidates);
@@ -182,6 +183,7 @@ class BlockListAPIController extends AppBaseController
                 $teamShortListUser->getCandidate->team_id = $teamId;
                 $shortListedBy = CandidateInformation::where('user_id', $teamShortListUser->pivot->block_by)->first();
                 $teamShortListUser->pivot->shortlisted_by =$shortListedBy->first_name.' '. $shortListedBy->last_name;
+
                 $candidatesResponse[] = $this->candidateTransformer->transformShortListUser($teamShortListUser);
             }
 
@@ -189,7 +191,7 @@ class BlockListAPIController extends AppBaseController
 
             return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!',$pagination, HttpStatusCode::CREATED);
 
-        }catch (Exception $exception) {
+        }catch (\Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }

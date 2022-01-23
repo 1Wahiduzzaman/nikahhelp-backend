@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class CandidateImage extends Model
 {
@@ -57,4 +58,59 @@ class CandidateImage extends Model
         }
         return constant('self::'.$image_type);
     }
+
+    public static function getPermissionStatus(int $candidateId):bool
+    {
+        $status = false;
+        $auth = Auth::user();
+
+        if(!$auth || !$candidateId){ /* if the user is not logged in or there is on candidate id than return false*/
+            return  $status;
+        }
+        $auth = CandidateInformation::where('user_id',Auth::id())->first();
+        $candidate = CandidateInformation::where('user_id',$candidateId)->first();
+        if($auth->user_id == $candidate->user_id){ /* if auth id and candidate id is same it will return true */
+            return $status = true;
+        }
+
+        if (!$candidate->active_team) {
+            return $status ;
+        }
+
+        /* Only Team Can see */
+        if($candidate->only_team_can_see){
+            return $status = in_array($auth->user_id,$candidate->active_team->team_members->pluck('user_id')->toArray());
+        }
+
+        /* Only Connected Team Can see */
+        if($candidate->team_connection_can_see){
+            if (!$auth->active_team) {
+                return $status;
+            }
+            $candidateTeam = $candidate->active_team;
+            $connectFrom = $candidateTeam->sentRequest->pluck('team_id')->toArray();
+            $connectTo = $candidateTeam->receivedRequest->pluck('team_id')->toArray();
+            $connectedTeamList = array_unique (array_merge($connectFrom,$connectTo)) ;
+            return $status = in_array($auth->active_team->team_id,$connectedTeamList);
+        }
+        /* any body can see */
+        if($candidate->anybody_can_see){
+            return $status = true;
+        }
+
+        return $status;
+    }
+
+    public static function getCandidateMainImage(int $candidateId)
+    {
+        $status = self::getPermissionStatus($candidateId);
+        $candidate = CandidateInformation::where('user_id',$candidateId)->first();
+        $mainImage = $candidate->per_avatar_url ? env('IMAGE_SERVER') . '/' . $candidate->per_avatar_url : '';
+        if($status){
+            $mainImage = $candidate->per_main_image_url ? env('IMAGE_SERVER') . '/' . $candidate->per_main_image_url : '';
+        }
+
+        return $mainImage;
+    }
+
 }
