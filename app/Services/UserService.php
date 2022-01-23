@@ -189,10 +189,12 @@ class UserService extends ApiBaseService
             /* Load data input status */
             if($userInfo->account_type == 1){
                 $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
-                $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url ? env('IMAGE_SERVER') .'/'. $userInfo->getCandidate->per_main_image_url : '';
+                //$userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url ? env('IMAGE_SERVER') .'/'. $userInfo->getCandidate->per_main_image_url : '';
+                $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
             }elseif ($userInfo->account_type == 2){
                 $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
-                $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url ? env('IMAGE_SERVER') .'/'. $userInfo->getRepresentative->per_main_image_url : '';
+                // $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url ? env('IMAGE_SERVER') .'/'. $userInfo->getRepresentative->per_main_image_url : '';
+                $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
             }
 
             /* attempt login */

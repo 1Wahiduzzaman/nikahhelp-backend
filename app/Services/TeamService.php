@@ -251,11 +251,11 @@ class TeamService extends ApiBaseService
                     ->where('status', 1)
                     ->get();
 
-                for ($i = 0; $i < count($team_infos); $i++) {
-                    // logo storage code has a bug. need to solve it first. then will change the location
-                    //$team_infos[$i]->logo = url('storage/' . $team_infos[$i]->logo);
-                    $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
-                }
+                // for ($i = 0; $i < count($team_infos); $i++) {
+                //     // logo storage code has a bug. need to solve it first. then will change the location
+                //     //$team_infos[$i]->logo = url('storage/' . $team_infos[$i]->logo);
+                //     $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
+                // }
                 return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
             } else {
                 return $this->sendSuccessResponse(array(), 'Data fetched Successfully!');
@@ -286,7 +286,7 @@ class TeamService extends ApiBaseService
                 ->with("team_members", 'team_invited_members','created_by')
                 ->where('team_id', '=', $teamId)
                 ->get();
-            $team_infos[0]->logo = isset($team_infos[0]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[0]->logo : '';
+            //$team_infos[0]->logo = isset($team_infos[0]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[0]->logo : '';
             //$team_infos[0]['logo'] = url('storage/' . $team_infos[0]['logo']);
             return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
         } catch (Exception $exception) {
@@ -629,10 +629,10 @@ class TeamService extends ApiBaseService
                 $team->update();
 
             }
-            if (!empty($team->logo)) {
-                $team->logo = isset($team->logo) ? env('IMAGE_SERVER') .'/'. $team->logo : '';
-                //$team->logo = url('storage/' . $team->logo);
-            }
+            // if (!empty($team->logo)) {
+            //     $team->logo = isset($team->logo) ? env('IMAGE_SERVER') .'/'. $team->logo : '';
+            //     //$team->logo = url('storage/' . $team->logo);
+            // }
             return $this->sendSuccessResponse($team, 'Successfully updated', [], HttpStatusCode::SUCCESS);
         } catch (\Illuminate\Database\QueryException $ex) {
             return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::BAD_REQUEST);
@@ -647,9 +647,9 @@ class TeamService extends ApiBaseService
         try {
             $team_infos = Team::with('created_by')->where('status',1)->paginate();
 
-            for ($i = 0; $i < count($team_infos); $i++) {
-                $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
-            }
+            // for ($i = 0; $i < count($team_infos); $i++) {
+            //     $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
+            // }
             return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -661,9 +661,9 @@ class TeamService extends ApiBaseService
         try {
             $team_infos = Team::with('created_by')->where('status',0)->paginate();
 
-            for ($i = 0; $i < count($team_infos); $i++) {
-                $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
-            }
+            // for ($i = 0; $i < count($team_infos); $i++) {
+            //     $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
+            // }
             return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -676,9 +676,9 @@ class TeamService extends ApiBaseService
             $team_infos = TeamConnection::where('from_team_id', $team_id)->orWhere('to_team_id', $team_id)
             ->with(['requested_by_user', 'responded_by_user'])->paginate();
 
-            for ($i = 0; $i < count($team_infos); $i++) {
-                $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
-            }
+            // for ($i = 0; $i < count($team_infos); $i++) {
+            //     $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
+            // }
             return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
