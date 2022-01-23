@@ -517,4 +517,14 @@ class CandidateInformation extends Model
         return $this->activeTeams->first();
     }
 
+    public function getPerMainImageUrlAttribute($value)
+    {
+        return env('IMAGE_SERVER').'/'.$value;
+    }
+    
+    public function getPerAvatarUrlAttribute($value)
+    {
+        return env('IMAGE_SERVER').'/'.$value;
+    }
+
 }
