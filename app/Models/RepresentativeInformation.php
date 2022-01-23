@@ -137,6 +137,15 @@ class RepresentativeInformation extends Model
     public static $rules = [
 
     ];
-
+    
+    public function getPerMainImageUrlAttribute($value)
+    {
+        return env('IMAGE_SERVER').'/'.$value;
+    }
+    
+    public function getPerAvatarUrlAttribute($value)
+    {
+        return env('IMAGE_SERVER').'/'.$value;
+    }
 
 }
