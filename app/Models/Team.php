@@ -165,4 +165,8 @@ class Team extends Model
         return $this->belongsToMany(CandidateInformation::class,'team_members','team_id','user_id')->wherePivot('user_type','Candidate')->first();
     }
 
+    public function getLogoAttribute($value) {
+        return env('IMAGE_SERVER').'/'.$value;
+    }
+
 }
