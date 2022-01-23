@@ -76,13 +76,37 @@ class MessageService extends ApiBaseService
     }
 
     public function connectedTeamData($request){
-        $active_team_id = Generic::getActiveTeamId();
+        $active_team_id = Generic::getActiveTeamId();        
         $data = TeamConnection::with([
             'from_team' => function($t1){
-                $t1->with('team_members');
+                $t1->with(['team_members' => function($qq) {
+                    $qq->with(['user' => function($q) {
+                        $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                        $q->with(
+                            [
+                                'candidate_info' => function($q1) {
+                                    $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                                }
+                        ])->with(['representative_info' => function($q2){
+                            $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }]);
+                    }]);                    
+                }]);
             }
             , 'to_team' => function($t2){
-                $t2->with('team_members');
+                $t2->with(['team_members' => function($qq) {
+                    $qq->with(['user' => function($q) {
+                        $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                        $q->with(
+                            [
+                                'candidate_info' => function($q1) {
+                                    $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                                }
+                        ])->with(['representative_info' => function($q2){
+                            $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }]);
+                    }]);                    
+                }]);
             }
             ])
        ->with(['team_chat' => function($q){
