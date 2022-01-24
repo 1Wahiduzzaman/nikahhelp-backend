@@ -461,7 +461,7 @@ class CandidateInformation extends Model
      * @param $id
      * @return string
      */
-    public static function getGender (int $id) : string
+    public static function getGender ($id) : string
     {
         $gender = null;
 
