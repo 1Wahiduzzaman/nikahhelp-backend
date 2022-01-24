@@ -182,8 +182,9 @@ class TeamConnectionResource extends JsonResource
 
         if (!empty($teamInfo->getCandidateInfo) && isset($teamInfo->getCandidateInfo->first_name)) {
             if ($teamInfo->getCandidateInfo->anybody_can_see == 1 or $teamInfo->getCandidateInfo->team_connection_can_see == 1) {
-                $image = url('storage/' . $teamInfo->getCandidateInfo->per_main_image_url);
-                $image = isset($teamInfo->getCandidateInfo->per_main_image_url) ? env('IMAGE_SERVER') .'/'. $teamInfo->getCandidateInfo->per_main_image_url : '';
+                // $image = url('storage/' . $teamInfo->getCandidateInfo->per_main_image_url);
+                // $image = isset($teamInfo->getCandidateInfo->per_main_image_url) ? env('IMAGE_SERVER') .'/'. $teamInfo->getCandidateInfo->per_main_image_url : '';
+                $image = isset($teamInfo->getCandidateInfo->per_main_image_url) ?  $teamInfo->getCandidateInfo->per_main_image_url : '';
             } else {
                 $image = null;
             }

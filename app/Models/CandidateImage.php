@@ -114,9 +114,11 @@ class CandidateImage extends Model
     {
         $status = self::getPermissionStatus($userId);
         $candidate = CandidateInformation::where('user_id',$userId)->first();
-        $mainImage = $candidate->per_avatar_url ? env('IMAGE_SERVER') . '/' . $candidate->per_avatar_url : '';
+        // $mainImage = $candidate->per_avatar_url ? env('IMAGE_SERVER') . '/' . $candidate->per_avatar_url : '';
+        $mainImage = isset($candidate->per_avatar_url) ? $candidate->per_avatar_url : '';
         if($status){
-            $mainImage = $candidate->per_main_image_url ? env('IMAGE_SERVER') . '/' . $candidate->per_main_image_url : '';
+            // $mainImage = $candidate->per_main_image_url ? env('IMAGE_SERVER') . '/' . $candidate->per_main_image_url : '';
+            $mainImage = isset($candidate->per_main_image_url) ? $candidate->per_main_image_url : '';
         }
         return $mainImage;
     }
