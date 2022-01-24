@@ -256,8 +256,11 @@ class CandidateService extends ApiBaseService
 //                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
 //            }
 
-            $data['candidate_image']["avatar_image_url"] = $candidate->per_avatar_url? env('IMAGE_SERVER') .'/'. $candidate->per_avatar_url : '';
-            $data['candidate_image']["main_image_url"] = $candidate->per_main_image_url ? env('IMAGE_SERVER') .'/'. $candidate->per_main_image_url : '';
+            //$data['candidate_image']["avatar_image_url"] = $candidate->per_avatar_url? env('IMAGE_SERVER') .'/'. $candidate->per_avatar_url : '';
+            $data['candidate_image']["avatar_image_url"] = isset($candidate->per_avatar_url) ? $candidate->per_avatar_url : '';
+
+            //$data['candidate_image']["main_image_url"] = $candidate->per_main_image_url ? env('IMAGE_SERVER') .'/'. $candidate->per_main_image_url : '';
+            $data['candidate_image']["main_image_url"] = isset($candidate->per_main_image_url) ?  $candidate->per_main_image_url : '';
             $data['candidate_image']["other_images"] = $images;
 
             return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
@@ -827,8 +830,12 @@ class CandidateService extends ApiBaseService
 //            }
 
             $data = array();
-            $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
-            $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'. $main_image_url : '';
+            // $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
+            // $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'. $main_image_url : '';
+
+            $data["avatar_image_url"] = isset($avatar_image_url) ? $avatar_image_url : '';
+            $data["main_image_url"] = isset($main_image_url) ?  $main_image_url : '';
+
             $data["other_images"] = $images;
 
 
@@ -910,8 +917,12 @@ class CandidateService extends ApiBaseService
 //            }
 
             $data = array();
-            $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'.$avatar_image_url : '';
-            $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'.$main_image_url : '';
+            // $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'.$avatar_image_url : '';
+            // $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'.$main_image_url : '';
+
+            $data["avatar_image_url"] = isset($avatar_image_url) ? $avatar_image_url : '';
+            $data["main_image_url"] = isset($main_image_url) ? $main_image_url : '';
+
             $data["other_images"] = $images;
 
             DB::commit();
@@ -1102,7 +1113,8 @@ class CandidateService extends ApiBaseService
         $images = $this->candidateTransformer->candidateOtherImage($images,CandidateImage::getPermissionStatus($user_id));
 
         $data = array();
-        $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
+        // $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
+        $data["avatar_image_url"] = isset($avatar_image_url) ? $avatar_image_url : '';
         $data["main_image_url"] = CandidateImage::getCandidateMainImage($user_id);
         $data["other_images"] = $images;
 
