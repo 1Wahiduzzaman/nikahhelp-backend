@@ -160,8 +160,20 @@ class CandidateService extends ApiBaseService
         $candidate_details = array_merge(
             $candidate_info,
             [
+                'essential' => $this->candidateTransformer->transformPersonal($candidate)['essential'],
+            ],
+            [
+                'general' => $this->candidateTransformer->transformPersonal($candidate)['general'],
+            ],
+            [
+                'contact' => $this->candidateTransformer->transformPersonal($candidate)['contact'],
+            ],
+            [
+                'more_about' =>  $this->candidateTransformer->transformPersonal($candidate)['more_about'],
+            ],
+            [
                 'other_images' => $candidate_image
-            ]
+            ],
         );
         return $this->sendSuccessResponse($candidate_details, self::INFORMATION_FETCHED_SUCCESSFULLY);
     }

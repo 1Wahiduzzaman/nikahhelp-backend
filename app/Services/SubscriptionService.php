@@ -217,10 +217,10 @@ class SubscriptionService extends ApiBaseService
                 return Carbon::now()->addDays(90);
                 break;
             case 3:
-                return Carbon::now()->addDays(180);;
+                return Carbon::now()->addDays(180);
                 break;
             default:
-                return Carbon::now()->addDays(1);;
+                return Carbon::now()->addDays(1);
                 break;
 
         }

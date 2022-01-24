@@ -10,6 +10,7 @@ use App\Models\Generic;
 use App\Models\Team;
 use App\Models\TeamChat;
 use App\Models\TeamConnection;
+use App\Models\TeamListedCandidate;
 use App\Models\TeamMember;
 use App\Models\TeamMemberInvitation;
 use App\Models\TeamPrivateChat;
@@ -572,6 +573,7 @@ class TeamService extends ApiBaseService
         TeamMember::where('team_id', $team->id)->delete();
         TeamChat::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
         TeamPrivateChat::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
+        TeamListedCandidate::where('team_listed_for', $team->id)->delete();
 
 
         // Send response
