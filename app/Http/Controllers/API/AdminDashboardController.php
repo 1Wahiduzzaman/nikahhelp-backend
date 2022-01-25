@@ -163,7 +163,7 @@ class AdminDashboardController extends AppBaseController
             ->paginate(10);
         }
         else {
-            $data = User::where('status', $status)
+            $data = User::where('status', $status)            
             ->with(['candidate_info' => function($q){
                 $q->select(['data_input_status', 'user_id']);
             }])

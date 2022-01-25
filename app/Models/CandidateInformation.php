@@ -519,12 +519,12 @@ class CandidateInformation extends Model
 
     public function getPerMainImageUrlAttribute($value)
     {
-        return env('IMAGE_SERVER').'/'.$value;
+        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
     
     public function getPerAvatarUrlAttribute($value)
     {
-        return env('IMAGE_SERVER').'/'.$value;
+        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
 
 }
