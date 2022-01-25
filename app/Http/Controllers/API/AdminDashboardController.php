@@ -121,7 +121,7 @@ class AdminDashboardController extends AppBaseController
         $keyword = @$request->input('keyword');
         $account_type = @$request->input('account_type');
         $status = $status;
-        if ($request->has('keyword') && $request->has('account_type')) {            
+        if (!empty($request->keyword) && !empty($request->account_type)) {            
             $data = User::where('status', $status)
             ->where('account_type', $account_type)
             ->where(function($q)use ($keyword){
@@ -129,23 +129,48 @@ class AdminDashboardController extends AppBaseController
                 $q->orWhere('email', 'LIKE','%'.$keyword.'%');
                 $q->orWhere('id', $keyword);                
             })
+            ->with(['candidate_info' => function($q){
+                $q->select(['data_input_status', 'user_id']);
+            }])
+            ->with(['representative_info' => function($q){
+                $q->select('data_input_status');
+            }])
             ->paginate(10);
         } 
-        elseif ($request->has('account_type')) {
+        elseif (!empty($request->account_type)) {
             $data = User::where('status', $status)
             ->where('account_type', $account_type)
-            ->paginate();
-        } elseif($request->has('keyword')) {
+            ->with(['candidate_info' => function($q){
+                $q->select('data_input_status');
+            }])
+            ->with(['representative_info' => function($q){
+                $q->select('data_input_status');
+            }])
+            ->paginate(10);
+        } elseif(!empty($request->keyword)) {
             $data = User::where('status', $status)    
             ->where(function($q)use ($keyword){
                 $q->orWhere('full_name', 'LIKE','%'.$keyword.'%');
                 $q->orWhere('email', 'LIKE','%'.$keyword.'%');
                 $q->orWhere('id', $keyword);                
             })
+            ->with(['candidate_info' => function($q){
+                $q->select(['data_input_status', 'user_id']);
+            }])
+            ->with(['representative_info' => function($q){
+                $q->select(['data_input_status', 'user_id']);
+            }])
             ->paginate(10);
         }
         else {
-            $data = User::where('status', $status)->paginate(10);
+            $data = User::where('status', $status)
+            ->with(['candidate_info' => function($q){
+                $q->select(['data_input_status', 'user_id']);
+            }])
+            ->with(['representative_info' => function($q){
+                $q->select(['data_input_status', 'user_id']);
+            }])
+            ->paginate(10);
         }                
         return $data;        
 
