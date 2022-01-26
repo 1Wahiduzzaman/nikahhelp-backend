@@ -111,6 +111,20 @@ class AdminDashboardController extends AppBaseController
 
     // }
 
+    public function count_can_rep() {
+        $candidate_count = User::where('status', 1)            
+        ->where('account_type', 1)       
+        ->count();  
+        $rep_count = User::where('status', 1)            
+        ->where('account_type', 2)       
+        ->count();  
+
+        $data =  [
+            'no_of_candidate' => $candidate_count,
+            'no_of_rep' => $rep_count,
+        ];
+        return $this->sendResponse($data, 'Data retrieved successfully');
+    }
     public function userReport(Request $request)
     {
         $data = $this->getUserData($request, 1);
@@ -135,6 +149,7 @@ class AdminDashboardController extends AppBaseController
             ->with(['representative_info' => function($q){
                 $q->select('data_input_status');
             }])
+            ->orderBy('id', 'DESC')
             ->paginate(10);
         } 
         elseif (!empty($request->account_type)) {
@@ -146,6 +161,7 @@ class AdminDashboardController extends AppBaseController
             ->with(['representative_info' => function($q){
                 $q->select('data_input_status');
             }])
+            ->orderBy('id', 'DESC')
             ->paginate(10);
         } elseif(!empty($request->keyword)) {
             $data = User::where('status', $status)    
@@ -160,6 +176,7 @@ class AdminDashboardController extends AppBaseController
             ->with(['representative_info' => function($q){
                 $q->select(['data_input_status', 'user_id']);
             }])
+            ->orderBy('id', 'DESC')
             ->paginate(10);
         }
         else {
@@ -170,8 +187,9 @@ class AdminDashboardController extends AppBaseController
             ->with(['representative_info' => function($q){
                 $q->select(['data_input_status', 'user_id']);
             }])
+            ->orderBy('id', 'DESC')
             ->paginate(10);
-        }                
+        }         
         return $data;        
 
     }

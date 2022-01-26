@@ -139,4 +139,9 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->hasOne(Message::class, 'receiver', 'id')->orderBy('created_at', 'desc');
     }      
+
+    public function block_list()
+    {
+        return $this->hasOne(BlockList::class, 'receiver', 'id')->orderBy('created_at', 'desc');
+    }    
 }

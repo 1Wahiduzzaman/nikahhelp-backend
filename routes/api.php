@@ -292,6 +292,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         // User report
         Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
+        Route::get('count-can-rep', [AdminDashboardController::class, 'count_can_rep'])->name('user.count-can-rep');
         Route::get('users-report', [AdminDashboardController::class, 'userReport'])->name('user.report');
         // Awating for approval list
         Route::get('pending-user', [AdminDashboardController::class, 'pendingUserList'])->name('user.pending');
