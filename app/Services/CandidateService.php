@@ -246,7 +246,7 @@ class CandidateService extends ApiBaseService
             $data['user'] = $this->candidateTransformer->transform($candidate);
             $data['personal_info'] = $this->candidateTransformer->transformPersonal($candidate);
             $data['countries'] = $this->countryRepository->findAll()->where('status', '=', 1);
-            $data['studylevels'] = StudyLevel::orderBy('name')->get();
+            $data['studylevels'] = StudyLevel::orderBy('id')->get();
             $data['religions'] = Religion::where('status', 1)->orderBy('name')->get();
             $data['occupations'] = Occupation::all();
             $data['validation_info'] = $this->candidateTransformer->transformPersonalVerification($candidate);;

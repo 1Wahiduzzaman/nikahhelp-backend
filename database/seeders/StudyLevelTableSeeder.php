@@ -13,7 +13,7 @@ class StudyLevelTableSeeder extends Seeder
     {
         DB::table('study_level')->delete();
 
-        $religions = [
+        $study_level = [
             ['name' => 'Elementary education'],
             ['name'=>"Primary education"],
             ['name'=>"Secondary education or high school"],
@@ -25,8 +25,8 @@ class StudyLevelTableSeeder extends Seeder
             ['name'=>"PhD (Doctorate)"],
             ['name'=>"Degree + professional qualification"],
             ['name'=>"Other"]
-            ];
+        ];
 
-        DB::table('study_level')->insert($religions);
+        DB::table('study_level')->insert($study_level);
     }
 }
