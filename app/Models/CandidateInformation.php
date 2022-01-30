@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Auth;
 
 class CandidateInformation extends Model
 {
@@ -533,6 +534,22 @@ class CandidateInformation extends Model
     public function getPerAvatarUrlAttribute($value)
     {
         return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
+    }
+
+    public function getDownloadableDocAttribute()
+    {
+        $authUserActiveTeam = Auth::user()->getCandidate->active_team;
+        $candidateActiveTeam = $this->active_team;
+        if(!$candidateActiveTeam){
+            return null;
+        }
+        $connectFrom = $authUserActiveTeam->sentRequest->pluck('team_id')->toArray();
+        $connectTo = $authUserActiveTeam->receivedRequest->pluck('team_id')->toArray();
+        $userConnectList = array_unique(array_merge($connectFrom,$connectTo)) ;
+        if(in_array($candidateActiveTeam->team_id,$userConnectList)){
+            return $this->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $this->per_additional_info_doc : '';
+        }
+        return null;
     }
 
 }
