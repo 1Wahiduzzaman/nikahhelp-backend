@@ -162,7 +162,7 @@ class Team extends Model
 
     public function candidateOfTeam()
     {
-        return $this->belongsToMany(CandidateInformation::class,'team_members','team_id','user_id')->wherePivot('user_type','Candidate')->first();
+        return $this->belongsToMany(CandidateInformation::class,'team_members','team_id','user_id','id','user_id')->wherePivot('user_type','Candidate')->first();
     }
 
     public function getLogoAttribute($value) {
