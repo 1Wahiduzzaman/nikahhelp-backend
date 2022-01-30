@@ -27,6 +27,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\API\V1\ChatInfoController;
 use App\Http\Controllers\API\V1\MatchMakerAPIController;
 use App\Http\Controllers\API\V1\MessageController;
+use App\Http\Controllers\API\V1\PackageController;
 use App\Http\Middleware\CorsHandler;
 
 /*
@@ -138,6 +139,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         //User / Raz
         Route::get('individual-rejected-notes/{id}', [UserController::class, 'getRejectedNotes'])->name('user.rejected-notes');
+
+        //Package List |Raz
+        Route::get('package-list', [PackageController::class, 'index'])->name('package-list');
 
 
         //Support Chat By Raz
