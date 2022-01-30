@@ -74,12 +74,12 @@ class CandidateImage extends Model
             return $status = true;
         }
 
-        $auth = Auth::user();
+
+        $auth = CandidateInformation::where('user_id',Auth::id())->first();
 
         if(!$auth){
             return  $status;
         }
-        $auth = CandidateInformation::where('user_id',Auth::id())->first();
 
         /* if auth id and candidate id is same it will return true */
         if($auth->user_id == $candidate->user_id){
