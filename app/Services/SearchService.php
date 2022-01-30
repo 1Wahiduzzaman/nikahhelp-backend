@@ -140,9 +140,10 @@ class SearchService extends ApiBaseService
                 $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
                 $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
 
-                /*Excluded Own data*/
-                $exceptIds = array_merge($userInfo['blockList'],[$userId]);
-                $candidates = $candidates->whereNotIn('id',$exceptIds);
+                /*Excluded Users*/
+                $activeTeamUserIds = $activeTeam->team_members->pluck('user_id')->toArray();
+                $exceptIds = array_merge($userInfo['blockList'],$activeTeamUserIds);
+                $candidates = $candidates->whereNotIn('user_id',$exceptIds);
             }
 
             if (isset($request->gender)) {
