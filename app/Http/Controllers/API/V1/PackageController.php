@@ -19,7 +19,7 @@ class PackageController extends Controller
         $my_team_data = Subscription::with('team')        
         ->where('plan_id', 1)
         ->where('user_id', Auth::id())
-        ->first();
+        ->get();
         $result = [
             'plan_data' => $data,
             'team_data' => $my_team_data
