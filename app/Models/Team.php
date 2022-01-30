@@ -166,7 +166,7 @@ class Team extends Model
     }
 
     public function getLogoAttribute($value) {
-        return env('IMAGE_SERVER').'/'.$value;
+        return isset($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
 
 }
