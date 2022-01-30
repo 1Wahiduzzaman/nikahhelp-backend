@@ -476,7 +476,7 @@ class CandidateTransformer extends TransformerAbstract
             'per_about' => $item->per_about,
             'per_improve_myself' => $per_improve_myself,
             'per_additional_info_text' => $item->per_additional_info_text,
-            'per_additional_info_doc' => $item->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $item->per_additional_info_doc : '',
+            'per_additional_info_doc' => $item->downloadable_doc,
             'per_additional_info_doc_title' => $item->per_additional_info_doc_title,
         ];
     }
