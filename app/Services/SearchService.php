@@ -109,12 +109,15 @@ class SearchService extends ApiBaseService
 
             $userInfo['shortList'] = [];
             $userInfo['blockList'] = [];
+            $userInfo['blockCountries'] = [];
             $userInfo['teamList'] = [];
             $connectFrom = [];
             $connectTo = [];
             $userInfo['connectList'] = [];
 
             $candidates = $this->candidateRepository->getModel();
+
+            /* FILTER - Candidate fill at least personal info  */
             $candidates = $candidates->where('data_input_status','>',2); // collect candidate with at list personal info given
 
             if(Auth::check()){
@@ -136,20 +139,23 @@ class SearchService extends ApiBaseService
                 $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('id')->toArray();
                 $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
                 $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('id')->toArray();
+                $userInfo['blockCountries'] = $loggedInCandidate->bloked_countries->pluck('id')->toArray();
                 $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
                 $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
                 $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
 
-                /*Excluded Users*/
+                /* FILTER - Own along with team member and blocklist candidate  */
                 $activeTeamUserIds = $activeTeam->team_members->pluck('user_id')->toArray();
                 $exceptIds = array_merge($userInfo['blockList'],$activeTeamUserIds);
                 $candidates = $candidates->whereNotIn('user_id',$exceptIds);
             }
 
+            /* FILTER - Gender  */
             if (isset($request->gender)) {
                 $candidates = $candidates->where('per_gender', $request->gender);
             }
 
+            /* FILTER - Age  */
             if (isset($request->min_age) && isset($request->max_age)) {
                 $dateRange['max'] = Carbon::now()->subYears($request->max_age);
                 $dateRange['min'] = Carbon::now()->subYears($request->mim_age);
@@ -157,50 +163,74 @@ class SearchService extends ApiBaseService
                 $candidates = $candidates->whereBetween('dob', [$dateRange]);
             }
 
+            /* FILTER - Gender  */
             if (isset($request->country)) {
-                $candidates = $candidates->where('per_country_of_birth', $request->country);
+                $candidates = $candidates->where('per_current_residence_country', $request->country);
             }
 
+            /* FILTER - Religion  */
             if (isset($request->religion)) {
                 $candidates = $candidates->where('per_religion_id', $request->religion);
             }
 
+            /* FILTER - Height  */
             if(isset($request->min_height) && isset($request->max_height)){
                 $heightRange['min'] = $request->min_height;
                 $heightRange['max'] = $request->max_height;
                 $candidates = $candidates->whereBetween('per_height', [$heightRange]);
             }
 
+            /* FILTER - Ethnicity  */
             if(isset($request->ethnicity)){
                 $candidates = $candidates->where('per_ethnicity', $request->ethnicity);
             }
+
+            /* FILTER - Marital Status  */
             if(isset($request->marital_status)){
                 $candidates = $candidates->where('per_marital_status', $request->marital_status);
             }
+
+            /* FILTER - Employment Status  */
             if(isset($request->employment_status)){
                 $candidates = $candidates->where('pre_employment_status', $request->employment_status);
             }
+
+            /* FILTER - Occupation */
             if(isset($request->per_occupation)){
                 $candidates = $candidates->where('per_occupation', $request->per_occupation);
             }
+
+            /* FILTER - Education Level */
             if(isset($request->education_level_id)){
                 $candidates = $candidates->where('per_education_level_id', $request->education_level_id);
             }
+
+            /* FILTER - Mother Tongue */
             if(isset($request->mother_tongue)){
                 $candidates = $candidates->where('per_mother_tongue', $request->mother_tongue);
             }
+
+            /* FILTER - Nationality */
             if(isset($request->nationality)){
                 $candidates = $candidates->where('per_nationality', $request->nationality);
             }
+
+            /* FILTER - Current Residence */
             if(isset($request->current_residence_country)){
                 $candidates = $candidates->where('per_current_residence_country', $request->country);
             }
+
+            /* FILTER - Currently Living With */
             if(isset($request->currently_living_with)){
                 $candidates = $candidates->where('per_currently_living_with', $request->currently_living_with);
             }
+
+            /* FILTER - Smoker status */
             if(isset($request->smoker)){
                 $candidates = $candidates->where('per_smoker ', $request->smoker);
             }
+
+            /* FILTER - Hobbies Interests */
             if(isset($request->hobbies_interests)){
                 $candidates = $candidates->where('per_hobbies_interests', $request->smoker);
             }
@@ -216,13 +246,15 @@ class SearchService extends ApiBaseService
             $candidatesResponse = [];
 
             foreach ($candidates as $candidate) {
+                /* Include additional info */
                 $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
                 $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
                 $candidate->is_teamListed = in_array($candidate->id,$userInfo['teamList']);
                 $teamId = $candidate->active_team ? $candidate->active_team->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $candidate->team_id = $teamId;
-                /* Find Team Connection Status*/
+
+                /* Find Team Connection Status (We Decline or They Decline )*/
                 if(in_array($teamId,$connectFrom)){
                     $teamConnectType = 1;
                     $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->team_id)->where('from_team_id',$teamId)->first();
@@ -239,15 +271,20 @@ class SearchService extends ApiBaseService
                 $candidate->teamConnectType = $teamConnectType;
                 $candidate->teamConnectStatus = $teamConnectStatus;
 
-                $candidatesResponse[] = array_merge(
-                    $this->candidateTransformer->transformSearchResult($candidate),
-                    [
-                        'personal' => $this->candidateTransformer->transform($candidate)['personal']
-                    ],
-                    [
-                        'preference' => $this->candidateTransformer->transform($candidate)['preference']
-                    ],
-                );
+                /* FILTER - Country not preferred  */
+                if(!in_array($candidate->per_current_residence_country,$userInfo['blockCountries'])){
+                    $candidatesResponse[] = array_merge(
+                        $this->candidateTransformer->transformSearchResult($candidate),
+                        [
+                            'personal' => $this->candidateTransformer->transform($candidate)['personal']
+                        ],
+                        [
+                            'preference' => $this->candidateTransformer->transform($candidate)['preference']
+                        ],
+                    );
+                }
+
+
 
             }
             $searchResult['data'] = $candidatesResponse;
