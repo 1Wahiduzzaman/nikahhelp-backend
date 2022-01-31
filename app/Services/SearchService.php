@@ -257,11 +257,11 @@ class SearchService extends ApiBaseService
                 /* Find Team Connection Status (We Decline or They Decline )*/
                 if(in_array($teamId,$connectFrom)){
                     $teamConnectType = 1;
-                    $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->team_id)->where('from_team_id',$teamId)->first();
+                    $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$teamId)->first();
                     $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
                 }elseif (in_array($teamId,$connectTo)){
                     $teamConnectType = 2;
-                    $teamConnectStatus = TeamConnection::where('from_team_id',$teamId)->where('from_team_id',$activeTeam->team_id)->first();
+                    $teamConnectStatus = TeamConnection::where('from_team_id',$teamId)->where('to_team_id',$activeTeam->id)->first();
                     $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
                 }else{
                     $teamConnectType = null;
