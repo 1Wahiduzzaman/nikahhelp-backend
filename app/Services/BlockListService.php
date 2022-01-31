@@ -98,7 +98,7 @@ class BlockListService extends ApiBaseService
 
             $blockCandidate = $this->blockListRepository->create([
                 'user_id' => $request['user_id'],
-                'block_by' => $candidate->id,
+                'block_by' => $candidate->user_id,
                 'block_for' => $activeTeamId,
                 'type' => 'single',
                 'block_date	' => now()
