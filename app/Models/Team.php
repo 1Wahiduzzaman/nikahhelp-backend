@@ -169,4 +169,9 @@ class Team extends Model
         return isset($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
 
+    public function last_subscription()
+    {
+        return $this->hasOne(Subscription::class, 'team_id','id')->orderBy('created_at', 'desc');
+    }
+
 }

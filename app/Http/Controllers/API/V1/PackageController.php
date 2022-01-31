@@ -14,16 +14,15 @@ class PackageController extends Controller
 {
     public function index(){
         $data = Package::where('status', 'Active')->get();     
-        
-        $active_team_id = Generic::getActiveTeamId();
-        $my_team_data = Subscription::with('team')        
+
+        $my_team_data = Subscription::select('team_id')        
         ->where('plan_id', 1)
         ->where('user_id', Auth::id())
-        ->get();
-        $result = [
-            'plan_data' => $data,
-            'team_data' => $my_team_data
-        ];        
-        return $this->sendSuccessResponse($result, 'Data Fetched Successfully');
+        ->pluck('team_id')
+        ->toArray();
+
+        $data[0]['team_ids'] = $my_team_data;
+            
+        return $this->sendSuccessResponse($data, 'Data Fetched Successfully');
     }
 }

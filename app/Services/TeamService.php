@@ -248,6 +248,9 @@ class TeamService extends ApiBaseService
                 //get team list and created by information add
                 $team_infos = Team::select("*")
                     ->with("team_members", 'team_invited_members','TeamlistedShortListed','teamRequestedConnectedList','teamRequestedAcceptedConnectedList','created_by')
+                    ->with(["last_subscription"=> function($q){
+                        $q->with('user');
+                    }])
                     ->whereIn('id', $team_ids)
                     ->where('status', 1)
                     ->get();
