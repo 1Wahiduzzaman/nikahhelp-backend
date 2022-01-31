@@ -10,6 +10,7 @@ use App\Models\Generic;
 use App\Models\Occupation;
 use App\Models\Religion;
 use App\Models\StudyLevel;
+use App\Models\TeamConnection;
 use App\Models\User;
 use App\Models\CandidateImage;
 use App\Models\CandidateInformation;
@@ -157,6 +158,37 @@ class CandidateService extends ApiBaseService
         $candidate_info['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
         $candidate_image = $this->candidateTransformer->candidateOtherImage($images,CandidateImage::getPermissionStatus($userId));
 
+        $candidateTeam = $candidate->active_team ;
+
+        if(!$candidateTeam){
+            return $this->sendErrorResponse('Candidate Team not found');
+        }
+
+        /* Find Team Connection Status (We Decline or They Decline )*/
+
+        $status['teamConnectType'] = '';
+        $status['teamConnectStatus'] = '';
+
+        $activeTeam = Auth::user()->getCandidate->active_team;
+
+        $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
+        $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
+
+        $teamId = $candidate->active_team->id;
+
+        if(in_array($candidate->active_team->team_id,$connectFrom)){
+            $status['teamConnectType'] = 1;
+            $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$teamId)->first();
+            $status['teamConnectStatus'] = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
+        }elseif (in_array($candidate->active_team->team_id,$connectTo)){
+            $status['teamConnectType'] = 2;
+            $teamConnectStatus = TeamConnection::where('from_team_id',$teamId)->where('from_team_id',$activeTeam->id)->first();
+            $status['teamConnectStatus'] = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
+        }else{
+            $status['teamConnectType'] = null;
+            $status['teamConnectStatus'] = null;
+        }
+
         $candidate_details = array_merge(
             $candidate_info,
             [
@@ -173,6 +205,9 @@ class CandidateService extends ApiBaseService
             ],
             [
                 'other_images' => $candidate_image
+            ],
+            [
+                'status' => $status
             ],
         );
         return $this->sendSuccessResponse($candidate_details, self::INFORMATION_FETCHED_SUCCESSFULLY);
