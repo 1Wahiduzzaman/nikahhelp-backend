@@ -12,6 +12,7 @@ use App\Mail\VerifyMail as VerifyEmail;
 use App\Repositories\RepresentativeInformationRepository;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\JsonResponse;
 use App\Traits\CrudTrait;
@@ -313,8 +314,29 @@ class UserService extends ApiBaseService
                 if (!$candidate) {
                     $candidateInformation = array();
                 } else {
+
+                    $status['is_short_listed'] = null;
+                    $status['is_block_listed'] = null;
+                    $status['is_teamListed'] = null;
+                    $status['is_connect'] = null;
+
+                    $loggedInUser = Auth::user();
+
+                    if($loggedInUser && $loggedInUser->getCandidate()->exists()){
+                        $loggedInCandidate = $loggedInUser->getCandidate;
+                        $activeTeam = $loggedInCandidate->active_team;
+                        $status['is_short_listed'] = in_array($candidate->id,$loggedInCandidate->shortList->pluck('id')->toArray());
+                        $status['is_block_listed'] = in_array($candidate->id,$loggedInCandidate->blockList->pluck('id')->toArray());
+                        $status['is_teamListed'] = in_array($candidate->user_id,$activeTeam->teamListedUser->pluck('id')->toArray());
+                        $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
+                        $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
+                        $teamId = $candidate->active_team ? $candidate->active_team->team_id : null;
+                        $status['is_connect'] = in_array($teamId,array_unique(array_merge($connectFrom,$connectTo)));
+                    }
+
                     $candidateInformation = $this->candidateTransformer->transform($candidate);
                     $candidateInformation['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
+                    $candidateInformation['status'] = $status;
                 }
 
                 $representativeInformation = $this->representativeRepository->findBy(['user_id' => $request->user_id]);
