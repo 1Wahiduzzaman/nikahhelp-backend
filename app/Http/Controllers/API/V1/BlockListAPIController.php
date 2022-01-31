@@ -108,7 +108,7 @@ class BlockListAPIController extends AppBaseController
             foreach ($blockListCandidates as $candidate) {
                 $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
                 $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
-                $candidate->is_teamListed = in_array($candidate->id,$userInfo['teamList']);
+                $candidate->is_teamListed = in_array($candidate->user_id,$userInfo['teamList']);
                 $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
                 $candidate->team_id = $teamId;
