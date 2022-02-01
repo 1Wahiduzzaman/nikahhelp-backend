@@ -249,7 +249,7 @@ class TeamService extends ApiBaseService
                 $team_infos = Team::select("*")
                     ->with("team_members", 'team_invited_members','TeamlistedShortListed','teamRequestedConnectedList','teamRequestedAcceptedConnectedList','created_by')
                     ->with(["last_subscription"=> function($q){
-                        $q->with('user');
+                        $q->with(['user', 'plans']);
                     }])
                     ->whereIn('id', $team_ids)
                     ->where('status', 1)
