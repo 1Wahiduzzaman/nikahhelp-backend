@@ -152,7 +152,7 @@ class AdminDashboardController extends AppBaseController
             ->orderBy('id', 'DESC')
             ->paginate(10);
         } 
-        elseif (!empty($request->account_type)) {
+        elseif (!empty($request->account_type) && empty($request->keyword)) {
             $data = User::where('status', $status)
             ->where('account_type', $account_type)
             ->with(['candidate_info' => function($q){
@@ -163,7 +163,7 @@ class AdminDashboardController extends AppBaseController
             }])
             ->orderBy('id', 'DESC')
             ->paginate(10);
-        } elseif(!empty($request->keyword)) {
+        } elseif(!empty($request->keyword) && empty($request->account_type)) {
             $data = User::where('status', $status)    
             ->where(function($q)use ($keyword){
                 $q->orWhere('full_name', 'LIKE','%'.$keyword.'%');
