@@ -37,8 +37,8 @@ class SubscriptionController extends AppBaseController
      * @param NewSubscriptionRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function createNewSubscription(NewSubscriptionRequest $request)
-    {
+    public function createNewSubscription(NewSubscriptionRequest $request) {        
+        
         return $this->subscriptionService->newSubscription($request->all());
 
     }
