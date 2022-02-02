@@ -28,6 +28,7 @@ use App\Http\Controllers\API\V1\ChatInfoController;
 use App\Http\Controllers\API\V1\MatchMakerAPIController;
 use App\Http\Controllers\API\V1\MessageController;
 use App\Http\Controllers\API\V1\PackageController;
+use App\Http\Controllers\API\V1\VisitController;
 use App\Http\Middleware\CorsHandler;
 
 /*
@@ -289,6 +290,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         // Email
         Route::get('email', [UserController::class, 'sendEmail'])->name('email');
+
+
+        //Raz Visitor count in site
+        Route::post('site-visit', [VisitController::class, 'visit'])->name('user.site-visit');
+        Route::get('site-visit-graph', [VisitController::class, 'visitGraph'])->name('user.site-visit-graph');
+
 
     });
 
