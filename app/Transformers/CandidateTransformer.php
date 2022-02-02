@@ -437,10 +437,10 @@ class CandidateTransformer extends TransformerAbstract
         return [
             'per_email' => $item->per_email,
             'per_current_residence_country' => $item->per_current_residence_country,
-            'per_current_residence_country_name' => $item->getCurrentResidenceCountry->name,
+            'per_current_residence_country_name' => $item->getCurrentResidenceCountry()->exists() ? $item->getCurrentResidenceCountry->name : null,
             'per_current_residence_city' => $item->per_current_residence_city,
             'per_permanent_country' => $item->per_permanent_country,
-            'per_permanent_country_name' => $item->getPermanentCountry->name,
+            'per_permanent_country_name' => $item->getPermanentCountry()->exists() ? $item->getPermanentCountry->name :null,
             'per_permanent_city' => $item->per_permanent_city,
             'per_county' => $item->per_county,
             'per_permanent_post_code' => $item->per_permanent_post_code,
