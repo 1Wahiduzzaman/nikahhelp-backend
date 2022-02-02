@@ -14,6 +14,8 @@ use App\Models\TeamListedCandidate;
 use App\Models\TeamMember;
 use App\Models\TeamMemberInvitation;
 use App\Models\TeamPrivateChat;
+use App\Models\TeamToTeamMessage;
+use App\Models\TeamToTeamPrivateMessage;
 use App\Transformers\CandidateTransformer;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -575,7 +577,9 @@ class TeamService extends ApiBaseService
         TeamMemberInvitation::where('team_id', $team->id)->delete();
         TeamMember::where('team_id', $team->id)->delete();
         TeamChat::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
+        TeamToTeamMessage::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
         TeamPrivateChat::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
+        TeamToTeamPrivateMessage::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
         TeamListedCandidate::where('team_listed_for', $team->id)->delete();
 
 
