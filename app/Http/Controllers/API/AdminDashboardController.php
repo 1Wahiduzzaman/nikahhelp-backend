@@ -127,9 +127,69 @@ class AdminDashboardController extends AppBaseController
     }
     public function userReport(Request $request)
     {
-        $data = $this->getUserData($request, 1);
+        $data = $this->getActiveUserData($request);
         return $this->sendResponse($data, 'Data retrieved successfully');
     }
+
+    private function getActiveUserData(Request $request)
+    {               
+        $keyword = @$request->input('keyword');
+        $account_type = @$request->input('account_type');        
+        if (!empty($request->keyword) && !empty($request->account_type)) {            
+            $data = User::where('account_type', $account_type)
+            ->where(function($q)use ($keyword){
+                $q->orWhere('full_name', 'LIKE','%'.$keyword.'%');
+                $q->orWhere('email', 'LIKE','%'.$keyword.'%');
+                $q->orWhere('id', $keyword);                
+            })
+            ->with(['candidate_info' => function($q){
+                $q->select(['data_input_status', 'user_id']);
+            }])
+            ->with(['representative_info' => function($q){
+                $q->select('data_input_status');
+            }])
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
+        } 
+        elseif (!empty($request->account_type) && empty($request->keyword)) {
+            $data = User::where('account_type', $account_type)
+            ->with(['candidate_info' => function($q){
+                $q->select('data_input_status');
+            }])
+            ->with(['representative_info' => function($q){
+                $q->select('data_input_status');
+            }])
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
+        } elseif(!empty($request->keyword) && empty($request->account_type)) {
+            $data = User::where(function($q)use ($keyword){
+                $q->orWhere('full_name', 'LIKE','%'.$keyword.'%');
+                $q->orWhere('email', 'LIKE','%'.$keyword.'%');
+                $q->orWhere('id', $keyword);                
+            })
+            ->with(['candidate_info' => function($q){
+                $q->select(['data_input_status', 'user_id']);
+            }])
+            ->with(['representative_info' => function($q){
+                $q->select(['data_input_status', 'user_id']);
+            }])
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
+        }
+        else {
+            $data = User::with(['candidate_info' => function($q){
+                $q->select(['data_input_status', 'user_id']);
+            }])
+            ->with(['representative_info' => function($q){
+                $q->select(['data_input_status', 'user_id']);
+            }])
+            ->orderBy('id', 'DESC')
+            ->paginate(10);
+        }         
+        return $data;        
+
+    }
+
     private function getUserData(Request $request, $status)
     {               
         $keyword = @$request->input('keyword');
