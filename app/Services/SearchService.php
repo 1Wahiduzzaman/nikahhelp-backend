@@ -109,7 +109,6 @@ class SearchService extends ApiBaseService
 
             $userInfo['shortList'] = [];
             $userInfo['blockList'] = [];
-            $userInfo['blockCountries'] = [];
             $userInfo['teamList'] = [];
             $connectFrom = [];
             $connectTo = [];
@@ -136,10 +135,9 @@ class SearchService extends ApiBaseService
                     'id' => $activeTeamId
                 ]);
 
-                $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('id')->toArray();
+                $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('user_id')->toArray();
                 $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
-                $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('id')->toArray();
-                $userInfo['blockCountries'] = $loggedInCandidate->bloked_countries->pluck('id')->toArray();
+                $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
                 $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
                 $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
                 $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
@@ -148,6 +146,9 @@ class SearchService extends ApiBaseService
                 $activeTeamUserIds = $activeTeam->team_members->pluck('user_id')->toArray();
                 $exceptIds = array_merge($userInfo['blockList'],$activeTeamUserIds);
                 $candidates = $candidates->whereNotIn('user_id',$exceptIds);
+
+                /* FILTER - Country not preferred  */
+                $candidates = $candidates->whereNotIn('per_current_residence_country',$loggedInCandidate->bloked_countries->pluck('id')->toArray());
             }
 
             /* FILTER - Gender  */
@@ -247,8 +248,8 @@ class SearchService extends ApiBaseService
 
             foreach ($candidates as $candidate) {
                 /* Include additional info */
-                $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
-                $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
+                $candidate->is_short_listed = in_array($candidate->user_id,$userInfo['shortList']);
+                $candidate->is_block_listed = in_array($candidate->user_id,$userInfo['blockList']);
                 $candidate->is_teamListed = in_array($candidate->user_id,$userInfo['teamList']);
                 $teamId = $candidate->active_team ? $candidate->active_team->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
@@ -271,22 +272,17 @@ class SearchService extends ApiBaseService
                 $candidate->teamConnectType = $teamConnectType;
                 $candidate->teamConnectStatus = $teamConnectStatus;
 
-                /* FILTER - Country not preferred  */
-                if(!in_array($candidate->per_current_residence_country,$userInfo['blockCountries'])){
-                    $candidatesResponse[] = array_merge(
-                        $this->candidateTransformer->transformSearchResult($candidate),
-                        [
-                            'personal' => $this->candidateTransformer->transform($candidate)['personal']
-                        ],
-                        [
-                            'preference' => $this->candidateTransformer->transform($candidate)['preference']
-                        ],
-                    );
-                }
-
-
-
+                $candidatesResponse[] = array_merge(
+                    $this->candidateTransformer->transformSearchResult($candidate),
+                    [
+                        'personal' => $this->candidateTransformer->transform($candidate)['personal']
+                    ],
+                    [
+                        'preference' => $this->candidateTransformer->transform($candidate)['preference']
+                    ],
+                );
             }
+
             $searchResult['data'] = $candidatesResponse;
             $searchResult['pagination'] = $this->paginationResponse($candidates);
 
