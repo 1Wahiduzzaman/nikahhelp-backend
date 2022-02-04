@@ -72,6 +72,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('switch-account', [UserController::class, 'switchAccount']);
         Route::POST('change-password', [UserController::class, 'changePassword']);
         Route::GET('delete-account', [UserController::class, 'deleteAccount']);
+        Route::POST('user-form-type', [UserController::class, 'formTypeStatus']);
         //create endpoint to fill up the profile form
 
         // Candidate information API
