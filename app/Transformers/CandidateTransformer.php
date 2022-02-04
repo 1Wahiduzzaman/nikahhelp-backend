@@ -362,6 +362,7 @@ class CandidateTransformer extends TransformerAbstract
             'pre_study_level' => $item->preEducationLevel()->exists() ? $item->preEducationLevel->name : null,
             'pre_employment_status' => $item->pre_employment_status,
             'pre_occupation' => $item->pre_occupation,
+            'pre_occupation_list' => json_decode($item->pre_occupation),
             'pre_preferred_divorcee' => $item->pre_preferred_divorcee,
             'pre_preferred_divorcee_child' => $item->pre_preferred_divorcee_child,
             'pre_other_preference' => $item->pre_other_preference,
