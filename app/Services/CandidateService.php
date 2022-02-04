@@ -160,7 +160,7 @@ class CandidateService extends ApiBaseService
 
         /* Find Team Connection Status (We Decline or They Decline )*/
 
-        $status['teamConnectType'] = null;
+        $status['connectionRequestSendType'] = null;
         $status['teamConnectStatus'] = null;
 
         $candidateTeam = $candidate->active_team ;
@@ -174,15 +174,15 @@ class CandidateService extends ApiBaseService
             $teamId = $candidate->active_team->id;
 
             if(in_array($candidate->active_team->team_id,$connectFrom)){
-                $status['teamConnectType'] = 1;
+                $status['connectionRequestSendType'] = 1;
                 $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$teamId)->first();
                 $status['teamConnectStatus'] = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
             }elseif (in_array($candidate->active_team->team_id,$connectTo)){
-                $status['teamConnectType'] = 2;
+                $status['connectionRequestSendType'] = 2;
                 $teamConnectStatus = TeamConnection::where('from_team_id',$teamId)->where('from_team_id',$activeTeam->id)->first();
                 $status['teamConnectStatus'] = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
             }else{
-                $status['teamConnectType'] = null;
+                $status['connectionRequestSendType'] = null;
                 $status['teamConnectStatus'] = null;
             }
         }
