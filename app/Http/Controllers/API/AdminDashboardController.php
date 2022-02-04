@@ -380,7 +380,26 @@ class AdminDashboardController extends AppBaseController
         } else {
             return $this->sendError('User Id is required ', FResponse::HTTP_BAD_REQUEST);
         }
-        $userInfo = User::with(['candidate_info', 'representative_info', 'candidate_image', 'rejected_notes'])->where('id', $userId)->first();
+        $userInfo = User::
+        with([
+            'candidate_info' => function($r1){
+                $r1->with([
+                    'candidateEducationLevel', 
+                    'getCountryOFBirth', 
+                    'getCurrentResidenceCountry', 
+                    'getPermanentCountry',
+                    'getPetnarCountryOFBirth',
+                    'activeTeams'                    
+                ]);
+            }
+        ])
+        ->with(
+            [                
+                'representative_info', 
+                'candidate_image', 
+                'rejected_notes'
+                ]
+            )->where('id', $userId)->first();
         if (!$userInfo) {
             throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $userId);
         }
