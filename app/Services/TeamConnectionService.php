@@ -231,7 +231,11 @@ class TeamConnectionService extends ApiBaseService
 
     public function updateResponse($user_id, $team_id, $connection_row, $connection_status)
     {
-        // If connection status is pending only "To Team" can update the connection status
+        if($connection_status ==10) {
+            $connection_row = TeamConnection::where('id', $connection_row->id)->delete();
+            return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
+        } else {
+            // If connection status is pending only "To Team" can update the connection status
         $user_member_status = $this->teamMemberRepository->findOneByProperties(
             [
                 "user_id" => $user_id,
@@ -269,6 +273,7 @@ class TeamConnectionService extends ApiBaseService
         } catch (QueryException $ex) {
             return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR);
         }
+        }        
     }
 
     public function reports($request)
@@ -280,17 +285,19 @@ class TeamConnectionService extends ApiBaseService
         $they_declined = 0;
         $teamId = $request->team_id;
         $userId = self::getUserId();
-        $teamInformation = Team::where("team_id", '=', "$teamId")->first();
+        $teamInformation = Team::where("team_id", '=', "$teamId")
+        ->where('status',1)
+        ->first();
         if (empty($teamInformation)) {
             return $this->sendErrorResponse('Active team information not found', [], HttpStatusCode::NOT_FOUND);
-        }
+        }    
         // Connected
         $connection_status = 1;
         $searchResult = $this->teamConnectionRepository->getModel()->newQuery();
 
         $searchResult->where('from_team_id', $teamInformation->id);
         $searchResult->orWhere('to_team_id', $teamInformation->id);
-        $queryData = $searchResult->get();
+        $queryData = $searchResult->get();        
         if (!empty($queryData) && count($queryData)) {
             foreach ($queryData as $key => $rInput) {
                 $queryData[$key]['active_teams'] = $teamInformation->id;
@@ -317,7 +324,7 @@ class TeamConnectionService extends ApiBaseService
         }
 
         $resultInfo = TeamConnectionResource::collection($queryData);
-
+        //dd($resultInfo);
         $data = array();
         $data['result'] = $resultInfo;
         $data["connected_teams"] = $connected_teams;

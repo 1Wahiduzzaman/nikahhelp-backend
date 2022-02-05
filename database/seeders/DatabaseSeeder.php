@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             StudyLevelTableSeeder::class,
             OccupationSeeder::class,
             WorldSeeder::class,
-            UserSeeder::class,
+//            UserSeeder::class,
 //            CandidateSeeder::class,
         ]);
     }

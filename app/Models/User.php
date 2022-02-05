@@ -26,6 +26,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     const LOCKED_END = 'locked_end';
     const REMEMBER_TOKEN = 'remember_token';
     const ACCOUNT_TYPE = 'account_type';
+    const FORM_TYPE = 'form_type';
 
     /**
      * The attributes that are mass assignable.
@@ -41,7 +42,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         self::STATUS,
         self::LOCKED_AT,
         self::LOCKED_END,
-        self::ACCOUNT_TYPE
+        self::ACCOUNT_TYPE,
+        self::FORM_TYPE
     ];
 
     /**
@@ -105,6 +107,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasOne(CandidateInformation::class, 'user_id', 'id');
     }
 
+    public function representative_info()
+    {
+        return $this->hasOne(RepresentativeInformation::class, 'user_id', 'id');
+    }
+
     public function candidate_image()
     {
         return $this->hasMany(CandidateImage::class, 'user_id', 'id');
@@ -128,10 +135,15 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function getMatchmaker()
     {
         return $this->hasOne(MatchMaker::class, 'user_id', 'id');
-    }    
+    }
 
     public function last_message()
     {
         return $this->hasOne(Message::class, 'receiver', 'id')->orderBy('created_at', 'desc');
-    }      
+    }
+
+    public function block_list()
+    {
+        return $this->hasOne(BlockList::class, 'receiver', 'id')->orderBy('created_at', 'desc');
+    }
 }

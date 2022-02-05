@@ -19,18 +19,20 @@ class AccessRulesDefinitionService
   }
 
   public function hasRemoveMemberRights(){
-      return [self::ROLES[0],self::ROLES[1],self::ROLES[3],self::ROLES[4],self::ROLES[5]];
+    //   return [self::ROLES[0],self::ROLES[1],self::ROLES[3],self::ROLES[4],self::ROLES[5]];
+      return [self::ROLES[0],self::ROLES[1]];
   }
 
   public function hasDeleteTeamRights(){
-      return [self::ROLES[0],self::ROLES[3],self::ROLES[4]];
+    //   return [self::ROLES[0],self::ROLES[3],self::ROLES[4]];
+      return [self::ROLES[0],self::ROLES[1]];
   }
 
   public function hasRespondConnectionRequestRights(){
-      return [self::ROLES[0],self::ROLES[3]];
+      return [self::ROLES[0],self::ROLES[1]];
   }
 
   public function hasDisconnectionRights(){
-        return [self::ROLES[0],self::ROLES[3]];
+        return [self::ROLES[0],self::ROLES[1]];
   }
 }

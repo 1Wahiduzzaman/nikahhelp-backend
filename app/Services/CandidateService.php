@@ -6,9 +6,11 @@ namespace App\Services;
 use App\Enums\HttpStatusCode;
 use App\Http\Resources\RecentJoinCandidateResource;
 use App\Http\Resources\SearchResource;
+use App\Models\Generic;
 use App\Models\Occupation;
 use App\Models\Religion;
 use App\Models\StudyLevel;
+use App\Models\TeamConnection;
 use App\Models\User;
 use App\Models\CandidateImage;
 use App\Models\CandidateInformation;
@@ -92,7 +94,6 @@ class CandidateService extends ApiBaseService
         RepresentativeRepository $representativeRepository,
         CountryRepository $countryRepository,
         UserRepository $userRepository
-        
     )
     {
         $this->candidateRepository = $candidateRepository;
@@ -154,13 +155,58 @@ class CandidateService extends ApiBaseService
         }
         $images = $this->imageRepository->findBy(['user_id'=>$userId]);
         $candidate_info = $this->candidateTransformer->transform($candidate);
-        $candidate_image = $this->candidateTransformer->candidateOtherImage($images);
+        $candidate_info['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
+        $candidate_image = $this->candidateTransformer->candidateOtherImage($images,CandidateImage::getPermissionStatus($userId));
+
+        /* Find Team Connection Status (We Decline or They Decline )*/
+
+        $status['connectionRequestSendType'] = null;
+        $status['teamConnectStatus'] = null;
+
+        $candidateTeam = $candidate->active_team ;
+
+        if($candidateTeam){
+            $activeTeam = Auth::user()->getCandidate->active_team;
+
+            $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
+            $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
+
+            $teamId = $candidate->active_team->id;
+
+            if(in_array($candidate->active_team->team_id,$connectFrom)){
+                $status['connectionRequestSendType'] = 1;
+                $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$teamId)->first();
+                $status['teamConnectStatus'] = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
+            }elseif (in_array($candidate->active_team->team_id,$connectTo)){
+                $status['connectionRequestSendType'] = 2;
+                $teamConnectStatus = TeamConnection::where('from_team_id',$teamId)->where('from_team_id',$activeTeam->id)->first();
+                $status['teamConnectStatus'] = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
+            }else{
+                $status['connectionRequestSendType'] = null;
+                $status['teamConnectStatus'] = null;
+            }
+        }
 
         $candidate_details = array_merge(
             $candidate_info,
             [
+                'essential' => $this->candidateTransformer->transformPersonal($candidate)['essential'],
+            ],
+            [
+                'general' => $this->candidateTransformer->transformPersonal($candidate)['general'],
+            ],
+            [
+                'contact' => $this->candidateTransformer->transformPersonal($candidate)['contact'],
+            ],
+            [
+                'more_about' =>  $this->candidateTransformer->transformPersonal($candidate)['more_about'],
+            ],
+            [
                 'other_images' => $candidate_image
-            ]
+            ],
+            [
+                'status' => $status
+            ],
         );
         return $this->sendSuccessResponse($candidate_details, self::INFORMATION_FETCHED_SUCCESSFULLY);
     }
@@ -233,18 +279,21 @@ class CandidateService extends ApiBaseService
             $data['user'] = $this->candidateTransformer->transform($candidate);
             $data['personal_info'] = $this->candidateTransformer->transformPersonal($candidate);
             $data['countries'] = $this->countryRepository->findAll()->where('status', '=', 1);
-            $data['studylevels'] = StudyLevel::orderBy('name')->get();
+            $data['studylevels'] = StudyLevel::orderBy('id')->get();
             $data['religions'] = Religion::where('status', 1)->orderBy('name')->get();
             $data['occupations'] = Occupation::all();
             $data['validation_info'] = $this->candidateTransformer->transformPersonalVerification($candidate);;
             $images = $this->imageRepository->findBy(['user_id'=>$userId]);
-            $images = $this->candidateTransformer->candidateOtherImage($images);
+            $images = $this->candidateTransformer->candidateOtherImage($images,true);
 //            for ($i = 0; $i < count($images); $i++) {
 //                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
 //            }
 
-            $data['candidate_image']["avatar_image_url"] = $candidate->per_avatar_url? env('IMAGE_SERVER') .'/'. $candidate->per_avatar_url : '';
-            $data['candidate_image']["main_image_url"] = $candidate->per_main_image_url ? env('IMAGE_SERVER') .'/'. $candidate->per_main_image_url : '';
+            //$data['candidate_image']["avatar_image_url"] = $candidate->per_avatar_url? env('IMAGE_SERVER') .'/'. $candidate->per_avatar_url : '';
+            $data['candidate_image']["avatar_image_url"] = isset($candidate->per_avatar_url) ? $candidate->per_avatar_url : '';
+
+            //$data['candidate_image']["main_image_url"] = $candidate->per_main_image_url ? env('IMAGE_SERVER') .'/'. $candidate->per_main_image_url : '';
+            $data['candidate_image']["main_image_url"] = isset($candidate->per_main_image_url) ?  $candidate->per_main_image_url : '';
             $data['candidate_image']["other_images"] = $images;
 
             return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
@@ -808,14 +857,18 @@ class CandidateService extends ApiBaseService
             $avatar_image_url = $candidate->per_avatar_url;
             $main_image_url = $candidate->per_main_image_url;
             $images = $this->imageRepository->findBy(['user_id'=>$userId]);
-            $images = $this->candidateTransformer->candidateOtherImage($images);
+            $images = $this->candidateTransformer->candidateOtherImage($images,true);
 //            for ($i = 0; $i < count($images); $i++) {
 //                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
 //            }
 
             $data = array();
-            $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
-            $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'. $main_image_url : '';
+            // $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
+            // $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'. $main_image_url : '';
+
+            $data["avatar_image_url"] = isset($avatar_image_url) ? $avatar_image_url : '';
+            $data["main_image_url"] = isset($main_image_url) ?  $main_image_url : '';
+
             $data["other_images"] = $images;
 
 
@@ -889,7 +942,7 @@ class CandidateService extends ApiBaseService
 
             $images = $this->imageRepository->findBy($searchCriteria);
 
-            $images = $this->candidateTransformer->candidateOtherImage($images);
+            $images = $this->candidateTransformer->candidateOtherImage($images,true);
 
 //            for ($i = 0; $i < count($images); $i++) {
 ////            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
@@ -897,8 +950,12 @@ class CandidateService extends ApiBaseService
 //            }
 
             $data = array();
-            $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'.$avatar_image_url : '';
-            $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'.$main_image_url : '';
+            // $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'.$avatar_image_url : '';
+            // $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'.$main_image_url : '';
+
+            $data["avatar_image_url"] = isset($avatar_image_url) ? $avatar_image_url : '';
+            $data["main_image_url"] = isset($main_image_url) ? $main_image_url : '';
+
             $data["other_images"] = $images;
 
             DB::commit();
@@ -1083,18 +1140,15 @@ class CandidateService extends ApiBaseService
 
         $searchCriteria = ["user_id" => $user_id];
         $avatar_image_url = $candidate->per_avatar_url;
-        $main_image_url = $candidate->per_main_image_url;
 
         $images = $this->imageRepository->findBy($searchCriteria);
 
-        $images = $this->candidateTransformer->candidateOtherImage($images);
-//        for ($i = 0; $i < count($images); $i++) {
-//            $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
-//        }
+        $images = $this->candidateTransformer->candidateOtherImage($images,CandidateImage::getPermissionStatus($user_id));
 
         $data = array();
-        $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
-        $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'. $main_image_url : '';
+        // $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'. $avatar_image_url : '';
+        $data["avatar_image_url"] = isset($avatar_image_url) ? $avatar_image_url : '';
+        $data["main_image_url"] = CandidateImage::getCandidateMainImage($user_id);
         $data["other_images"] = $images;
 
         return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
@@ -1116,11 +1170,15 @@ class CandidateService extends ApiBaseService
 //            'per_page' => 3,
 //        ], null, ['column' => 'id', 'direction' => 'desc']);
 
-        $recentJoinUsers = $this->userRepository->getModel()->with('getCandidate')->latest()->limit(12)->get();
+        $recentJoinUsers = $this->userRepository->getModel()->with('getCandidate')->whereHas('getCandidate',function($q){
+            $q->where('data_input_status','>',1);
+        })->latest()->limit(12)->get();
 
         $shortListedCandidates = [];
         foreach ($recentJoinUsers as $user){
-            $shortListedCandidates[] = $user->getCandidate;
+            $candidate = $user->getCandidate;
+            $candidate->per_main_image_url = $candidate->per_avatar_url;
+            $shortListedCandidates[] = $candidate;
         }
 
         $formatted_data = RecentJoinCandidateResource::collection($shortListedCandidates);

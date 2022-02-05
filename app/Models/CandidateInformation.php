@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Auth;
 
 class CandidateInformation extends Model
 {
@@ -369,7 +370,6 @@ class CandidateInformation extends Model
     public function userInfo()
     {
         return $this->belongsTo(CandidateInformation::class, 'user_id', 'user_id');
-
     }
 
     /**
@@ -378,16 +378,15 @@ class CandidateInformation extends Model
     public function candidateEducationLevel()
     {
         return $this->belongsTo(EducationLevel::class, 'per_education_level_id', 'id');
-
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function candidateTeamInfo()
+    public function candidateTeam()
     {
-        return $this->hasOne(TeamMember::class, 'user_id', 'user_id')->where('user_type', '=', 'Candidate');
-
+        return $this->hasMany(TeamMember::class,'user_id','user_id')
+            ->where('user_type','Candidate');
     }
 
     /**
@@ -396,7 +395,22 @@ class CandidateInformation extends Model
     public function getCountryOFBirth()
     {
         return $this->belongsTo(Country::class, 'per_country_of_birth', 'id');
+    }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function getCurrentResidenceCountry()
+    {
+        return $this->belongsTo(Country::class, 'per_current_residence_country', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function getPermanentCountry()
+    {
+        return $this->belongsTo(Country::class, 'per_permanent_country', 'id');
     }
 
     /**
@@ -415,21 +429,30 @@ class CandidateInformation extends Model
         return $this->belongsTo(Religion::class, 'pre_partner_religions', 'id');
     }
 
-    /// Profile suggestions
-
+    /**
+     * @return BelongsToMany
+     */
     public function shortList()
     {
-        return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id')->withTimestamps();
-    }
-    public function teamList()
-    {
-        return $this->belongsToMany(TeamListedCandidate::class, 'team_listed_candidates', 'team_listed_by', 'user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id','user_id','user_id')->withTimestamps();
     }
 
+    /**
+     * Return Candidate information team listed by user
+     * @return BelongsToMany
+     */
+    public function teamList()
+    {
+        return $this->belongsToMany(CandidateInformation::class, 'team_listed_candidates', 'team_listed_by', 'user_id','user_id','user_id')->withTimestamps();
+    }
+
+    /**
+     * Return Candidate information block listed by user
+     * @return BelongsToMany
+     */
     public function blockList()
     {
-//        return $this->belongsTo(CandidateInformation::class, 'block_by', 'user_id')->withTimestamps();
-        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id','user_id','user_id')->withTimestamps();
 
     }
 
@@ -442,13 +465,12 @@ class CandidateInformation extends Model
 
     }
 
-    public function candidateTeam()
-    {
-        return $this->hasMany(TeamMember::class,'user_id','user_id')
-            ->where('user_type','Candidate');
-    }
-
-    public static function getGender ($id)
+    /**
+     * Convert gender id to sting
+     * @param $id
+     * @return string
+     */
+    public static function getGender ($id) : string
     {
         $gender = null;
 
@@ -477,4 +499,57 @@ class CandidateInformation extends Model
     {
         return $this->hasMany(TeamConnection::class,'requested_by','user_id')->where('connection_status',1);
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function teamMember()
+    {
+        return $this->hasMany(TeamMember::class,'user_id','user_id');
+    }
+
+    public function activeTeams()
+    {
+        return $this->belongsToMany(Team::class,'team_members','user_id','team_id','user_id','id')->wherePivot('status',1);
+    }
+
+    public function getActiveTeamAttribute()
+    {
+        return $this->activeTeams->first();
+    }
+
+    public function getPerMainImageUrlAttribute($value)
+    {
+        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
+    }
+
+    public function getPerAvatarUrlAttribute($value)
+    {
+        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
+    }
+
+    public function getDownloadableDocAttribute()
+    {
+        $authUserActiveTeam = Auth::user()->getCandidate->active_team;
+        $candidateActiveTeam = $this->active_team;
+        if(!$candidateActiveTeam){
+            return null;
+        }
+        $connectFrom = $authUserActiveTeam->sentRequest->pluck('team_id')->toArray();
+        $connectTo = $authUserActiveTeam->receivedRequest->pluck('team_id')->toArray();
+        $userConnectList = array_unique(array_merge($connectFrom,$connectTo)) ;
+        if(in_array($candidateActiveTeam->team_id,$userConnectList)){
+            return $this->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $this->per_additional_info_doc : '';
+        }
+        return null;
+    }
+
 }

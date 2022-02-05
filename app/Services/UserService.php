@@ -12,6 +12,7 @@ use App\Mail\VerifyMail as VerifyEmail;
 use App\Repositories\RepresentativeInformationRepository;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\JsonResponse;
 use App\Traits\CrudTrait;
@@ -189,10 +190,12 @@ class UserService extends ApiBaseService
             /* Load data input status */
             if($userInfo->account_type == 1){
                 $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
-                $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url ? env('IMAGE_SERVER') .'/'. $userInfo->getCandidate->per_main_image_url : '';
+                $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
+                // $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
             }elseif ($userInfo->account_type == 2){
                 $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
-                $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url ? env('IMAGE_SERVER') .'/'. $userInfo->getRepresentative->per_main_image_url : '';
+                $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
+                // $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
             }
 
             /* attempt login */
@@ -311,7 +314,30 @@ class UserService extends ApiBaseService
                 if (!$candidate) {
                     $candidateInformation = array();
                 } else {
+
+                    $status['is_short_listed'] = null;
+                    $status['is_block_listed'] = null;
+                    $status['is_teamListed'] = null;
+                    $status['is_connect'] = null;
+
+                    $loggedInUser = Auth::user();
+
+                    if($loggedInUser && $loggedInUser->getCandidate()->exists()){
+                        $loggedInCandidate = $loggedInUser->getCandidate;
+                        $activeTeam = $loggedInCandidate->active_team;
+                        $status['is_short_listed'] = in_array($candidate->id,$loggedInCandidate->shortList->pluck('id')->toArray());
+                        $status['is_block_listed'] = in_array($candidate->id,$loggedInCandidate->blockList->pluck('id')->toArray());
+                        $status['is_teamListed'] = in_array($candidate->user_id,$activeTeam->teamListedUser->pluck('id')->toArray());
+                        $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
+                        $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
+                        $teamId = $candidate->active_team ? $candidate->active_team->team_id : null;
+                        $status['is_connect'] = in_array($teamId,array_unique(array_merge($connectFrom,$connectTo)));
+                    }
+
                     $candidateInformation = $this->candidateTransformer->transform($candidate);
+                    $candidateInformation['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
+                    $candidateInformation['status'] = $status;
+                    $candidateInformation['more_about'] = $this->candidateTransformer->transformPersonalMoreAbout($candidate)['more_about'];
                 }
 
                 $representativeInformation = $this->representativeRepository->findBy(['user_id' => $request->user_id]);
@@ -319,10 +345,10 @@ class UserService extends ApiBaseService
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'FAIL',
-                'status_code' => $e->getStatusCode(),
+                'status_code' => $e->getCode(),
                 'message' => $e->getMessage(),
                 'error' => ['details' => $e->getMessage()]
-            ], $e->getStatusCode());
+            ], $e->getCode());
 
         }
 
@@ -620,8 +646,20 @@ class UserService extends ApiBaseService
             return $this->sendSuccessResponse($data, 'User List Fetched successfully');
         } catch(Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }        
+        }
 
+    }
+
+    public function formTypeStatus(Request $request)
+    {
+        $userId = self::getUserId();
+        $user = $this->userRepository->findOneByProperties([
+            'id' => $userId
+        ]);
+        $formType = (int)$request->get('form_type');
+        $user->update(['form_type'=> $formType]);
+
+        return $this->sendSuccessResponse($user,'Form type status update successfully');
     }
 
 }

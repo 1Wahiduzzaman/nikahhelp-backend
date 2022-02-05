@@ -152,13 +152,26 @@ class Team extends Model
 
     public function sentRequest()
     {
-        return $this->belongsToMany(Team::class,'team_connections','from_team_id','to_team_id' );
+        return $this->belongsToMany(Team::class,'team_connections','from_team_id','to_team_id' )->wherePivot('connection_status',1);
     }
 
     public function receivedRequest()
     {
-        return $this->belongsToMany(Team::class,'team_connections','to_team_id','from_team_id' );
+        return $this->belongsToMany(Team::class,'team_connections','to_team_id','from_team_id' )->wherePivot('connection_status',1);
     }
 
+    public function candidateOfTeam()
+    {
+        return $this->belongsToMany(CandidateInformation::class,'team_members','team_id','user_id','id','user_id')->wherePivot('user_type','Candidate')->first();
+    }
+
+    public function getLogoAttribute($value) {
+        return isset($value) ? env('IMAGE_SERVER').'/'.$value : null;
+    }
+
+    public function last_subscription()
+    {
+        return $this->hasOne(Subscription::class, 'team_id','id')->orderBy('created_at', 'desc');
+    }
 
 }

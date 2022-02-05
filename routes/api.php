@@ -27,6 +27,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\API\V1\ChatInfoController;
 use App\Http\Controllers\API\V1\MatchMakerAPIController;
 use App\Http\Controllers\API\V1\MessageController;
+use App\Http\Controllers\API\V1\PackageController;
+use App\Http\Controllers\API\V1\VisitController;
 use App\Http\Middleware\CorsHandler;
 
 /*
@@ -66,11 +68,11 @@ Route::get('v1/utilities/religions', [ReligionController::class, 'index'])->name
 
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'v1'], function () {
-
         //  Settings
         Route::POST('switch-account', [UserController::class, 'switchAccount']);
         Route::POST('change-password', [UserController::class, 'changePassword']);
         Route::GET('delete-account', [UserController::class, 'deleteAccount']);
+        Route::POST('user-form-type', [UserController::class, 'formTypeStatus']);
         //create endpoint to fill up the profile form
 
         // Candidate information API
@@ -136,6 +138,14 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::GET('seen-notification', [AllNotificationController::class, 'seenNotification'])->name('all-notification.seen-notification');
         // End Notification
 
+
+        //User / Raz
+        Route::get('individual-rejected-notes/{id}', [UserController::class, 'getRejectedNotes'])->name('user.rejected-notes');
+
+        //Package List |Raz
+        Route::get('package-list', [PackageController::class, 'index'])->name('package-list');
+
+
         //Support Chat By Raz
         Route::POST('support-send-message', [MessageController::class, 'sendMessageToSupport'])->name('support.support-send-message');
         Route::POST('individual-support-user-chat-history', [MessageController::class, 'individualSupportChatHistory'])->name('support.individual-support-user-chat-history');
@@ -164,6 +174,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('delete-reason-submit', [DeleteReasonController::class, 'store'])->name('team.delete.reason.submit');
         Route::POST('leave-team', [TeamMembersController::class, 'teamLeave'])->name('team.leave');
         Route::POST('user-info', [UserController::class, 'getUserInfo'])->name('team.user_info');
+        Route::get('candidate-of-team', [TeamController::class, 'candidateOfTeam'])->name('candidate.of.team');
 
         // Team Connection API
         Route::POST('send-connection-request', [TeamConnectionController::class, 'store'])->name('send.team.connection.request');
@@ -281,14 +292,19 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         // Email
         Route::get('email', [UserController::class, 'sendEmail'])->name('email');
 
+
+        //Raz Visitor count in site
+        Route::post('site-visit', [VisitController::class, 'visit'])->name('user.site-visit');
+        Route::get('site-visit-graph', [VisitController::class, 'visitGraph'])->name('user.site-visit-graph');
+
+
     });
-
-
 
     Route::group(['prefix' => 'v1/admin'], function () {
 
         // User report
         Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
+        Route::get('count-can-rep', [AdminDashboardController::class, 'count_can_rep'])->name('user.count-can-rep');
         Route::get('users-report', [AdminDashboardController::class, 'userReport'])->name('user.report');
         // Awating for approval list
         Route::get('pending-user', [AdminDashboardController::class, 'pendingUserList'])->name('user.pending');

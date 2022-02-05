@@ -70,8 +70,8 @@ class SubscriptionService extends ApiBaseService
      * @return JsonResponse
      */
     public function newSubscription($request)
-    {
-        try {
+    {        
+        try {            
             $userId = self::getUserId();
             $user = User::find($userId);
             if (!$user) {
@@ -92,7 +92,13 @@ class SubscriptionService extends ApiBaseService
             $suBInfo->subscription_expire_at = $expireDate;
             $suBInfo->save();
             $teamExpireDateUpdate = Team::find($request['team_id']);
-            $teamExpireDateUpdate->subscription_expire_at = $expireDate;
+            $current_expire_date  = $teamExpireDateUpdate->subscription_expire_at;
+            if($current_expire_date) {
+                $exp_date = Carbon::parse($this->reNewExpiryDate($request['plane'], $current_expire_date))->format('Y-m-d');                                
+            } else {
+                $exp_date = $expireDate;
+            }
+            $teamExpireDateUpdate->subscription_expire_at = $exp_date;
             $teamExpireDateUpdate->subscription_id = $subscriptionInfo->id;
             $teamExpireDateUpdate->save();
 
@@ -105,6 +111,31 @@ class SubscriptionService extends ApiBaseService
             return $this->sendErrorResponse($exception->getMessage());
         }
 
+    }
+
+    private function reNewExpiryDate($plan = null, $date = null) {        
+        $date = Carbon::createFromFormat('Y-m-d', $date);
+        switch ($plan) {            
+            case 0:
+                return $date->addDays(1);
+                break;
+            case 1:
+                return $date->addDays(30);
+                break;
+            case 2:
+                return $date->addDays(90);
+                break;
+            case 3:
+                return $date->addDays(180);
+                break;
+            case 4:
+                return $date->addDays(365);
+                break;
+            default:
+                return $date->addDays(1);
+                break;
+
+        }
     }
 
     /**
@@ -206,6 +237,7 @@ class SubscriptionService extends ApiBaseService
      */
     public function expireDateCalculation($type)
     {
+
         switch ($type) {
             case 0:
                 return Carbon::now()->addDays(1);
@@ -217,10 +249,10 @@ class SubscriptionService extends ApiBaseService
                 return Carbon::now()->addDays(90);
                 break;
             case 3:
-                return Carbon::now()->addDays(180);;
+                return Carbon::now()->addDays(180);
                 break;
             default:
-                return Carbon::now()->addDays(1);;
+                return Carbon::now()->addDays(1);
                 break;
 
         }

@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->boolean('is_verified')->default(false);
             $table->string('password');
             $table->enum('status', ['1', '2', '3', '4', '5'])->default(1);
+            $table->tinyInteger('form_type')->default(1)->comment('1 for long for 2 for short form');
             $table->timestamp('locked_at')->nullable();
             $table->timestamp('locked_end')->nullable();
             $table->rememberToken();

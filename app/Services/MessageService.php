@@ -76,13 +76,40 @@ class MessageService extends ApiBaseService
     }
 
     public function connectedTeamData($request){
-        $active_team_id = Generic::getActiveTeamId();
+        $active_team_id = Generic::getActiveTeamId();        
         $data = TeamConnection::with([
             'from_team' => function($t1){
-                $t1->with('team_members');
+                $t1->with(['team_members' => function($qq) {
+                    $qq->with(['user' => function($q) {
+                        $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                        $q->with(
+                            [
+                                'candidate_info' => function($q1) {
+                                    $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                                }
+                        ])->with(['representative_info' => function($q2){
+                            $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }]);
+                        // ->with(['block_list' => function($q3){
+                        //     $q3->where('user_id','<>', 'id');
+                        // }]);
+                    }]);                    
+                }]);
             }
             , 'to_team' => function($t2){
-                $t2->with('team_members');
+                $t2->with(['team_members' => function($qq) {
+                    $qq->with(['user' => function($q) {
+                        $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                        $q->with(
+                            [
+                                'candidate_info' => function($q1) {
+                                    $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                                }
+                        ])->with(['representative_info' => function($q2){
+                            $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }]);
+                    }]);                    
+                }]);
             }
             ])
        ->with(['team_chat' => function($q){
@@ -417,26 +444,41 @@ class MessageService extends ApiBaseService
      * @return JsonResponse
      */
     public function getTeamList(array $data): JsonResponse
-    {
+    {        
         $user_id = Auth::id();        
 
         try {
             $active_team = TeamMember::where('user_id', $user_id)
             ->where('status', 1)
             ->first();
-            $active_team_id = isset($active_team) ? $active_team->team_id : 0;
+            $active_team_id = isset($active_team) ? $active_team->team_id : 0;                     
             $team_infos = Team::
-                    with(["team_members" => function($query) {
-                            $query->select('team_id', 'user_id')->with('last_message');  //last message from messages table
+            with(["team_members" => function($query) {
+                    $query->select('team_id', 'user_id')
+                    ->with(['user' => function($q) {
+                        $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                        $q->with(
+                            [
+                                'candidate_info' => function($q1) {
+                                    $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                                }
+                            ]
+                        )->with(['representative_info' => function($q2){
+                            $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }]);
                     }])
-                    ->with('last_group_message')  // last message from team_messages table
-                    ->where('id', $active_team_id)
-                    ->where('status', 1)
-                    ->first();
-                    $count = 0;
-                    $team_infos->logo = url('storage/' . @$team_infos->logo);
-
-                    // count unread
+                    ->with('last_message');  //last message from messages table
+            }])
+            ->with('last_group_message')  // last message from team_messages table
+            ->where('id', $active_team_id)
+            ->where('status', 1)
+            ->first();                    
+            $count = 0;         
+            if(isset($team_infos)) {
+                // $team_infos->logo = isset($team_infos->logo) ? env('IMAGE_SERVER') .'/'. $team_infos->logo : '';                    
+                // $team_infos->base_image_url = @env('IMAGE_SERVER');                    
+                // count unread
+                if(isset($team_infos->team_members)) {
                     $count = $team_infos->team_members->filter(function($item, $key){                
                         return (isset($item->last_message['seen']) && $item->last_message['seen'] == 0) || (isset($item->last_message['seen']) && $item->last_message['seen'] == null);
                     })->count();
@@ -446,7 +488,11 @@ class MessageService extends ApiBaseService
                         $count+=1;
                     }
                     $team_infos->unread_notification_count = $count;
+                }                    
                 return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
+            } else {
+                return $this->sendErrorResponse('No Result Found!');
+            }                                               
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
@@ -564,7 +610,11 @@ class MessageService extends ApiBaseService
         try{                        
             $from_team_id = $request_data->from_team_id;
             $to_team_id = $request_data->to_team_id;
-            $this->receiver = $request_data->receiver;            
+            $this->receiver = $request_data->receiver; 
+            
+            //
+            $this->from_team_id = $from_team_id;
+            $this->to_team_id = $to_team_id;
             $user_id = Auth::id();      
             $active_team = TeamMember::where('user_id', $user_id)
             ->where('status', 1)
@@ -691,10 +741,31 @@ class MessageService extends ApiBaseService
     public function getAllPrivateChatRequest() {
         try{   
             $active_team_id = Generic::getActiveTeamId(); 
-            $data = TeamPrivateChat::with(['private_sender_data', 'private_receiver_data'])
+            $data = TeamPrivateChat::with(['private_sender_data' => function($q) {
+                $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                $q->with(
+                    [
+                        'candidate_info' => function($q1) {
+                            $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }
+                ])->with(['representative_info' => function($q2){
+                    $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                }]);
+            }])
+            ->with(['private_receiver_data' => function($q) {
+                $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                $q->with(
+                    [
+                        'candidate_info' => function($q1) {
+                            $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }
+                ])->with(['representative_info' => function($q2){
+                    $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                }]);
+            }])
             ->where('from_team_id', $active_team_id)
             ->orWhere('to_team_id', $active_team_id)
-            ->get();
+            ->get();            
             return $this->sendSuccessResponse($data, 'All Chat request fetched Successfully!');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -741,8 +812,28 @@ class MessageService extends ApiBaseService
             ->with(['last_message'=> function($query){                    
                     $query->where('team_id', $this->team_id);
             }])                  
-            ->with('sender_data')
-            ->with('receiver_data')
+            ->with(['sender_data' => function($q) {
+                $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                $q->with(
+                    [
+                        'candidate_info' => function($q1) {
+                            $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }
+                ])->with(['representative_info' => function($q2){
+                    $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                }]);
+            }])
+            ->with(['receiver_data' => function($q) {
+                $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                $q->with(
+                    [
+                        'candidate_info' => function($q1) {
+                            $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }
+                ])->with(['representative_info' => function($q2){
+                    $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                }]);
+            }])
             ->where('team_id', $active_team_id)   
             ->where(function($q){
                 $user_id = Auth::id(); 
@@ -765,15 +856,46 @@ class MessageService extends ApiBaseService
                 } 
             }
             //Get Group Message
-            $g_msg = TeamMessage::with("team")
-                ->where('team_id', $active_team_id)   
-                ->orderBy('created_at' , 'DESC')
-                ->first();   
+            $g_msg = TeamMessage::with(["team" => function($q) {
+                $q->with(['team_members' => function($qq) {
+                    $qq->with(['user' => function($q) {
+                        $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                        $q->with(
+                            [
+                                'candidate_info' => function($q1) {
+                                    $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                                }
+                        ])->with(['representative_info' => function($q2){
+                            $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }]);
+                    }]);
+                }]);
+            }])
+            ->where('team_id', $active_team_id)   
+            ->orderBy('created_at' , 'DESC')
+            ->first();   
                 
             if((isset($g_msg->seen) && $g_msg->seen==0) || (isset($g_msg->seen) && $g_msg->seen == null)) { $count++;}
 
             //Get Connected Group Message
-            $connected_team_msgs = TeamChat::with(["from_team", 'to_team','last_message'])
+            $connected_team_msgs = TeamChat::with(["from_team" => function($q) {
+                    $q->with('team_members');
+                }])
+                ->with(['to_team' => function($q1) {
+                    $q1->with(['team_members' => function($qq) {
+                        $qq->with(['user' => function($q) {
+                            $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                            $q->with(
+                                [
+                                    'candidate_info' => function($q1) {
+                                        $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                                    }
+                            ])->with(['representative_info' => function($q2){
+                                $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                            }]);
+                        }]);
+                    }]);
+                }])->with('last_message')
                 ->where('from_team_id', $active_team_id)   
                 ->orWhere('to_team_id', $active_team_id)
                 ->get();   
@@ -787,7 +909,28 @@ class MessageService extends ApiBaseService
 
             // Private Chat 
             $private_chat = TeamPrivateChat::select('*')  
-            ->with('private_receiver_data')  
+            ->with(['private_receiver_data' => function($q) {
+                $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                $q->with(
+                    [
+                        'candidate_info' => function($q1) {
+                            $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }
+                ])->with(['representative_info' => function($q2){
+                    $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                }]);
+            }])
+            ->with(['private_sender_data' => function($q) {
+                $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                $q->with(
+                    [
+                        'candidate_info' => function($q1) {
+                            $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                        }
+                ])->with(['representative_info' => function($q2){
+                    $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                }]);
+            }])  
             ->with(['last_private_message'=> function($query){                                                                    
                 $query->where('sender', Auth::id());
                 $query->orwhere('receiver', Auth::id());
@@ -850,7 +993,15 @@ class MessageService extends ApiBaseService
 
     public function getUsersChatHistory($chat_id = null) {
         try{
-            $messages = Chat::with('message_history')
+            $messages = Chat::with(['message_history' => function($q) {
+                $q->with(['sender'=>function($q1) {
+                    $q1->select(['full_name', 'id']);
+                }]);
+
+                $q->with(['receiver'=>function($q2) {
+                    $q2->select(['full_name', 'id']);
+                }]);
+            }])
             ->where('id', $chat_id)            
             ->first();
             return $this->sendSuccessResponse($messages, 'Message fetched Successfully!');
