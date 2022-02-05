@@ -179,9 +179,9 @@ class UserService extends ApiBaseService
                 );
             }
             /* Check the user is not delete */
-            if ($userInfo->status == 2) {
+            if ($userInfo->status == 0) {
                 return $this->sendErrorResponse(
-                    'This account hase been deleted ( ' . $userInfo->email . ' )',
+                    'Your account has been deleted ( ' . $userInfo->email . ' ), please contact us so we can assist you.',
                     [],
                     HttpStatusCode::BAD_REQUEST
                 );
@@ -558,7 +558,7 @@ class UserService extends ApiBaseService
             return $this->sendErrorResponse('User Not Found', [], HttpStatusCode::NOT_FOUND);
         }
         try {
-            $user->status = 2;
+            $user->status = 0;
             if ($user->save()) {
                 JWTAuth::invalidate(JWTAuth::getToken());
                 return $this->sendSuccessResponse([], 'Your account has been delete');
