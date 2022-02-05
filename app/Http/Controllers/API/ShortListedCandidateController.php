@@ -105,7 +105,7 @@ class ShortListedCandidateController extends AppBaseController
             ]);
 
             $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
-            $userInfo['blockList'] = $candidate->blockList->pluck('id')->toArray();
+            $userInfo['blockList'] = $candidate->blockList->pluck('user_id')->toArray();
             $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
             $connectFrom = $candidate->teamConnection->pluck('from_team_id')->toArray();
             $connectTo = $candidate->teamConnection->pluck('to_team_id')->toArray();
@@ -115,13 +115,13 @@ class ShortListedCandidateController extends AppBaseController
 
             $singleBLockList = $this->blockListService->blockListByUser($userId)->toArray();
 
-            $shortListCandidates = $candidate->shortList()->whereNotIn('candidate_information.user_id',$singleBLockList)->paginate($perPage);
-
+            $shortListCandidates = $candidate->shortList()->wherePivot('shortlisted_for',$activeTeam->id)->whereNotIn('candidate_information.user_id',$singleBLockList)->paginate($perPage);
+            
             $candidatesResponse = [];
 
             foreach ($shortListCandidates as $candidate) {
-                $candidate->is_short_listed = in_array($candidate->id,$userInfo['shortList']);
-                $candidate->is_block_listed = in_array($candidate->id,$userInfo['blockList']);
+                $candidate->is_short_listed = in_array($candidate->user_id,$userInfo['shortList']);
+                $candidate->is_block_listed = in_array($candidate->user_id,$userInfo['blockList']);
                 $candidate->is_teamListed = in_array($candidate->user_id,$userInfo['teamList']);
                 $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
                 $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
