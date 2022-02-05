@@ -116,6 +116,7 @@ class UserService extends ApiBaseService
             $inputData['password'] = Hash::make($request->get('password'));
             $inputData['full_name'] = $request->get('first_name') . ' '. $request->get('last_name');
             $inputData['account_type'] = $request->get('account_type');
+            $inputData['form_type'] = $request->get('form_type');
             $user = $this->userRepository->save($inputData);
 
             /* Data set for user information table */
