@@ -199,6 +199,7 @@ class TeamConnectionResource extends JsonResource
                 'candidate_location' => isset($teamInfo->getCandidateInfo->getNationality->name) ? $teamInfo->getCandidateInfo->getNationality->name : null,
                 'candidate_religion' => isset($teamInfo->getCandidateInfo->getReligion->name) ? $teamInfo->getCandidateInfo->getReligion->name : null,
                 'candidate_userid' => $teamInfo->getCandidateInfo->user_id,
+                'candidate_image' => $teamInfo->getCandidateInfo->per_main_image_url,
             ];
         } else {
             $result = '';
