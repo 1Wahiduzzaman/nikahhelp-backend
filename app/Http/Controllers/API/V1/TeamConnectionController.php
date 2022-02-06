@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 //use App\Http\Requests\TeamFromRequest;
 //use App\Models\Team;
+use App\Http\Requests\Team\TeamDisconnectRequest;
 use App\Services\TeamConnectionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -86,6 +87,15 @@ class TeamConnectionController extends Controller
     public function disconnect(Request $request)
     {
         return $this->teamConnectionService->disconnect($request);
+    }
+
+    /**
+     * @param TeamDisconnectRequest $request
+     * @return \App\Services\JsonResponse|Response
+     */
+    public function teamDisconnect(TeamDisconnectRequest $request)
+    {
+        return $this->teamConnectionService->teamDisconnect($request);
     }
 
 

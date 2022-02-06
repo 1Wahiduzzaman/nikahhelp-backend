@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Models\Generic;
 use App\Models\Team;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -273,7 +274,7 @@ class TeamConnectionService extends ApiBaseService
         } catch (QueryException $ex) {
             return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR);
         }
-        }        
+        }
     }
 
     public function reports($request)
@@ -290,14 +291,14 @@ class TeamConnectionService extends ApiBaseService
         ->first();
         if (empty($teamInformation)) {
             return $this->sendErrorResponse('Active team information not found', [], HttpStatusCode::NOT_FOUND);
-        }    
+        }
         // Connected
         $connection_status = 1;
         $searchResult = $this->teamConnectionRepository->getModel()->newQuery();
 
         $searchResult->where('from_team_id', $teamInformation->id);
         $searchResult->orWhere('to_team_id', $teamInformation->id);
-        $queryData = $searchResult->get();        
+        $queryData = $searchResult->get();
         if (!empty($queryData) && count($queryData)) {
             foreach ($queryData as $key => $rInput) {
                 $queryData[$key]['active_teams'] = $teamInformation->id;
@@ -360,7 +361,7 @@ class TeamConnectionService extends ApiBaseService
         // SQL query explanation: We need to join teams table twice with alias to Get From Team and To Team information
         // Team member information is needed to find out the candidates in both teams.
         // Candidate information table is joined to get the candidate data
-        // If user row id is match with to_team then from_team candidate data will be selected and vice varsa as user wants to
+        // If user row id is match with to_team then from_team candidate data will be selected and vice versa as user wants to
         // see the information of the opposite team.
 
         // Connected
@@ -740,6 +741,24 @@ class TeamConnectionService extends ApiBaseService
         $connection_row->save($input);
 
         return $this->sendSuccessResponse($connection_row, 'Connection disconnected!');
+    }
+
+    public function teamDisconnect(Request $request)
+    {
+        $userActiveTeam = Generic::getActiveTeamId();
+
+        $blockTeam = $this->teamRepository->findOneByProperties([
+            "team_id" => $request->team_id
+        ]);
+
+        $fromTeamDisconnect = $blockTeam->sentRequest()->detach($userActiveTeam);
+        $toTeamDisconnect = $blockTeam->receivedRequest()->detach($userActiveTeam);
+
+        if($fromTeamDisconnect || $toTeamDisconnect){
+            return $this->sendSuccessResponse([], 'Connection disconnected!');
+        }
+
+        return $this->sendErrorResponse("Team Connection not found");
     }
 
 

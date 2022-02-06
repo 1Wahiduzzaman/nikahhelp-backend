@@ -116,7 +116,7 @@ class ShortListedCandidateController extends AppBaseController
             $singleBLockList = $this->blockListService->blockListByUser($userId)->toArray();
 
             $shortListCandidates = $candidate->shortList()->wherePivot('shortlisted_for',$activeTeam->id)->whereNotIn('candidate_information.user_id',$singleBLockList)->paginate($perPage);
-            
+
             $candidatesResponse = [];
 
             foreach ($shortListCandidates as $candidate) {
@@ -185,7 +185,8 @@ class ShortListedCandidateController extends AppBaseController
                 $teamShortListUser->getCandidate->is_block_listed = in_array($teamShortListUser->id,$userInfo['blockList']);
                 $teamShortListUser->getCandidate->is_teamListed = in_array($teamShortListUser->id,$userInfo['teamList']);
                 $teamId = $teamShortListUser->getCandidate->candidateTeam()->exists() ? $teamShortListUser->getCandidate->candidateTeam->first()->getTeam->team_id : null;
-                $teamShortListUser->getCandidate->is_connect = in_array($teamId,$userInfo['connectList']);
+                $teamTableId = $candidate->active_team ? $candidate->active_team->id : '';
+                $teamShortListUser->getCandidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;;
                 $teamShortListUser->getCandidate->team_id = $teamId;
                 $shortListedBy = CandidateInformation::where('user_id', $teamShortListUser->pivot->team_listed_by)->first();
                 $teamShortListUser->pivot->shortlisted_by =$shortListedBy->first_name.' '. $shortListedBy->last_name;
