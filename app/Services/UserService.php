@@ -326,13 +326,11 @@ class UserService extends ApiBaseService
                     if($loggedInUser && $loggedInUser->getCandidate()->exists()){
                         $loggedInCandidate = $loggedInUser->getCandidate;
                         $activeTeam = $loggedInCandidate->active_team;
-                        $status['is_short_listed'] = in_array($candidate->id,$loggedInCandidate->shortList->pluck('id')->toArray());
-                        $status['is_block_listed'] = in_array($candidate->id,$loggedInCandidate->blockList->pluck('id')->toArray());
+                        $status['is_short_listed'] = in_array($candidate->user_id,$loggedInCandidate->shortList->pluck('user_id')->toArray());
+                        $status['is_block_listed'] = in_array($candidate->user_id,$loggedInCandidate->blockList->pluck('user_id')->toArray());
                         $status['is_teamListed'] = in_array($candidate->user_id,$activeTeam->teamListedUser->pluck('id')->toArray());
-                        $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
-                        $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
-                        $teamId = $candidate->active_team ? $candidate->active_team->team_id : null;
-                        $status['is_connect'] = in_array($teamId,array_unique(array_merge($connectFrom,$connectTo)));
+                        $teamTableId = $candidate->active_team ? $candidate->active_team->id : '';
+                        $status['is_connect'] = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;;
                     }
 
                     $candidateInformation = $this->candidateTransformer->transform($candidate);

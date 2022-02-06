@@ -181,6 +181,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('respond-connection-request', [TeamConnectionController::class, 'respond'])->name('respond.team.connection.request');
         Route::POST('connection-report', [TeamConnectionController::class, 'report'])->name('team.connection.report');
 
+        // Team Connection API | by Rabbi
+        Route::DELETE('team-connection-detach', [TeamConnectionController::class, 'teamDisconnect'])->name('team.connection.report');
+
         Route::POST('connection-reports', [TeamConnectionController::class, 'reports'])->name('team.connection.reports');
 
         Route::POST('connection-overview', [TeamConnectionController::class, 'overview'])->name('team.connection.overview');

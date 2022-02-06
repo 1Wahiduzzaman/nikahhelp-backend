@@ -110,7 +110,8 @@ class BlockListAPIController extends AppBaseController
                 $candidate->is_block_listed = in_array($candidate->user_id,$userInfo['blockList']);
                 $candidate->is_teamListed = in_array($candidate->user_id,$userInfo['teamList']);
                 $teamId = $candidate->candidateTeam()->exists() ? $candidate->candidateTeam->first()->getTeam->team_id : null;
-                $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
+                $teamTableId = $candidate->active_team ? $candidate->active_team->id : '';
+                $candidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;;
                 $candidate->team_id = $teamId;
                 $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
             }

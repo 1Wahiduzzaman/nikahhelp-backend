@@ -152,12 +152,12 @@ class Team extends Model
 
     public function sentRequest()
     {
-        return $this->belongsToMany(Team::class,'team_connections','from_team_id','to_team_id' )->wherePivot('connection_status',1);
+        return $this->belongsToMany(Team::class,'team_connections','from_team_id','to_team_id' )->wherePivot('connection_status',"1");
     }
 
     public function receivedRequest()
     {
-        return $this->belongsToMany(Team::class,'team_connections','to_team_id','from_team_id' )->wherePivot('connection_status',1);
+        return $this->belongsToMany(Team::class,'team_connections','to_team_id','from_team_id' )->wherePivot('connection_status',"1");
     }
 
     public function candidateOfTeam()
@@ -172,6 +172,17 @@ class Team extends Model
     public function last_subscription()
     {
         return $this->hasOne(Subscription::class, 'team_id','id')->orderBy('created_at', 'desc');
+    }
+
+    public function connectedTeam($teamId)
+    {
+        $connectedTeam =  $this->teamRequestedConnectedList()->where('to_team_id',$teamId)->first();
+
+        if(!$connectedTeam){
+            $connectedTeam = $this->teamRequestedAcceptedConnectedList()->where('from_team_id',$teamId)->first();
+        }
+
+        return $connectedTeam;
     }
 
 }

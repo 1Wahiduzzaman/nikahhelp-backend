@@ -142,7 +142,7 @@ class SearchService extends ApiBaseService
                 $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
                 $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
 
-                /* FILTER - Own along with team member and blocklist candidate  */
+                /* FILTER - Own along with team member and block list candidate  */
                 $activeTeamUserIds = $activeTeam->team_members->pluck('user_id')->toArray();
                 $exceptIds = array_merge($userInfo['blockList'],$activeTeamUserIds);
                 $candidates = $candidates->whereNotIn('user_id',$exceptIds);
@@ -252,17 +252,18 @@ class SearchService extends ApiBaseService
                 $candidate->is_block_listed = in_array($candidate->user_id,$userInfo['blockList']);
                 $candidate->is_teamListed = in_array($candidate->user_id,$userInfo['teamList']);
                 $teamId = $candidate->active_team ? $candidate->active_team->team_id : null;
-                $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
+                $teamTableId = $candidate->active_team ? $candidate->active_team->id : '';
+                $candidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;
                 $candidate->team_id = $teamId;
 
                 /* Find Team Connection Status (We Decline or They Decline )*/
                 if(in_array($teamId,$connectFrom)){
                     $connectionRequestSendType = 1;
-                    $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$teamId)->first();
+                    $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$candidate->active_team->id)->first();
                     $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
                 }elseif (in_array($teamId,$connectTo)){
                     $connectionRequestSendType = 2;
-                    $teamConnectStatus = TeamConnection::where('from_team_id',$teamId)->where('to_team_id',$activeTeam->id)->first();
+                    $teamConnectStatus = TeamConnection::where('from_team_id',$candidate->active_team->id)->where('to_team_id',$activeTeam->id)->first();
                     $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
                 }else{
                     $connectionRequestSendType = null;
