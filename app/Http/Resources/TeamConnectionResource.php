@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\CandidateImage;
 use App\Models\ShortListedCandidate;
 use App\Models\TeamMember;
 use App\Models\User;
@@ -37,7 +38,9 @@ class TeamConnectionResource extends JsonResource
             'responded_by' => User::find($this->responded_by) ?? null,
             'connection_status' => $this->connection_status ?? null,
             'requested_at' => $this->requested_at ?? null,
-            'responded_at' => $this->responded_at ?? null
+            'responded_at' => $this->responded_at ?? null,
+            'from_team_members' => self::getTeamMembers($this->from_team_id),
+            'to_team_members' => self::getTeamMembers($this->to_team_id),
         ];
 
         $result['candidateInfo'] = null;
@@ -181,13 +184,13 @@ class TeamConnectionResource extends JsonResource
         $teamInfo = TeamMember::where('team_id', '=', $teamId)->where('user_type', '=', 'Candidate')->first();
 
         if (!empty($teamInfo->getCandidateInfo) && isset($teamInfo->getCandidateInfo->first_name)) {
-            if ($teamInfo->getCandidateInfo->anybody_can_see == 1 or $teamInfo->getCandidateInfo->team_connection_can_see == 1) {
-                // $image = url('storage/' . $teamInfo->getCandidateInfo->per_main_image_url);
-                // $image = isset($teamInfo->getCandidateInfo->per_main_image_url) ? env('IMAGE_SERVER') .'/'. $teamInfo->getCandidateInfo->per_main_image_url : '';
-                $image = isset($teamInfo->getCandidateInfo->per_main_image_url) ?  $teamInfo->getCandidateInfo->per_main_image_url : '';
-            } else {
-                $image = null;
-            }
+            // if ($teamInfo->getCandidateInfo->anybody_can_see == 1 or $teamInfo->getCandidateInfo->team_connection_can_see == 1) {
+            //     // $image = url('storage/' . $teamInfo->getCandidateInfo->per_main_image_url);
+            //     // $image = isset($teamInfo->getCandidateInfo->per_main_image_url) ? env('IMAGE_SERVER') .'/'. $teamInfo->getCandidateInfo->per_main_image_url : '';
+            //     $image = isset($teamInfo->getCandidateInfo->per_main_image_url) ?  $teamInfo->getCandidateInfo->per_main_image_url : '';
+            // } else {
+            //     $image = null;
+            // }
 
             $result = [
                 'candidate_fname' => $teamInfo->getCandidateInfo->first_name,
@@ -195,11 +198,11 @@ class TeamConnectionResource extends JsonResource
                 'candidate_age' => $teamInfo->getCandidateInfo->dob,
                 'candidate_location' => $teamInfo->getCandidateInfo->per_current_residence_country,
                 'candidate_ethnicity' => $teamInfo->getCandidateInfo->per_ethnicity,
-                'candidate_image' => $image,
+                // 'candidate_image' => $image,
                 'candidate_location' => isset($teamInfo->getCandidateInfo->getNationality->name) ? $teamInfo->getCandidateInfo->getNationality->name : null,
                 'candidate_religion' => isset($teamInfo->getCandidateInfo->getReligion->name) ? $teamInfo->getCandidateInfo->getReligion->name : null,
                 'candidate_userid' => $teamInfo->getCandidateInfo->user_id,
-                'candidate_image' => $teamInfo->getCandidateInfo->per_main_image_url,
+                'candidate_image' => CandidateImage::getCandidateMainImage($teamInfo->getCandidateInfo->user_id),
             ];
         } else {
             $result = '';
@@ -274,6 +277,15 @@ class TeamConnectionResource extends JsonResource
 
         } else {
             return null;
+        }
+    }
+
+    public function getTeamMembers($teamId)
+    {
+        if (!empty($teamId)) {
+            return TeamMember::select('id', 'user_id')->where('team_id', $teamId)->pluck('user_id')->toArray();
+        } else {
+            return 0;
         }
     }
 }
