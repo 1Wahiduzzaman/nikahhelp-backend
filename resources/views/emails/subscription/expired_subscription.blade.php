@@ -105,7 +105,7 @@
         $domain=env('WEB_DOMAIN');
     @endphp
     <div style="width: 100%; margin-top: 30px;">
-        <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Subscription expiring at 20/03/2022</h2>
+        <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Subscription expired 20/03/2022</h2>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear Full name,</p>
 
@@ -114,81 +114,21 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            This is a gentle reminder.
+            Further to our previous reminders, please note that your subscription for the team- <span style="color: #522e8e;">Amina Alam’s Family (Team 1)</span> has now
+			<span style="color: #522e8e;">Expired on 20/03/2022, at 14:0</span>
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Your subscription for the - <span style="color: #522e8e;">Amina's Family (Team 1)</span> is expiring on <span style="color: #522e8e">20/03/2022, at 14:00 +06</span>
+            The owner of this team is <span style="color: #522e8e;">Farhana Alam</span>. All team members will receive a notification of this
+			renewal in MatrimonyAssist
         </p>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            All team members are receiving this email, Anyone from the team can take up subscription on
-            behalf of their team.
-        </p>
-
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            To continue using MatrimonyAssist please renew your subscription by clicking (tapping):
-        </p>
-
-        <div style="text-align: center; margin-top: 28px;">
-            <a role="button" style="padding: 12px 30px;
-            border-radius: 30px;
-            background: #5eee5e;
-            border: 3px solid #FFFFFF;
-            cursor: pointer;
-            color: #FFFFFF;
-            font-size: 20px;
-            text-align: center;
-            display: inline-block;
-            margin: 0 auto;
-            text-decoration: none;
-            font-weight: bold;" href="">Renew Subscription</a>
+        <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+            Help and guidance on how to subscribe and subscription detail. <a href="">http://www.nikah.arranzed.com/help</a>
         </div>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px; text-align: center">
-            <a style="color: #522e8e;" href="">Link</a>
-        </p>
-
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            If you no longer wish to continue please ignore this email and your subscription will end on
-            20/03/2022, at 14:00. We are grateful to you for using MatrimonyAssist.
-        </p>
-
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            If we have not been able to meet your expectations and you are cancelling because of our
-            shortcomings, we would like to hear from you so that we can raise our game.
-        </p>
-
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            We would love to hear from you if you have any suggestions for improving MatrionyAssist for
-            others, to help them find a match for themselves and their loved ones more easily. You can give
-            us your feedback by using the contact us link below.
-        </p>
-
-        <div style="text-align: center; margin-top: 28px;">
-            <a role="button" style="padding: 12px 30px;
-            border-radius: 30px;
-            background: #522e8e;
-            border: 3px solid #FFFFFF;
-            cursor: pointer;
-            color: #FFFFFF;
-            font-size: 20px;
-            text-align: center;
-            display: inline-block;
-            margin: 0 auto;
-            text-decoration: none;
-            font-weight: bold;" href="">Contact Us</a>
-        </div>
-
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px; text-align: center">
-            <a style="color: #522e8e; text-align: center" href="{{ $domain }}/dynamic-link">Link</a>
-        </p>
-
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Feedback tips. If you can please include the following details: what is the issue specifically, what
-            happened, why is it a good or bad thing, what could change and how to improve things. You
-            can attach screenshots of the matter you are concerned or happy about to illustrate your
-            point.
+            Please note this is an automated email. Please do not reply as the email will not reach MatrimonyAssist Team
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px">

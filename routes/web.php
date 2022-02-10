@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('emails.subscription.expiring_subscription');
+    return view('emails.subscription.new_subscription');
 });
 
 Route::get('/migration', function () {
