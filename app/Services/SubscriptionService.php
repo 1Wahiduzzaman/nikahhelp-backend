@@ -79,7 +79,7 @@ class SubscriptionService extends ApiBaseService
             }
             $stripeToken = $request['stripeToken'];
             $packageID = Self::selectPlaneID($request['plane']);
-            $packageName = Self::selectPlaneName($request['plane']) . date('YmdHis');
+            $packageName = Self::selectPlaneName($request['plane']).date('YmdHis');
 
             $subscriptionInfo = $user->newSubscription("$packageName", "$packageID")->create($stripeToken, [
                 'name' => $user->full_name,
@@ -196,6 +196,9 @@ class SubscriptionService extends ApiBaseService
             case 4:
                 return env('PLANE_FIX');
                 break;
+            case 5:
+                return env('PLANE_ONE_YEAR');
+                break;
             default:
                 return env('PLANE_ONE_DAY', 'PLANE_ONE_DAY');
                 break;
@@ -222,6 +225,9 @@ class SubscriptionService extends ApiBaseService
                 break;
             case 3:
                 return 'PLANE_SIX_MONTH';
+                break;
+            case 4:
+                return 'PLANE_ONE_YEAR';
                 break;
             default:
                 return 'PLANE_ONE_DAY_FREE';
@@ -250,6 +256,9 @@ class SubscriptionService extends ApiBaseService
                 break;
             case 3:
                 return Carbon::now()->addDays(180);
+                break;
+            case 3:
+                return Carbon::now()->addDays(365);
                 break;
             default:
                 return Carbon::now()->addDays(1);
