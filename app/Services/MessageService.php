@@ -1137,8 +1137,22 @@ class MessageService extends ApiBaseService
 
             $chats = SupportChat::select('*')    
             ->with('last_message')                  
-            ->with('sender_data')
-            ->with('receiver_data')            
+            ->with(['sender_data' => function($q1){
+                $q1->with(['candidate_info' => function($s1) {
+                    $s1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                }]);
+                $q1->with(['representative_info' => function($s1) {
+                    $s1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                }]);
+            }])
+            ->with(['receiver_data' => function($q2){
+                $q2->with(['candidate_info' => function($s2){
+                    $s2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                }]);
+                $q2->with(['representative_info' => function($s2) {
+                    $s2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                }]);
+            }])            
             ->where(function($q){
                 $user_id = Auth::id(); 
                 $q->where('sender' , $user_id)
