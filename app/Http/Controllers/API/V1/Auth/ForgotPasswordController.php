@@ -15,7 +15,7 @@ use App\Mail\ForgetPasswordMail;
 use Exception;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 use Swift_TransportException;
 
 class ForgotPasswordController extends Controller
@@ -73,7 +73,7 @@ class ForgotPasswordController extends Controller
                         dispatch(function () use ($passwordUpdate, $input) {
                             $passwordUpdate->forceDelete();
                         })->delay(now()->addMinutes(1));
-
+                        Artisan::call('queue:work', ['--stop-when-empty' => true]);
                     } catch (Exception $exception) {
                         return $this->sendErrorResponse($exception->getMessage(), [], 'Failed reset password');
                     }
