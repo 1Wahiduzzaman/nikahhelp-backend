@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use App\Enums\HttpStatusCode;
-use App\Jobs\ExpirePassword;
 use App\Services\ApiBaseService;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\UserRepository;
@@ -14,9 +13,9 @@ use App\Models\PasswordReset;
 use Str;
 use App\Mail\ForgetPasswordMail;
 use Exception;
-use Illuminate\Support\Facades\Artisan;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Swift_TransportException;
 
 class ForgotPasswordController extends Controller
@@ -71,8 +70,8 @@ class ForgotPasswordController extends Controller
                     Mail::to($user->email)->send(new ForgetPasswordMail($user, $token));
 
                     try {
-                        dispatch(function () use ($passwordUpdate) {
-                            $passwordUpdate->forceDelete();
+                        dispatch(function () use ($passwordUpdate, $input) {
+                            DB::table('password_resets')->where('email', $input['email'])->delete();
                         })->delay(now()->addMinutes(1));
 
                     } catch (Exception $exception) {
