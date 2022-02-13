@@ -70,8 +70,7 @@ class ForgotPasswordController extends Controller
                     Mail::to($user->email)->send(new ForgetPasswordMail($user, $token));
 
                     try {
-                        Artisan::call('queue:work');
-                        ExpirePassword::dispatch($passwordUpdate)->delay(now()->minute(1));
+                        ExpirePassword::dispatch($passwordUpdate)->delay(now()->addMinutes(1));
 
                     } catch (Exception $exception) {
                         return $this->sendErrorResponse($exception->getMessage(), [], 'Failed reset password');
