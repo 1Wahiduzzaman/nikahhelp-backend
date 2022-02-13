@@ -72,7 +72,7 @@ class ForgotPasswordController extends Controller
 
                     try {
                         dispatch(function () use ($passwordUpdate) {
-                            $passwordUpdate->delete();
+                            $passwordUpdate->forceDelete();
                         })->delay(now()->addMinutes(1));
 
                     } catch (Exception $exception) {
