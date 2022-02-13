@@ -66,7 +66,7 @@ class ForgotPasswordController extends Controller
                     $passwordUpdate->token = $token;
                     $passwordUpdate->save();
                     Mail::to($user->email)->send(new ForgetPasswordMail($user, $token));
-                    ExpirePassword::dispatch($passwordUpdate);
+                    ExpirePassword::dispatch($passwordUpdate)->delay(now()->minute(1));
                     return $this->apiBaseService->sendSuccessResponse($token, 'Reset link sent to your email');
                 } else {
                     return $this->apiBaseService->sendErrorResponse('Invalid Email', ['detail' => 'User Not found'],
