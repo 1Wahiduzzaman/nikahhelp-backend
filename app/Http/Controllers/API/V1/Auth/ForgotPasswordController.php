@@ -66,6 +66,7 @@ class ForgotPasswordController extends Controller
                     $passwordUpdate = new PasswordReset();
                     $passwordUpdate->email = $input['email'];
                     $passwordUpdate->token = $token;
+                    $passwordUpdate->created_at = now();
                     $passwordUpdate->save();
                     Mail::to($user->email)->send(new ForgetPasswordMail($user, $token));
 
