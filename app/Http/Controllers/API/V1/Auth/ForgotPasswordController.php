@@ -13,6 +13,8 @@ use App\Repositories\UserRepository;
 use App\Models\PasswordReset;
 use Str;
 use App\Mail\ForgetPasswordMail;
+use Exception;
+use Illuminate\Support\Facades\Artisan;
 use Mail;
 use Illuminate\Support\Facades\Hash;
 use Swift_TransportException;
@@ -66,7 +68,15 @@ class ForgotPasswordController extends Controller
                     $passwordUpdate->token = $token;
                     $passwordUpdate->save();
                     Mail::to($user->email)->send(new ForgetPasswordMail($user, $token));
-                    ExpirePassword::dispatch($passwordUpdate)->delay(now()->minute(1));
+
+                    try {
+                        Artisan::call('queue:work');
+                        ExpirePassword::dispatch($passwordUpdate)->delay(now()->minute(1));
+
+                    } catch (Exception $exception) {
+                        return $this->sendErrorResponse($exception->getMessage(), [], 'Failed reset password');
+                    }
+
                     return $this->apiBaseService->sendSuccessResponse($token, 'Reset link sent to your email');
                 } else {
                     return $this->apiBaseService->sendErrorResponse('Invalid Email', ['detail' => 'User Not found'],
