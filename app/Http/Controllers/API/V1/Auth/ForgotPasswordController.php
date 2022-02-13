@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use App\Enums\HttpStatusCode;
+use App\Jobs\ExpirePassword;
 use App\Services\ApiBaseService;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\UserRepository;
@@ -63,8 +64,9 @@ class ForgotPasswordController extends Controller
                     $passwordUpdate = new PasswordReset();
                     $passwordUpdate->email = $input['email'];
                     $passwordUpdate->token = $token;
-                    $passwordUpdate->save();                    
-                    Mail::to($user->email)->send(new ForgetPasswordMail($user, $token));                    
+                    $passwordUpdate->save();
+                    Mail::to($user->email)->send(new ForgetPasswordMail($user, $token));
+                    ExpirePassword::dispatch($passwordUpdate)->delay(now()->minute(1));
                     return $this->apiBaseService->sendSuccessResponse($token, 'Reset link sent to your email');
                 } else {
                     return $this->apiBaseService->sendErrorResponse('Invalid Email', ['detail' => 'User Not found'],
@@ -89,7 +91,7 @@ class ForgotPasswordController extends Controller
      */
 
     public function forgetPasswordTokenVerification(Request $request)
-    {        
+    {
         $validator = Validator::make($request->all(), [
             'token' => 'required'
         ]);
@@ -98,7 +100,7 @@ class ForgotPasswordController extends Controller
             return $this->sendErrorResponse('validation error', $validator->errors(), HttpStatusCode::VALIDATION_ERROR);
         }
 
-        $input = $request->all();        
+        $input = $request->all();
         $verified = PasswordReset::where('token', $input['token'])->first();
         if ($verified) {
             $data = [
