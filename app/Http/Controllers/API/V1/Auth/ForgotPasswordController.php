@@ -71,7 +71,7 @@ class ForgotPasswordController extends Controller
 
                     try {
                         dispatch(function () use ($passwordUpdate, $input) {
-                            DB::raw('delete from password_resets where email=' . $input['email'] . ' limit 1 offset 1');
+                            $passwordUpdate->forceDelete();
                         })->delay(now()->addMinutes(1));
 
                     } catch (Exception $exception) {
