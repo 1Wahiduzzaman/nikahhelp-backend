@@ -249,9 +249,21 @@ class TeamService extends ApiBaseService
                 }
                 //get team list and created by information add
                 $team_infos = Team::select("*")
-                    ->with("team_members", 'team_invited_members','TeamlistedShortListed','teamRequestedConnectedList','teamRequestedAcceptedConnectedList','created_by')
+                    ->with(["team_members" => function($q){
+                        $q->with(['user' => function($u){
+                            $u->with(['candidate_info' => function($c){
+                                $c->select(['id', 'user_id', 'per_avatar_url', 'per_main_image_url']);
+                            }]);
+                        }]);
+                    }])                   
+                    ->with('team_invited_members', 'TeamlistedShortListed','teamRequestedConnectedList','teamRequestedAcceptedConnectedList','created_by')
                     ->with(["last_subscription"=> function($q){
-                        $q->with(['user', 'plans']);
+                        $q->with(['user' => function($u){
+                            $u->with(['candidate_info' => function($c){
+                                $c->select(['id', 'user_id', 'per_avatar_url', 'per_main_image_url']);
+                            }]);
+                        }]);
+                        $q->with(['plans']);
                     }])
                     ->whereIn('id', $team_ids)
                     ->where('status', 1)
@@ -289,7 +301,10 @@ class TeamService extends ApiBaseService
             }
 
             $team_infos = Team::select("*")
-                ->with("team_members", 'team_invited_members','created_by')
+                ->with(["team_members" => function($q){
+                    $q->with('candidate_info');
+                }])
+                ->with('team_invited_members','created_by')
                 ->where('team_id', '=', $teamId)
                 ->get();
             //$team_infos[0]->logo = isset($team_infos[0]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[0]->logo : '';
