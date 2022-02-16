@@ -81,8 +81,10 @@ class CandidateImage extends Model
             return  $status;
         }
 
-        /* Only Team Can see */
-        if(in_array($auth->user_id,$candidate->active_team->team_members->pluck('user_id')->toArray())){
+        /* Only Connected Team Can see */
+        $authId = $auth->user_id;
+        $candidateTeamMemberIds = $candidate->active_team ? $candidate->active_team->team_members->pluck('user_id')->toArray() : [] ;
+        if(in_array($authId,$candidateTeamMemberIds)){
             return $status = true;
         }
 
