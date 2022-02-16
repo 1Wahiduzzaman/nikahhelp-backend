@@ -136,16 +136,14 @@ class SearchService extends ApiBaseService
                     'id' => $activeTeamId
                 ]);
 
-
                 $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('user_id')->toArray();
                 $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
                 $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
                 $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
                 $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
                 $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
-
                 /* FILTER - Own along with team member and block list candidate  */
-                $activeTeamUserIds = $activeTeam->team_members()->exists() ? $activeTeam->team_members->pluck('user_id')->toArray() : [];
+                $activeTeamUserIds = $activeTeam->team_members->pluck('user_id')->toArray();
                 $exceptIds = array_merge($userInfo['blockList'],$activeTeamUserIds);
                 $candidates = $candidates->whereNotIn('user_id',$exceptIds);
 
@@ -247,7 +245,6 @@ class SearchService extends ApiBaseService
             }
 
             $candidatesResponse = [];
-
             foreach ($candidates as $candidate) {
                 /* Include additional info */
                 $candidate->is_short_listed = in_array($candidate->user_id,$userInfo['shortList']);
@@ -256,8 +253,10 @@ class SearchService extends ApiBaseService
                 $teamId = $candidate->active_team ? $candidate->active_team->team_id : null;
                 $teamTableId = $candidate->active_team ? $candidate->active_team->id : '';
                 $candidate->team_id = $teamId;
+
                 $connectionRequestSendType = null;
                 $teamConnectStatus = null;
+
 
                 /* Set Team related info */
 
@@ -278,8 +277,11 @@ class SearchService extends ApiBaseService
 
                 }
 
+
+
                 $candidate->connectionRequestSendType = $connectionRequestSendType;
                 $candidate->teamConnectStatus = $teamConnectStatus;
+
 
                 $candidatesResponse[] = array_merge(
                     $this->candidateTransformer->transformSearchResult($candidate),
