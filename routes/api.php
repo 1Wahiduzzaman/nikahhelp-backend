@@ -30,7 +30,8 @@ use App\Http\Controllers\API\V1\MessageController;
 use App\Http\Controllers\API\V1\PackageController;
 use App\Http\Controllers\API\V1\VisitController;
 use App\Http\Middleware\CorsHandler;
-
+use App\Models\PasswordReset;
+use Illuminate\Support\Facades\Validator;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -51,6 +52,12 @@ Route::POST('v1/login', [UserController::class, 'authenticate']);
 Route::GET('v1/logout', [UserController::class, 'logout']);//will be used  in save and exit
 //using ony get method
 Route::get('v1/emailVerify/{token}', [UserController::class, 'emailVerify']);//incomplete
+Route::get('v1/password-reset/{token}', static function ($token) {
+    $rule = ['token' => 'required|string|max:60'];
+    Validator::make(['token' => $token], $rule);
+    $tokenExistInDB = PasswordReset::where('token', $token)->exists();
+    return response()->json(['accepted_token' => $tokenExistInDB]);
+});
 Route::GET('v1/token-refresh', [UserController::class, 'getTokenRefresh']);//inspect
 Route::post('v1/forgot/password', ForgotPasswordController::class)->name('forgot.password');//inspect
 Route::post('v1/forgot/password/verify', [ForgotPasswordController::class, 'forgetPasswordTokenVerification'])->name('forgot.password.verify');//inspect
