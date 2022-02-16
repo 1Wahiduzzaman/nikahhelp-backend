@@ -136,15 +136,24 @@ class SearchService extends ApiBaseService
                     'id' => $activeTeamId
                 ]);
 
+                $activeTeamUserIds = [];
+
+                if($activeTeam){
+
+                    $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
+                    $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
+                    $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
+                    $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
+                    $activeTeamUserIds = $activeTeam->team_members->pluck('user_id')->toArray();
+                }
+
                 $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('user_id')->toArray();
-                $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
+
                 $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
-                $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
-                $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
-                $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
+
 
                 /* FILTER - Own along with team member and block list candidate  */
-                $activeTeamUserIds = $activeTeam->team_members->pluck('user_id')->toArray();
+
                 $exceptIds = array_merge($userInfo['blockList'],$activeTeamUserIds);
                 $candidates = $candidates->whereNotIn('user_id',$exceptIds);
 
