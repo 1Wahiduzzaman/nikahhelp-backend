@@ -113,6 +113,7 @@ class SearchService extends ApiBaseService
             $connectFrom = [];
             $connectTo = [];
             $userInfo['connectList'] = [];
+            $activeTeam = '';
 
             $candidates = $this->candidateRepository->getModel();
 
@@ -253,21 +254,27 @@ class SearchService extends ApiBaseService
                 $candidate->is_teamListed = in_array($candidate->user_id,$userInfo['teamList']);
                 $teamId = $candidate->active_team ? $candidate->active_team->team_id : null;
                 $teamTableId = $candidate->active_team ? $candidate->active_team->id : '';
-                $candidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;
                 $candidate->team_id = $teamId;
+                $connectionRequestSendType = null;
+                $teamConnectStatus = null;
 
-                /* Find Team Connection Status (We Decline or They Decline )*/
-                if(in_array($teamId,$connectFrom)){
-                    $connectionRequestSendType = 1;
-                    $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$candidate->active_team->id)->first();
-                    $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
-                }elseif (in_array($teamId,$connectTo)){
-                    $connectionRequestSendType = 2;
-                    $teamConnectStatus = TeamConnection::where('from_team_id',$candidate->active_team->id)->where('to_team_id',$activeTeam->id)->first();
-                    $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
-                }else{
-                    $connectionRequestSendType = null;
-                    $teamConnectStatus = null;
+                /* Set Team related info */
+
+                if($activeTeam){
+
+                    $candidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;
+
+                    /* Find Team Connection Status (We Decline or They Decline )*/
+                    if(in_array($teamId,$connectFrom)){
+                        $connectionRequestSendType = 1;
+                        $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$candidate->active_team->id)->first();
+                        $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
+                    }elseif (in_array($teamId,$connectTo)){
+                        $connectionRequestSendType = 2;
+                        $teamConnectStatus = TeamConnection::where('from_team_id',$candidate->active_team->id)->where('to_team_id',$activeTeam->id)->first();
+                        $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
+                    }
+
                 }
 
                 $candidate->connectionRequestSendType = $connectionRequestSendType;

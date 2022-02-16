@@ -110,6 +110,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         // PATCH and PUT request do not support File upload
         Route::POST('candidate/image-update', [CandidateController::class, 'updateImage'])->name('update.candidate.image.upload');
         Route::DELETE('candidate/image-upload/{candidate_image}', [CandidateController::class, 'deleteImage'])->name('delete.candidate.image.upload');
+        Route::DELETE('candidate-image/{image_type}', [CandidateController::class, 'deleteImageByType'])->name('delete.candidate.image.upload');
 
         // Chat | Message API | By Raz
         Route::GET('team-chat', [MessageController::class, 'teamChatList'])->name('team-chat.list');
