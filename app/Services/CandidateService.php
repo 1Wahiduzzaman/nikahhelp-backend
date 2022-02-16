@@ -918,25 +918,35 @@ class CandidateService extends ApiBaseService
                 $checkRepresentative->team_connection_can_see = $request['team_connection_can_see'];
             }
             $checkRepresentative->save();
+
             if (isset($request['image']) && count($request['image']) > 0) {
+
                 foreach ($request['image'] as $key => $file) {
-//                    $requestFile = $request->file("image.$key.image");
                     $requestFileType = $file['type'];
-//                    $input = $this->singleImageUploadFile($requestFile, $requestFileType);
-                    $randNumb = 'image_'.mt_rand(10000,99999);
+                    $randNumb = 'image_'.$userId.$file['type'];
                     $image = $this->uploadImageThrowGuzzle([
                         $randNumb=>$request->file("image.$key.image"),
                     ]);
-                    $request['user_id'] = $userId;
-                    $request['image_type'] = $requestFileType;
-                    $request['image_path'] = $image->$randNumb;
-                    $request['disk'] = 'remote';
-                    $input = array_merge($request->all(), []);
-                    $upload = $this->imageRepository->save($input);
+                    $data['user_id'] = $userId;
+                    $data['image_type'] = $requestFileType;
+                    $data['image_path'] = $image->$randNumb;
+                    $data['image_visibility'] = $file['visibility'];
+                    $data['disk'] = 'remote';
+                    $imageInfo = $this->imageRepository->findOneByProperties([
+                        'user_id' => $userId,
+                        'image_type' => $file['type']
+                    ]);
+
+                    if(!$imageInfo){
+                        $upload = $this->imageRepository->save($data);
+                    }else{
+                        $upload = $imageInfo->update($data);
+                    }
+
                 }
             }
 
-            $searchCriteria = ["user_id" => $checkRepresentative->id];
+            $searchCriteria = ["user_id" => $checkRepresentative->user_id];
             $avatar_image_url = $checkRepresentative->per_avatar_url;
             $main_image_url = $checkRepresentative->per_main_image_url;
 
@@ -944,14 +954,8 @@ class CandidateService extends ApiBaseService
 
             $images = $this->candidateTransformer->candidateOtherImage($images,true);
 
-//            for ($i = 0; $i < count($images); $i++) {
-////            $images[$i]->image_path = url('storage/' . $images[$i]->image_path);
-//                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
-//            }
 
             $data = array();
-            // $data["avatar_image_url"] = $avatar_image_url ? env('IMAGE_SERVER') .'/'.$avatar_image_url : '';
-            // $data["main_image_url"] = $main_image_url ? env('IMAGE_SERVER') .'/'.$main_image_url : '';
 
             $data["avatar_image_url"] = isset($avatar_image_url) ? $avatar_image_url : '';
             $data["main_image_url"] = isset($main_image_url) ? $main_image_url : '';
@@ -1046,6 +1050,46 @@ class CandidateService extends ApiBaseService
             return $this->sendSuccessResponse([], self::IMAGE_DELETED_SUCCESSFULLY);
         } catch (Exception $exception) {
             DB::rollBack();
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+    }
+
+    /**
+     * @param CandidateImage $candidateImage
+     * @return JsonResponse
+     */
+    public function deleteImageByType($image_type): JsonResponse
+    {
+        $userId = self::getUserId();
+        try {
+            if($image_type == 0 || $image_type == 1){
+
+                $candidate = $this->candidateRepository->findOneByProperties([
+                    'user_id' => $userId
+                ]);
+
+
+                if($image_type == 0){
+                    $candidate->per_avatar_url = null ;
+                    $candidate->save();
+                }else{
+                    $candidate->per_main_image_url = null ;
+                    $candidate->save();
+                }
+
+            }elseif (in_array((int)$image_type,[2,3,4,5,6,7,8])){
+                $imageInfo = $this->imageRepository->findOneByProperties([
+                    'user_id' => $userId,
+                    'image_type' => $image_type
+                ]);
+                $imageInfo->delete();
+            }
+
+            /* edo Need to remove from image server  */
+
+            return $this->sendSuccessResponse([], self::IMAGE_DELETED_SUCCESSFULLY);
+
+        } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }

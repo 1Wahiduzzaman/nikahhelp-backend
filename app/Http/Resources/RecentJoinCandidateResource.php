@@ -24,7 +24,7 @@ class RecentJoinCandidateResource extends JsonResource
             'religion' => $this->userinfo->getReligion['name'] ?? "",
             'study_level' => $this->candidateEducationLevel['name'] ?? "",
             'ethnicity' => $this->userinfo['per_ethnicity'] ?? "",
-            'image' => isset($this->userInfo['per_main_image_url']) ? $this->userInfo['per_main_image_url'] : null ,
+            'image' => isset($this->userInfo['per_avatar_url']) ? $this->userInfo['per_avatar_url'] : null ,
             'gender' => $this->userinfo['per_gender'] ?? ""
 
         ];

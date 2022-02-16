@@ -481,11 +481,8 @@ class CandidateInformation extends Model
             case 2:
                 $gender = 'Female';
                 break;
-            case 3:
-                $gender = 'Others';
-                break;
             default:
-                $gender = "Do not disclose";
+                $gender = "";
         }
 
         return $gender ;

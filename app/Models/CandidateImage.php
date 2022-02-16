@@ -81,19 +81,16 @@ class CandidateImage extends Model
             return  $status;
         }
 
+        /* Only Team Can see */
+        if(in_array($auth->user_id,$candidate->active_team->team_members->pluck('user_id')->toArray())){
+            return $status = true;
+        }
+
         /* if auth id and candidate id is same it will return true */
         if($auth->user_id == $candidate->user_id){
             return $status = true;
         }
 
-        if (!$candidate->active_team) {
-            return $status ;
-        }
-
-        /* Only Team Can see */
-        if($candidate->only_team_can_see){
-            return $status = in_array($auth->user_id,$candidate->active_team->team_members->pluck('user_id')->toArray());
-        }
 
         /* Only Connected Team Can see */
         if($candidate->team_connection_can_see){
