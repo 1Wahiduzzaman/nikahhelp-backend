@@ -162,4 +162,9 @@ class UserController extends Controller
         return $this->userService->formTypeStatus($request);
     }
 
+    public function passwordExpiryCheck(Request $request, $token)
+    {
+        return $this->userService->passwordExpiryCheck($token);
+    }
+
 }
