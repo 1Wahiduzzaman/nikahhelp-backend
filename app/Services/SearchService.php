@@ -238,7 +238,7 @@ class SearchService extends ApiBaseService
 
             $parPage = $request->input('parpage',10);
 
-            $candidates = $candidates->with('getNationality','getReligion','candidateTeam')->paginate($parPage);
+            $candidates = $candidates->with('getNationality','getReligion','candidateTeam','activeTeams','activeTeams.team_members')->paginate($parPage);
 
             if(!count($candidates->items())){
                 return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::SUCCESS);
@@ -250,18 +250,21 @@ class SearchService extends ApiBaseService
                 $candidate->is_short_listed = in_array($candidate->user_id,$userInfo['shortList']);
                 $candidate->is_block_listed = in_array($candidate->user_id,$userInfo['blockList']);
                 $candidate->is_teamListed = in_array($candidate->user_id,$userInfo['teamList']);
-                $teamId = $candidate->active_team ? $candidate->active_team->team_id : null;
-                $teamTableId = $candidate->active_team ? $candidate->active_team->id : '';
+
+                /* Set Candidate Team related info */
+                $teamId = null;
+                $teamTableId = '';
+                if($candidate->active_team){
+                    $teamId = $candidate->active_team->team_id;
+                    $teamTableId = $candidate->active_team->id;
+                    $candidate->team_members_id = $candidate->active_team->team_members->pluck('user_id')->toArray();
+                }
                 $candidate->team_id = $teamId;
 
+                /* Set Auth Team related info */
                 $connectionRequestSendType = null;
                 $teamConnectStatus = null;
-
-
-                /* Set Team related info */
-
                 if($activeTeam){
-
                     $candidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;
 
                     /* Find Team Connection Status (We Decline or They Decline )*/
@@ -274,14 +277,9 @@ class SearchService extends ApiBaseService
                         $teamConnectStatus = TeamConnection::where('from_team_id',$candidate->active_team->id)->where('to_team_id',$activeTeam->id)->first();
                         $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
                     }
-
                 }
-
-
-
                 $candidate->connectionRequestSendType = $connectionRequestSendType;
                 $candidate->teamConnectStatus = $teamConnectStatus;
-
 
                 $candidatesResponse[] = array_merge(
                     $this->candidateTransformer->transformSearchResult($candidate),
