@@ -34,6 +34,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use \App\Domain;
 use App\Models\TeamMember;
 use App\Models\TeamMemberInvitation;
+use Illuminate\Support\Facades\Validator;
+use App\Models\PasswordReset;
 
 class UserService extends ApiBaseService
 {
@@ -666,6 +668,19 @@ class UserService extends ApiBaseService
         $user->update(['form_type'=> $formType]);
 
         return $this->sendSuccessResponse($user,'Form type status update successfully');
+    }
+
+    public function passwordExpiryCheck($token)
+    {
+        $rule = ['token' => 'required|string|max:60'];
+       $isValid = Validator::make(['token' => $token], $rule);
+
+       if ($isValid->fails()) {
+            return $this->sendErrorResponse('Please reset password', ['Token not valid']);
+       }
+
+        $tokenExistInDB = PasswordReset::where('token', $token)->exists();
+         return $this->sendSuccessResponse(['accepted' => $tokenExistInDB], 'Token accepted');
     }
 
 }

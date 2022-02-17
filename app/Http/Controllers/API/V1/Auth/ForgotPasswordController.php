@@ -73,7 +73,6 @@ class ForgotPasswordController extends Controller
                         dispatch(function () use ($passwordUpdate, $input) {
                             $passwordUpdate->forceDelete();
                         })->delay(now()->addMinutes(1));
-                        Artisan::call('queue:work', ['--stop-when-empty' => true]);
                     } catch (Exception $exception) {
                         return $this->sendErrorResponse($exception->getMessage(), [], 'Failed reset password');
                     }
