@@ -88,7 +88,7 @@ class CandidateImage extends Model
             return $status = true;
         }
 
-        /* if auth id and candidate id is same it will return true */
+        /* if auth id and candidate id is same it will return true as it is own id*/
         if($auth->user_id == $candidate->user_id){
             return $status = true;
         }
