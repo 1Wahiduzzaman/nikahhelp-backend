@@ -175,6 +175,7 @@ class CandidateTransformer extends TransformerAbstract
             'teamConnectStatus' => $item->teamConnectStatus ?? null,
             'verification_status' => $item->user->status,
             'team_members_id' => $item->team_members_id ?? null,
+            'representative_status' => $item->representative_status ?? null,
         ];
     }
 

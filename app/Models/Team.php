@@ -164,6 +164,10 @@ class Team extends Model
     {
         return $this->belongsToMany(CandidateInformation::class,'team_members','team_id','user_id','id','user_id')->wherePivot('user_type','Candidate')->first();
     }
+    public function representativeOfTeamFromUser()
+    {
+        return $this->belongsToMany(User::class,'team_members','team_id','user_id')->wherePivot('user_type','Representative');
+    }
 
     public function getLogoAttribute($value) {
         return isset($value) ? env('IMAGE_SERVER').'/'.$value : null;

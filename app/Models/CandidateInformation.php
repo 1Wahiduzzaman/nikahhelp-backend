@@ -549,4 +549,9 @@ class CandidateInformation extends Model
         return null;
     }
 
+    public function getRepresentativeStatusAttribute()
+    {
+       return $this->active_team ? (bool)$this->active_team->representativeOfTeamFromUser->filter(function($user){ return $user->account_type > 2; })->count() : false ;
+    }
+
 }
