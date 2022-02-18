@@ -13,14 +13,16 @@ class SubscriptionMail extends Mailable
 
     public $user;
     public $domain;
+    public $team;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user, $domain)
+    public function __construct($team,$user, $domain)
     {        
+        $this->team = $team;
         $this->user = $user;
         $this->domain = $domain;
     }
