@@ -350,12 +350,17 @@ class SubscriptionService extends ApiBaseService
 
 
     //Subscription Cron Job
-    public function subscriptionExpire($users) {
-        foreach($users as $user) {
-            if($user->email) {
-                Mail::to($user->email)->send(new SubscriptionMail($user, $this->domain->domain));
+    public function subscriptionExpire($teams) {
+        foreach($teams as $team){
+            if(!$team->team_members->isEmpty()) {
+                foreach($team->team_members as $member) {
+                    $user = $member->user;
+                    if($user->email) {
+                        Mail::to($member->user->email)->send(new SubscriptionMail($team, $user, $this->domain->domain));
+                    }            
+                }  
             }            
-        }    
+        }          
         echo 'Mail Sent';    
     }
 
