@@ -174,7 +174,7 @@ class CandidateTransformer extends TransformerAbstract
             'connectionRequestSendType' => $item->connectionRequestSendType ?? null,
             'teamConnectStatus' => $item->teamConnectStatus ?? null,
             'verification_status' => $item->user->status,
-            'team_members_id' => $item->team_members_id ?? null,
+            'team' => $item->team_info ?? null,
             'representative_status' => $item->representative_status ?? null,
         ];
     }
