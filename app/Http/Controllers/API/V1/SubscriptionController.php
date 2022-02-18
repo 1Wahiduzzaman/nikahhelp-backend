@@ -66,17 +66,14 @@ class SubscriptionController extends AppBaseController
     //Cron job
     public function subscriptionExpire() {
         $date = Carbon::today()->addDay(7);
-        // dd($date);
-        $users = Team::with(['team_members' => function($q) {
+        $teams = Team::with(['team_members' => function($q) {
             $q->with(['user' => function($u){
                 $u->select('id', 'full_name', 'email', 'status');
             }]);
-            // $q->with('user');
             $q->where('status', 1);
         }])
-        ->where('subscription_expire_at', $date)->first();
-        dd($users->team_members[0]->user);
+        ->where('subscription_expire_at', $date)->get();
         // $users = User::where('email', 'raz.doict@gmail.com')->get();        
-        return $this->subscriptionService->subscriptionExpire($users);
+        return $this->subscriptionService->subscriptionExpire($teams);
     }
 }
