@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\V1\SubscriptionController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('emails.subscription.new_subscription');
 });
+
+ // Raz - Cron Job Expire Subscription Sending Mail
+ Route::get('/subscription-expire', [SubscriptionController::class, 'subscriptionExpire'])->name('subscription.expire');
 
 Route::get('/migration', function () {
     if(env('APP_ENV') === 'local'){

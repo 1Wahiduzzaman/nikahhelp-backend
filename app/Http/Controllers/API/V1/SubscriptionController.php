@@ -10,7 +10,7 @@ use App\Services\SubscriptionService;
 use App\Http\Requests\Subscription\NewSubscriptionRequest;
 use App\Http\Requests\Subscription\OneDaySubscriptionRequest;
 use App\Http\Requests\Subscription\CancelSubscriptionRequest;
-
+use App\Models\User;
 
 class SubscriptionController extends AppBaseController
 {
@@ -59,5 +59,11 @@ class SubscriptionController extends AppBaseController
     public function oneDaySubscription(OneDaySubscriptionRequest $request)
     {
         return $this->subscriptionService->oneDaySubscription($request->all());
+    }
+
+    //Cron job
+    public function subscriptionExpire() {
+        $users = User::where('email', 'raz.doict@gmail.com')->get();        
+        return $this->subscriptionService->subscriptionExpire($users);
     }
 }
