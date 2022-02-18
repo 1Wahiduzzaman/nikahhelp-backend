@@ -278,6 +278,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('/subscription/cancel_subscription', [SubscriptionController::class, 'cancelSubscription'])->name('subscription.cancel');
         Route::get('/subscription/payment_initialization', [SubscriptionController::class, 'initializationPayment'])->name('subscription.initialization.payment');
 
+       
+
+
 
         // Notification
 
@@ -299,7 +302,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('email', [UserController::class, 'sendEmail'])->name('email');
 
 
-        //Raz Visitor count in site
+        //Raz - Visitor count in site
         Route::post('site-visit', [VisitController::class, 'visit'])->name('user.site-visit');
         Route::get('site-visit-graph', [VisitController::class, 'visitGraph'])->name('user.site-visit-graph');
 

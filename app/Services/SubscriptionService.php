@@ -21,6 +21,9 @@ use Session;
 use Laravel\Cashier\Cashier;
 use Laravel\Cashier\Exceptions\IncompletePayment;
 use App\Http\Resources\SubscriptionReportResource;
+use App\Mail\SubscriptionMail;
+use Illuminate\Support\Facades\Mail;
+use \App\Domain;
 
 class SubscriptionService extends ApiBaseService
 {
@@ -31,16 +34,17 @@ class SubscriptionService extends ApiBaseService
      * @var TeamRepository
      */
     protected $teamRepository;
+    protected $domain;
 
     /**
      * TeamService constructor.
      *
      * @param TeamRepository $teamRepository
      */
-    public function __construct(TeamRepository $teamRepository)
+    public function __construct(TeamRepository $teamRepository, Domain $domain)
     {
         $this->teamRepository = $teamRepository;
-
+        $this->domain = $domain;
     }
 
     /**
@@ -257,7 +261,7 @@ class SubscriptionService extends ApiBaseService
             case 3:
                 return Carbon::now()->addDays(180);
                 break;
-            case 3:
+            case 4:
                 return Carbon::now()->addDays(365);
                 break;
             default:
@@ -342,6 +346,17 @@ class SubscriptionService extends ApiBaseService
             'has_more_pages' => $queryData->hasMorePages(),
         ];
         return $data;
+    }
+
+
+    //Subscription Cron Job
+    public function subscriptionExpire($users) {
+        foreach($users as $user) {
+            if($user->email) {
+                Mail::to($user->email)->send(new SubscriptionMail($user, $this->domain->domain));
+            }            
+        }    
+        echo 'Mail Sent';    
     }
 
 }
