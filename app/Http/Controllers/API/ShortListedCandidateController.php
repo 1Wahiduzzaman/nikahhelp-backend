@@ -128,7 +128,11 @@ class ShortListedCandidateController extends AppBaseController
                 $teamId = null;
                 if($candidate->active_team){
                     $teamId = $candidate->active_team->team_id;
-                    $candidate->team_members_id = $candidate->active_team->team_members->pluck('user_id')->toArray();
+                    $candidate->team_info = [
+                        'team_id' => $candidate->active_team->team_id,
+                        'name' => $candidate->active_team->name,
+                        'members_id' => $candidate->active_team->team_members->pluck('user_id')->toArray(),
+                    ];
                 }
                 $candidate->team_id = $teamId;
 
@@ -198,7 +202,11 @@ class ShortListedCandidateController extends AppBaseController
                 if($teamShortListUser->getCandidate->active_team){
                     $teamId = $teamShortListUser->getCandidate->active_team->team_id;
                     $teamTableId = $candidate->active_team->id;
-                    $teamShortListUser->getCandidate->team_members_id = $teamShortListUser->getCandidate->active_team->team_members->pluck('user_id')->toArray();
+                    $teamShortListUser->getCandidate->team_info = [
+                        'team_id' => $teamShortListUser->getCandidate->active_team->team_id,
+                        'name' => $teamShortListUser->getCandidate->active_team->name,
+                        'members_id' => $teamShortListUser->getCandidate->active_team->team_members->pluck('user_id')->toArray(),
+                    ];
                 }
                 $teamShortListUser->getCandidate->team_id = $teamId;
                 $teamShortListUser->getCandidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;;

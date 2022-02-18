@@ -257,7 +257,11 @@ class SearchService extends ApiBaseService
                 if($candidate->active_team){
                     $teamId = $candidate->active_team->team_id;
                     $teamTableId = $candidate->active_team->id;
-                    $candidate->team_members_id = $candidate->active_team->team_members->pluck('user_id')->toArray();
+                    $candidate->team_info = [
+                        'team_id' => $candidate->active_team->team_id,
+                        'name' => $candidate->active_team->name,
+                        'members_id' => $candidate->active_team->team_members->pluck('user_id')->toArray(),
+                    ];
                 }
                 $candidate->team_id = $teamId;
 
