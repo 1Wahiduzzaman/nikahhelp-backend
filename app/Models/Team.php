@@ -48,7 +48,7 @@ class Team extends Model
 
     public function subscription()
     {
-       return $this->hasOne(Subscription::class,'subscription_id', 'id');
+       return $this->belongsTo(Subscription::class,'subscription_id', 'id');
     }
 
     /**
