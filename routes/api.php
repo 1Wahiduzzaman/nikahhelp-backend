@@ -63,7 +63,7 @@ Route::GET('v1/recent-join-candidate', [HomeController::class, 'recentJoinCandid
 
 Route::get('v1/religions', [ReligionController::class, 'index'])->name('religion.list');//show all
 // Countries API
-
+ Route::get('v1/search/location', [LocationController::class, 'postcode']);
 Route::get('v1/utilities/countries', [CountryController::class, 'index'])->name('utilities.countries.lists');//ok
 Route::get('v1/utilities/cities', [CountryController::class, 'getCityList'])->name('utilities.city.lists');//ok
 Route::get('v1/utilities/religions', [ReligionController::class, 'index'])->name('utilities.religions.lists');//ok
@@ -278,7 +278,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('/subscription/cancel_subscription', [SubscriptionController::class, 'cancelSubscription'])->name('subscription.cancel');
         Route::get('/subscription/payment_initialization', [SubscriptionController::class, 'initializationPayment'])->name('subscription.initialization.payment');
 
-       
+
 
 
 
