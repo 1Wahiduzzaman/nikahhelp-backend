@@ -21,8 +21,8 @@ Route::get('/', function () {
 });
 
  // Raz - Cron Job Expire Subscription Sending Mail
- Route::get('/subscription-expiring', [SubscriptionController::class, 'subscriptionExpiring'])->name('subscription.expiring');
- Route::get('/subscription-expired', [SubscriptionController::class, 'subscriptionExpired'])->name('subscription.expired');
+ Route::get('/subscription-expiring/{days}', [SubscriptionController::class, 'subscriptionExpiring'])->name('subscription.expiring');
+ Route::get('/subscription-expired/{days}', [SubscriptionController::class, 'subscriptionExpired'])->name('subscription.expired');
 
 Route::get('/migration', function () {
     if(env('APP_ENV') === 'local'){
