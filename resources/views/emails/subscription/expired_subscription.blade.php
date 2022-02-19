@@ -119,12 +119,12 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            The owner of this team is <span style="color: #522e8e;">{{ @$user->created_by->full_name }}</span>. All team members will receive a notification of this
+            The owner of this team is <span style="color: #522e8e;">{{ @$team->created_by->full_name }}</span>. All team members will receive a notification of this
 			renewal in MatrimonyAssist
         </p>
 
         <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Help and guidance on how to subscribe and subscription detail. <a href="">http://www.nikah.arranzed.com/help</a>
+            Help and guidance on how to subscribe and subscription detail. <a href="http://www.nikah.arranzed.com/help">http://www.nikah.arranzed.com/help</a>
         </div>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">

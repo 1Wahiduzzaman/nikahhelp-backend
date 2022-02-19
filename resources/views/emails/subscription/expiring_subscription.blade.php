@@ -181,7 +181,7 @@
         </div>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px; text-align: center">
-            <a style="color: #522e8e; text-align: center" href="{{ $domain }}/dynamic-link">Link</a>
+            <a style="color: #522e8e; text-align: center" href="{{ $domain }}/subscription/{{ $team->team_id }}">{{ $domain }}/subscription/{{ $team->team_id }}</a>
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">

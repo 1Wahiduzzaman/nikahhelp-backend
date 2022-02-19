@@ -142,7 +142,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            The owner of this team is <span style="color: #522e8e;"> {{ @$user->created_by->full_name }} </span>.
+            The owner of this team is <span style="color: #522e8e;"> {{ @$team->created_by->full_name }} </span>.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
@@ -163,7 +163,7 @@
             <tr>
                 <td>Reference</td>
                 <td style="padding-left: 20px">:</td>
-                <td style="padding-left: 20px">{{ @$subscription->stripe_id }} (stripe transection ID)</td>
+                <td style="padding-left: 20px">{{ @$subscription->stripe_id }}</td>
             </tr>
             <tr>
                 <td>Transaction date/time</td>
@@ -178,7 +178,7 @@
             <tr>
                 <td>Order reference</td>
                 <td style="padding-left: 20px">:</td>
-                <td style="padding-left: 20px">{{ $subscription->id }} (our system transection ID)</td>
+                <td style="padding-left: 20px">{{ $subscription->id }}</td>
             </tr>
         </table>
 
