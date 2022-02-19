@@ -107,10 +107,10 @@
     <div style="width: 100%; margin-top: 30px;">
         <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Subscription payment</h2>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear Full name,</p>
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">{{ @$subscription->user->full_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Thank you for using MatrimonyAssist [20-11-2021]
+            Thank you for using MatrimonyAssist [{{ date('d M Y h:i A') }}]
         </p>
 
         <p style="font-size: 22px; color: rgba(3,3,3,0.73); margin-top: 28px; text-align: center">
@@ -123,8 +123,8 @@
                 <td style="text-align: right">Cost</td>
             </tr>
             <tr style="height: 30px">
-                <td>1 month plan for - Team 1</td>
-                <td style="text-align: right">£ 10.00</td>
+                <td>{{ @$subscription->plans->title }} subscription plan for - {{ @$team->name }}</td>
+                <td style="text-align: right">£ {{ @$subscription->plans->price }}</td>
             </tr>
         </table>
 
@@ -137,12 +137,12 @@
         </div>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            1 month subscription plan for - <span style="color: #522e8e;">Amina Alam’s Family (Team 1)</span> <br>
-            Subscription expire date extended to: 21/03/2022
+            {{ @$subscription->plans->title }} subscription plan for - <span style="color: #522e8e;"> {{ @$team->name }} </span> <br>
+            Subscription expire date extended to: {{ Carbon::parse($team->subscription_expire_at)->format('d M Y') }}
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            The owner of this team is <span style="color: #522e8e;">Farhana Alam</span>.
+            The owner of this team is <span style="color: #522e8e;"> {{ {{ @$user->created_by->full_name }} }} </span>.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
@@ -153,32 +153,32 @@
             <tr>
                 <td>Card type</td>
                 <td style="padding-left: 20px">:</td>
-                <td style="padding-left: 20px">Visa</td>
+                <td style="padding-left: 20px"> N/A </td>
             </tr>
             <tr>
                 <td>Payment total</td>
                 <td style="padding-left: 20px">:</td>
-                <td style="padding-left: 20px">£10.00</td>
+                <td style="padding-left: 20px">£{{ @$subscription->plans->price }}</td>
             </tr>
             <tr>
                 <td>Reference</td>
                 <td style="padding-left: 20px">:</td>
-                <td style="padding-left: 20px">LM00-00CQ-H9GD-55 (stripe transection ID)</td>
+                <td style="padding-left: 20px">{{ @$subscription->stripe_id }} (stripe transection ID)</td>
             </tr>
             <tr>
                 <td>Transaction date/time</td>
                 <td style="padding-left: 20px">:</td>
-                <td style="padding-left: 20px">27 January 2022 08:56:39</td>
+                <td style="padding-left: 20px">{{ Carbon::parse($subscription->created_at)->format('d M Y h:i:s A') }}</td>
             </tr>
             <tr>
                 <td>Payer details</td>
                 <td style="padding-left: 20px">:</td>
-                <td style="padding-left: 20px">Amina Alam</td>
+                <td style="padding-left: 20px">{{ @$subscription->user->full_name }}</td>
             </tr>
             <tr>
                 <td>Order reference</td>
                 <td style="padding-left: 20px">:</td>
-                <td style="padding-left: 20px">718685122 (our system transection ID)</td>
+                <td style="padding-left: 20px">{{ $subscription->id }} (our system transection ID)</td>
             </tr>
         </table>
 

@@ -105,21 +105,21 @@
         $domain=env('WEB_DOMAIN');
     @endphp
     <div style="width: 100%; margin-top: 30px;">
-        <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Subscription expired 20/03/2022</h2>
+        <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Subscription expired {{ Carbon::parse($team->subscription_expire_at)->format('d M Y') }}</h2>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear Full name,</p>
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ @$user->user->full_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             Thank you for using MatrimonyAssist [20-11-2021]
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Further to our previous reminders, please note that your subscription for the team- <span style="color: #522e8e;">Amina Alam’s Family (Team 1)</span> has now
-			<span style="color: #522e8e;">Expired on 20/03/2022, at 14:0</span>
+            Further to our previous reminders, please note that your subscription for the team- <span style="color: #522e8e;">{{ @$team->name }}</span> has now
+			<span style="color: #522e8e;">{{ Carbon::parse($team->subscription_expire_at)->format('d M Y') }}</span>
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            The owner of this team is <span style="color: #522e8e;">Farhana Alam</span>. All team members will receive a notification of this
+            The owner of this team is <span style="color: #522e8e;">{{ @$user->created_by->full_name }}</span>. All team members will receive a notification of this
 			renewal in MatrimonyAssist
         </p>
 

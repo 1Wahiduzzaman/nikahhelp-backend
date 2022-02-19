@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SubscriptionMail extends Mailable
+class SubscriptionExpiredMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -34,7 +34,7 @@ class SubscriptionMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Mail from Matrimonial-assist')
-            ->markdown('emails.subscription.expiring_subscription');
+        return $this->subject('Mail from Matrimonial-assist | Subscription has been expired!')
+            ->markdown('emails.subscription.expired_subscription');
     }
 }

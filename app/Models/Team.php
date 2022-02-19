@@ -46,6 +46,11 @@ class Team extends Model
         self::CREATED_AT => 'date',
     ];
 
+    public function subscription()
+    {
+       return $this->hasOne(Subscription::class,'subscription_id', 'id');
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */

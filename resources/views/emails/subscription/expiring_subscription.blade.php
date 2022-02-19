@@ -107,10 +107,10 @@
     <div style="width: 100%; margin-top: 30px;">
         <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Subscription expiring at {{ Carbon::parse($team->subscription_expire_at)->format('d M Y') }}</h2>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user->full_name }},</p>
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ @$user->full_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Thank you for using MatrimonyAssist [20-11-2021]
+            Thank you for using MatrimonyAssist [{{ Carbon::parse($team->subscription_expire_at)->format('d M Y') }}]
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
@@ -118,7 +118,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Your subscription for the - <span style="color: #522e8e;">{{ $team->name }}</span> is expiring on <span style="color: #522e8e">{{ Carbon::parse($team->subscription_expire_at)->format('d M Y') }}</span>
+            Your subscription for the - <span style="color: #522e8e;">{{ @$team->name }}</span> is expiring on <span style="color: #522e8e">{{ Carbon::parse($team->subscription_expire_at)->format('d M Y') }}</span>
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
