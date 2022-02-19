@@ -64,8 +64,8 @@ class SubscriptionController extends AppBaseController
     }
 
     //Cron job
-    public function subscriptionExpire() {
-        $date = Carbon::today()->addDay(7);
+    public function subscriptionExpiring($days = 7) {
+        $date = Carbon::today()->addDay($days);
         $teams = Team::with(['team_members' => function($q) {
             $q->with(['user' => function($u){
                 $u->select('id', 'full_name', 'email', 'status');
@@ -74,6 +74,21 @@ class SubscriptionController extends AppBaseController
         }])
         ->where('subscription_expire_at', $date)->get();
         // $users = User::where('email', 'raz.doict@gmail.com')->get();        
-        return $this->subscriptionService->subscriptionExpire($teams);
+        return $this->subscriptionService->subscriptionExpiring($teams);
+    }
+
+    public function subscriptionExpired($days = 1) {
+        $date = Carbon::today()->subDay($days);
+        $teams = Team::with(['team_members' => function($q) {
+            $q->with(['user' => function($u){
+                $u->select('id', 'full_name', 'email', 'status');
+            }]);
+            $q->where('status', 1);
+        }])
+        ->with(['created_by' => function($u){
+            $u->select('id', 'full_name', 'email', 'status');
+        }])
+        ->where('subscription_expire_at', $date)->get();                
+        return $this->subscriptionService->subscriptionExpired($teams);
     }
 }

@@ -24,6 +24,9 @@ use App\Http\Resources\SubscriptionReportResource;
 use App\Mail\SubscriptionMail;
 use Illuminate\Support\Facades\Mail;
 use \App\Domain;
+use App\Mail\SubscriptionExpiredMail;
+use App\Mail\SubscriptionExpiringMail;
+use App\Mail\SubscriptionNewMail;
 
 class SubscriptionService extends ApiBaseService
 {
@@ -91,11 +94,11 @@ class SubscriptionService extends ApiBaseService
             ]);
             $expireDate = Carbon::parse(self::expireDateCalculation($request['plane']))->format('Y-m-d');
             $suBInfo = Subscription::find($subscriptionInfo->id);
-            $suBInfo->team_id = $request['team_id'];
+            $suBInfo->team_id = $request['team_id'];  //pk
             $suBInfo->plan_id = $request['plane'];
             $suBInfo->subscription_expire_at = $expireDate;
             $suBInfo->save();
-            $teamExpireDateUpdate = Team::find($request['team_id']);
+            $teamExpireDateUpdate = Team::find($request['team_id']);   //pk team_id
             $current_expire_date  = $teamExpireDateUpdate->subscription_expire_at;
             if($current_expire_date) {
                 $exp_date = Carbon::parse($this->reNewExpiryDate($request['plane'], $current_expire_date))->format('Y-m-d');                                
@@ -106,6 +109,16 @@ class SubscriptionService extends ApiBaseService
             $teamExpireDateUpdate->subscription_id = $subscriptionInfo->id;
             $teamExpireDateUpdate->save();
 
+            // Send Mail to subscribed user
+            try{
+                if($user->email) {
+                    $subscription = $teamExpireDateUpdate->subscription;                
+                    Mail::to($user->email)->send(new SubscriptionNewMail($teamExpireDateUpdate, $subscription, $this->domain->domain));
+                }
+            } catch (IncompletePayment $exception) {
+                return $this->sendErrorResponse('Subscription mail has been filled');
+            }            
+            //
             Notificationhelpers::add(self::SUBSCRIPTION_SUCCESSFULLY, 'team', $request['team_id'], $userId);
 
             return $this->sendSuccessResponse($subscriptionInfo->toArray(), self::SUBSCRIPTION_SUCCESSFULLY);
@@ -350,13 +363,27 @@ class SubscriptionService extends ApiBaseService
 
 
     //Subscription Cron Job
-    public function subscriptionExpire($teams) {
+    public function subscriptionExpiring($teams) {
         foreach($teams as $team){
             if(!$team->team_members->isEmpty()) {
                 foreach($team->team_members as $member) {
                     $user = $member->user;
                     if($user->email) {
-                        Mail::to($member->user->email)->send(new SubscriptionMail($team, $user, $this->domain->domain));
+                        Mail::to($user->email)->send(new SubscriptionExpiringMail($team, $user, $this->domain->domain));
+                    }            
+                }  
+            }            
+        }          
+        echo 'Mail Sent';    
+    }
+
+    public function subscriptionExpired($teams) {
+        foreach($teams as $team){
+            if(!$team->team_members->isEmpty()) {
+                foreach($team->team_members as $member) {
+                    //$user = $member->user;                    
+                    if($member->user->email) {
+                        Mail::to($member->user->email)->send(new SubscriptionExpiredMail($team, $member, $this->domain->domain));
                     }            
                 }  
             }            
