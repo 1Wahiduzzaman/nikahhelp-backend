@@ -77,8 +77,8 @@ class SubscriptionService extends ApiBaseService
      * @return JsonResponse
      */
     public function newSubscription($request)
-    {        
-        try {            
+    {
+        try {
             $userId = self::getUserId();
             $user = User::find($userId);
             if (!$user) {
@@ -98,10 +98,10 @@ class SubscriptionService extends ApiBaseService
             $suBInfo->plan_id = $request['plane'];
             $suBInfo->subscription_expire_at = $expireDate;
             $suBInfo->save();
-            $teamExpireDateUpdate = Team::find($request['team_id']);   //pk team_id
+            $teamExpireDateUpdate = Team::with(['created_by'])->find($request['team_id']);   //pk team_id
             $current_expire_date  = $teamExpireDateUpdate->subscription_expire_at;
             if($current_expire_date) {
-                $exp_date = Carbon::parse($this->reNewExpiryDate($request['plane'], $current_expire_date))->format('Y-m-d');                                
+                $exp_date = Carbon::parse($this->reNewExpiryDate($request['plane'], $current_expire_date))->format('Y-m-d');
             } else {
                 $exp_date = $expireDate;
             }
@@ -112,12 +112,12 @@ class SubscriptionService extends ApiBaseService
             // Send Mail to subscribed user
             try{
                 if($user->email) {
-                    $subscription = $teamExpireDateUpdate->subscription;                
+                    $subscription = $teamExpireDateUpdate->subscription;
                     Mail::to($user->email)->send(new SubscriptionNewMail($teamExpireDateUpdate, $subscription, $this->domain->domain));
                 }
             } catch (IncompletePayment $exception) {
                 return $this->sendErrorResponse('Subscription mail has been filled');
-            }            
+            }
             //
             Notificationhelpers::add(self::SUBSCRIPTION_SUCCESSFULLY, 'team', $request['team_id'], $userId);
 
@@ -130,9 +130,9 @@ class SubscriptionService extends ApiBaseService
 
     }
 
-    private function reNewExpiryDate($plan = null, $date = null) {        
+    private function reNewExpiryDate($plan = null, $date = null) {
         $date = Carbon::createFromFormat('Y-m-d', $date);
-        switch ($plan) {            
+        switch ($plan) {
             case 0:
                 return $date->addDays(1);
                 break;
@@ -370,25 +370,25 @@ class SubscriptionService extends ApiBaseService
                     $user = $member->user;
                     if($user->email) {
                         Mail::to($user->email)->send(new SubscriptionExpiringMail($team, $user, $this->domain->domain));
-                    }            
-                }  
-            }            
-        }          
-        echo 'Mail Sent';    
+                    }
+                }
+            }
+        }
+        echo 'Mail Sent';
     }
 
     public function subscriptionExpired($teams) {
         foreach($teams as $team){
             if(!$team->team_members->isEmpty()) {
                 foreach($team->team_members as $member) {
-                    //$user = $member->user;                    
+                    //$user = $member->user;
                     if($member->user->email) {
                         Mail::to($member->user->email)->send(new SubscriptionExpiredMail($team, $member, $this->domain->domain));
-                    }            
-                }  
-            }            
-        }          
-        echo 'Mail Sent';    
+                    }
+                }
+            }
+        }
+        echo 'Mail Sent';
     }
 
 }
