@@ -60,12 +60,12 @@ class Team extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function created_by()
     {
         // created_by information
-       return $this->hasOne(User::class,'id',self::CREATED_BY);
+       return $this->belongsTo(User::class,self::CREATED_BY,'id');
     }
 
     /**
