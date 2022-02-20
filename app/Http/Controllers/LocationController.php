@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\Http;
 
 class LocationController extends Controller
 {
-    //
-
     public function postcode(Request $request)
     {
        $token = config('mapbox.token');
