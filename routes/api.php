@@ -29,9 +29,8 @@ use App\Http\Controllers\API\V1\MatchMakerAPIController;
 use App\Http\Controllers\API\V1\MessageController;
 use App\Http\Controllers\API\V1\PackageController;
 use App\Http\Controllers\API\V1\VisitController;
+use App\Http\Controllers\LocationController;
 use App\Http\Middleware\CorsHandler;
-use App\Models\PasswordReset;
-use Illuminate\Support\Facades\Validator;
 /*
 |--------------------------------------------------------------------------
 | API Routes
