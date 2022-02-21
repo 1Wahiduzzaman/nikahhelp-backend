@@ -108,7 +108,7 @@ class CreateCandidateInformationTable extends Migration
             $table->string('fi_siblings_desc')->comment('Siblings descriptions')->nullable();
             $table->string('fi_country_of_origin')->nullable();
             $table->string('fi_family_info')->nullable();
-            $table->tinyInteger('anybody_can_see')->comment('0=No,1=Yes')->default(0);
+            $table->tinyInteger('anybody_can_see')->comment('0=No,1=Yes')->default(1);
             $table->tinyInteger('only_team_can_see')->comment('0=No,1=Yes')->default(0);
             $table->tinyInteger('team_connection_can_see')->comment('0=No,1=Yes')->default(0);
 

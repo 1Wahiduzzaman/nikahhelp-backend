@@ -123,6 +123,7 @@ class UserService extends ApiBaseService
 
             /* Data set for user information table */
             $registerUser['user_id'] = $user->id;
+            $registerUser['email'] = $request->get('email');
             $registerUser['first_name'] = $request->get('first_name');
             $registerUser['last_name'] = $request->get('last_name');
             $registerUser['screen_name'] = $request->get('screen_name');
