@@ -908,13 +908,13 @@ class CandidateService extends ApiBaseService
                 ]);
                 $checkRepresentative->per_main_image_url = $image->per_main_image_url;
             }
-            if (!empty($request['anybody_can_see'])) {
+            if (isset($request['anybody_can_see'])) {
                 $checkRepresentative->anybody_can_see = $request['anybody_can_see'];
             }
-            if (!empty($request['only_team_can_see'])) {
+            if (isset($request['only_team_can_see'])) {
                 $checkRepresentative->only_team_can_see = $request['only_team_can_see'];
             }
-            if (!empty($request['team_connection_can_see'])) {
+            if (isset($request['team_connection_can_see'])) {
                 $checkRepresentative->team_connection_can_see = $request['team_connection_can_see'];
             }
             $checkRepresentative->save();
