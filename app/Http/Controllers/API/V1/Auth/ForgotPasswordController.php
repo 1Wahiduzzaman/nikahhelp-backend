@@ -72,7 +72,7 @@ class ForgotPasswordController extends Controller
                     try {
                         dispatch(function () use ($passwordUpdate, $input) {
                             $passwordUpdate->forceDelete();
-                        })->delay(now()->addMinutes(1));
+                        })->delay(now()->addMinutes(4));
                     } catch (Exception $exception) {
                         return $this->sendErrorResponse($exception->getMessage(), [], 'Failed reset password');
                     }
