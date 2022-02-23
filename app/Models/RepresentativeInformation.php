@@ -137,15 +137,39 @@ class RepresentativeInformation extends Model
     public static $rules = [
 
     ];
-    
+
     public function getPerMainImageUrlAttribute($value)
     {
-        return env('IMAGE_SERVER').'/'.$value;
+        return $value ? env('IMAGE_SERVER').'/'.$value : '';
     }
-    
+
     public function getPerAvatarUrlAttribute($value)
     {
-        return env('IMAGE_SERVER').'/'.$value;
+        return $value ? env('IMAGE_SERVER').'/'.$value : '';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function currentResidenceCountry()
+    {
+        return $this->belongsTo(Country::class, 'per_current_residence_country');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function permanentCountry()
+    {
+        return $this->belongsTo(Country::class, 'per_permanent_country');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'per_county');
     }
 
 }

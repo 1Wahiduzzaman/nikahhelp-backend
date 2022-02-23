@@ -3,6 +3,7 @@
 
 namespace App\Transformers;
 
+use App\Models\CandidateInformation;
 use App\Models\RepresentativeInformation;
 use League\Fractal\TransformerAbstract;
 
@@ -24,6 +25,25 @@ class RepresentativeTransformer extends TransformerAbstract
             [
                 'basic' => $this->basicInfo($item)
             ],
+            [
+                'essential' => $this->essentialInfo($item)
+            ],
+            [
+                'personal' => $this->personalInfo($item)
+            ],
+            [
+                'verification' => $this->verificationInfo($item)
+            ],
+            [
+                'image_upload' => $this->imageUploadInfo($item)
+            ]
+        );
+    }
+
+    public function profileInfo(RepresentativeInformation $item): array
+    {
+        return array_merge(
+            $this->basicInfo($item),
             [
                 'essential' => $this->essentialInfo($item)
             ],
@@ -227,6 +247,7 @@ class RepresentativeTransformer extends TransformerAbstract
     {
         return [
             'per_gender' => $item->per_gender,
+            'per_gender_text' => CandidateInformation::getGender($item->per_gender),
             'dob' => $item->dob,
             'per_occupation' => $item->per_occupation,
         ];
@@ -242,10 +263,13 @@ class RepresentativeTransformer extends TransformerAbstract
         return [
             'per_email' => $item->per_email,
             'per_current_residence_country' => $item->per_current_residence_country,
+            'per_current_residence_country_text' => $item->currentResidenceCountry ? $item->currentResidenceCountry->name : null,
             'per_current_residence_city' => $item->per_current_residence_city,
-            'per_permanent_country' => $item->per_permanent_country,
+            'per_permanent_country' => $item->per_permanent_country ,
+            'per_permanent_country_text' => $item->permanentCountry ? $item->permanentCountry->name : null,
             'per_permanent_city' => $item->per_permanent_city,
             'per_county' => $item->per_county,
+            'per_county_text' => $item->country ? $item->country->name : null,
             'per_telephone_no' => $item->per_telephone_no,
             'mobile_number' => $item->mobile_number,
             'mobile_country_code' => $item->mobile_country_code,
