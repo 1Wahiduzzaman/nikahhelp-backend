@@ -283,6 +283,11 @@ class AdminDashboardController extends AppBaseController
 //         return $this->sendResponse($formatted_data, 'Data retrieved successfully');
 
 //     }
+    public function approvedUserList(Request $request)
+    {
+       $data =  $this->getUserData($request, 5);
+       return $this->sendResponse($data, 'Data retrieved successfully');
+    }
 
     public function verifiedUserList(Request $request)
     {
@@ -344,6 +349,8 @@ class AdminDashboardController extends AppBaseController
     public function verifyRejectUser(Request $request)
     {
         $status = [
+            'suspend' => 9,
+            'approved' => 5,
             'verified' => 3,
             'rejected' => 4,
             'completed' => 2,

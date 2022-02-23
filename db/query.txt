@@ -1,2 +1,2 @@
 ALTER TABLE `users`
-MODIFY COLUMN `status`  enum('1','2','3','4','5') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1' COMMENT '1=>InComplete, 2=>Complete, 3=>Verified, 4=>Rejected, 0=>Deleted' AFTER `password`;
+MODIFY COLUMN `status`  enum('1','2','3','4','5') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1' COMMENT '1=>InComplete, 2=>Complete, 3=>Verified, 4=>Rejected,5=>Approved, 9=>Suspended, 0=>Deleted' AFTER `password`;
