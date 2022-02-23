@@ -189,6 +189,12 @@ class UserService extends ApiBaseService
                     [],
                     HttpStatusCode::BAD_REQUEST
                 );
+            } elseif($userInfo->status == 9){
+                return $this->sendErrorResponse(
+                    'Your account has been Suspended ( ' . $userInfo->email . ' ), please contact us so we can assist you.',
+                    [],
+                    HttpStatusCode::BAD_REQUEST
+                );
             }
 
             /* Load data input status */
