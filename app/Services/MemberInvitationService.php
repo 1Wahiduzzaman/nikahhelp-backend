@@ -109,92 +109,97 @@ class MemberInvitationService extends ApiBaseService
      */
     public function join(array $data)
     {
-        // Find invitation from link
-        $invitation = $this->memberInvitationRepository->findOneByProperties(
-            [
-                "link" => $data["invitation_link"]
-            ]
-        );
+        $userInfo = self::getUserInfo();
+        if ( $userInfo->status == 5) {
+            // Find invitation from link
+            $invitation = $this->memberInvitationRepository->findOneByProperties(
+                [
+                    "link" => $data["invitation_link"]
+                ]
+            );
 
-        if (!$invitation) {
-            return $this->sendErrorResponse('Invitation not found or expired.', [], HttpStatusCode::NOT_FOUND);
-        }
+            if (!$invitation) {
+                return $this->sendErrorResponse('Invitation not found or expired.', [], HttpStatusCode::NOT_FOUND);
+            }
 
-        // Search team
-        $team = $this->teamRepository->findOneByProperties(
-            [
-                "id" => $invitation->team_id
-            ]
-        );
+            // Search team
+            $team = $this->teamRepository->findOneByProperties(
+                [
+                    "id" => $invitation->team_id
+                ]
+            );
 
-        if (!$team) {
-            return $this->sendErrorResponse('Team not found or may be deleted.', [], HttpStatusCode::NOT_FOUND);
-        }
+            if (!$team) {
+                return $this->sendErrorResponse('Team not found or may be deleted.', [], HttpStatusCode::NOT_FOUND);
+            }
 
-        // Match with team password
-        if ($team->password !== $data["team_password"]) {
-            return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::VALIDATION_ERROR);
-        }
+            // Match with team password
+            if ($team->password !== $data["team_password"]) {
+                return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::VALIDATION_ERROR);
+            }
 
-        // Check team size < 5
-        if ($team->member_count > 4) {
-            return $this->sendErrorResponse('Team can not have more than 5 members.', [], HttpStatusCode::VALIDATION_ERROR);
-        }
+            // Check team size < 5
+            if ($team->member_count > 4) {
+                return $this->sendErrorResponse('Team can not have more than 5 members.', [], HttpStatusCode::VALIDATION_ERROR);
+            }
 
-        // Get user id
-        $user_id = Auth::id();
+            // Get user id
+            $user_id = Auth::id();
 
-        // Check if already a member
-        $team_member = $this->teamMemberRepository->findOneByProperties(
-            [
-                "team_id" => $team->id,
+            // Check if already a member
+            $team_member = $this->teamMemberRepository->findOneByProperties(
+                [
+                    "team_id" => $team->id,
+                    "user_id" => $user_id
+                ]
+            );
+
+            if ($team_member) {
+                return $this->sendErrorResponse('You are already a member.', [], HttpStatusCode::VALIDATION_ERROR);
+            }
+
+            // If user is a member of more than 5 teams
+            $all_user_teams = $this->teamMemberRepository->findByProperties([
                 "user_id" => $user_id
-            ]
-        );
+            ]);
 
-        if ($team_member) {
-            return $this->sendErrorResponse('You are already a member.', [], HttpStatusCode::VALIDATION_ERROR);
-        }
-
-        // If user is a member of more than 5 teams
-        $all_user_teams = $this->teamMemberRepository->findByProperties([
-            "user_id" => $user_id
-        ]);
-
-        if (count($all_user_teams) == 5) {
-            return $this->sendErrorResponse('You can not join in more than 5 teams.', [], HttpStatusCode::VALIDATION_ERROR);
-        }
+            if (count($all_user_teams) == 5) {
+                return $this->sendErrorResponse('You can not join in more than 5 teams.', [], HttpStatusCode::VALIDATION_ERROR);
+            }
 
 
-        // If everything alright add in team members
-        $new_team_member = array();
-        $new_team_member["team_id"] = $team->id;
-        $new_team_member["user_id"] = $user_id;
-        $new_team_member["user_type"] = $invitation->user_type;
-        $new_team_member["role"] = $invitation->role;
-        $new_team_member["relationship"] = $invitation->relationship;
+            // If everything alright add in team members
+            $new_team_member = array();
+            $new_team_member["team_id"] = $team->id;
+            $new_team_member["user_id"] = $user_id;
+            $new_team_member["user_type"] = $invitation->user_type;
+            $new_team_member["role"] = $invitation->role;
+            $new_team_member["relationship"] = $invitation->relationship;
 
-        try {
-            $this->teamMemberRepository->save($new_team_member);
-        } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception->getMessage());
-        }
-        // Update team member count
-        try {
-            $team->member_count = $team->member_count + 1;
-            $input = (array)$team;
-            // As BaseRepository update method has bug that's why we have to fallback to model default methods.
-            $input = $team->fill($input)->toArray();
-            $team->save($input);
-//            $this->teamRepository->save($team);
-        } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception->getMessage());
-        }
-        // Change invitation status
-        // Remove Invitation from table
+            try {
+                $this->teamMemberRepository->save($new_team_member);
+            } catch (Exception $exception) {
+                return $this->sendErrorResponse($exception->getMessage());
+            }
+            // Update team member count
+            try {
+                $team->member_count = $team->member_count + 1;
+                $input = (array)$team;
+                // As BaseRepository update method has bug that's why we have to fallback to model default methods.
+                $input = $team->fill($input)->toArray();
+                $team->save($input);
+            //            $this->teamRepository->save($team);
+            } catch (Exception $exception) {
+                return $this->sendErrorResponse($exception->getMessage());
+            }
+            // Change invitation status
+            // Remove Invitation from table
 
-        $this->memberInvitationRepository->delete($invitation);
-        return $this->sendSuccessResponse(array(), 'Information inserted Successfully!');
+            $this->memberInvitationRepository->delete($invitation);
+            return $this->sendSuccessResponse(array(), 'Information inserted Successfully!');
+        } else {
+            return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST);
+        }        
     }
 
     public function delete($request)

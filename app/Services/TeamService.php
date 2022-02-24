@@ -92,70 +92,75 @@ class TeamService extends ApiBaseService
     {
         $userInfo = self::getUserInfo();
         $countTeamList = $this->teamRepository->findByProperties(["created_by" => $userInfo->id, 'status' =>1]);
-        if (count($countTeamList) >= env('CANDIDATE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 1) {
-            $createLimit = env('CANDIDATE_TEAM_CREATE_LIMIT');
-            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
-        }
 
-        if (count($countTeamList) >= env('REPRESENTATIVE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 2) {
-            $createLimit = env('REPRESENTATIVE_TEAM_CREATE_LIMIT');
-            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
-        }
-        if (count($countTeamList) >= env('MATCHMAKER_TEAM_CREATE_LIMIT') && $userInfo->account_type == 4) {
-            $createLimit = env('MATCHMAKER_TEAM_CREATE_LIMIT');
-            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
-        }
-        try {
-            $data = $request->all();
-            $data[Team::TEAM_ID] = Str::uuid();
-            $data[Team::CREATED_BY] = Auth::id();
-            $data['member_count'] = 1;
-
-            $team = $this->teamRepository->save($data);
-            $data = $this->teamTransformer->transform($team);
-            $team_id = $data['id'];
-
-            // Process team logo image
-            // if ($request->hasFile('logo')) {
-            //     $logo_url = $this->singleImageUploadFile($team_id, $request->file('logo'));
-            //     $team->logo = $logo_url['image_path'];
-            // }
-
-            if ($request->hasFile('logo')) {
-                $image = $this->uploadImageThrowGuzzle([
-                    'logo'=>$request->file('logo')
-                ]);
-                $team->logo = $image->logo;
+        if ( $userInfo->status == 5) {
+            if (count($countTeamList) >= env('CANDIDATE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 1) {
+                $createLimit = env('CANDIDATE_TEAM_CREATE_LIMIT');
+                return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
             }
-
-            // Update logo url
-            $input = (array)$team;
-            // As BaseRepository update method has bug that's why we have to fallback to model default methods.
-            $input = $team->fill($input)->toArray();
-            $team->save($input);
-
-
-            // Automatically add the user in team as member
-            // $role = get role
-
-            $user_id = $data['created_by']['id'];
-
-            $user_type = $this->getRoleForNewTeamMember($user_id);
-            $team_member = array();
-            $team_member['team_id'] = $team_id;
-            $team_member['user_id'] = $user_id;
-            $team_member['user_type'] = $request->user_type;
-            $team_member['role'] = "Owner+Admin";
-            $team_member['status'] =1;
-            // $team_member['relationship'] ='Own';
-            $team_member['relationship'] = $request->relationship;
-
-            $newmember = $this->teamMemberRepository->save($team_member);
-
-            return $this->sendSuccessResponse($data, 'Team created Successfully!');
-        } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception->getMessage());
-        }
+    
+            if (count($countTeamList) >= env('REPRESENTATIVE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 2) {
+                $createLimit = env('REPRESENTATIVE_TEAM_CREATE_LIMIT');
+                return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
+            }
+            if (count($countTeamList) >= env('MATCHMAKER_TEAM_CREATE_LIMIT') && $userInfo->account_type == 4) {
+                $createLimit = env('MATCHMAKER_TEAM_CREATE_LIMIT');
+                return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
+            }
+            try {
+                $data = $request->all();
+                $data[Team::TEAM_ID] = Str::uuid();
+                $data[Team::CREATED_BY] = Auth::id();
+                $data['member_count'] = 1;
+    
+                $team = $this->teamRepository->save($data);
+                $data = $this->teamTransformer->transform($team);
+                $team_id = $data['id'];
+    
+                // Process team logo image
+                // if ($request->hasFile('logo')) {
+                //     $logo_url = $this->singleImageUploadFile($team_id, $request->file('logo'));
+                //     $team->logo = $logo_url['image_path'];
+                // }
+    
+                if ($request->hasFile('logo')) {
+                    $image = $this->uploadImageThrowGuzzle([
+                        'logo'=>$request->file('logo')
+                    ]);
+                    $team->logo = $image->logo;
+                }
+    
+                // Update logo url
+                $input = (array)$team;
+                // As BaseRepository update method has bug that's why we have to fallback to model default methods.
+                $input = $team->fill($input)->toArray();
+                $team->save($input);
+    
+    
+                // Automatically add the user in team as member
+                // $role = get role
+    
+                $user_id = $data['created_by']['id'];
+    
+                $user_type = $this->getRoleForNewTeamMember($user_id);
+                $team_member = array();
+                $team_member['team_id'] = $team_id;
+                $team_member['user_id'] = $user_id;
+                $team_member['user_type'] = $request->user_type;
+                $team_member['role'] = "Owner+Admin";
+                $team_member['status'] =1;
+                // $team_member['relationship'] ='Own';
+                $team_member['relationship'] = $request->relationship;
+    
+                $newmember = $this->teamMemberRepository->save($team_member);
+    
+                return $this->sendSuccessResponse($data, 'Team created Successfully!');
+            } catch (Exception $exception) {
+                return $this->sendErrorResponse($exception->getMessage());
+            }
+        } else {
+            return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST);
+        }        
     }
 
     /**
