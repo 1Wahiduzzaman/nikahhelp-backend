@@ -414,8 +414,14 @@ class AdminDashboardController extends AppBaseController
         $userInfo->image_server_base_url = env('IMAGE_SERVER');
         if ($userInfo) {
             //dd($userInfo->candidate_info);
-            //$ci = new CandidateTransformer();
-            //$userInfo->candidate_info_modified = $ci->candidateSearchData($userInfo->candidate_info);
+            $ci = new CandidateTransformer();
+            if($userInfo->candidate_info)
+            $userInfo->candidate_info_modified = $ci->candidateSearchData($userInfo->candidate_info);
+            else $userInfo->candidate_info_modified = null;
+            if($userInfo->representative_info)
+            $userInfo->representative_info_modified = $ci->candidateSearchData($userInfo->representative_info);
+            else $userInfo->representative_info_modified = null;
+
             return $this->sendSuccess($userInfo, 'User info loaded successfully', [], FResponse::HTTP_OK);
         } else {
             return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
