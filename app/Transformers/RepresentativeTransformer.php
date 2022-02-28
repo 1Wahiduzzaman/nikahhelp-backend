@@ -253,6 +253,12 @@ class RepresentativeTransformer extends TransformerAbstract
         ];
     }
 
+
+    public function RepDetails(RepresentativeInformation $item)
+    {
+        return $this->personalInfo($item);
+    }
+
     /**
      * Extract Personal info only
      * @param RepresentativeInformation $item
