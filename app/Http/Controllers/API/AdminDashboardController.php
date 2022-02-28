@@ -17,6 +17,7 @@ use App\Services\SubscriptionService;
 use App\Repositories\UserRepository;
 use App\Models\User;
 use App\Transformers\CandidateTransformer;
+use App\Transformers\RepresentativeTransformer;
 
 /**
  * Class ShortListedCandidateController
@@ -412,14 +413,15 @@ class AdminDashboardController extends AppBaseController
         }
         //$userInfo->status = 1;
         $userInfo->image_server_base_url = env('IMAGE_SERVER');
-        if ($userInfo) {
-            //dd($userInfo->candidate_info);
+        //dd($userInfo->representative_info);
+        if ($userInfo) {           
             $ci = new CandidateTransformer();
+            $cr = new RepresentativeTransformer();
             if($userInfo->candidate_info)
             $userInfo->candidate_info_modified = $ci->candidateSearchData($userInfo->candidate_info);
             else $userInfo->candidate_info_modified = null;
             if($userInfo->representative_info)
-            $userInfo->representative_info_modified = $ci->candidateSearchData($userInfo->representative_info);
+            $userInfo->representative_info_modified = $cr->RepDetails($userInfo->representative_info);
             else $userInfo->representative_info_modified = null;
 
             return $this->sendSuccess($userInfo, 'User info loaded successfully', [], FResponse::HTTP_OK);
