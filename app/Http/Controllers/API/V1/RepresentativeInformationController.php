@@ -65,6 +65,15 @@ class RepresentativeInformationController extends Controller
     }
 
     /**
+     * @param int $userId
+     * @return \App\Services\JsonResponse|\Illuminate\Http\Response
+     */
+    public function representativeInfo()
+    {
+        return $this->representativeService->getRepresentativeInfo();
+    }
+
+    /**
      * Store a newly created RepresentativeInformation in storage.
      * POST /representativeInformations
      *
