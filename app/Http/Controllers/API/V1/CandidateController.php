@@ -67,6 +67,14 @@ class CandidateController extends Controller
     }
 
     /**
+     * @return JsonResponse
+     */
+    public function candidateStatus(): JsonResponse
+    {
+        return $this->candidateService->candidateStatus();
+    }
+
+    /**
      * @param int $userId
      * @return JsonResponse
      */

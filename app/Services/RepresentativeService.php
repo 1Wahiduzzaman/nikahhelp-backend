@@ -9,6 +9,7 @@ use App\Models\Occupation;
 use App\Models\RepresentativeInformation;
 use App\Models\CandidateImage;
 use App\Models\User;
+use App\Repositories\CandidateRepository;
 use App\Repositories\CountryRepository;
 use App\Transformers\RepresentativeTransformer;
 use Exception;
@@ -18,6 +19,7 @@ use Illuminate\Http\JsonResponse;
 use App\Traits\CrudTrait;
 use Illuminate\Http\Request;
 use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
+use Illuminate\Support\Carbon;
 use \Illuminate\Support\Facades\DB;
 use App\Transformers\CandidateTransformer;
 use Illuminate\Support\Facades\Storage;
@@ -54,8 +56,11 @@ class RepresentativeService extends ApiBaseService
      */
     private $representativeTransformer;
 
+    private $candidateRepository;
+
 
     public function __construct(
+        CandidateRepository $candidateRepository,
         RepresentativeRepository $representativeRepository,
         CountryRepository $countryRepository,
         RepresentativeTransformer $representativeTransformer
@@ -64,6 +69,7 @@ class RepresentativeService extends ApiBaseService
         $this->representativeRepository = $representativeRepository;
         $this->countryRepository = $countryRepository;
         $this->representativeTransformer = $representativeTransformer;
+        $this->candidateRepository = $candidateRepository;
     }
 
     /**
@@ -374,6 +380,84 @@ class RepresentativeService extends ApiBaseService
             return $this->sendErrorResponse($exception->getMessage());
         }
 
+    }
+
+    /**
+     * @return \App\Services\JsonResponse|\Illuminate\Http\Response
+     */
+    public function representativeStatus()
+    {
+        $userId = self::getUserId();
+
+        try {
+            $representative = $this->representativeRepository->findOneByProperties([
+                'user_id' => $userId
+            ]);
+
+            if (!$representative) {
+                throw (new ModelNotFoundException)->setModel(get_class($this->representativeRepository->getModel()), $userId);
+            }
+
+            $activeTeam = $representative->active_team;
+
+            if (!$activeTeam) {
+                throw new Exception('Team not found, Please create team first');
+            }
+            $authUser = $activeTeam->candidateOfTeam();
+
+            $candidates = $this->candidateRepository->getModel();
+
+            /* FILTER -  by representative block list  */
+            $userInfo['blockList'] = $representative->blockList->pluck('user_id')->toArray();
+
+            /* FILTER - Own along with team member and block list candidate  */
+            $activeTeamUserIds = $activeTeam->team_members->pluck('user_id')->toArray();
+
+            /* FILTER - Remove Team users already in connected list (pending, connected or rejected)  */
+            $connectFromMembersId = $activeTeam->sentRequestMembers->pluck('user_id')->toArray();
+            $connectToMembersId = $activeTeam->receivedRequestMembers->pluck('user_id')->toArray();
+
+            /* FILTER - Gender  */
+            $gender = $authUser->gender == 1 ? 2 : 1;
+
+            /* FILTER - Age  */
+            $dateRange['max'] = Carbon::now()->subYears($authUser->max_age);
+            $dateRange['min'] = Carbon::now()->subYears($authUser->mim_age);
+
+            /* FILTER - Height  */
+            $heightRange['min'] = $authUser->min_height;
+            $heightRange['max'] = $authUser->max_height;
+
+            /* FILTER - Ethnicity  */
+            $ethnicity = $authUser->ethnicity;
+
+            $exceptIds = array_unique(array_merge($userInfo['blockList'], $activeTeamUserIds, $connectFromMembersId, $connectToMembersId));
+            $filter = $candidates->with('user')
+                ->where('data_input_status', '>', 2)
+                ->whereNotIn('user_id', $exceptIds)
+                ->whereNotIn('per_current_residence_country', $authUser->bloked_countries->pluck('id')->toArray())
+                ->where('per_gender', $gender)
+                ->whereBetween('dob', [$dateRange])
+                ->whereBetween('per_height', [$heightRange])
+                ->where('per_ethnicity', $ethnicity);
+
+            $result['suggestion'] = $filter->count();
+            $result['newSuggestion'] = $filter->whereHas('user', function ($q) {
+                $q->where('created_at', '>', Carbon::now()->subDays(3)); // User Register within 3 days
+            })->count();
+
+            $result['teamListed'] = $activeTeam->teamListedUser->count();
+            $result['shortListed'] = $authUser->shortList->count();
+            $connectFromCount = $activeTeam->sentRequest->count();
+            $connectToCount = $activeTeam->receivedRequest->count();
+            $result['connected'] = $connectFromCount + $connectToCount;
+            $result['requestReceive'] = $connectFromCount;
+            $result['requestSend'] = $connectToCount;
+
+            return $this->sendSuccessResponse($result, "Candidates Status fetched successfully");
+        }catch (Exception $exception){
+            return $this->sendErrorResponse($exception->getMessage());
+        }
     }
 
 }

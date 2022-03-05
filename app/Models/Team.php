@@ -165,6 +165,44 @@ class Team extends Model
         return $this->belongsToMany(Team::class,'team_connections','to_team_id','from_team_id' )->wherePivot('connection_status',"1");
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function sentRequestMembers()
+    {
+        return $this->hasManyThrough(
+            TeamMember::class,
+            TeamConnection::class,
+            'from_team_id',
+            'team_id',
+            'id',
+            'to_team_id' );
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function receivedRequestMembers()
+    {
+        return $this->hasManyThrough(
+            TeamMember::class,
+            TeamConnection::class,
+            'to_team_id',
+            'team_id',
+            'id',
+            'from_team_id' );
+    }
+//    public function sentRequestMembers()
+//    {
+//        return $this->belongsToMany(
+//            TeamMember::class,
+//            TeamConnection::class,
+//            'from_team_id',
+//            'from_team_id',
+//            'id',
+//            'team_id' );
+//    }
+
     public function candidateOfTeam()
     {
         return $this->belongsToMany(CandidateInformation::class,'team_members','team_id','user_id','id','user_id')->wherePivot('user_type','Candidate')->first();
