@@ -323,6 +323,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('verified-user-list', [AdminDashboardController::class, 'verifiedUserList'])->name('user.verified');
         Route::get('rejected-user-list', [AdminDashboardController::class, 'rejectedUserList'])->name('user.rejected');
         Route::get('user-info/{id}', [AdminDashboardController::class, 'UserInfo'])->name('user.user-info');
+
+        // new API Raz
+        Route::get('candidate-user-info/{id}', [AdminDashboardController::class, 'CandidateUserInfo'])->name('user.candidate-user-info');
+        Route::get('representative-info/{id}', [AdminDashboardController::class, 'RepresentativeUserInfo'])->name('user.user-info');
         
         Route::post('user-verify-reject', [AdminDashboardController::class, 'verifyRejectUser'])->name('user.verify_reject');
         Route::get('subscription-report', [AdminDashboardController::class, 'subscription'])->name('team.subscription.report');
