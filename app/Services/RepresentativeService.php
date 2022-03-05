@@ -120,6 +120,28 @@ class RepresentativeService extends ApiBaseService
 
     }
 
+    public function getRepresentativeInfo()
+    {
+        try {
+            $userId = self::getUserId();
+            $representativeInformation = $this->representativeRepository->findOneByProperties([
+                'user_id' => $userId
+            ]);
+
+            if (!$representativeInformation) {
+                throw (new ModelNotFoundException)->setModel(get_class($this->representativeRepository->getModel()), $userId);
+            }
+            $data = $this->representativeTransformer->transform($representativeInformation);
+
+            return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
+
+
+        }catch (Exception $exception){
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+
+    }
+
     /**
      * @param $request
      * @return JsonResponse

@@ -247,6 +247,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         // Representative
         Route::get('representative-information', [RepresentativeInformationController::class, 'index'])->name('representativeInformation');
         Route::get('representative/info/{user_id}', [RepresentativeInformationController::class, 'profileInfo'])->name('candidate.information.all');
+        Route::get('representative/profile', [RepresentativeInformationController::class, 'representativeInfo'])->name('candidate.information.all');
         Route::POST('representative-screen-name', [RepresentativeInformationController::class, 'representativeScreenName'])->name('representativeScreenName');
         Route::POST('representative/essentialInformation', [RepresentativeInformationController::class, 'essentialInformation'])->name('essentialInformation');
         Route::POST('representative/contactinfo', [RepresentativeInformationController::class, 'contactInformation'])->name('rcontactInformation');
