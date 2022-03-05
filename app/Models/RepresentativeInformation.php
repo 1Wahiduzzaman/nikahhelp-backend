@@ -172,4 +172,29 @@ class RepresentativeInformation extends Model
         return $this->belongsTo(Country::class, 'per_county');
     }
 
+    /**
+     * @return mixed
+     */
+    public function activeTeams()
+    {
+        return $this->belongsToMany(Team::class,'team_members','user_id','team_id','user_id','id')->wherePivot('status',1);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getActiveTeamAttribute()
+    {
+        return $this->activeTeams->first();
+    }
+    /**
+     * Return Representative block listed by user
+     * @return BelongsToMany
+     */
+    public function blockList()
+    {
+        return $this->belongsToMany(RepresentativeInformation::class, 'block_lists', 'block_by', 'user_id','user_id','user_id')->withTimestamps();
+
+    }
+
 }

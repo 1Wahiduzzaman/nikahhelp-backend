@@ -221,4 +221,13 @@ class RepresentativeInformationController extends Controller
     {
         return $this->representativeService->updateInfoStatus($request);
     }
+    /**
+     * Get Representative Status info
+     * @param RepresentativeInfoStatusUpdateRequest $request
+     * @return JsonResponse
+     */
+    public function representativeStatus() : JsonResponse
+    {
+        return $this->representativeService->representativeStatus();
+    }
 }

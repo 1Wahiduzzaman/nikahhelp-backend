@@ -345,7 +345,6 @@ class CandidatePersonalInfoUpdateTest extends TestCase
      */
     public function test_update_candidate_personal_info()
     {
-        // edo continue after fix route
 
         $userInfo = $this->withHeaders([
             'Authorization' => 'Bearer' . $this->token

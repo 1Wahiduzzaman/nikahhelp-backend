@@ -121,30 +121,33 @@ class SearchService extends ApiBaseService
             $candidates = $candidates->where('data_input_status','>',2); // collect candidate with at list personal info given
 
             if(Auth::check()){
+
                 $userId = self::getUserId();
                 $loggedInCandidate = $this->candidateRepository->findOneByProperties([
                     'user_id' => $userId
                 ]);
 
-                $activeTeamId = Generic::getActiveTeamId();
+                $activeTeam = $loggedInCandidate->active_team;
 
-                if (!$activeTeamId) {
+                if (!$activeTeam) {
                     throw new Exception('Team not found, Please create team first');
                 }
-
-                $activeTeam = $this->teamRepository->findOneByProperties([
-                    'id' => $activeTeamId
-                ]);
 
                 $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('user_id')->toArray();
                 $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
                 $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
                 $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
                 $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
-                $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
+                $userInfo['connectList'] = array_unique(array_merge($connectFrom,$connectTo)) ;
+
                 /* FILTER - Own along with team member and block list candidate  */
                 $activeTeamUserIds = $activeTeam->team_members->pluck('user_id')->toArray();
-                $exceptIds = array_merge($userInfo['blockList'],$activeTeamUserIds);
+
+                /* FILTER - Remove Team users already in connected list (pending, connected or rejected)  */
+                $connectFromMembersId = $activeTeam->sentRequestMembers->pluck('user_id')->toArray();
+                $connectToMembersId = $activeTeam->receivedRequestMembers->pluck('user_id')->toArray();
+
+                $exceptIds = array_unique(array_merge($userInfo['blockList'],$activeTeamUserIds,$connectFromMembersId,$connectToMembersId));
                 $candidates = $candidates->whereNotIn('user_id',$exceptIds);
 
                 /* FILTER - Country not preferred  */
