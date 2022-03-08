@@ -109,9 +109,13 @@
         <h2 style="font-size: 20px; color: rgba(0,0,0,.5);">Reset your password</h2>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear [Mr./Ms.] {{ $user['name'] }},</p>
+        
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+           A request has been recieved to change the password for your MatrimonyAssist account. 
+        </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            In order to reset your password please click the link - <a href="{{$domain}}/password-reset-token-verification/{{$token}}" style="color: #1d68a7;">{{$domain}}/password-reset-token-verification/{{$token}}</a> or press the button below
+            To reset your password please click the link - <a href="{{$domain}}/password-reset-token-verification/{{$token}}" style="color: #1d68a7;">{{$domain}}/password-reset-token-verification/{{$token}}</a> or press the button below
         </p>
 
         <div style="text-align: center; margin-top: 28px;">
@@ -129,18 +133,14 @@
         </div>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            If you do not reset your password by this link within <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">30 minutes</span> then the reset link
-            will automatically invalid from Matrimony Assist platform, you can reset your password from Matrimony Assist at any time..
-        </p>
-
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            You're receiving this email because you recently requested for a password reset link for Matrimony Assist account. If this wasn't you,
-            please ignore this email.
-        </p>
-
+            This link is valid for <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">15 minutes</span>. 
+            </p>
+            <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+           If you did not initiate this request, please contact us immediately at support@matrimonyassist.com.  
+            </p>
+       
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px">
-            Thanks, <br>
-            Regards <br>
+            Thank you <br>
             Matrimony Assist Team
         </p>
 
