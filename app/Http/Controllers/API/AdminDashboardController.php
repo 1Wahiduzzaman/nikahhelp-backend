@@ -489,6 +489,9 @@ class AdminDashboardController extends AppBaseController
             ],            
             [
                 'rejected_notes' => $rejected_notes
+            ],
+            [
+                'user' => User::where('id', $id)->first()
             ]
         );
 
