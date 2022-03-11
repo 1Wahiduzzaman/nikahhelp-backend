@@ -463,9 +463,8 @@ class AdminDashboardController extends AppBaseController
         $images = $this->imageRepository->findBy(['user_id'=>$userId]);
         $candidate_info = $this->candidateTransformer->transform($candidate);
         $candidate_info['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
-        $candidate_image = $this->candidateTransformer->candidateOtherImage($images,CandidateImage::getPermissionStatus($userId));
-
-
+        $candidate_image = $this->candidateTransformer->candidateOtherImage($images,CandidateImage::getPermissionStatus($userId));       
+        
         //Raz
         $rejected_notes = RejectedNote::where('user_id', $userId)->get();
 
@@ -474,8 +473,20 @@ class AdminDashboardController extends AppBaseController
         $candidate_details = array_merge(
             $candidate_info,
             [
-                'other_images' => $candidate_image
+                'essential' => $this->candidateTransformer->transformPersonal($candidate)['essential'],
             ],
+            [
+                'general' => $this->candidateTransformer->transformPersonal($candidate)['general'],
+            ],
+            [
+                'contact' => $this->candidateTransformer->transformPersonal($candidate)['contact'],
+            ],
+            [
+                'more_about' =>  $this->candidateTransformer->transformPersonal($candidate)['more_about'],
+            ],
+            [
+                'other_images' => $candidate_image
+            ],            
             [
                 'rejected_notes' => $rejected_notes
             ]
@@ -564,9 +575,7 @@ class AdminDashboardController extends AppBaseController
             'has_more_pages' => $queryData->hasMorePages(),
         ];
         return $data;
-    }
-
-
+    }    
 
     //helper methods
     public function profileInfo(RepresentativeInformation $item): array
