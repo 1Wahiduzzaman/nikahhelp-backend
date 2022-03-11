@@ -110,7 +110,7 @@ class MemberInvitationService extends ApiBaseService
     public function join(array $data)
     {
         $userInfo = self::getUserInfo();
-        if ( $userInfo->status == 5) {
+        //if ( $userInfo->status == 5) {
             // Find invitation from link
             $invitation = $this->memberInvitationRepository->findOneByProperties(
                 [
@@ -197,9 +197,9 @@ class MemberInvitationService extends ApiBaseService
 
             $this->memberInvitationRepository->delete($invitation);
             return $this->sendSuccessResponse(array(), 'Information inserted Successfully!');
-        } else {
-            return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST);
-        }        
+        // } else {
+        //     return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST);
+        // }        
     }
 
     public function delete($request)

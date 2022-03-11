@@ -93,7 +93,7 @@ class TeamService extends ApiBaseService
         $userInfo = self::getUserInfo();
         $countTeamList = $this->teamRepository->findByProperties(["created_by" => $userInfo->id, 'status' =>1]);
 
-        if ( $userInfo->status == 5) {
+        //if ( $userInfo->status == 5) {
             if (count($countTeamList) >= env('CANDIDATE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 1) {
                 $createLimit = env('CANDIDATE_TEAM_CREATE_LIMIT');
                 return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
@@ -158,9 +158,9 @@ class TeamService extends ApiBaseService
             } catch (Exception $exception) {
                 return $this->sendErrorResponse($exception->getMessage());
             }
-        } else {
-            return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST);
-        }        
+        // } else {
+        //     return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST);
+        // }        
     }
 
     /**
