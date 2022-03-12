@@ -434,6 +434,9 @@ class AdminDashboardController extends AppBaseController
                     $data, 
                     [
                         'rejected_notes' => $rejected_notes
+                    ],
+                    [
+                        'user' => User::where('id', $id)->first()
                     ]
                 );                                         
                 return $this->sendSuccess($res, 'User info loaded successfully', [], FResponse::HTTP_OK);
