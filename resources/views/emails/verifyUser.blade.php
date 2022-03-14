@@ -104,14 +104,18 @@
     <div style="width: 100%; margin-top: 30px;">
         <h2 style="font-size: 20px; color: rgba(0,0,0,.5);">Verify your email address</h2>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear [Mr./Ms.] {{ $user['full_name'] }},</p>
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user['full_name'] }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Welcome to Matrimony Assist [20-11-2021 10:40:30 +06]
+            Welcome to MatrimonyAssist [20-11-2021 10:40:30 +06]
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            In order to validate your account please click the link - <a href="{{ $domain }}/emailVerify/{{ $user->verifyUser->token }}" style="color: #1d68a7;">{{ $domain }}/emailVerify/{{ $user->verifyUser->token }}</a> or press the button below
+        We are happy you signed up for MatrimonyAssist. 
+        </p>
+
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+        You are almost ready to start exploring the MatriomnyAssist. Before enjoiyng various features of the application, simply verify that this is your email address by clicking the link:<a href="{{ $domain }}/emailVerify/{{ $user->verifyUser->token }}" style="color: #1d68a7;">{{ $domain }}/emailVerify/{{ $user->verifyUser->token }}</a> or press purple the button below
         </p>
 
         <div style="text-align: center; margin-top: 28px;">
@@ -128,26 +132,29 @@
             font-weight: bold;" href="{{ $domain }}/emailVerify/{{ $user->verifyUser->token }}">Verify my email</a>
         </div>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+        <!-- <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             If you do not verify your email address by sent link within <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">30 minutes</span> then the sent verification link & your signup
             information will automatically unenrolled from Matrimony Assist platform, you can rejoin Matrimony Assist
             at any time by once again completing the Matrimony Assist signup process.
-        </p>
+        </p> -->
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+            This link is valid for <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">15 minutes.</span> After the email verification, you will have the access to complete the full registration form. </p>
+        <!-- <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             Verify email is the first step of the account validate process. After your email is verified we will
             proceed to complete your <a style="color: #522e8e;">Candidate</a> registration form.
-        </p>
+        </p> -->
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            You're receiving this email because you recently created a new Matrimony Assist account or added a new email address. If this wasn't you,
-            please ignore this email.
+        You are receiving this email because you have signed for a new MatrimonyAssist account or added a new email address to your account. 
         </p>
-
+        
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+        If you did not initiate this request, please contact us immediately at support@matrimonyassist.com.   
+        </p>
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px">
-            Thanks, <br>
-            Regards <br>
-            Matrimony Assist Team
+        Thank you <br>
+        MatrimonyAssist Team
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px; text-align: center;">
