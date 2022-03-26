@@ -119,7 +119,7 @@ class SearchService extends ApiBaseService
 
             /* FILTER - Candidate Must be verified  */
             $candidates = $candidates->whereHas('user',function ($q){
-                $q->where('status',5);
+                $q->where('status',3);
             });
 
             if(Auth::check()){
