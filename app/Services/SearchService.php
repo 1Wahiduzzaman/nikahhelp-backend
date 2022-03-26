@@ -117,8 +117,10 @@ class SearchService extends ApiBaseService
 
             $candidates = $this->candidateRepository->getModel();
 
-            /* FILTER - Candidate fill at least personal info  */
-            $candidates = $candidates->where('data_input_status','>',2); // collect candidate with at list personal info given
+            /* FILTER - Candidate Must be verified  */
+            $candidates = $candidates->whereHas('user',function ($q){
+                $q->where('status',5);
+            });
 
             if(Auth::check()){
 
