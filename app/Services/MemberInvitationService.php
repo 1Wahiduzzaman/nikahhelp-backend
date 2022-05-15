@@ -154,6 +154,7 @@ class MemberInvitationService extends ApiBaseService
                 ]
             );
 
+
             if ($team_member) {
                 return $this->sendErrorResponse('You are already a member.', [], HttpStatusCode::VALIDATION_ERROR);
             }
@@ -167,6 +168,15 @@ class MemberInvitationService extends ApiBaseService
                 return $this->sendErrorResponse('You can not join in more than 5 teams.', [], HttpStatusCode::VALIDATION_ERROR);
             }
 
+            //If already member as a candidate  By Raz
+            $is_candidate = $this->teamMemberRepository->findByProperties([
+                "user_id" => $user_id,
+                "user_type" => 'Candidate',
+            ]);
+
+            if($is_candidate && $invitation->user_type=='Candidate'){
+                return $this->sendErrorResponse('You can not join as a Candidate in multiple teams.', [], HttpStatusCode::BAD_REQUEST);
+            }            
 
             // If everything alright add in team members
             $new_team_member = array();
