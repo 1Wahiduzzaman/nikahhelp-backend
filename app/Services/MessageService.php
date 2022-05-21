@@ -117,6 +117,7 @@ class MessageService extends ApiBaseService
        }])
        ->with('team_private_chat')
         ->where(['from_team_id'=> $active_team_id]) 
+        ->where('connection_status', '1') //added by Raz
         ->orWhere(function($q){             
             $active_team_id = Generic::getActiveTeamId();  
             $q->where([ 'to_team_id' => $active_team_id]);                  
