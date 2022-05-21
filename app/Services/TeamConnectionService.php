@@ -296,7 +296,7 @@ class TeamConnectionService extends ApiBaseService
         $connection_status = 1;
         $searchResult = $this->teamConnectionRepository->getModel()->newQuery();
 
-        $searchResult->where('connection_status', 1); //added by Raz
+        $searchResult->where('connection_status', 1); //added by Raz Ahmed
         $searchResult->where('from_team_id', $teamInformation->id);
         $searchResult->orWhere('to_team_id', $teamInformation->id);
         $queryData = $searchResult->get();
