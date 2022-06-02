@@ -374,7 +374,7 @@ class AdminDashboardController extends AppBaseController
      * @return \Illuminate\Http\JsonResponse
      */
     public function verifyRejectUser(Request $request)
-    {
+    {       
         $status = [
             'suspend' => 9,
             'approved' => 5,
@@ -390,11 +390,11 @@ class AdminDashboardController extends AppBaseController
         } else {
             return $this->sendError('User Id is required ', FResponse::HTTP_BAD_REQUEST);
         }
-        $userInfo = $this->userRepository->findOneByProperties(['id' => $userId]);
+        $userInfo = $this->userRepository->findOneByProperties(['id' => $userId]);        
         if (!$userInfo) {
             throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $userId);
-        }
-        $userInfo->status = $ver_rej;
+        }        
+        $userInfo->status = strval($ver_rej);
         if ($userInfo->save()) {
             if($ver_rej == '4') {
                 $rj = new RejectedNote();
