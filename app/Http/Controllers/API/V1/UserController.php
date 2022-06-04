@@ -10,7 +10,10 @@ use App\Services\UserService;
 use App\Http\Requests\UserRegistrationRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\LoginRequest;
+use App\Models\CandidateInformation;
+use App\Models\RepresentativeInformation;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Mail;
 
 class UserController extends Controller
@@ -137,7 +140,25 @@ class UserController extends Controller
         dd("Email is Sent.");
     }
 
-    //Raz Start for Admin Panel
+    //Raz 
+    public function postDocUpload() {    
+        $is_exist = CandidateInformation::where('user_id', Auth::id())->first();
+        if($is_exist) {
+            $res = CandidateInformation::where('user_id', Auth::id())->update(['is_uplaoded_doc'=>1]);    
+            return $this->sendSuccessResponse([], 'Successfully Updated');     
+        } else {
+            return $this->sendErrorResponse('Candidate not found');
+        }      
+    }
+    public function postDocUploadRep() {    
+        $res = RepresentativeInformation::where('user_id', Auth::id())->update(['is_uplaoded_doc'=>1]);    
+        if($res) {
+            return $this->sendSuccessResponse([], 'Successfully Updated');
+        }  else {
+            return $this->sendErrorResponse('Rep not found');
+        }       
+    }
+
     public function getSuportUserId() {
         $data = User::where('account_type', 11)->first();
         return $this->sendSuccessResponse($data, 'Support Admin Loaded Successfully');

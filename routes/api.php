@@ -142,6 +142,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         //User / Raz
         Route::get('individual-rejected-notes/{id}', [UserController::class, 'getRejectedNotes'])->name('user.rejected-notes');
+        Route::get('candidate-upload-doc', [UserController::class, 'postDocUpload'])->name('user.candidate-upload-doc');
+        Route::get('rep-upload-doc', [UserController::class, 'postDocUploadRep'])->name('user.rep-upload-doc');
 
         //Package List |Raz
         Route::get('package-list', [PackageController::class, 'index'])->name('package-list');
