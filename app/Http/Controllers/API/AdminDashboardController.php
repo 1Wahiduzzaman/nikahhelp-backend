@@ -170,10 +170,10 @@ class AdminDashboardController extends AppBaseController
                 $q->orWhere('id', $keyword);                
             })
             ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id']);
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->with(['representative_info' => function($q){
-                $q->select('data_input_status');
+                 $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->orderBy('id', 'DESC')
             ->paginate(10);
@@ -181,10 +181,10 @@ class AdminDashboardController extends AppBaseController
         elseif (!empty($request->account_type) && empty($request->keyword)) {
             $data = User::where('account_type', $account_type)
             ->with(['candidate_info' => function($q){
-                $q->select('data_input_status');
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->with(['representative_info' => function($q){
-                $q->select('data_input_status');
+                 $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->orderBy('id', 'DESC')
             ->paginate(10);
@@ -195,20 +195,20 @@ class AdminDashboardController extends AppBaseController
                 $q->orWhere('id', $keyword);                
             })
             ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id']);
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->with(['representative_info' => function($q){
-                $q->select(['data_input_status', 'user_id']);
+                 $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->orderBy('id', 'DESC')
             ->paginate(10);
         }
         else {
             $data = User::with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id']);
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->with(['representative_info' => function($q){
-                $q->select(['data_input_status', 'user_id']);
+                 $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->orderBy('id', 'DESC')
             ->paginate(10);
@@ -231,10 +231,10 @@ class AdminDashboardController extends AppBaseController
                 $q->orWhere('id', $keyword);                
             })
             ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id']);
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->with(['representative_info' => function($q){
-                $q->select('data_input_status');
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->orderBy('id', 'DESC')
             ->paginate(10);
@@ -243,10 +243,10 @@ class AdminDashboardController extends AppBaseController
             $data = User::where('status', $status)
             ->where('account_type', $account_type)
             ->with(['candidate_info' => function($q){
-                $q->select('data_input_status');
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->with(['representative_info' => function($q){
-                $q->select('data_input_status');
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->orderBy('id', 'DESC')
             ->paginate(10);
@@ -258,10 +258,10 @@ class AdminDashboardController extends AppBaseController
                 $q->orWhere('id', $keyword);                
             })
             ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id']);
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->with(['representative_info' => function($q){
-                $q->select(['data_input_status', 'user_id']);
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->orderBy('id', 'DESC')
             ->paginate(10);
@@ -269,10 +269,10 @@ class AdminDashboardController extends AppBaseController
         else {
             $data = User::where('status', $status)            
             ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id']);
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->with(['representative_info' => function($q){
-                $q->select(['data_input_status', 'user_id']);
+                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
             ->orderBy('id', 'DESC')
             ->paginate(10);
