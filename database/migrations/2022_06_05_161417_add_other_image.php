@@ -14,7 +14,7 @@ class AddOtherImage extends Migration
     public function up()
     {
         Schema::table('candidate_information', function(Blueprint $table) {
-            $table->addColumn('other_images', 2083)->nullable();
+            $table->string('other_images', 2083)->nullable();
         });
     }
 
