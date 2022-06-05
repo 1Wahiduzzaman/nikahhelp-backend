@@ -18,6 +18,7 @@ class CandidateImage extends Model
     const IMAGE_DISK = 'disk';
     const IMAGE_AVATAR = 'per_avatar_url';
     const IMAGE_MAIN = 'per_main_image_url';
+    const OTHER_IMAGE = 'other_images';
 
     const IMAGE_TYPE_1 = 'avatar';
     const IMAGE_TYPE_2 = 'main-image';

@@ -274,6 +274,7 @@ class CandidateInformation extends Model
         "per_main_image_url",
 
         'data_input_status',
+        "other_images",
     ];
 
     /**

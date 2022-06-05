@@ -41,10 +41,6 @@ use App\Http\Middleware\CorsHandler;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-// header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
-// header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization, Accept,charset,Content-Length');
-// header('Access-Control-Allow-Origin: https://app.arranzed.com');
-// Route::GET('/v1/recent-join-candidate', [HomeController::class, 'recentJoinCandidate']);
 Route::get('v1/home-searches', [SearchAPIController::class, 'filter']);
 Route::post('v1/register', [UserController::class, 'register']);//validation incomplete
 Route::POST('v1/login', [UserController::class, 'authenticate']);

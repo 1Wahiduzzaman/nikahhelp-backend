@@ -933,8 +933,9 @@ class CandidateService extends ApiBaseService
 
             $avatar_image_url = $candidate->per_avatar_url;
             $main_image_url = $candidate->per_main_image_url;
-            $images = $this->imageRepository->findBy(['user_id'=>$userId]);
-            $images = $this->candidateTransformer->candidateOtherImage($images,true);
+            $other_images = $candidate->other_images;
+//            $images = $this->imageRepository->findBy(['user_id'=>$userId]);
+//            $images = $this->candidateTransformer->candidateOtherImage($images,true);
 //            for ($i = 0; $i < count($images); $i++) {
 //                $images[$i]->image_path = $images[$i]->image_path ? env('IMAGE_SERVER') .'/'. $images[$i]->image_path : '';
 //            }
@@ -946,7 +947,7 @@ class CandidateService extends ApiBaseService
             $data["avatar_image_url"] = isset($avatar_image_url) ? $avatar_image_url : '';
             $data["main_image_url"] = isset($main_image_url) ?  $main_image_url : '';
 
-            $data["other_images"] = $images;
+            $data["other_images"] = isset($other_images) ? $other_images : '';
 
 
             return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
@@ -985,6 +986,14 @@ class CandidateService extends ApiBaseService
                 ]);
                 $checkRepresentative->per_main_image_url = $image->per_main_image_url;
             }
+
+            if ($request->hasFile('other_images')) {
+                $image = $this->uploadImageThrowGuzzle([
+                    'other_images'=>$request->file('other_images'),
+                ]);
+                $checkRepresentative->other_images = $image->other_images;
+            }
+
             if (isset($request['anybody_can_see'])) {
                 $checkRepresentative->anybody_can_see = $request['anybody_can_see'];
             }
