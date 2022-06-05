@@ -28,6 +28,7 @@ class CandidateImageUploadRequest extends APIRequest
         $rules = [
             CandidateImage::IMAGE_AVATAR => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
             CandidateImage::IMAGE_MAIN => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
+            CandidateImage::OTHER_IMAGE => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
             'image.*.image' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
             'image.*.type' => 'sometimes|numeric|between:1,8',
             'image.*.visibility' => 'sometimes|numeric|between:1,4',
