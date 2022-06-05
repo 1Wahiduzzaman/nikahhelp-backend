@@ -1158,8 +1158,15 @@ class CandidateService extends ApiBaseService
                 if($image_type == 0){
                     $candidate->per_avatar_url = null ;
                     $candidate->save();
-                }else{
+                }
+
+                if ($image_type === 1){
                     $candidate->per_main_image_url = null ;
+                    $candidate->save();
+                }
+
+                if ($image_type === 3) {
+                    $candidate->other_images = null ;
                     $candidate->save();
                 }
 
