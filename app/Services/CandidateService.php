@@ -156,8 +156,7 @@ class CandidateService extends ApiBaseService
         $images = $this->imageRepository->findBy(['user_id'=>$userId]);
         $candidate_info = $this->candidateTransformer->transform($candidate);
         $candidate_info['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
-        $candidate_image = $this->candidateTransformer->candidateOtherImage($images,CandidateImage::getPermissionStatus($userId));
-
+        $candidate_other_image = $candidate->other_images;
         /* Find Team Connection Status (We Decline or They Decline )*/
 
         $status['connectionRequestSendType'] = null;
@@ -202,7 +201,7 @@ class CandidateService extends ApiBaseService
                 'more_about' =>  $this->candidateTransformer->transformPersonal($candidate)['more_about'],
             ],
             [
-                'other_images' => $candidate_image
+                'other_images' => $candidate_other_image
             ],
             [
                 'status' => $status
