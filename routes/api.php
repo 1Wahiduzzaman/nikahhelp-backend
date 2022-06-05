@@ -105,7 +105,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('candidate/image-upload', [CandidateController::class, 'storeImage'])->name('store.candidate.image.upload');
         // PATCH and PUT request do not support File upload
         Route::POST('candidate/image-update', [CandidateController::class, 'updateImage'])->name('update.candidate.image.upload');
-        Route::DELETE('candidate/image-upload/{candidate_image}', [CandidateController::class, 'deleteImage'])->name('delete.candidate.image.upload');
+        Route::DELETE('candidate/image-upload/{candidate_image}', [CandidateController::class, 'deleteImageByType'])->name('delete.candidate.image.upload');
         Route::DELETE('candidate-image/{image_type}', [CandidateController::class, 'deleteImageByType'])->name('delete.candidate.image.upload');
 
         // Chat | Message API | By Raz
@@ -326,7 +326,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         // new API Raz
         Route::get('candidate-user-info/{id}', [AdminDashboardController::class, 'CandidateUserInfo'])->name('user.candidate-user-info');
         Route::get('representative-info/{id}', [AdminDashboardController::class, 'RepresentativeUserInfo'])->name('user.user-info');
-        
+
         Route::post('user-verify-reject', [AdminDashboardController::class, 'verifyRejectUser'])->name('user.verify_reject');
         Route::get('subscription-report', [AdminDashboardController::class, 'subscription'])->name('team.subscription.report');
 
