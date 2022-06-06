@@ -10,6 +10,9 @@ use App\Http\Controllers\AppBaseController;
 use Response;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Http\Resources\UserReportResource;
+use App\Mail\UserDeletedMail;
+use App\Mail\UserRejectedMail;
+use App\Mail\UserSuspendedMail;
 use App\Models\CandidateImage;
 use App\Models\CandidateInformation;
 use App\Models\RejectedNote;
@@ -28,6 +31,7 @@ use App\Repositories\CountryRepository;
 use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
 use App\Transformers\RepresentativeTransformer;
 use Exception;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Class ShortListedCandidateController
@@ -390,7 +394,7 @@ class AdminDashboardController extends AppBaseController
         } else {
             return $this->sendError('User Id is required ', FResponse::HTTP_BAD_REQUEST);
         }
-        $userInfo = $this->userRepository->findOneByProperties(['id' => $userId]);        
+        $userInfo = $this->userRepository->findOneByProperties(['id' => $userId]);             
         if (!$userInfo) {
             throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $userId);
         }        
@@ -402,6 +406,35 @@ class AdminDashboardController extends AppBaseController
                 $rj->note = $request->note;
                 $rj->save();                
             }
+            if($ver_rej == '9') {
+                if($userInfo->email) {
+                    try{
+                        Mail::to($userInfo->email)->send(new UserSuspendedMail($userInfo));
+                    } catch(Exception $e) {                   
+                        return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
+                    }                 
+                }               
+            }
+            // 
+            if($ver_rej == '4') {
+                if($userInfo->email) {
+                    try{
+                        Mail::to($userInfo->email)->send(new UserRejectedMail($userInfo));
+                    } catch(Exception $e) {                   
+                        return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
+                    }                 
+                }               
+            }
+            if($ver_rej == '0') {
+                if($userInfo->email) {
+                    try{
+                        Mail::to($userInfo->email)->send(new UserDeletedMail($userInfo));
+                    } catch(Exception $e) {                   
+                        return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
+                    }                 
+                }               
+            }
+
             return $this->sendSuccess($userInfo, 'User '. $request->status.' successfully', [], FResponse::HTTP_OK);
         } else {
             return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
