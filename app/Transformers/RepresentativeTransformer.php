@@ -234,7 +234,8 @@ class RepresentativeTransformer extends TransformerAbstract
             'first_name'=>$item->first_name,
             'last_name'=>$item->last_name,
             'screen_name'=>$item->screen_name,
-            'data_input_status' => $item->data_input_status
+            'data_input_status' => $item->data_input_status,
+            'is_uplaoded_doc' => $item->is_uplaoded_doc
         ];
     }
 
