@@ -179,7 +179,7 @@ class UserService extends ApiBaseService
                 return $this->sendErrorResponse(
                     'You are not a registered you should registration first ',
                     [],
-                    HttpStatusCode::BAD_REQUEST
+                    401
                 );
             }
             /* Check the user is not delete */
@@ -187,13 +187,13 @@ class UserService extends ApiBaseService
                 return $this->sendErrorResponse(
                     'Your account has been deleted ( ' . $userInfo->email . ' ), please contact us so we can assist you.',
                     [],
-                    HttpStatusCode::BAD_REQUEST
+                    401
                 );
             } elseif($userInfo->status == 9){
                 return $this->sendErrorResponse(
                     'Your account has been Suspended ( ' . $userInfo->email . ' ), please contact us so we can assist you.',
                     [],
-                    HttpStatusCode::BAD_REQUEST
+                    401
                 );
             }
 
@@ -213,7 +213,7 @@ class UserService extends ApiBaseService
                 return $this->sendErrorResponse(
                     'Invalid credentials',
                     ['detail' => 'Ensure that the email and password included in the request are correct'],
-                    HttpStatusCode::BAD_REQUEST
+                    401
                 );
             } else {
                 $data['token'] = self::TokenFormater($token);
