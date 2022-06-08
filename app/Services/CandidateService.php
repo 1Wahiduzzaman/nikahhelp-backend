@@ -34,6 +34,7 @@ use phpDocumentor\Reflection\Types\Collection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
+use function PHPUnit\Framework\throwException;
 
 
 class CandidateService extends ApiBaseService
@@ -1035,18 +1036,19 @@ class CandidateService extends ApiBaseService
             $searchCriteria = ["user_id" => $checkRepresentative->user_id];
             $avatar_image_url = $checkRepresentative->per_avatar_url;
             $main_image_url = $checkRepresentative->per_main_image_url;
+            $other_images = $checkRepresentative->other_images;
 
-            $images = $this->imageRepository->findBy($searchCriteria);
+//            $images = $this->imageRepository->findBy($searchCriteria);
 
-            $images = $this->candidateTransformer->candidateOtherImage($images,true);
+//            $images = $this->candidateTransformer->candidateOtherImage($images,true);
 
 
             $data = array();
 
-            $data["avatar_image_url"] = isset($avatar_image_url) ? $avatar_image_url : '';
-            $data["main_image_url"] = isset($main_image_url) ? $main_image_url : '';
+            $data["avatar_image_url"] = $avatar_image_url ?? '';
+            $data["main_image_url"] = $main_image_url ?? '';
 
-            $data["other_images"] = $images;
+            $data["other_images"] = $other_images ?? '';
 
             DB::commit();
 //            $checkRepresentative->per_avatar_url = (!empty($checkRepresentative->per_avatar_url) ? 'api.arranzed.com/api' . $checkRepresentative->per_avatar_url : '');
@@ -1141,31 +1143,39 @@ class CandidateService extends ApiBaseService
     }
 
     /**
-     * @param CandidateImage $candidateImage
+     * @param int $imageType
      * @return JsonResponse
      */
-    public function deleteImageByType($image_type): JsonResponse
+    public function deleteImageByType(int $imageType): JsonResponse
     {
         $userId = self::getUserId();
+
+        if ($imageType >= 10) {
+            return $this->sendErrorResponse(
+                HttpStatusCode::VALIDATION_ERROR, HttpStatusCode::VALIDATION_ERROR_MESSAGE
+            );
+        }
+
         try {
-            if($image_type == 0 || $image_type == 1){
+
+            if($imageType == 0 || $imageType == 1){
 
                 $candidate = $this->candidateRepository->findOneByProperties([
                     'user_id' => $userId
                 ]);
 
 
-                if($image_type == 0){
+                if($imageType == 0){
                     $candidate->per_avatar_url = null ;
                     $candidate->save();
                 }
 
-                if ($image_type === 1){
+                if ($imageType === 1){
                     $candidate->per_main_image_url = null ;
                     $candidate->save();
                 }
 
-                if ($image_type === 3) {
+                if ($imageType === 9) {
                     $candidate->other_images = null ;
                     $candidate->save();
                 }

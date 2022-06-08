@@ -271,12 +271,12 @@ class CandidateController extends Controller
         return $this->candidateService->removeImage($request->name);
     }
     /**
-     * @param Request $request
+     * @param int $imageType
      * @return JsonResponse
      */
-    public function deleteImageByType(Request $request): JsonResponse
+    public function deleteImageByType(int $imageType): JsonResponse
     {
-        return $this->candidateService->deleteImageByType($request->image_type);
+        return $this->candidateService->deleteImageByType($imageType);
     }
 
     /**
