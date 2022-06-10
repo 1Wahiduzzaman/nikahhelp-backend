@@ -992,6 +992,7 @@ class CandidateService extends ApiBaseService
                 $image = $this->uploadImageThrowGuzzle([
                     'other_images'=>$request->file('other_images'),
                 ]);
+
                 $checkRepresentative->other_images = $image->other_images;
             }
 
@@ -1006,34 +1007,8 @@ class CandidateService extends ApiBaseService
             }
             $checkRepresentative->save();
 
-            if (isset($request['image']) && count($request['image']) > 0) {
 
-                foreach ($request['image'] as $key => $file) {
-                    $requestFileType = $file['type'];
-                    $randNumb = 'image_'.$userId.$file['type'];
-                    $image = $this->uploadImageThrowGuzzle([
-                        $randNumb=>$request->file("image.$key.image"),
-                    ]);
-                    $data['user_id'] = $userId;
-                    $data['image_type'] = $requestFileType;
-                    $data['image_path'] = $image->$randNumb;
-                    $data['image_visibility'] = $file['visibility'];
-                    $data['disk'] = 'remote';
-                    $imageInfo = $this->imageRepository->findOneByProperties([
-                        'user_id' => $userId,
-                        'image_type' => $file['type']
-                    ]);
-
-                    if(!$imageInfo){
-                        $upload = $this->imageRepository->save($data);
-                    }else{
-                        $upload = $imageInfo->update($data);
-                    }
-
-                }
-            }
-
-            $searchCriteria = ["user_id" => $checkRepresentative->user_id];
+           // $searchCriteria = ["user_id" => $checkRepresentative->user_id];
             $avatar_image_url = $checkRepresentative->per_avatar_url;
             $main_image_url = $checkRepresentative->per_main_image_url;
             $other_images = $checkRepresentative->other_images;

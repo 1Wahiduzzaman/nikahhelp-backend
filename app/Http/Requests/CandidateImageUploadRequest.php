@@ -30,7 +30,7 @@ class CandidateImageUploadRequest extends APIRequest
             CandidateImage::IMAGE_MAIN => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
             CandidateImage::OTHER_IMAGE => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
             'image.*.image' => 'sometimes|image|mimes:jpeg,png,jpg|max:2048',
-            'image.*.type' => 'sometimes|numeric|between:1,8',
+            'image.*.type' => 'sometimes|numeric|between:1,10',
             'image.*.visibility' => 'sometimes|numeric|between:1,4',
 //            CandidateImage::IMAGE  => 'required|image|mimes:jpeg,png,jpg|max:3072',
 //            CandidateImage::IMAGE_TYPE => [ 'required','numeric','between:1,8'],
