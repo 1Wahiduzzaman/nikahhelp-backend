@@ -303,7 +303,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('site-visit-graph', [VisitController::class, 'visitGraph'])->name('user.site-visit-graph');
 
         //location requests
-        Route::get('v1/search/location', [LocationController::class, 'postcode']);
+        Route::post('v1/search/location', [LocationController::class, 'postcode']);
 
     });
 
