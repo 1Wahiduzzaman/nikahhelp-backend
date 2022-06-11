@@ -6,6 +6,7 @@ use App\Enums\ApiCustomStatusCode;
 use App\Enums\HttpStatusCode;
 use Illuminate\Http\Response;
 use App\Contracts\ApiBaseServiceInterface;
+use Illuminate\Support\Str;
 use JWTAuth;
 
 /**
@@ -119,7 +120,7 @@ class ApiBaseService implements ApiBaseServiceInterface
                 [
                     'name'     => 'image['.$i.'][file]',
                     'contents' => file_get_contents($image),
-                    'filename' => $key.'.'.$image->getClientOriginalExtension()
+                    'filename' => $key.'.'.$image->getClientOriginalExtension() . Str::random(2),
                 ],
                 [
                     'name'     => 'image['.$i.'][path]',
