@@ -1022,7 +1022,7 @@ class CandidateService extends ApiBaseService
             $data["avatar_image_url"] = $avatar_image_url ?? '';
             $data["main_image_url"] = $main_image_url ?? '';
 
-            $data["other_images"] = $other_images ?? '';
+            $data["other_images"] =  env('IMAGE_SERVER') .'/'. $other_images ?? '';
 
             DB::commit();
 //            $checkRepresentative->per_avatar_url = (!empty($checkRepresentative->per_avatar_url) ? 'api.arranzed.com/api' . $checkRepresentative->per_avatar_url : '');
