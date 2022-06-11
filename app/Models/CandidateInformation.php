@@ -534,6 +534,12 @@ class CandidateInformation extends Model
         return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
 
+
+    public function getOtherImagesAttribute($value)
+    {
+        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
+    }
+
     public function getDownloadableDocAttribute()
     {
         if(Auth::user()->account_type=='10') {

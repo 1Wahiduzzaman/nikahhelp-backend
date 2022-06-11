@@ -1023,7 +1023,7 @@ class CandidateService extends ApiBaseService
             $data["avatar_image_url"] = $avatar_image_url ?? '';
             $data["main_image_url"] = $main_image_url ?? '';
 
-            $data["other_images"] =  env('IMAGE_SERVER') .'/'. $other_images ?? '';
+            $data["other_images"] =  $other_images ?? '';
 
             DB::commit();
 //            $checkRepresentative->per_avatar_url = (!empty($checkRepresentative->per_avatar_url) ? 'api.arranzed.com/api' . $checkRepresentative->per_avatar_url : '');
@@ -1155,12 +1155,7 @@ class CandidateService extends ApiBaseService
                     $candidate->save();
                 }
 
-            }elseif (in_array((int)$image_type,[2,3,4,5,6,7,8])){
-                $imageInfo = $this->imageRepository->findOneByProperties([
-                    'user_id' => $userId,
-                    'image_type' => $image_type
-                ]);
-                $imageInfo->delete();
+
             }
 
             /* edo Need to remove from image server  */
