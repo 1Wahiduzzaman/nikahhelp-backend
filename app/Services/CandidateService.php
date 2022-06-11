@@ -1133,7 +1133,7 @@ class CandidateService extends ApiBaseService
 
         try {
 
-            if($imageType == 0 || $imageType == 1){
+            if($imageType == 0 || $imageType == 1 || $imageType == 9){
 
                 $candidate = $this->candidateRepository->findOneByProperties([
                     'user_id' => $userId
