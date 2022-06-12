@@ -294,7 +294,7 @@ class CandidateService extends ApiBaseService
 
             //$data['candidate_image']["main_image_url"] = $candidate->per_main_image_url ? env('IMAGE_SERVER') .'/'. $candidate->per_main_image_url : '';
             $data['candidate_image']["main_image_url"] = isset($candidate->per_main_image_url) ?  $candidate->per_main_image_url : '';
-            $data['candidate_image']["other_images"] = $candidate->other_images;
+            $data['candidate_image']["other_images"] = isset($candidate->other_images) ?  $candidate->other_images : '';
 
             return $this->sendSuccessResponse($data, self::INFORMATION_FETCHED_SUCCESSFULLY);
         } catch (Exception $exception) {
