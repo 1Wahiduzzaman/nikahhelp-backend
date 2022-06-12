@@ -340,7 +340,7 @@ class CandidateTransformer extends TransformerAbstract
     {
         $pre_partner_religions = [];
         if (!empty($item->pre_partner_religions)) {
-            $pre_partner_religions_id = $item->pre_partner_religions
+            $pre_partner_religions_id = $item->pre_partner_religions;
             $pre_partner_religions = implode("", Religion::where('id',$pre_partner_religions_id)->pluck('name')->toArray());
         }
 
