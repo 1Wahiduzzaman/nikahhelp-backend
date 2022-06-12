@@ -338,11 +338,10 @@ class CandidateTransformer extends TransformerAbstract
      */
     private function preferenceInfo(CandidateInformation $item): array
     {
-        $pre_partner_religions_id = [];
         $pre_partner_religions = [];
         if (!empty($item->pre_partner_religions)) {
-            $pre_partner_religions_id = explode(",", $item->pre_partner_religions);
-            $pre_partner_religions = Religion::whereIn('id',$pre_partner_religions_id)->pluck('name')->toArray();
+            $pre_partner_religions_id = $item->pre_partner_religions
+            $pre_partner_religions = implode("", Religion::where('id',$pre_partner_religions_id)->pluck('name')->toArray());
         }
 
         return [
