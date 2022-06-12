@@ -341,7 +341,7 @@ class CandidateTransformer extends TransformerAbstract
         $pre_partner_religions = [];
         $pre_partner_religions_id = [];
         if (!empty($item->pre_partner_religions)) {
-            $pre_partner_religions_id = explode(',', $item->pre_partner_religions);
+            $pre_partner_religions_id = Religion::where('id',$item->pre_partner_religions)->pluck('id')->toArray();
             $pre_partner_religions = implode("", Religion::where('id',$pre_partner_religions_id)->pluck('name')->toArray());
         }
 
