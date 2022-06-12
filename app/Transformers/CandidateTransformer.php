@@ -357,7 +357,7 @@ class CandidateTransformer extends TransformerAbstract
             'bloked_countries' => $item->bloked_countries,
             'blocked_cities' => $item->blocked_cities,
             'preferred_nationality' => $item->preferred_nationality,
-            'pre_partner_religion_id' => $pre_partner_religions_id,
+            'pre_partner_religion_id' => $pre_partner_religions,
             'pre_partner_religion' => $pre_partner_religions,
             'pre_ethnicities' => $item->pre_ethnicities,
             'pre_study_level_id' => $item->pre_study_level_id,
