@@ -963,7 +963,7 @@ class CandidateService extends ApiBaseService
     public function uploadImage(Request $request): JsonResponse
     {
         try {
-            DB::beginTransaction();
+
             $userId = self::getUserId();
             $checkRepresentative = $this->candidateRepository->findOneByProperties([
                 'user_id' => $userId
@@ -1024,11 +1024,11 @@ class CandidateService extends ApiBaseService
 
             $data["other_images"] =  $other_images ?? '';
 
-            DB::commit();
+
 //            $checkRepresentative->per_avatar_url = (!empty($checkRepresentative->per_avatar_url) ? 'api.arranzed.com/api' . $checkRepresentative->per_avatar_url : '');
             return $this->sendSuccessResponse($data, self::INFORMATION_UPDATED_SUCCESSFULLY);
         } catch (Exception $exception) {
-            DB::rollBack();
+            
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
