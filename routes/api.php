@@ -77,7 +77,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('candidate/info/{user_id}', [CandidateController::class, 'index'])->name('candidate.information.all');
         Route::get('candidate/initial-info', [CandidateController::class, 'candidateProfileInitialInfo'])->name('candidate.initial.information');
         Route::get('candidate/personal-info', [CandidateController::class, 'candidatePersonalInfo'])->name('candidate.personal.information');
-        Route::Post('candidate/basic-info/{user_id}', [CandidateController::class, 'storeCandidateBasicInformation'])->name('store.candidate.basic.information');
+        Route::POST('candidate/basic-info/{user_id}', [CandidateController::class, 'storeCandidateBasicInformation'])->name('store.candidate.basic.information');
         Route::PATCH('candidate/personal-info/{user_id}', [CandidateController::class, 'updatePersonalInformation'])->name('update.candidate.personal.information');
         Route::POST('candidate/personal-essentialInformation', [CandidateController::class, 'updatePersonalEssentialInInformation'])->name('update.candidate.personal.essential.information');
         Route::POST('candidate/personal-generalinformation', [CandidateController::class, 'updatePersonalGeneralInInformation'])->name('update.candidate.personal.general.information');
@@ -308,7 +308,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('search/location', [LocationController::class, 'postcode']);
 
     });
-
+/*
     Route::group(['prefix' => 'v1/admin'], function () {
 
         // User report
@@ -340,6 +340,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::GET('all-user', [AllNotificationController::class, 'getAllUsers'])->name('all-notification.all-user');
         Route::POST('send-notification', [AllNotificationController::class, 'sendGlobalNotification'])->name('all-notification.send-notification');
     });
+    */
 });
 
 

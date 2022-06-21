@@ -266,14 +266,14 @@ class CandidateService extends ApiBaseService
      * @return JsonResponse
      */
     public function fetchProfileInitialInfo(): JsonResponse
-    {       
+    {
         $userId = self::getUserId();
         try {
             $candidate = $this->candidateRepository->findOneByProperties([
                 'user_id' => $userId
             ]);
 
-            if (!$candidate) {                
+            if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
            // dd($candidate);

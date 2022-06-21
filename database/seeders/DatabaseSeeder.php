@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -21,7 +22,9 @@ class DatabaseSeeder extends Seeder
             StudyLevelTableSeeder::class,
             OccupationSeeder::class,
             WorldSeeder::class,
-//            UserSeeder::class,
+            UserSeeder::class,
+            PermissionSeeder::class,
+            RoleSeeder::class,
 //            CandidateSeeder::class,
         ]);
     }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Admin;
 use App\Models\CandidateInformation;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -24,14 +25,22 @@ class UserSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         //
         $user = User::create([
-            'full_name' => 'Mr. Admin',
+            'full_name' => 'Mr. User',
             "is_verified" => 1,
+            "status" => "1",
+            'email' => 'user@mail.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make(12345678),
+            'remember_token' => Str::random(10),
+            "account_type" => 1,
+        ]);
+        $admin = Admin::create([
+            'full_name' => 'Mr. Admin',
             "status" => "1",
             'email' => 'admin@mail.com',
             'email_verified_at' => now(),
             'password' => Hash::make(12345678),
             'remember_token' => Str::random(10),
-            "account_type" => 1,
         ]);
         CandidateInformation::create([
             'user_id'=> $user->id,
