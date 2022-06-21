@@ -99,7 +99,6 @@ class AdminDashboardController extends AppBaseController
      */
     public function dashboard(Request $request)
     {
-        dd('dskfj');
         dd(Gate::allows('dashboard-assess'));
         abort_unless(Gate::allows('access-admin'), 403);
         $userId = $this->getUserId();

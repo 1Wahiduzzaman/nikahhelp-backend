@@ -230,6 +230,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        'JWTGuard' => Tymon\JWTAuth\JWTGuard::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'Carbon' => 'Carbon\Carbon',
 

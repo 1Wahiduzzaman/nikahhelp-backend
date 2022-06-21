@@ -27,26 +27,17 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-//        dd($this->isRequestFromAdmin());
-
-////        dd($this->isRequestFromAdmin());
-//        if($this->isRequestFromAdmin()){
-////            dd('Hi');
-//            \Illuminate\Support\Facades\Config::set('auth.providers.users.model', \App\Models\Admin::class);
-//        }
-//        dd($this->isRequestFromAdmin());
-//        if ($this->isRequestFromAdmin()) {
-//            \Illuminate\Support\Facades\Config::set('auth.providers.users.model', \App\Models\Admin::class);
-//        }else{
-//            \Illuminate\Support\Facades\Config::set('auth.providers.users.model', \App\Models\User::class);
-//        }
         $this->registerPolicies();
 
-        foreach ($this->getPermissions() as $permission) {
-            Gate::define(strtolower($permission->slug), function ($user) use ($permission) {
-                return $user->hasRole($permission->roles);
+        if ($status = $this->isRequestFromAdmin()) {
+            \Illuminate\Support\Facades\Config::set('auth.providers.users.model', \App\Models\Admin::class);
 
-            });
+            foreach ($this->getPermissions() as $permission) {
+                Gate::define(strtolower($permission->slug), function ($user) use ($permission) {
+                    return $user->hasRole($permission->roles);
+
+                });
+            }
         }
     }
 
@@ -62,6 +53,34 @@ class AuthServiceProvider extends ServiceProvider
         } else {
             return [];
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isRequestFromAdmin()
+    {
+        $url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+
+        $baseUrl = parse_url($url);
+
+        $status = false;
+
+        if ($baseUrl['path'] == '/api/v1/admin/login') {
+            $status = true;
+        }
+
+        if(isset($_SERVER['HTTP_AUTHORIZATION']) && !empty($_SERVER['HTTP_AUTHORIZATION'])){
+            $token = substr($_SERVER['HTTP_AUTHORIZATION'], 6) ;
+            $tokenParts = explode(".", $token);
+            $tokenPayload = json_decode(base64_decode($tokenParts[1]));
+            if(isset($tokenPayload->authType) && $tokenPayload->authType == 'admin'){
+                $status = true;
+            }
+        }
+
+
+        return $status;
     }
 
 
