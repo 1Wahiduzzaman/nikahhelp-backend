@@ -12,6 +12,7 @@ use App\Mail\VerifyMail as VerifyEmail;
 use App\Repositories\RepresentativeInformationRepository;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Mail;
 use Illuminate\Http\JsonResponse;
@@ -77,7 +78,6 @@ class AdminService extends ApiBaseService
         $data = array();
         try {
             $adminInfo = Admin::where('email', $request->input('email'))->first();
-//            dd($adminInfo);
 
             /* Check the user is existed */
             if (empty($adminInfo)) {
@@ -87,36 +87,7 @@ class AdminService extends ApiBaseService
                     403
                 );
             }
-//            /* Check the user is not delete */
-//            if ($adminInfo->status == 0) {
-//                return $this->sendErrorResponse(
-//                    'Your account has been deleted ( ' . $adminInfo->email . ' ), please contact us so we can assist you.',
-//                    [],
-//                    403
-//                );
-//            } elseif($adminInfo->status == 9){
-//                return $this->sendErrorResponse(
-//                    'Your account has been Suspended ( ' . $adminInfo->email . ' ), please contact us so we can assist you.',
-//                    [],
-//                    403
-//                );
-//            }
-//
-//            /* Load data input status */
-//            if($adminInfo->account_type == 1){
-//                $adminInfo['data_input_status'] = $adminInfo->getCandidate->data_input_status;
-//                $adminInfo['per_main_image_url'] = $adminInfo->getCandidate->per_main_image_url;
-//                // $adminInfo['per_main_image_url'] = $adminInfo->getCandidate->per_main_image_url;
-//            }elseif ($adminInfo->account_type == 2){
-//                $adminInfo['data_input_status'] = $adminInfo->getRepresentative->data_input_status;
-//                $adminInfo['per_main_image_url'] = $adminInfo->getRepresentative->per_main_image_url;
-//                // $adminInfo['per_main_image_url'] = $adminInfo->getRepresentative->per_main_image_url;
-//            }
-            /* attempt login */
-//            Config::set('auth.providers.users.model', \App\Models\Admin::class);
-//            dd(Config::get('auth.providers.users.model'));
-            if (!$token = auth('admin')->claims(['authType' => 'admin'])->attempt($credentials)) {
-//            if (!$token = JWTAuth::fromUser($user)) {
+            if (!$token = Auth::guard('admin')->attempt($credentials)) {
                 return $this->sendErrorResponse(
                     'Invalid credentials',
                     ['detail' => 'Ensure that the email and password included in the request are correct'],

@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
     public function run()
     {
          // Admin Role
-        Role::create(['name' => 'Super Admin', 'slug' => 'super-admin', 'description' => 'Super Admin description']);
+        Role::create(['name' => 'Admin', 'slug' => 'admin', 'description' => 'Admin description']);
         Role::create(['name' => 'Support', 'slug' => 'support', 'description' => 'Support provider']);
 
         // Others Role
@@ -27,13 +27,13 @@ class RoleSeeder extends Seeder
         /* Assign role permissions to admin */
         $permissions = Permission::all();
 
-        $roleSuperAdmin = Role::where('slug', 'super-admin')->first();
+        $roleAdmin = Role::where('slug', 'admin')->first();
         $roleSupport = Role::where('slug', 'support')->first();
-        $permissions->each(function ($permission) use ($roleSuperAdmin, $roleSupport) {
+        $permissions->each(function ($permission) use ($roleAdmin, $roleSupport) {
 
-            $roleSuperAdmin->givePermissionTo($permission);
+            $roleAdmin->givePermissionTo($permission);
 
-            if($permission->for != 'admin'){
+            if($permission->for == 'team'){
                 $roleSupport->givePermissionTo($permission);
             }
 

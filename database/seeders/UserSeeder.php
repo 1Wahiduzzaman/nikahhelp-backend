@@ -42,6 +42,18 @@ class UserSeeder extends Seeder
             'password' => Hash::make(12345678),
             'remember_token' => Str::random(10),
         ]);
+        $admin->assignRole('Admin');
+
+        $support = Admin::create([
+            'full_name' => 'Mr. Support',
+            "status" => "1",
+            'email' => 'support@mail.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make(12345678),
+            'remember_token' => Str::random(10),
+        ]);
+        $support->assignRole('Support');
+
         CandidateInformation::create([
             'user_id'=> $user->id,
             'first_name'=> 'Mr',

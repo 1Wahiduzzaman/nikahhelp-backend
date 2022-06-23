@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\User;
@@ -324,6 +325,10 @@ class SubscriptionService extends ApiBaseService
      */
     public function subscriptionReport($request)
     {
+        if(!Gate::allows('get-team-subscription-data')){
+            return $this->sendUnauthorizedResponse();
+        }
+
         $page = $request['page'] ?: 1;
         $parpage = $request['parpage'] ?: 10;
         $teamInformation = $this->teamRepository->getModel()->newQuery();

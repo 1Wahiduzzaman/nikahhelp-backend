@@ -22,9 +22,9 @@ class DatabaseSeeder extends Seeder
             StudyLevelTableSeeder::class,
             OccupationSeeder::class,
             WorldSeeder::class,
-            UserSeeder::class,
             PermissionSeeder::class,
             RoleSeeder::class,
+            UserSeeder::class,
 //            CandidateSeeder::class,
         ]);
     }

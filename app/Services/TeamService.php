@@ -28,6 +28,7 @@ use App\Repositories\TeamMemberRepository;
 use Illuminate\Support\Facades\Auth;
 use \Illuminate\Support\Facades\DB;
 use App\Transformers\TeamTransformer;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Services\AccessRulesDefinitionService;
@@ -98,7 +99,7 @@ class TeamService extends ApiBaseService
                 $createLimit = env('CANDIDATE_TEAM_CREATE_LIMIT');
                 return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
             }
-    
+
             if (count($countTeamList) >= env('REPRESENTATIVE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 2) {
                 $createLimit = env('REPRESENTATIVE_TEAM_CREATE_LIMIT');
                 return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
@@ -112,36 +113,36 @@ class TeamService extends ApiBaseService
                 $data[Team::TEAM_ID] = Str::uuid();
                 $data[Team::CREATED_BY] = Auth::id();
                 $data['member_count'] = 1;
-    
+
                 $team = $this->teamRepository->save($data);
                 $data = $this->teamTransformer->transform($team);
                 $team_id = $data['id'];
-    
+
                 // Process team logo image
                 // if ($request->hasFile('logo')) {
                 //     $logo_url = $this->singleImageUploadFile($team_id, $request->file('logo'));
                 //     $team->logo = $logo_url['image_path'];
                 // }
-    
+
                 if ($request->hasFile('logo')) {
                     $image = $this->uploadImageThrowGuzzle([
                         'logo'=>$request->file('logo')
                     ]);
                     $team->logo = $image->logo;
                 }
-    
+
                 // Update logo url
                 $input = (array)$team;
                 // As BaseRepository update method has bug that's why we have to fallback to model default methods.
                 $input = $team->fill($input)->toArray();
                 $team->save($input);
-    
-    
+
+
                 // Automatically add the user in team as member
                 // $role = get role
-    
+
                 $user_id = $data['created_by']['id'];
-    
+
                 $user_type = $this->getRoleForNewTeamMember($user_id);
                 $team_member = array();
                 $team_member['team_id'] = $team_id;
@@ -151,16 +152,16 @@ class TeamService extends ApiBaseService
                 $team_member['status'] =1;
                 // $team_member['relationship'] ='Own';
                 $team_member['relationship'] = $request->relationship;
-    
+
                 $newmember = $this->teamMemberRepository->save($team_member);
-    
+
                 return $this->sendSuccessResponse($data, 'Team created Successfully!');
             } catch (Exception $exception) {
                 return $this->sendErrorResponse($exception->getMessage());
             }
         // } else {
         //     return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST);
-        // }        
+        // }
     }
 
     /**
@@ -260,7 +261,7 @@ class TeamService extends ApiBaseService
                                 $c->select(['id', 'user_id', 'per_avatar_url', 'per_main_image_url']);
                             }]);
                         }]);
-                    }])                   
+                    }])
                     ->with('team_invited_members', 'TeamlistedShortListed','teamRequestedConnectedList','teamRequestedAcceptedConnectedList','created_by')
                     ->with(["last_subscription"=> function($q){
                         $q->with(['user' => function($u){
@@ -673,6 +674,10 @@ class TeamService extends ApiBaseService
     //Admin
     public function getTeamListForBackend(array $data): JsonResponse
     {
+        if(!Gate::allows('get-team-data')){
+            return $this->sendUnauthorizedResponse();
+        }
+
         try {
             $team_infos = Team::with('created_by')->where('status',1)->paginate();
 
@@ -687,6 +692,9 @@ class TeamService extends ApiBaseService
 
     public function getDeletedTeamListForBackend(array $data): JsonResponse
     {
+        if(!Gate::allows('get-deleted-team-list')){
+            return $this->sendUnauthorizedResponse();
+        }
         try {
             $team_infos = Team::with('created_by')->where('status',0)->paginate();
 
@@ -701,6 +709,9 @@ class TeamService extends ApiBaseService
 
     public function getConnectedTeamListForBackend($team_id = null): JsonResponse
     {
+        if(!Gate::allows('get-connected-team')){
+            return $this->sendUnauthorizedResponse();
+        }
         try {
             $team_infos = TeamConnection::where('from_team_id', $team_id)->orWhere('to_team_id', $team_id)
             ->with(['requested_by_user', 'responded_by_user'])->paginate();
@@ -715,6 +726,9 @@ class TeamService extends ApiBaseService
     }
 
     public function adminTeamDelete($data) {
+        if(!Gate::allows('delete-team')){
+            return $this->sendUnauthorizedResponse();
+        }
         try{
             Team::where('id', $data->id)->update(['status'=> 0]);
             return $this->sendSuccessResponse([], 'Team deleted Successfully!');

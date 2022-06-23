@@ -95,13 +95,15 @@ class AdminDashboardController extends AppBaseController
      * GET|HEAD /shortListedCandidates
      *
      * @param Request $request
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function dashboard(Request $request)
     {
-        dd(Gate::allows('dashboard-assess'));
-        abort_unless(Gate::allows('access-admin'), 403);
-        $userId = $this->getUserId();
+//        $admin = Auth::guest('admin')->user();
+        if(!Gate::allows('dashboard-assess')){
+            return $this->sendUnauthorizedResponse();
+        }
+
         $personalList = ShortListedCandidate::whereNull('shortlisted_for')->count();
         $personalListTeam = ShortListedCandidate::whereNotNull('shortlisted_for')->count();
         $result['short_list']['total'] = $personalList + $personalListTeam;
@@ -159,8 +161,13 @@ class AdminDashboardController extends AppBaseController
         ];
         return $this->sendResponse($data, 'Data retrieved successfully');
     }
+
     public function userReport(Request $request)
     {
+        if(!Gate::allows('get-active-user')){
+            return $this->sendUnauthorizedResponse();
+        }
+
         $data = $this->getActiveUserData($request);
         return $this->sendResponse($data, 'Data retrieved successfully');
     }
@@ -294,6 +301,9 @@ class AdminDashboardController extends AppBaseController
      */
     public function pendingUserList(Request $request)
     {
+        if(!Gate::allows('get-pending-user')){
+            return $this->sendUnauthorizedResponse();
+        }
         $data = $this->getUserData($request, 2);
         return $this->sendResponse($data, 'Data retrieved successfully');
     }
@@ -319,18 +329,30 @@ class AdminDashboardController extends AppBaseController
 //     }
     public function approvedUserList(Request $request)
     {
+        if(!Gate::allows('get-approved-user')){
+            return $this->sendUnauthorizedResponse();
+        }
+
        $data =  $this->getUserData($request, 5);
        return $this->sendResponse($data, 'Data retrieved successfully');
     }
 
     public function verifiedUserList(Request $request)
     {
+        if(!Gate::allows('get-verified-user')){
+            return $this->sendUnauthorizedResponse();
+        }
+
        $data =  $this->getUserData($request, 3);
        return $this->sendResponse($data, 'Data retrieved successfully');
     }
 
     public function rejectedUserList(Request $request)
     {
+        if(!Gate::allows('get-rejected-user')){
+            return $this->sendUnauthorizedResponse();
+        }
+
        $data =  $this->getUserData($request, 4);
        return $this->sendResponse($data, 'Data retrieved successfully');
     }
@@ -382,6 +404,10 @@ class AdminDashboardController extends AppBaseController
      */
     public function verifyRejectUser(Request $request)
     {
+        if(!Gate::allows('verify-reject-user')){
+            return $this->sendUnauthorizedResponse();
+        }
+
         $status = [
             'suspend' => 9,
             'approved' => 5,
@@ -449,6 +475,11 @@ class AdminDashboardController extends AppBaseController
 
     // Representative details
     public function RepresentativeUserInfo($id = null) {
+
+        if(!Gate::allows('get-particular-representative')){
+            return $this->sendUnauthorizedResponse();
+        }
+
         if (!empty($id)) {
             $userId = $id;
         } else {
@@ -489,6 +520,11 @@ class AdminDashboardController extends AppBaseController
 
     // candidate details
     public function CandidateUserInfo($id = null) {
+
+        if(!Gate::allows('get-particular-candidate')){
+            return $this->sendUnauthorizedResponse();
+        }
+
         if (!empty($id)) {
             $userId = $id;
         } else {
@@ -543,6 +579,11 @@ class AdminDashboardController extends AppBaseController
     }
 
     public function UserInfo($id = null) {
+
+        if(!Gate::allows('get-particular-user')){
+            return $this->sendUnauthorizedResponse();
+        }
+
         if (!empty($id)) {
             $userId = $id;
         } else {
