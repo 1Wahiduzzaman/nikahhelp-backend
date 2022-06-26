@@ -14,6 +14,7 @@ class ChangeVerificationCountryColumn extends Migration
     public function up()
     {
         Schema::table('candidate_information', function (Blueprint $table) {
+            $table->renameColumn('ver_country_id', 'ver_country');
             $table->string('ver_country')->nullable()->change();
         });
     }
