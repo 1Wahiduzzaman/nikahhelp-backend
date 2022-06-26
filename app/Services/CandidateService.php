@@ -266,14 +266,14 @@ class CandidateService extends ApiBaseService
      * @return JsonResponse
      */
     public function fetchProfileInitialInfo(): JsonResponse
-    {       
+    {
         $userId = self::getUserId();
         try {
             $candidate = $this->candidateRepository->findOneByProperties([
                 'user_id' => $userId
             ]);
 
-            if (!$candidate) {                
+            if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
            // dd($candidate);
@@ -524,8 +524,8 @@ class CandidateService extends ApiBaseService
                 $input['per_additional_info_doc'] = $candidateFile->per_additional_info_doc;
             }
 
-            $input = $candidate->fill($input)->toArray();
-            $candidate->save($input);
+            $candidate->fill($input);
+            $candidate->save();
             $personal_info = $this->candidateTransformer->transformPersonalMoreAbout($candidate);
             return $this->sendSuccessResponse($personal_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
         } catch (Exception $exception) {
