@@ -524,7 +524,7 @@ class CandidateService extends ApiBaseService
                 $input['per_additional_info_doc'] = $candidateFile->per_additional_info_doc;
             }
 
-            $candidate->fill($input);
+            $candidate = $candidate->fill($input);
             $candidate->save();
             $personal_info = $this->candidateTransformer->transformPersonalMoreAbout($candidate);
             return $this->sendSuccessResponse($personal_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
