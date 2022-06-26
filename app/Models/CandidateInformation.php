@@ -151,7 +151,7 @@ class CandidateInformation extends Model
     ];
 
     public const PERSONAL_VERIFICATION_INFO = [
-        'ver_country_id',
+        'ver_country',
         'ver_city_id',
         'ver_document_type',
         'ver_image_front',
@@ -253,7 +253,7 @@ class CandidateInformation extends Model
         "fi_family_info",
 
         // Verification
-        'ver_country_id',
+        'ver_country',
         'ver_city_id',
         'ver_document_type',
         'ver_image_front',
@@ -557,7 +557,7 @@ class CandidateInformation extends Model
                 return $this->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $this->per_additional_info_doc : '';
             }
             return null;
-        }        
+        }
     }
 
     public function getRepresentativeStatusAttribute()
