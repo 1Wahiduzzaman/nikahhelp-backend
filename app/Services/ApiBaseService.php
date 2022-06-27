@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\ApiCustomStatusCode;
 use App\Enums\HttpStatusCode;
+use http\Env\Request;
 use Illuminate\Http\Response;
 use App\Contracts\ApiBaseServiceInterface;
 use Illuminate\Support\Facades\Http;
@@ -144,13 +145,13 @@ class ApiBaseService implements ApiBaseServiceInterface
         return json_decode($response);
     }
 
-    public function deleteImageGuzzle(String $filename)
+    public function deleteImageGuzzle(\Illuminate\Http\Request $request)
     {
         $userId = self::getUserId();
 
         $response = Http::delete(config('chobi.chobi').'/img', [
             'path' => 'candidate/candidate_'.$userId.'/',
-            'file' => $filename
+            'file' => $request->file(),
         ]);
 
        return $response->json();

@@ -1124,9 +1124,12 @@ class CandidateService extends ApiBaseService
      * @param int $imageType
      * @return JsonResponse
      */
-    public function deleteImageByType(int $imageType): JsonResponse
+    public function deleteImageByType(Request $request, int $imageType): JsonResponse
     {
         $userId = self::getUserId();
+        $request->validate([
+            'file' => 'file'
+        ]);
 
         if ($imageType >= 10) {
             return $this->sendErrorResponse(
@@ -1145,19 +1148,19 @@ class CandidateService extends ApiBaseService
 
                 if($imageType == 0){
                     $candidate->per_avatar_url = null ;
-                    $this->deleteImageGuzzle('per_avatar_url');
+                    $this->deleteImageGuzzle($request);
                     $candidate->save();
                 }
 
                 if ($imageType === 1){
                     $candidate->per_main_image_url = null ;
-                    $this->deleteImageGuzzle('per_main_image_url');
+                    $this->deleteImageGuzzle($request);
                     $candidate->save();
                 }
 
                 if ($imageType === 9) {
                     $candidate->other_images = null ;
-                    $this->deleteImageGuzzle('other_images');
+                    $this->deleteImageGuzzle('other_images', $request);
                     $candidate->save();
                 }
 
