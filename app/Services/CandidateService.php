@@ -1148,23 +1148,21 @@ class CandidateService extends ApiBaseService
 
                 if($imageType == 0){
                     $candidate->per_avatar_url = null ;
-                    $this->deleteImageGuzzle($request);
+                    $this->deleteImageGuzzle('per_avatar_url');
                     $candidate->save();
                 }
 
                 if ($imageType === 1){
                     $candidate->per_main_image_url = null ;
-                    $this->deleteImageGuzzle($request);
+                    $this->deleteImageGuzzle('per_main_image_url');
                     $candidate->save();
                 }
 
                 if ($imageType === 9) {
                     $candidate->other_images = null ;
-                    $this->deleteImageGuzzle('other_images', $request);
+                    $this->deleteImageGuzzle('other_images');
                     $candidate->save();
                 }
-
-
             }
 
             /* edo Need to remove from image server  */
