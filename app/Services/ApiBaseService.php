@@ -146,20 +146,17 @@ class ApiBaseService implements ApiBaseServiceInterface
         return json_decode($response);
     }
 
-    public function deleteImageGuzzle(\Illuminate\Http\Request $request)
+    public function deleteImageGuzzle(Str $filename)
     {
         $userId = self::getUserId();
         try {
             $response = Http::delete(config('chobi.chobi').'/img', [
                 'path' => 'candidate/candidate_'.$userId.'/',
-                'file' => $request->file(),
+                'file' => $filename,
             ]);
+            return $response->json();
         } catch (\Exception $exception) {
             Log::log('error', $exception->getMessage());
         }
-
-
-       return $response->json();
-
     }
 }
