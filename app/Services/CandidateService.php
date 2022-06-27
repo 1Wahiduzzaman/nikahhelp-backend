@@ -207,6 +207,9 @@ class CandidateService extends ApiBaseService
             [
                 'status' => $status
             ],
+            [
+                'verification' => $this->candidateTransformer->transformPersonalVerification($candidate),
+            ]
         );
         return $this->sendSuccessResponse($candidate_details, self::INFORMATION_FETCHED_SUCCESSFULLY);
     }

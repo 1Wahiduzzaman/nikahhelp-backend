@@ -513,8 +513,7 @@ class CandidateTransformer extends TransformerAbstract
     private function personalVerification(CandidateInformation $item): array
     {
         return [
-            'ver_country_id' => $item->ver_country_id,
-            'ver_city_id' => $item->ver_city_id,
+            'ver_country' => $item->ver_country,
             'ver_document_type' => $item->ver_document_type,
             'ver_image_front' => $item->ver_image_front ? env('IMAGE_SERVER') . '/' . $item->ver_image_front : '',
             'ver_image_back' => $item->ver_image_back ? env('IMAGE_SERVER') . '/' . $item->ver_image_back : '',
