@@ -146,7 +146,7 @@ class ApiBaseService implements ApiBaseServiceInterface
         return json_decode($response);
     }
 
-    public function deleteImageGuzzle(Str $filename)
+    public function deleteImageGuzzle(String $filename)
     {
         $userId = self::getUserId();
         try {
