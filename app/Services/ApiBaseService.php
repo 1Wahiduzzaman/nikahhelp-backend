@@ -8,6 +8,7 @@ use http\Env\Request;
 use Illuminate\Http\Response;
 use App\Contracts\ApiBaseServiceInterface;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use JWTAuth;
 
@@ -148,11 +149,15 @@ class ApiBaseService implements ApiBaseServiceInterface
     public function deleteImageGuzzle(\Illuminate\Http\Request $request)
     {
         $userId = self::getUserId();
+        try {
+            $response = Http::delete(config('chobi.chobi').'/img', [
+                'path' => 'candidate/candidate_'.$userId.'/',
+                'file' => $request->file(),
+            ]);
+        } catch (\Exception $exception) {
+            Log::log('error', $exception->getMessage());
+        }
 
-        $response = Http::delete(config('chobi.chobi').'/img', [
-            'path' => 'candidate/candidate_'.$userId.'/',
-            'file' => $request->file(),
-        ]);
 
        return $response->json();
 
