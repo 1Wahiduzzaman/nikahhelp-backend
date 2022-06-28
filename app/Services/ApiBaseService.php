@@ -138,7 +138,8 @@ class ApiBaseService implements ApiBaseServiceInterface
 
         $client = new \GuzzleHttp\Client();
         $requestc = $client->post(env('IMAGE_SERVER').'/img',[
-            'multipart' => $output
+            'multipart' => $output,
+            'user_id' => $userId,
         ]);
 
 
