@@ -528,15 +528,16 @@ class CandidateInformation extends Model
     {
         $value = str_replace('image', 'image/'.$this->user_id, $value);
 
-        $path = preg_replace('candidate/candidate_'.$this->user_id.'/', '', $value);
+        $pattern = "/candidate/candidate_'.$this->user_id.'/'/";
+        $path = preg_replace($pattern, '', $value);
         return !empty($value) ? env('IMAGE_SERVER').'/'.$path : null;
     }
 
     public function getPerAvatarUrlAttribute($value)
     {
         $value = str_replace('image', 'image/'.$this->user_id, $value);
-
-        $path = preg_replace('candidate/candidate_'.$this->user_id.'/', '', $value);
+        $pattern = "/candidate/candidate_'.$this->user_id.'/'/";
+        $path = preg_replace($pattern, '', $value);
         return !empty($value) ? env('IMAGE_SERVER').'/'.$path : null;
     }
 
@@ -545,8 +546,8 @@ class CandidateInformation extends Model
     {
         $value = str_replace('image', 'image/'.$this->user_id, $value);
 
-        $path = preg_replace('candidate/candidate_'.$this->user_id.'/', '', $value);
-
+        $pattern = "/candidate/candidate_'.$this->user_id.'/'/";
+        $path = preg_replace($pattern, '', $value);
         return !empty($value) ? env('IMAGE_SERVER').'/'.$path : null;
     }
 
