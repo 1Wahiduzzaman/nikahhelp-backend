@@ -587,4 +587,13 @@ class CandidateInformation extends Model
         return !empty($value) ? env('IMAGE_SERVER') . '/' . $newPath : null;
     }
 
+    public function getVerImageFrontAttribute($value)
+    {
+        return $this->getImagePath($value);
+    }
+
+    public function getVerImageBackAttribute($value)
+    {
+        return $this->getImagePath($value);
+    }
 }
