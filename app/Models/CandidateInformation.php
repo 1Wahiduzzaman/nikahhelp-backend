@@ -546,7 +546,7 @@ class CandidateInformation extends Model
     {
         $value = str_replace('image', 'image/'.$this->user_id, $value);
 
-        $pattern = "/candidate/candidate_'.$this->user_id.'/'/";
+        $pattern = "'candidate/candidate_'.$this->user_id.'/'";
         $path = preg_replace($pattern, '', $value);
         return !empty($value) ? env('IMAGE_SERVER').'/'.$path : null;
     }
