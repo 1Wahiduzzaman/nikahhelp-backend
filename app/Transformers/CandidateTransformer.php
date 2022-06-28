@@ -515,8 +515,8 @@ class CandidateTransformer extends TransformerAbstract
         return [
             'ver_country' => $item->ver_country,
             'ver_document_type' => $item->ver_document_type,
-            'ver_image_front' => $item->ver_image_front ? env('IMAGE_SERVER') . '/' . $item->ver_image_front : '',
-            'ver_image_back' => $item->ver_image_back ? env('IMAGE_SERVER') . '/' . $item->ver_image_back : '',
+            'ver_image_front' => $item->ver_image_front,
+            'ver_image_back' => $item->ver_image_back,
             'ver_recommences_title' => $item->ver_recommences_title,
             'ver_recommences_first_name' => $item->ver_recommences_first_name,
             'ver_recommences_last_name' => $item->ver_recommences_last_name,
