@@ -526,30 +526,19 @@ class CandidateInformation extends Model
 
     public function getPerMainImageUrlAttribute($value)
     {
-        $value = str_replace('image', 'image/'.$this->user_id, $value);
 
-        $pattern = "'candidate/candidate_'.(string)$this->user_id.'/'";
-        $path = preg_replace($pattern, '', $value);
-        return !empty($value) ? env('IMAGE_SERVER').'/'.$path : null;
+        return $this->getImagePath($value);
     }
 
     public function getPerAvatarUrlAttribute($value)
     {
-        $value = str_replace('image', 'image/'.$this->user_id, $value);
-        $pattern = "'candidate/candidate_'.(string)$this->user_id.'/'";
-        $path = preg_replace($pattern, '', $value);
-        return !empty($value) ? env('IMAGE_SERVER').'/'.$path : null;
+        return $this->getImagePath($value);
     }
 
 
     public function getOtherImagesAttribute($value)
     {
-        $value = str_replace('image', 'image/'.$this->user_id, $value);
-
-
-        $pattern = "'candidate/candidate_'.(string)$this->user_id.'/'";
-        $path = preg_replace($pattern, '', $value);
-        return !empty($value) ? env('IMAGE_SERVER').'/'.$path : null;
+        return $this->getImagePath($value);
     }
 
     public function getDownloadableDocAttribute()
@@ -575,6 +564,23 @@ class CandidateInformation extends Model
     public function getRepresentativeStatusAttribute()
     {
        return $this->active_team ? (bool)$this->active_team->representativeOfTeamFromUser->filter(function($user){ return $user->account_type > 2; })->count() : false ;
+    }
+
+    /**
+     * @param $value
+     * @return string|null
+     */
+    public function getImagePath($value): ?string
+    {
+        $value = str_replace('image', 'image/' . $this->user_id, $value);
+
+        $pattern = '/(?:candidate)/gm';
+        $path = preg_replace($pattern, '', $value);
+
+        $pattern = '/(?:candidate_' . $this->user_id . ')/gm';
+
+        $path = preg_replace($pattern, '', $path);
+        return !empty($value) ? env('IMAGE_SERVER') . '/' . $path : null;
     }
 
 }
