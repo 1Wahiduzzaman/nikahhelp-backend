@@ -528,6 +528,7 @@ class CandidateInformation extends Model
     {
         $value = str_replace('image', 'image/'.$this->user_id, $value);
 
+        $value = str_replace('candidate/candidate', '', $value);
         return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
 
@@ -535,7 +536,7 @@ class CandidateInformation extends Model
     {
         $value = str_replace('image', 'image/'.$this->user_id, $value);
 
-
+        $value = str_replace('candidate/candidate', '', $value);
         return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
 
@@ -544,6 +545,7 @@ class CandidateInformation extends Model
     {
         $value = str_replace('image', 'image/'.$this->user_id, $value);
 
+        $value = str_replace('candidate/candidate', '', $value);
         return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
 
