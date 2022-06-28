@@ -528,7 +528,7 @@ class CandidateInformation extends Model
     {
         $value = str_replace('image', 'image/'.$this->user_id, $value);
 
-        $path = str_replace('candidate/candidate_'.$this->user_id, '', $value);
+        $path = preg_replace('candidate/candidate_'.$this->user_id.'/', '', $value);
         return !empty($value) ? env('IMAGE_SERVER').'/'.$path : null;
     }
 
@@ -536,7 +536,7 @@ class CandidateInformation extends Model
     {
         $value = str_replace('image', 'image/'.$this->user_id, $value);
 
-        $path = str_replace('candidate/candidate_'.$this->user_id, '', $value);
+        $path = preg_replace('candidate/candidate_'.$this->user_id.'/', '', $value);
         return !empty($value) ? env('IMAGE_SERVER').'/'.$path : null;
     }
 
@@ -545,7 +545,7 @@ class CandidateInformation extends Model
     {
         $value = str_replace('image', 'image/'.$this->user_id, $value);
 
-        $path = str_replace('candidate/candidate_'.$this->user_id, '', $value);
+        $path = preg_replace('candidate/candidate_'.$this->user_id.'/', '', $value);
 
         return !empty($value) ? env('IMAGE_SERVER').'/'.$path : null;
     }
