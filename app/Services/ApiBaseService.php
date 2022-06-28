@@ -141,7 +141,7 @@ class ApiBaseService implements ApiBaseServiceInterface
             'multipart' => $output
         ]);
 
-        $response = $requestc->getBody();
+
 
         return json_decode($response);
     }
