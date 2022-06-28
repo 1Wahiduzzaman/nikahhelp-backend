@@ -123,7 +123,7 @@ class ApiBaseService implements ApiBaseServiceInterface
                 [
                     'name'     => 'image['.$i.'][file]',
                     'contents' => file_get_contents($image),
-                    'filename' => $key.'.'.$image->getClientOriginalExtension(),
+                    'filename' => '.'.$image->getClientOriginalExtension(),
                 ],
                 [
                     'name'     => 'image['.$i.'][path]',
