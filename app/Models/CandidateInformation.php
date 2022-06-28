@@ -581,7 +581,8 @@ class CandidateInformation extends Model
 
         $path = preg_replace($pattern, '', $value);
 
-        $newPath = str_replace('image', 'image/' . $this->user_id, $path);
+        $path = str_replace('/_', '', $path);
+        $newPath = str_replace('image/', 'image/' . $this->user_id, $path);
 
         return !empty($value) ? env('IMAGE_SERVER') . '/' . $newPath : null;
     }
