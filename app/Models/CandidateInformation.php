@@ -572,15 +572,17 @@ class CandidateInformation extends Model
      */
     public function getImagePath($value): ?string
     {
-        $value = str_replace('image', 'image/' . $this->user_id, $value);
 
-        $pattern = '/(?:candidate)/';
+        $pattern = [
+            'candidate',
+            (string)$this->user_id,
+        ];
+
         $path = preg_replace($pattern, '', $value);
 
-        $pattern = '/(?:candidate_' . $this->user_id . ')/';
+        $newPath = str_replace('image', 'image/' . $this->user_id, $path);
 
-        $path = preg_replace($pattern, '', $path);
-        return !empty($value) ? env('IMAGE_SERVER') . '/' . $path : null;
+        return !empty($value) ? env('IMAGE_SERVER') . '/' . $newPath : null;
     }
 
 }
