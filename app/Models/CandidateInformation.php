@@ -526,18 +526,18 @@ class CandidateInformation extends Model
 
     public function getPerMainImageUrlAttribute($value)
     {
-        return !empty($value) ? env('IMAGE_SERVER').'/'.$this->user_id.'/'.$value : null;
+        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
 
     public function getPerAvatarUrlAttribute($value)
     {
-        return !empty($value) ? env('IMAGE_SERVER').'/'.$this->user_id.'/'.$value : null;
+        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
 
 
     public function getOtherImagesAttribute($value)
     {
-        return !empty($value) ? env('IMAGE_SERVER').'/'.$this->user_id.'/'.$value : null;
+        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
     }
 
     public function getDownloadableDocAttribute()
