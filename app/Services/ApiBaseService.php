@@ -142,9 +142,9 @@ class ApiBaseService implements ApiBaseServiceInterface
             'user_id' => $userId,
         ]);
 
+        $response = $requestc->getBody();
 
-
-        return json_decode($requestc->getBody());
+        return json_decode($response);
     }
 
     public function deleteImageGuzzle(String $filename)
