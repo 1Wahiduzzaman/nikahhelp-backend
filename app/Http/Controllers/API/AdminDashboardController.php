@@ -523,7 +523,7 @@ class AdminDashboardController extends AppBaseController
                 'more_about' =>  $this->candidateTransformer->transformPersonal($candidate)['more_about'],
             ],
             [
-                'other_images' => $candidate_image
+                'other_images' => $candidate->other_images
             ],
             [
                 'rejected_notes' => $rejected_notes
