@@ -95,7 +95,7 @@ class AdminService extends ApiBaseService
                 );
             } else {
                 $data['token'] = self::TokenFormater($token);
-//                $data['user'] = $adminInfo;
+                $data['permissions'] = [];
 
                 return $this->sendSuccessResponse($data, 'Login successfully');
             }

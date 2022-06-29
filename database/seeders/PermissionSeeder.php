@@ -49,5 +49,11 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'Get All User', 'slug' => 'get-all-user', 'for' => 'user']);
         Permission::create(['name' => 'Send Global Notification', 'slug' => 'send-global-notification', 'for' => 'user']);
 
+        Permission::create(['name' => 'Admin Can Access', 'slug' => 'CAN_ACCESS_ADMIN', 'for' => 'admin']);
+        Permission::create(['name' => 'Can Access Candidate Registration form', 'slug' => 'CAN_ACCESS_CANDIDATE_REGISTRATION_FORM', 'for' => 'admin']);
+        Permission::create(['name' => 'Can Access Representative Registration form', 'slug' => 'CAN_ACCESS_REPRESENTATIVE_REGISTRATION_FORM', 'for' => 'admin']);
+        Permission::create(['name' => 'Can Access Dashboard', 'slug' => 'CAN_ACCESS_DASHBOARD', 'for' => 'admin']);
+
+
     }
 }
