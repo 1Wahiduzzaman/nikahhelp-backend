@@ -6,31 +6,21 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Models\Admin;
-use App\Models\User;
-use App\Models\VerifyUser;
-use App\Mail\VerifyMail as VerifyEmail;
-use App\Repositories\RepresentativeInformationRepository;
-use Carbon\Carbon;
-use Exception;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
-use Mail;
-use Illuminate\Http\JsonResponse;
+use App\Models\Permission;
+use App\Repositories\CandidateRepository;
+use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
+use App\Repositories\UserRepository;
 use App\Traits\CrudTrait;
+use App\Transformers\CandidateTransformer;
+use Carbon\Carbon;
+use DB;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use JWTAuth;
+use Mail;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use App\Repositories\UserRepository;
-use App\Repositories\EmailVerificationRepository as EmailVerifyRepository;
-use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
-use App\Transformers\CandidateTransformer;
-use App\Repositories\CandidateRepository;
-use DB;
-use Symfony\Component\HttpFoundation\Response as FResponse;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AdminService extends ApiBaseService
 {
@@ -95,7 +85,7 @@ class AdminService extends ApiBaseService
                 );
             } else {
                 $data['token'] = self::TokenFormater($token);
-                $data['permissions'] = [];
+                $data['permissions'] = $this->getPermissions(Auth::guard('admin')->user());
 
                 return $this->sendSuccessResponse($data, 'Login successfully');
             }
@@ -180,6 +170,17 @@ class AdminService extends ApiBaseService
         $data['representative_information'] = $representativeInformation;
 
         return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS);
+    }
+
+    private function getPermissions(Admin $admin)
+    {
+        $permissionList = Permission::with('roles')->get();
+        $adminPermissions = [];
+        foreach ($permissionList as $permission) {
+           $adminPermissions[$permission->slug] = $admin->hasRole($permission->roles);
+        }
+
+        return $adminPermissions;
     }
 
 

@@ -34,8 +34,9 @@ class AdminMiddleware extends BaseMiddleware
         }
 
         $user = Auth::guard('admin')->authenticate();
+        Auth::setUser($user);
         foreach ($this->getPermissions() as $permission) {
-            Gate::define(strtolower($permission->slug), function ($user) use ($permission) {
+            Gate::define(strtoupper($permission->slug), function ($user) use ($permission) {
                 return $user->hasRole($permission->roles);
 
             });

@@ -34,6 +34,16 @@ class UserSeeder extends Seeder
             'remember_token' => Str::random(10),
             "account_type" => 1,
         ]);
+        $superAdmin = Admin::create([
+            'full_name' => 'Super Admin',
+            "status" => "1",
+            'email' => 'superadmin@mail.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make(12345678),
+            'remember_token' => Str::random(10),
+        ]);
+        $superAdmin->assignRole('Superadmin');
+
         $admin = Admin::create([
             'full_name' => 'Mr. Admin',
             "status" => "1",

@@ -29,12 +29,16 @@ class RoleSeeder extends Seeder
         /* Assign role permissions to admin */
         $permissions = Permission::all();
 
-        $roleAdmin = Role::where('slug', 'superadmin')->first();
+        $roleSuperAdmin = Role::where('slug', 'superadmin')->first();
+        $roleAdmin = Role::where('slug', 'admin')->first();
         $roleSupport = Role::where('slug', 'support')->first();
-        $permissions->each(function ($permission) use ($roleAdmin, $roleSupport) {
+        $permissions->each(function ($permission) use ($roleSuperAdmin,$roleAdmin, $roleSupport) {
 
-            $roleAdmin->givePermissionTo($permission);
+            $roleSuperAdmin->givePermissionTo($permission);
 
+            if(in_array($permission->for,['admin','dashboard','team','user'])){
+                $roleAdmin->givePermissionTo($permission);
+            }
             if($permission->for == 'team'){
                 $roleSupport->givePermissionTo($permission);
             }

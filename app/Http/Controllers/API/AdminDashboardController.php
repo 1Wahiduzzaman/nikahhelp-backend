@@ -99,7 +99,6 @@ class AdminDashboardController extends AppBaseController
      */
     public function dashboard(Request $request)
     {
-//        $admin = Auth::guest('admin')->user();
         if(!Gate::allows('dashboard-assess')){
             return $this->sendUnauthorizedResponse();
         }

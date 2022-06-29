@@ -15,44 +15,44 @@ class PermissionSeeder extends Seeder
     public function run()
     {
         // Role permissions
-        Permission::create(['name' => 'Access Role', 'slug' => 'access-role', 'for' => 'role']);
-        Permission::create(['name' => 'Create Role', 'slug' => 'create-role', 'for' => 'role']);
-        Permission::create(['name' => 'Update Role', 'slug' => 'update-role', 'for' => 'role']);
-        Permission::create(['name' => 'Show Role', 'slug' => 'show-role', 'for' => 'role']);
-        Permission::create(['name' => 'Delete Role', 'slug' => 'delete-role', 'for' => 'role']);
+        Permission::create(['name' => 'Access Role', 'slug' => 'ACCESS_ROLE', 'for' => 'role']);
+        Permission::create(['name' => 'Create Role', 'slug' => 'CREATE_ROLE', 'for' => 'role']);
+        Permission::create(['name' => 'Update Role', 'slug' => 'UPDATE_ROLE', 'for' => 'role']);
+        Permission::create(['name' => 'Show Role', 'slug' => 'SHOW_ROLE', 'for' => 'role']);
+        Permission::create(['name' => 'Delete Role', 'slug' => 'DELETE_ROLE', 'for' => 'role']);
 
         //Admin permissions
-        Permission::create(['name' => 'Access Admin', 'slug' => 'access-admin', 'for' => 'admin']);
-        Permission::create(['name' => 'Create Admin', 'slug' => 'create-admin', 'for' => 'admin']);
-        Permission::create(['name' => 'Update Admin', 'slug' => 'update-admin', 'for' => 'admin']);
-        Permission::create(['name' => 'Show Admin', 'slug' => 'show-admin', 'for' => 'admin']);
-        Permission::create(['name' => 'Delete Admin', 'slug' => 'delete-admin', 'for' => 'admin']);
-        Permission::create(['name' => 'Status Change Admin', 'slug' => 'status-change-admin', 'for' => 'admin']);
+        Permission::create(['name' => 'Access Admin', 'slug' => 'ACCESS_ADMIN', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Create Admin', 'slug' => 'CREATE_ADMIN', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Update Admin', 'slug' => 'UPDATE_ADMIN', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Show Admin', 'slug' => 'SHOW_ADMIN', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Delete Admin', 'slug' => 'DELETE_ADMIN', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Status Change Admin', 'slug' => 'STATUS_CHANGE_ADMIN', 'for' => 'super_admin']);
 
         //Admin permissions
-        Permission::create(['name' => 'Dashboard Assess', 'slug' => 'dashboard-assess', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Active User Data', 'slug' => 'get-active-user', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Pending User Data', 'slug' => 'get-pending-user', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Approved User Data', 'slug' => 'get-approved-user', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Verified User Data', 'slug' => 'get-verified-user', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Rejected User Data', 'slug' => 'get-rejected-user', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Particular User Data', 'slug' => 'get-particular-user', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Particular Candidate Data', 'slug' => 'get-particular-candidate', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Particular Representative Data', 'slug' => 'get-particular-representative', 'for' => 'dashboard']);
+        Permission::create(['name' => 'Dashboard Assess', 'slug' => 'DASHBOARD_ASSESS', 'for' => 'dashboard']);
+        Permission::create(['name' => 'Get Active User Data', 'slug' => 'GET_ACTIVE_USER', 'for' => 'dashboard']);
+        Permission::create(['name' => 'Get Pending User Data', 'slug' => 'GET_PENDING_USER', 'for' => 'dashboard']);
+        Permission::create(['name' => 'Get Approved User Data', 'slug' => 'GET_APPROVED_USER', 'for' => 'dashboard']);
+        Permission::create(['name' => 'Get Verified User Data', 'slug' => 'GET_VERIFIED_USER', 'for' => 'dashboard']);
+        Permission::create(['name' => 'Get Rejected User Data', 'slug' => 'GET_REJECTED_USER', 'for' => 'dashboard']);
+        Permission::create(['name' => 'Get Particular User Data', 'slug' => 'GET_PARTICULAR_USER', 'for' => 'dashboard']);
+        Permission::create(['name' => 'Get Particular Candidate Data', 'slug' => 'GET_PARTICULAR_CANDIDATE', 'for' => 'dashboard']);
+        Permission::create(['name' => 'Get Particular Representative Data', 'slug' => 'GET_PARTICULAR_REPRESENTATIVE', 'for' => 'dashboard']);
 
-        Permission::create(['name' => 'Get Team Subscription Data', 'slug' => 'get-team-subscription-data', 'for' => 'team']);
-        Permission::create(['name' => 'Get Team Data', 'slug' => 'get-team-data', 'for' => 'team']);
-        Permission::create(['name' => 'Get Deleted Team List', 'slug' => 'get-deleted-team-list', 'for' => 'team']);
-        Permission::create(['name' => 'Get Connected Team', 'slug' => 'get-connected-team', 'for' => 'team']);
-        Permission::create(['name' => 'Delete Team', 'slug' => 'delete-team', 'for' => 'team']);
+        Permission::create(['name' => 'Get Team Subscription Data', 'slug' => 'GET_TEAM_SUBSCRIPTION_DATA', 'for' => 'team']);
+        Permission::create(['name' => 'Get Team Data', 'slug' => 'GET_TEAM_DATA', 'for' => 'team']);
+        Permission::create(['name' => 'Get Deleted Team List', 'slug' => 'GET_DELETED_TEAM_LIST', 'for' => 'team']);
+        Permission::create(['name' => 'Get Connected Team', 'slug' => 'GET_CONNECTED_TEAM', 'for' => 'team']);
+        Permission::create(['name' => 'Delete Team', 'slug' => 'DELETE_TEAM', 'for' => 'team']);
 
-        Permission::create(['name' => 'Get All User', 'slug' => 'get-all-user', 'for' => 'user']);
-        Permission::create(['name' => 'Send Global Notification', 'slug' => 'send-global-notification', 'for' => 'user']);
+        Permission::create(['name' => 'Get All User', 'slug' => 'GET_ALL_USER', 'for' => 'user']);
+        Permission::create(['name' => 'Send Global Notification', 'slug' => 'SEND_GLOBAL_NOTIFICATION', 'for' => 'user']);
 
-        Permission::create(['name' => 'Admin Can Access', 'slug' => 'CAN_ACCESS_ADMIN', 'for' => 'admin']);
-        Permission::create(['name' => 'Can Access Candidate Registration form', 'slug' => 'CAN_ACCESS_CANDIDATE_REGISTRATION_FORM', 'for' => 'admin']);
-        Permission::create(['name' => 'Can Access Representative Registration form', 'slug' => 'CAN_ACCESS_REPRESENTATIVE_REGISTRATION_FORM', 'for' => 'admin']);
-        Permission::create(['name' => 'Can Access Dashboard', 'slug' => 'CAN_ACCESS_DASHBOARD', 'for' => 'admin']);
+        Permission::create(['name' => 'Admin Can Access', 'slug' => 'CAN_ACCESS_ADMIN', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Can Access Candidate Registration form', 'slug' => 'CAN_ACCESS_CANDIDATE_REGISTRATION_FORM', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Can Access Representative Registration form', 'slug' => 'CAN_ACCESS_REPRESENTATIVE_REGISTRATION_FORM', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Can Access Dashboard', 'slug' => 'CAN_ACCESS_DASHBOARD', 'for' => 'super_admin']);
 
 
     }
