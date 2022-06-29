@@ -521,7 +521,7 @@ class CandidateInformation extends Model
 
     public function getActiveTeamAttribute()
     {
-        return $this->activeTeams->first();
+        return $this->activeTeams()->first();
     }
 
     public function getPerMainImageUrlAttribute($value)
@@ -546,7 +546,7 @@ class CandidateInformation extends Model
         if(Auth::user()->account_type=='10') {
             return $this->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $this->per_additional_info_doc : '';
         } else {
-            $authUserActiveTeam = Auth::user()->getCandidate->active_team;
+            $authUserActiveTeam = $this->active_teams;
             $candidateActiveTeam = $this->active_team;
             if(!$candidateActiveTeam){
                 return null;
@@ -555,7 +555,7 @@ class CandidateInformation extends Model
             $connectTo = $authUserActiveTeam->receivedRequest->pluck('team_id')->toArray();
             $userConnectList = array_unique(array_merge($connectFrom,$connectTo)) ;
             if(in_array($candidateActiveTeam->team_id,$userConnectList)){
-                return $this->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $this->per_additional_info_doc : '';
+                return $this->per_additional_info_doc;
             }
             return null;
         }
@@ -593,6 +593,11 @@ class CandidateInformation extends Model
     }
 
     public function getVerImageBackAttribute($value)
+    {
+        return $this->getImagePath($value);
+    }
+
+    public function getPerAdditionalInfoDocAttribute($value)
     {
         return $this->getImagePath($value);
     }
