@@ -546,7 +546,7 @@ class CandidateInformation extends Model
         if(Auth::user()->account_type=='10') {
             return $this->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $this->per_additional_info_doc : '';
         } else {
-            $authUserActiveTeam = $this->active_teams;
+            $authUserActiveTeam = $this->active_team;
             $candidateActiveTeam = $this->active_team;
             if(!$candidateActiveTeam){
                 return null;
