@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\HttpStatusCode;
+use Illuminate\Http\JsonResponse;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Response;
 use Symfony\Component\HttpFoundation\Response as FResponse;
@@ -35,6 +36,12 @@ class AppBaseController extends Controller
     {
        return $this->sendSuccessResponse($data,$message,$code);
     }
+    public function sendUnauthorizedResponse($message='',$code = FResponse::HTTP_FORBIDDEN): JsonResponse
+    {
+        $message = $message ? : "You don't have permission to access";
+        return $this->sendErrorResponse($message, $errorMessages = [], $code);
+    }
+
 
     public function getUserId(){
         $user = JWTAuth::parseToken()->authenticate();
@@ -59,5 +66,10 @@ class AppBaseController extends Controller
             'last_page' => $items->lastPage(),
             'has_more_pages' => $items->hasMorePages(),
         );
+    }
+
+    public function getBackHere()
+    {
+        return response()->json(['message'=>'It is working']);
     }
 }

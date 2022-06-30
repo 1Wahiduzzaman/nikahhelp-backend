@@ -20,7 +20,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,   
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
     /**
@@ -43,7 +43,7 @@ class Kernel extends HttpKernel
            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        ],
+        ]
     ];
 
     /**
@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
         'candidate.profile.completed' => \App\Http\Middleware\EnsureProfileCompleted::class,
         'subscription.validate' => \App\Http\Middleware\CheckSubscriptionValidity::class,
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
     ];
 }
