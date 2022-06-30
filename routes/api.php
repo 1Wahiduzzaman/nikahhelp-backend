@@ -342,7 +342,3 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     });
     */
 });
-
-
-
-//Route::resource('match_makers', App\Http\Controllers\API\MatchMakerAPIController::class);

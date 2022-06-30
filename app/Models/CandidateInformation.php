@@ -120,6 +120,8 @@ class CandidateInformation extends Model
     ];
 
     public const PERSONAL_CONTACT_INFO = [
+        'address_1',
+        'address_2',
         'per_email',
         'per_current_residence_country',
         'per_current_residence_city',
@@ -275,6 +277,8 @@ class CandidateInformation extends Model
 
         'data_input_status',
         "other_images",
+        'address_2',
+        'address_2'
     ];
 
     /**
