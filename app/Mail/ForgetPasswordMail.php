@@ -20,7 +20,6 @@ class ForgetPasswordMail extends Mailable
      * ForgetPasswordMail constructor.
      * @param $user
      * @param $token
-     * @param $domain
      */
     public function __construct($user, $token)
     {

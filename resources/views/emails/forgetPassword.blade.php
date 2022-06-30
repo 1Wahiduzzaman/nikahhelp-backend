@@ -101,7 +101,6 @@
     @endphp
     <a><img src="{{ $chobi }}" alt="logo" style="width: 170px; height: 110px;" /></a>
 </div>
-
 @php
     $domain=env('WEB_DOMAIN');
 @endphp
