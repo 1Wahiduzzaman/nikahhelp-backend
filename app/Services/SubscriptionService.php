@@ -325,7 +325,7 @@ class SubscriptionService extends ApiBaseService
      */
     public function subscriptionReport($request)
     {
-        if(!Gate::allows('get-team-subscription-data')){
+        if(!Gate::allows('GET_TEAM_SUBSCRIPTION_DATA')){
             return $this->sendUnauthorizedResponse();
         }
 

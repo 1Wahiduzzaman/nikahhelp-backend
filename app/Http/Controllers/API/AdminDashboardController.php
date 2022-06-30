@@ -99,7 +99,7 @@ class AdminDashboardController extends AppBaseController
      */
     public function dashboard(Request $request)
     {
-        if(!Gate::allows('dashboard-assess')){
+        if(!Gate::allows('DASHBOARD_ASSESS')){
             return $this->sendUnauthorizedResponse();
         }
 
@@ -163,7 +163,7 @@ class AdminDashboardController extends AppBaseController
 
     public function userReport(Request $request)
     {
-        if(!Gate::allows('get-active-user')){
+        if(!Gate::allows('GET_ACTIVE_USER')){
             return $this->sendUnauthorizedResponse();
         }
 
@@ -300,7 +300,7 @@ class AdminDashboardController extends AppBaseController
      */
     public function pendingUserList(Request $request)
     {
-        if(!Gate::allows('get-pending-user')){
+        if(!Gate::allows('GET_PENDING_USER')){
             return $this->sendUnauthorizedResponse();
         }
         $data = $this->getUserData($request, 2);
@@ -328,7 +328,7 @@ class AdminDashboardController extends AppBaseController
 //     }
     public function approvedUserList(Request $request)
     {
-        if(!Gate::allows('get-approved-user')){
+        if(!Gate::allows('GET_APPROVED_USER')){
             return $this->sendUnauthorizedResponse();
         }
 
@@ -338,7 +338,7 @@ class AdminDashboardController extends AppBaseController
 
     public function verifiedUserList(Request $request)
     {
-        if(!Gate::allows('get-verified-user')){
+        if(!Gate::allows('GET_VERIFIED_USER')){
             return $this->sendUnauthorizedResponse();
         }
 
@@ -348,7 +348,7 @@ class AdminDashboardController extends AppBaseController
 
     public function rejectedUserList(Request $request)
     {
-        if(!Gate::allows('get-rejected-user')){
+        if(!Gate::allows('GET_REJECTED_USER')){
             return $this->sendUnauthorizedResponse();
         }
 
@@ -404,7 +404,7 @@ class AdminDashboardController extends AppBaseController
     public function verifyRejectUser(Request $request)
     {
 
-        if(!Gate::allows('verify-reject-user')){
+        if(!Gate::allows('VERIFY_REJECT_USER')){
             return $this->sendUnauthorizedResponse();
         }
 
@@ -476,7 +476,7 @@ class AdminDashboardController extends AppBaseController
     // Representative details
     public function RepresentativeUserInfo($id = null) {
 
-        if(!Gate::allows('get-particular-representative')){
+        if(!Gate::allows('GET_PARTICULAR_REPRESENTATIVE')){
             return $this->sendUnauthorizedResponse();
         }
 
@@ -522,7 +522,7 @@ class AdminDashboardController extends AppBaseController
 
     public function CandidateUserInfo($id = null) {
 
-        if(!Gate::allows('get-particular-candidate')){
+        if(!Gate::allows('GET_PARTICULAR_CANDIDATE')){
             return $this->sendUnauthorizedResponse();
         }
 
@@ -582,7 +582,7 @@ class AdminDashboardController extends AppBaseController
 
     public function UserInfo($id = null) {
 
-        if(!Gate::allows('get-particular-user')){
+        if(!Gate::allows('GET_PARTICULAR_USER')){
             return $this->sendUnauthorizedResponse();
         }
 
