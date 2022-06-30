@@ -107,7 +107,7 @@
     <div style="width: 100%; margin-top: 30px;">
         <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Subscription expired {{ Carbon::parse(@$team->subscription_expire_at)->format('d M Y') }}</h2>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ @$user->user->full_name }},</p>
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             Thank you for using MatrimonyAssist
@@ -124,7 +124,7 @@
         </p>
 
         <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Help and guidance on how to subscribe and subscription detail. <a href="http://www.nikah.arranzed.com/help">http://www.nikah.arranzed.com/help</a>
+            Help and guidance on how to subscribe and subscription detail. <a href="{{ $domain.'/help' }}">{{ $domain.'/help' }}</a>
         </div>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
@@ -138,12 +138,12 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px; text-align: center;">
-            This email was sent to <span style="color: #522e8e;">{{ $user->email }}</span>, which is
+            This email was sent to <span style="color: #522e8e;">{{ $user_email }}</span>, which is
             associated with a Matrimony Assist account.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy; 2022 Matrimony Assist. All Rights Reserved Matrimony Assist.
+            &copy; 2022 MatrimonyAssist. All Rights Reserved MatrimonyAssist.
         </p>
     </div>
 </div>

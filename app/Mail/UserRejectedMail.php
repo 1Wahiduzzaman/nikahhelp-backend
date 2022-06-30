@@ -31,6 +31,6 @@ class UserRejectedMail extends Mailable
     public function build()
     {
         return $this->subject('Mail from Matrimonial-assist | Account Rejected!')
-            ->markdown('emails.status.reject');
+            ->markdown('emails.status.reject')->with('user_name', $this->user->full_name);
     }
 }

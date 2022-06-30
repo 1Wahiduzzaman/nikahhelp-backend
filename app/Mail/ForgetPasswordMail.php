@@ -21,11 +21,11 @@ class ForgetPasswordMail extends Mailable
      * @param $user
      * @param $token
      * @param $domain
-     */    
+     */
     public function __construct($user, $token)
     {
         $this->user = $user;
-        $this->token = $token;        
+        $this->token = $token;
     }
 
     /**
@@ -35,6 +35,6 @@ class ForgetPasswordMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.forgetPassword');
+        return $this->view('emails.forgetPassword')->with('user_name', $this->user->full_name);
     }
 }

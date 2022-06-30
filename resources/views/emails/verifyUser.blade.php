@@ -104,7 +104,7 @@
     <div style="width: 100%; margin-top: 30px;">
         <h2 style="font-size: 20px; color: rgba(0,0,0,.5);">Verify your email address</h2>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user['full_name'] }},</p>
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             Welcome to MatrimonyAssist
@@ -140,7 +140,6 @@
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             This link is valid for <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">15 minutes.</span> After the email verification, you will have the access to complete the full registration form. </p>
-            <p>{{now()}}</p>
         <!-- <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             Verify email is the first step of the account validate process. After your email is verified we will
             proceed to complete your <a style="color: #522e8e;">Candidate</a> registration form.

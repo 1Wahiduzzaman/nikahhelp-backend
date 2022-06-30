@@ -110,7 +110,7 @@
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">{{ @$subscription->user->full_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Thank you for using MatrimonyAssist [{{ now('d-m-Y') }}]
+            Thank you for using MatrimonyAssist.
         </p>
 
         <p style="font-size: 22px; color: rgba(3,3,3,0.73); margin-top: 28px; text-align: center">
@@ -183,7 +183,7 @@
         </table>
 
         <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Help and guidance on how to subscribe and subscription detail. <a href="">http://www.nikah.arranzed.com/help</a>
+            Help and guidance on how to subscribe and subscription detail. <a href="{{ $domain.'/help' }}">{{ $domain.'/help' }}</a>
         </div>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
@@ -202,7 +202,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy; 2022 Matrimony Assist. All Rights Reserved Matrimony Assist.
+            &copy; 2022 MatrimonyAssist. All Rights Reserved MatrimonyAssist.
         </p>
     </div>
 </div>

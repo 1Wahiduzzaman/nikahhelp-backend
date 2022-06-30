@@ -31,6 +31,6 @@ class UserSuspendedMail extends Mailable
     public function build()
     {
         return $this->subject('Mail from Matrimonial-assist | Acount Suspension!')
-            ->markdown('emails.status.suspend');
+            ->markdown('emails.status.suspend')->with('user_name', $this->user->full_name);
     }
 }

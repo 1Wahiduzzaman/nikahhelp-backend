@@ -2,7 +2,6 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forget Password Mail</title>
     <style type="text/css">
         body {
             margin: 0;
@@ -106,9 +105,9 @@
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
     <div style="width: 100%; margin-top: 30px;">
-        <h2 style="font-size: 20px; color: rgba(0,0,0,.5);">Reset your password</h2>
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear [Mr./Ms.] {{ $user_name }},</p>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear [Mr./Ms.] {{ $user['name'] }},</p>
+        <h2 style="font-size: 20px; color: rgba(0,0,0,.5);">Reset your password</h2>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
            A request has been recieved to change the password for your MatrimonyAssist account.
