@@ -107,10 +107,10 @@
     <div style="width: 100%; margin-top: 30px;">
         <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Account has been Suspended</h2>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ @$user->user->full_name }},</p>
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Thank you for using MatrimonyAssist <span>{{now('d-m-Y')}}</span>
+            Thank you for using MatrimonyAssist.
         </p>
 
         {{-- <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
