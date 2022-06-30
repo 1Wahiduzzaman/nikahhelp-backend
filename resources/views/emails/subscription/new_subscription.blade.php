@@ -97,7 +97,7 @@
 </head>
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
-    <a><img src="{{ asset('https://chobi.arranzed.com/image/site/ma_logo_white.svg') }}" alt="logo" style="width: 170px; height: 110px;" /></a>
+    <a><img src="{{ asset(config('chobi.chobi').'/logo/site/ma_logo_white.svg') }}" alt="logo" style="width: 170px; height: 110px;" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
@@ -110,7 +110,7 @@
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">{{ @$subscription->user->full_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Thank you for using MatrimonyAssist [{{ date('d M Y h:i A') }}]
+            Thank you for using MatrimonyAssist [{{ now('d-m-Y') }}]
         </p>
 
         <p style="font-size: 22px; color: rgba(3,3,3,0.73); margin-top: 28px; text-align: center">
@@ -202,7 +202,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy; 2022 Matrimony Assist Inc., All Rights Reserved Matrimony Assist Inc., 55 2nd Street London, UK 94105
+            &copy; 2022 Matrimony Assist. All Rights Reserved Matrimony Assist.
         </p>
     </div>
 </div>

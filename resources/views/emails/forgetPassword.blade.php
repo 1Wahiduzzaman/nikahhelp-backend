@@ -97,7 +97,7 @@
 </head>
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
-    <a><img src="{{ asset('https://chobi.arranzed.com/image/site/ma_logo_white.svg') }}" alt="logo" style="width: 170px; height: 110px;" /></a>
+    <a><img src="{{ asset(config('chobi.chobi').'/logo/site/ma_logo_white.svg') }}" alt="logo" style="width: 170px; height: 110px;" /></a>
 </div>
 
 @php
@@ -109,9 +109,9 @@
         <h2 style="font-size: 20px; color: rgba(0,0,0,.5);">Reset your password</h2>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear [Mr./Ms.] {{ $user['name'] }},</p>
-        
+
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-           A request has been recieved to change the password for your MatrimonyAssist account. 
+           A request has been recieved to change the password for your MatrimonyAssist account.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
@@ -133,12 +133,12 @@
         </div>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            This link is valid for <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">15 minutes</span>. 
+            This link is valid for <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">15 minutes</span>.
             </p>
             <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-           If you did not initiate this request, please contact us immediately at support@matrimonyassist.com.  
+           If you did not initiate this request, please contact us immediately at support@matrimonyassist.com.
             </p>
-       
+
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px">
             Thank you <br>
             Matrimony Assist Team
@@ -150,7 +150,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy; 2022 Matrimony Assist Inc., All Rights Reserved Matrimony Assist Inc., 55 2nd Street London, UK 94105
+            &copy; 2022 MatrimonyAssist. All Rights Reserved MatrimonyAssist.
         </p>
     </div>
 </div>
