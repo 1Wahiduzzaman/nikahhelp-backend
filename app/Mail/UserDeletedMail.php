@@ -31,6 +31,6 @@ class UserDeletedMail extends Mailable
     public function build()
     {
         return $this->subject('Mail from Matrimonial-assist | Account Deleted!')
-            ->markdown('emails.status.delete');
+            ->markdown('emails.status.delete')->with('user_name', $this->user->full_name);
     }
 }

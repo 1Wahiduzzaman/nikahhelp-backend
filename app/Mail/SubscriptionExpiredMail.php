@@ -21,7 +21,7 @@ class SubscriptionExpiredMail extends Mailable
      * @return void
      */
     public function __construct($team,$user, $domain)
-    {        
+    {
         $this->team = $team;
         $this->user = $user;
         $this->domain = $domain;
@@ -35,6 +35,6 @@ class SubscriptionExpiredMail extends Mailable
     public function build()
     {
         return $this->subject('Mail from Matrimonial-assist | Subscription has been expired!')
-            ->markdown('emails.subscription.expired_subscription');
+            ->markdown('emails.subscription.expired_subscription')->with('user_name', $this->user->full_name);
     }
 }

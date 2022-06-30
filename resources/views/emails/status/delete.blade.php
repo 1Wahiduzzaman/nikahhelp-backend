@@ -107,7 +107,7 @@
     <div style="width: 100%; margin-top: 30px;">
         <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Account has been Deleted</h2>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ @$user->user->full_name }},</p>
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             Thank you for using MatrimonyAssist <span>{{now()}}</span>
@@ -124,7 +124,7 @@
         </p> --}}
 
         <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            You account has been suspended. <a href="http://www.nikah.arranzed.com/help">http://www.nikah.arranzed.com/help</a>
+            You account has been suspended. <a href="{{ asset(config('chobi.chobi').'/help') }}">{{ config('chobi.chobi').'/help' }}</a>
         </div>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
