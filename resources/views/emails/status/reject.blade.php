@@ -124,7 +124,7 @@
         </p> --}}
 
         <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            You account has been suspended. <a href="http://www.nikah.arranzed.com/help">http://www.nikah.arranzed.com/help</a>
+            You account has been suspended. <a href="{{ $domain.'/help' }}">{{ $domain.'/help' }}</a>
         </div>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">

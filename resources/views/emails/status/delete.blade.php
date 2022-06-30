@@ -110,7 +110,7 @@
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Thank you for using MatrimonyAssist <span>{{now()}}</span>
+            Thank you for using MatrimonyAssist.
         </p>
 
         {{-- <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
@@ -143,7 +143,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy; 2022 Matrimony Assist. All Rights Reserved Matrimony Assist.
+            &copy; 2022 MatrimonyAssist. All Rights Reserved MatrimonyAssist.
         </p>
     </div>
 </div>
