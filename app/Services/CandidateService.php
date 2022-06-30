@@ -207,6 +207,9 @@ class CandidateService extends ApiBaseService
             [
                 'status' => $status
             ],
+            [
+                'verification' => $this->candidateTransformer->transformPersonalVerification($candidate),
+            ]
         );
         return $this->sendSuccessResponse($candidate_details, self::INFORMATION_FETCHED_SUCCESSFULLY);
     }
@@ -524,8 +527,8 @@ class CandidateService extends ApiBaseService
                 $input['per_additional_info_doc'] = $candidateFile->per_additional_info_doc;
             }
 
-            $input = $candidate->fill($input)->toArray();
-            $candidate->save($input);
+            $candidate = $candidate->fill($input);
+            $candidate->save();
             $personal_info = $this->candidateTransformer->transformPersonalMoreAbout($candidate);
             return $this->sendSuccessResponse($personal_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
         } catch (Exception $exception) {
@@ -1121,9 +1124,12 @@ class CandidateService extends ApiBaseService
      * @param int $imageType
      * @return JsonResponse
      */
-    public function deleteImageByType(int $imageType): JsonResponse
+    public function deleteImageByType(Request $request, int $imageType): JsonResponse
     {
         $userId = self::getUserId();
+        $request->validate([
+            'file' => 'file'
+        ]);
 
         if ($imageType >= 10) {
             return $this->sendErrorResponse(
@@ -1142,20 +1148,21 @@ class CandidateService extends ApiBaseService
 
                 if($imageType == 0){
                     $candidate->per_avatar_url = null ;
+                    $this->deleteImageGuzzle('per_avatar_url');
                     $candidate->save();
                 }
 
                 if ($imageType === 1){
                     $candidate->per_main_image_url = null ;
+                    $this->deleteImageGuzzle('per_main_image_url');
                     $candidate->save();
                 }
 
                 if ($imageType === 9) {
                     $candidate->other_images = null ;
+                    $this->deleteImageGuzzle('other_images');
                     $candidate->save();
                 }
-
-
             }
 
             /* edo Need to remove from image server  */

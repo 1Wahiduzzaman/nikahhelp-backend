@@ -151,7 +151,7 @@ class CandidateInformation extends Model
     ];
 
     public const PERSONAL_VERIFICATION_INFO = [
-        'ver_country_id',
+        'ver_country',
         'ver_city_id',
         'ver_document_type',
         'ver_image_front',
@@ -253,7 +253,7 @@ class CandidateInformation extends Model
         "fi_family_info",
 
         // Verification
-        'ver_country_id',
+        'ver_country',
         'ver_city_id',
         'ver_document_type',
         'ver_image_front',
@@ -521,23 +521,24 @@ class CandidateInformation extends Model
 
     public function getActiveTeamAttribute()
     {
-        return $this->activeTeams->first();
+        return $this->activeTeams()->first();
     }
 
     public function getPerMainImageUrlAttribute($value)
     {
-        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
+
+        return $this->getImagePath($value);
     }
 
     public function getPerAvatarUrlAttribute($value)
     {
-        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
+        return $this->getImagePath($value);
     }
 
 
     public function getOtherImagesAttribute($value)
     {
-        return !empty($value) ? env('IMAGE_SERVER').'/'.$value : null;
+        return $this->getImagePath($value);
     }
 
     public function getDownloadableDocAttribute()
@@ -545,7 +546,7 @@ class CandidateInformation extends Model
         if(Auth::user()->account_type=='10') {
             return $this->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $this->per_additional_info_doc : '';
         } else {
-            $authUserActiveTeam = Auth::user()->getCandidate->active_team;
+            $authUserActiveTeam = $this->active_team;
             $candidateActiveTeam = $this->active_team;
             if(!$candidateActiveTeam){
                 return null;
@@ -554,10 +555,10 @@ class CandidateInformation extends Model
             $connectTo = $authUserActiveTeam->receivedRequest->pluck('team_id')->toArray();
             $userConnectList = array_unique(array_merge($connectFrom,$connectTo)) ;
             if(in_array($candidateActiveTeam->team_id,$userConnectList)){
-                return $this->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $this->per_additional_info_doc : '';
+                return $this->per_additional_info_doc;
             }
             return null;
-        }        
+        }
     }
 
     public function getRepresentativeStatusAttribute()
@@ -565,4 +566,39 @@ class CandidateInformation extends Model
        return $this->active_team ? (bool)$this->active_team->representativeOfTeamFromUser->filter(function($user){ return $user->account_type > 2; })->count() : false ;
     }
 
+    /**
+     * @param $value
+     * @return string|null
+     */
+    public function getImagePath($value): ?string
+    {
+
+        $id = '/'.(string)$this->user_id.'/';
+        $pattern = [
+            '/candidate/',
+            $id,
+        ];
+
+        $path = preg_replace($pattern, '', $value);
+
+        $path = str_replace('/_', '', $path);
+        $newPath = str_replace('image/', 'image/' . $this->user_id, $path);
+
+        return !empty($value) ? env('IMAGE_SERVER') . '/' . $newPath : null;
+    }
+
+    public function getVerImageFrontAttribute($value)
+    {
+        return $this->getImagePath($value);
+    }
+
+    public function getVerImageBackAttribute($value)
+    {
+        return $this->getImagePath($value);
+    }
+
+    public function getPerAdditionalInfoDocAttribute($value)
+    {
+        return $this->getImagePath($value);
+    }
 }

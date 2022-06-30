@@ -4,8 +4,11 @@ namespace App\Services;
 
 use App\Enums\ApiCustomStatusCode;
 use App\Enums\HttpStatusCode;
+use http\Env\Request;
 use Illuminate\Http\Response;
 use App\Contracts\ApiBaseServiceInterface;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use JWTAuth;
 
@@ -135,10 +138,26 @@ class ApiBaseService implements ApiBaseServiceInterface
 
         $client = new \GuzzleHttp\Client();
         $requestc = $client->post(env('IMAGE_SERVER').'/img',[
-            'multipart' => $output
+            'multipart' => $output,
+            'user_id' => $userId,
         ]);
+
         $response = $requestc->getBody();
 
         return json_decode($response);
+    }
+
+    public function deleteImageGuzzle(String $filename)
+    {
+        $userId = self::getUserId();
+        try {
+            $response = Http::delete(config('chobi.chobi').'/img', [
+                'path' => 'candidate/candidate_'.$userId.'/',
+                'file' => $filename,
+            ]);
+            return $response->json();
+        } catch (\Exception $exception) {
+            Log::log('error', $exception->getMessage());
+        }
     }
 }

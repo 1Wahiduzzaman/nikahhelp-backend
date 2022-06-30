@@ -423,9 +423,8 @@ class CandidateTransformer extends TransformerAbstract
             'per_things_enjoy' => $item->per_things_enjoy,
             'per_thankfull_for' => $item->per_thankfull_for,
             'per_about' => $item->per_about,
-            // 'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') . '/' . $item->per_avatar_url : '',
-            'per_avatar_url' => $item->per_avatar_url ? $item->per_avatar_url : '',
-            'per_main_image_url' => CandidateImage::getCandidateMainImage($item->user_id),
+            'per_avatar_url' => $item->per_avatar_url,
+            'per_main_image_url' => $item->per_main_image_url,
             'anybody_can_see' => $item->anybody_can_see,
             'only_team_can_see' => $item->only_team_can_see,
             'team_connection_can_see' => $item->team_connection_can_see,
@@ -513,11 +512,10 @@ class CandidateTransformer extends TransformerAbstract
     private function personalVerification(CandidateInformation $item): array
     {
         return [
-            'ver_country_id' => $item->ver_country_id,
-            'ver_city_id' => $item->ver_city_id,
+            'ver_country' => $item->ver_country,
             'ver_document_type' => $item->ver_document_type,
-            'ver_image_front' => $item->ver_image_front ? env('IMAGE_SERVER') . '/' . $item->ver_image_front : '',
-            'ver_image_back' => $item->ver_image_back ? env('IMAGE_SERVER') . '/' . $item->ver_image_back : '',
+            'ver_image_front' => $item->ver_image_front,
+            'ver_image_back' => $item->ver_image_back,
             'ver_recommences_title' => $item->ver_recommences_title,
             'ver_recommences_first_name' => $item->ver_recommences_first_name,
             'ver_recommences_last_name' => $item->ver_recommences_last_name,

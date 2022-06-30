@@ -403,6 +403,7 @@ class AdminDashboardController extends AppBaseController
      */
     public function verifyRejectUser(Request $request)
     {
+
         if(!Gate::allows('verify-reject-user')){
             return $this->sendUnauthorizedResponse();
         }
@@ -518,6 +519,7 @@ class AdminDashboardController extends AppBaseController
     }
 
     // candidate details
+
     public function CandidateUserInfo($id = null) {
 
         if(!Gate::allows('get-particular-candidate')){
@@ -560,7 +562,8 @@ class AdminDashboardController extends AppBaseController
                 'more_about' =>  $this->candidateTransformer->transformPersonal($candidate)['more_about'],
             ],
             [
-                'other_images' => $candidate_image
+
+                'other_images' => $candidate->other_images
             ],
             [
                 'rejected_notes' => $rejected_notes
