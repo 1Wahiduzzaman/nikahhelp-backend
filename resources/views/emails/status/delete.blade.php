@@ -2,7 +2,6 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscription Email</title>
     <style type="text/css">
         body {
             margin: 0;
@@ -97,7 +96,10 @@
 </head>
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
-    <a><img src="{{ asset(config('chobi.chobi').'/logo/site/ma_logo_white.svg') }}" alt="logo" style="width: 170px; height: 110px;" /></a>
+    @php
+        $chobi= config('chobi.chobi').'/logo/site/ma_logo_white.svg';
+    @endphp
+    <a><img src="{{ $chobi }}" alt="logo" style="width: 170px; height: 110px;" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
