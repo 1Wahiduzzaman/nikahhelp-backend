@@ -97,7 +97,7 @@
 </head>
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
-    <a><img src="{{ asset('https://chobi.arranzed.com/image/site/ma_logo_white.svg') }}" alt="logo" style="width: 170px; height: 110px;" /></a>
+    <a><img src="{{ asset(config('chobi.chobi').'/logo/site/ma_logo_white.svg') }}" alt="logo" style="width: 170px; height: 110px;" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
@@ -107,11 +107,11 @@
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user['full_name'] }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            Welcome to MatrimonyAssist [20-11-2021 10:40:30 +06]
+            Welcome to MatrimonyAssist
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-        We are happy you signed up for MatrimonyAssist. 
+        We are happy you signed up for MatrimonyAssist.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
@@ -140,17 +140,18 @@
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             This link is valid for <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">15 minutes.</span> After the email verification, you will have the access to complete the full registration form. </p>
+            <p>{{now()}}</p>
         <!-- <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             Verify email is the first step of the account validate process. After your email is verified we will
             proceed to complete your <a style="color: #522e8e;">Candidate</a> registration form.
         </p> -->
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-        You are receiving this email because you have signed for a new MatrimonyAssist account or added a new email address to your account. 
+        You are receiving this email because you have signed for a new MatrimonyAssist account or added a new email address to your account.
         </p>
-        
+
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-        If you did not initiate this request, please contact us immediately at support@matrimonyassist.com.   
+        If you did not initiate this request, please contact us immediately at support@matrimonyassist.com.
         </p>
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px">
         Thank you <br>
@@ -163,7 +164,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy; 2022 Matrimony Assist Inc., All Rights Reserved Matrimony Assist Inc., 55 2nd Street London, UK 94105
+            &copy; 2022 Matrimony Assist. All Rights Reserved Matrimony Assist.
         </p>
     </div>
 </div>
