@@ -27,7 +27,7 @@ class AllNotificationController extends Controller
     //Admin
     public function sendGlobalNotification(Request $request){
 
-        if(!Gate::allows('send-global-notification')){
+        if(!Gate::allows('SEND_GLOBAL_NOTIFICATION')){
             return $this->sendUnauthorizedResponse();
         }
 
@@ -50,7 +50,7 @@ class AllNotificationController extends Controller
         }
     }
     public function getAllUsers(Request $request){
-        if(!Gate::allows('get-all-user')){
+        if(!Gate::allows('GET_ALL_USER')){
             return $this->sendUnauthorizedResponse();
         }
         $u_data = Auth::user();

@@ -674,7 +674,7 @@ class TeamService extends ApiBaseService
     //Admin
     public function getTeamListForBackend(array $data): JsonResponse
     {
-        if(!Gate::allows('get-team-data')){
+        if(!Gate::allows('GET_TEAM_DATA')){
             return $this->sendUnauthorizedResponse();
         }
 
@@ -692,7 +692,7 @@ class TeamService extends ApiBaseService
 
     public function getDeletedTeamListForBackend(array $data): JsonResponse
     {
-        if(!Gate::allows('get-deleted-team-list')){
+        if(!Gate::allows('GET_DELETED_TEAM_LIST')){
             return $this->sendUnauthorizedResponse();
         }
         try {
@@ -709,7 +709,7 @@ class TeamService extends ApiBaseService
 
     public function getConnectedTeamListForBackend($team_id = null): JsonResponse
     {
-        if(!Gate::allows('get-connected-team')){
+        if(!Gate::allows('GET_CONNECTED_TEAM')){
             return $this->sendUnauthorizedResponse();
         }
         try {
@@ -726,7 +726,7 @@ class TeamService extends ApiBaseService
     }
 
     public function adminTeamDelete($data) {
-        if(!Gate::allows('delete-team')){
+        if(!Gate::allows('DELETE_TEAM')){
             return $this->sendUnauthorizedResponse();
         }
         try{
