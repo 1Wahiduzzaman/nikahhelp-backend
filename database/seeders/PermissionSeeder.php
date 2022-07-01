@@ -30,15 +30,15 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'Status Change Admin', 'slug' => 'STATUS_CHANGE_ADMIN', 'for' => 'super_admin']);
 
         //Admin permissions
-        Permission::create(['name' => 'Dashboard Assess', 'slug' => 'DASHBOARD_ASSESS', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Active User Data', 'slug' => 'GET_ACTIVE_USER', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Pending User Data', 'slug' => 'GET_PENDING_USER', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Approved User Data', 'slug' => 'GET_APPROVED_USER', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Verified User Data', 'slug' => 'GET_VERIFIED_USER', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Rejected User Data', 'slug' => 'GET_REJECTED_USER', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Particular User Data', 'slug' => 'GET_PARTICULAR_USER', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Particular Candidate Data', 'slug' => 'GET_PARTICULAR_CANDIDATE', 'for' => 'dashboard']);
-        Permission::create(['name' => 'Get Particular Representative Data', 'slug' => 'GET_PARTICULAR_REPRESENTATIVE', 'for' => 'dashboard']);
+        Permission::create(['name' => 'Dashboard Assess', 'slug' => 'DASHBOARD_ASSESS', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Get Active User Data', 'slug' => 'GET_ACTIVE_USER', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Get Pending User Data', 'slug' => 'GET_PENDING_USER', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Get Approved User Data', 'slug' => 'GET_APPROVED_USER', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Get Verified User Data', 'slug' => 'GET_VERIFIED_USER', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Get Rejected User Data', 'slug' => 'GET_REJECTED_USER', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Get Particular User Data', 'slug' => 'GET_PARTICULAR_USER', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Get Particular Candidate Data', 'slug' => 'GET_PARTICULAR_CANDIDATE', 'for' => 'super_admin']);
+        Permission::create(['name' => 'Get Particular Representative Data', 'slug' => 'GET_PARTICULAR_REPRESENTATIVE', 'for' => 'super_admin']);
 
         Permission::create(['name' => 'Get Team Subscription Data', 'slug' => 'GET_TEAM_SUBSCRIPTION_DATA', 'for' => 'team']);
         Permission::create(['name' => 'Get Team Data', 'slug' => 'GET_TEAM_DATA', 'for' => 'team']);
