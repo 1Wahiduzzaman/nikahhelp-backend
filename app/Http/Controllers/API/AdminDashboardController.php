@@ -404,7 +404,7 @@ class AdminDashboardController extends AppBaseController
     public function verifyRejectUser(Request $request)
     {
 
-        if(!Gate::allows('VERIFY_REJECT_USER')){
+        if(!Gate::allows('CAN_ACCESS_ADMIN')){
             return $this->sendUnauthorizedResponse();
         }
 
