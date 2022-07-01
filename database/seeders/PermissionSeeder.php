@@ -53,7 +53,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'Can Access Candidate Registration form', 'slug' => 'CAN_ACCESS_CANDIDATE_REGISTRATION_FORM', 'for' => 'super_admin']);
         Permission::create(['name' => 'Can Access Representative Registration form', 'slug' => 'CAN_ACCESS_REPRESENTATIVE_REGISTRATION_FORM', 'for' => 'super_admin']);
         Permission::create(['name' => 'Can Access Dashboard', 'slug' => 'CAN_ACCESS_DASHBOARD', 'for' => 'super_admin']);
-
+        Permission::create(['name' => 'Reject user', 'slug' => 'VERIFY_REJECT_USER', 'for' => 'super_admin']);
 
     }
 }
