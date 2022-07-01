@@ -26,8 +26,6 @@ class AdminLoginRequest extends APIRequest
         return [
             "email" => 'required',
             "password" => 'required',
-
-
         ];
     }
 
