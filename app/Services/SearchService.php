@@ -101,19 +101,30 @@ class SearchService extends ApiBaseService
 
             $userInfo = [];
 
-            /*Attempt log in */
-            try {
-                JWTAuth::parseToken()->authenticate();
-            }catch (\Exception $e){
-            }
 
-            $userInfo['shortList'] = [];
-            $userInfo['blockList'] = [];
-            $userInfo['teamList'] = [];
-            $connectFrom = [];
-            $connectTo = [];
-            $userInfo['connectList'] = [];
-            $activeTeam = '';
+//            $userInfo['shortList'] = [];
+//            $userInfo['blockList'] = [];
+//            $userInfo['teamList'] = [];
+//            $connectFrom = [];
+//            $connectTo = [];
+//            $userInfo['connectList'] = [];
+//            $activeTeam = '';
+
+            $members = $this->candidateRepository->getModel()->with('user')->get()
+                    ->filter(function ($candidate) use ($request) {
+                        $minAge = Carbon::now()->subYears($request->input('min_age'));
+                        $maxAge = Carbon::now()->subYears($request->input('max_age'));
+                        $date_of_birth = new Carbon($candidate->dob);
+                        return $date_of_birth->greaterThanOrEqualTo($minAge) &&
+                            $date_of_birth->lessThanOrEqualTo($maxAge) &&
+                            $candidate->per_gender === $request->input('gender') &&
+                            $candidate->per_country_of_birth === $request->input('country') &&
+                            $candidate->getReligion->name === $request->input('religion') &&
+                            $candidate->user->is_verified === 1;
+                    });
+
+            $membersWithPagenation = $this->paginationResponse($members);
+            return $this->sendSuccessResponse($membersWithPagenation, "Candidates fetched successfully");
 
             $candidates = $this->candidateRepository->getModel();
 
