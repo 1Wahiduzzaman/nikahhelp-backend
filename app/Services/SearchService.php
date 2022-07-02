@@ -114,15 +114,13 @@ class SearchService extends ApiBaseService
             $members = $this->candidateRepository->getModel()->with('user')->get()
                     ->filter(static function ($candidate) use ($request) {
                         $min_age = (int)$request->input('min_age');
-                        $max_age = (int)$request->max_age;
-                        $minAge = Carbon::now()->subYears($min_age);
-                        $maxAge = Carbon::now()->subYears($max_age);
+                        $max_age = (int)$request->input('max_age');
                         $gender = (int)$request->input('gender');
 
                         $date_of_birth = new Carbon($candidate->dob);
 
-                        return $date_of_birth->diffInYears($minAge) >= $min_age &&
-                            $date_of_birth->diffInYears($maxAge) <= $max_age &&
+                        return $date_of_birth->diffInYears(now()) >= $min_age &&
+                            $date_of_birth->diffInYears(now()) <= $max_age &&
                             $candidate->user->is_verified &&
                             $candidate->per_gender === $gender &&
                             $candidate->per_country_of_birth === (int)$request->input('country');
