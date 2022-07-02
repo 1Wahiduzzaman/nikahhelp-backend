@@ -112,26 +112,26 @@ class SearchService extends ApiBaseService
 //            $activeTeam = '';
 
             $members = $this->candidateRepository->getModel()->with('user')->get()
-                    ->filter(function ($candidate) {
-                        return $candidate->dob !== null && $candidate->per_gender !== null &&
-                            $candidate->per_relgion_id !== null &&
-                            $candidate->per_country_of_birth !== null &&
-                            $candidate->user->is_verified !== 1;
-                    })
-                    ->filter(function ($candidate) use ($request) {
-                        $min_age = (int) $request->min_age;
-                        $max_age = (int) $request->max_age;
-                        
+                    ->filter(static function ($candidate) use ($request) {
+                        $min_age = (int)$request->input('min_age');
+                        $max_age = (int)$request->max_age;
                         $minAge = Carbon::now()->subYears($min_age);
                         $maxAge = Carbon::now()->subYears($max_age);
+                        $gender = (int)$request->input('gender');
+
                         $date_of_birth = new Carbon($candidate->dob);
-                        return $date_of_birth->greaterThanOrEqualTo($minAge) &&
-                            $date_of_birth->lessThanOrEqualTo($maxAge) &&
-                            $candidate->per_gender === (int)$request->input('gender') &&
-                            $candidate->per_country_of_birth === (int)$request->input('country') &&
-                            $candidate->per_religion_id === (int)$request->input('religion');
+
+                        return $date_of_birth->diffInYears($minAge) >= $min_age &&
+                            $date_of_birth->diffInYears($maxAge) <= $max_age &&
+                            $candidate->user->is_verified &&
+                            $candidate->per_gender === $gender &&
+                            $candidate->per_country_of_birth === (int)$request->input('country');
+                        $candidates->per_religion_id === (int)$request->input('religion');
                     });
 
+            if ($members->count() === 0) {
+                return $this->sendErrorResponse("No Candidates found", "no candidates", HttpStatusCode::NOT_FOUND);
+            }
             return $this->sendSuccessResponse($members, "Candidates fetched successfully");
 
             $candidates = $this->candidateRepository->getModel();
