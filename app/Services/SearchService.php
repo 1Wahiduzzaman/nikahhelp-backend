@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Http\Requests\Search\CreateSearchAPIRequest;
 use App\Models\CandidateImage;
 use App\Models\Generic;
 use App\Models\Team;
@@ -92,10 +93,10 @@ class SearchService extends ApiBaseService
 
     /**
      * Update resource
-     * @param Request $request
+     * @param CreateSearchAPIRequest $request
      * @return Response
      */
-    public function filter($request)
+    public function filter(CreateSearchAPIRequest $request)
     {
         try {
 
@@ -125,8 +126,7 @@ class SearchService extends ApiBaseService
                             $date_of_birth->lessThanOrEqualTo($maxAge) &&
                             $candidate->per_gender === $request->input('gender') &&
                             $candidate->per_country_of_birth === $request->input('country') &&
-                            $candidate->per_religion_id === $request->input('religion') &&
-                            $candidate->user->is_verified === 1;
+                            $candidate->per_religion_id === $request->input('religion');
                     });
 
             return $this->sendSuccessResponse($members, "Candidates fetched successfully");
