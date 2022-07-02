@@ -31,10 +31,10 @@ class SearchAPIController extends AppBaseController
     }
 
     /**
-     * @param Request $request
+     * @param CreateSearchAPIRequest $request
      * @param User $user
      */
-    public function filter(APICreateSearchAPIRequest $request)
+    public function filter(CreateSearchAPIRequest $request)
     {
         return  $this->searchService->filter($request);
     }
