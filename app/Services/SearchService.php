@@ -111,6 +111,12 @@ class SearchService extends ApiBaseService
 //            $activeTeam = '';
 
             $members = $this->candidateRepository->getModel()->with('user')->get()
+                    ->filter(function ($candidate) {
+                        return $candidate->dob !== null && $candidate->per_gender !== null &&
+                            $candidate->per_relgion_id !== null &&
+                            $candidate->per_country_of_birth !== null &&
+                            $candidate->user->is_verified !== 1;
+                    })
                     ->filter(function ($candidate) use ($request) {
                         $minAge = Carbon::now()->subYears($request->input('min_age'));
                         $maxAge = Carbon::now()->subYears($request->input('max_age'));
@@ -119,7 +125,7 @@ class SearchService extends ApiBaseService
                             $date_of_birth->lessThanOrEqualTo($maxAge) &&
                             $candidate->per_gender === $request->input('gender') &&
                             $candidate->per_country_of_birth === $request->input('country') &&
-                            $candidate->getReligion->name === $request->input('religion') &&
+                            $candidate->per_religion_id === $request->input('religion') &&
                             $candidate->user->is_verified === 1;
                     });
 
