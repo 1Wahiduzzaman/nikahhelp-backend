@@ -123,8 +123,7 @@ class SearchService extends ApiBaseService
                             $candidate->user->is_verified === 1;
                     });
 
-            $membersWithPagenation = $this->pagination($members);
-            return $this->sendSuccessResponse($membersWithPagenation, "Candidates fetched successfully");
+            return $this->sendSuccessResponse($members, "Candidates fetched successfully");
 
             $candidates = $this->candidateRepository->getModel();
 
@@ -331,8 +330,8 @@ class SearchService extends ApiBaseService
         $data = [
             'total_items' => $queryData->count(),
             'current_items' => $queryData->count(),
-            'first_item' => $queryData->first()->get(),
-            'last_item' => $queryData->last()->get(),
+            'first_item' => $queryData->first(),
+            'last_item' => $queryData->last(),
         ];
         return $data;
     }
