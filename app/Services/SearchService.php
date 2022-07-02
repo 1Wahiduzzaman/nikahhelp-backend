@@ -119,14 +119,17 @@ class SearchService extends ApiBaseService
                             $candidate->user->is_verified !== 1;
                     })
                     ->filter(function ($candidate) use ($request) {
-                        $minAge = Carbon::now()->subYears($request->input('min_age'));
-                        $maxAge = Carbon::now()->subYears($request->input('max_age'));
+                        $min_age = (int) $request->min_age;
+                        $max_age = (int) $request->max_age;
+                        
+                        $minAge = Carbon::now()->subYears($min_age);
+                        $maxAge = Carbon::now()->subYears($max_age);
                         $date_of_birth = new Carbon($candidate->dob);
                         return $date_of_birth->greaterThanOrEqualTo($minAge) &&
                             $date_of_birth->lessThanOrEqualTo($maxAge) &&
-                            $candidate->per_gender === $request->input('gender') &&
-                            $candidate->per_country_of_birth === $request->input('country') &&
-                            $candidate->per_religion_id === $request->input('religion');
+                            $candidate->per_gender === (int)$request->input('gender') &&
+                            $candidate->per_country_of_birth === (int)$request->input('country') &&
+                            $candidate->per_religion_id === (int)$request->input('religion');
                     });
 
             return $this->sendSuccessResponse($members, "Candidates fetched successfully");
