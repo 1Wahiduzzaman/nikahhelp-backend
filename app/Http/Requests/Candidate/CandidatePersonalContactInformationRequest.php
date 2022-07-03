@@ -26,6 +26,7 @@ class CandidatePersonalContactInformationRequest  extends APIRequest
     {
         return [
             'per_email' => 'nullable|max:255',
+            'mobile_country_code' => 'nullable|string',
             'mobile_number' => 'nullable|max:255',
             'per_current_residence_country' => 'nullable|max:255',
             'per_current_residence_city' => 'nullable|max:255',
