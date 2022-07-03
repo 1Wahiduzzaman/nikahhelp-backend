@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Http\Requests\Candidate\CandidatePersonalContactInformationRequest;
 use App\Http\Resources\RecentJoinCandidateResource;
 use App\Http\Resources\SearchResource;
 use App\Models\Generic;
@@ -475,10 +476,10 @@ class CandidateService extends ApiBaseService
 
     /**
      * Update resource
-     * @param Request $request
+     * @param CandidatePersonalContactInformationRequest $request
      * @return JsonResponse
      */
-    public function candidatePersonalContactInfoUpdate(Request $request): JsonResponse
+    public function candidatePersonalContactInfoUpdate(CandidatePersonalContactInformationRequest $request): JsonResponse
     {
         $userId = self::getUserId();
         try {
