@@ -278,7 +278,7 @@ class CandidateInformation extends Model
 
         'data_input_status',
         "other_images",
-        'address_2',
+        'address_1',
         'address_2'
     ];
 
