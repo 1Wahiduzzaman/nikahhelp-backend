@@ -102,9 +102,11 @@ class SearchService extends ApiBaseService
         try {
 
             $members = $this->candidateRepository->getModel()->with(['user' => function($query) {
-                $query->where('is_verified', 1);
+                $query->where('status', 3);
             }])
                 ->where('per_gender', $request->input('gender'))
+                ->where('per_current_residence_country', $request->input('country'))
+                ->where('per_religion_id', $request->input('religion'))
                 ->get()
                 ->filter(function ($candidate) {
                     return $candidate->dob != null;
@@ -116,9 +118,7 @@ class SearchService extends ApiBaseService
                     $date_of_birth = new Carbon($candidate->dob);
 
                     return $date_of_birth->diffInYears(now()) >= $min_age &&
-                        $date_of_birth->diffInYears(now()) <= $max_age &&
-                        $candidate->per_current_residence_country === $request->input('country') &&
-                        $candidate->per_religion_id === (int)$request->input('religion');
+                        $date_of_birth->diffInYears(now()) <= $max_age;
                 });
 
 
