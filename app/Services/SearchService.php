@@ -101,27 +101,26 @@ class SearchService extends ApiBaseService
     {
         try {
 
-            $country = Country::where('id', $request->input('country'))->get()->first()->name;
-
-            $members = $this->candidateRepository->getModel()->with(['user', function($query) {
-                    $query->where('is_verified', 1);
-                }])
+            $members = $this->candidateRepository->getModel()->with(['user' => function($query) {
+                $query->where('is_verified', 1);
+            }])
                 ->where('per_gender', $request->input('gender'))
                 ->get()
                 ->filter(function ($candidate) {
                     return $candidate->dob != null;
                 })
-                    ->filter(static function ($candidate) use ($request, $country) {
-                        $min_age = (int)$request->input('min_age');
-                        $max_age = (int)$request->input('max_age');
+                ->filter(static function ($candidate) use ($request, $country) {
+                    $min_age = (int)$request->input('min_age');
+                    $max_age = (int)$request->input('max_age');
 
-                        $date_of_birth = new Carbon($candidate->dob);
+                    $date_of_birth = new Carbon($candidate->dob);
 
-                        return $date_of_birth->diffInYears(now()) >= $min_age &&
-                            $date_of_birth->diffInYears(now()) <= $max_age &&
-                            $candidate->per_current_residence_country === $country;
-                            $candidates->per_religion_id === (int)$request->input('religion');
-                    });
+                    return $date_of_birth->diffInYears(now()) >= $min_age &&
+                        $date_of_birth->diffInYears(now()) <= $max_age &&
+                        $candidate->per_current_residence_country === $request->input('country') &&
+                        $candidate->per_religion_id === (int)$request->input('religion');
+                });
+
 
             if ($members->count() === 0) {
                 return $this->sendErrorResponse("No Candidates found", "no candidates", HttpStatusCode::NOT_FOUND);
