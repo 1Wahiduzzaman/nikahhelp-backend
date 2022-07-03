@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Enums\HttpStatusCode;
 use App\Http\Requests\Search\CreateSearchAPIRequest;
 use App\Models\CandidateImage;
+use App\Models\Country;
 use App\Models\Generic;
 use App\Models\Team;
 use App\Models\TeamConnection;
@@ -100,34 +101,26 @@ class SearchService extends ApiBaseService
     {
         try {
 
-            $userInfo = [];
+            $country = Country::where('id', $request->input('country'))->get()->first()->name;
 
-
-//            $userInfo['shortList'] = [];
-//            $userInfo['blockList'] = [];
-//            $userInfo['teamList'] = [];
-//            $connectFrom = [];
-//            $connectTo = [];
-//            $userInfo['connectList'] = [];
-//            $activeTeam = '';
-
-            $members = $this->candidateRepository->getModel()->with('user')->get()
+            $members = $this->candidateRepository->getModel()->with(['user', function($query) {
+                    $query->where('is_verified', 1);
+                }])
+                ->where('per_gender', $request->input('gender'))
+                ->get()
                 ->filter(function ($candidate) {
                     return $candidate->dob != null;
                 })
-                    ->filter(static function ($candidate) use ($request) {
+                    ->filter(static function ($candidate) use ($request, $country) {
                         $min_age = (int)$request->input('min_age');
                         $max_age = (int)$request->input('max_age');
-                        $gender = (int)$request->input('gender');
 
                         $date_of_birth = new Carbon($candidate->dob);
 
                         return $date_of_birth->diffInYears(now()) >= $min_age &&
                             $date_of_birth->diffInYears(now()) <= $max_age &&
-                            $candidate->user->is_verified &&
-                            $candidate->per_gender === $gender &&
-                            $candidate->per_country_of_birth === (int)$request->input('country');
-                        $candidates->per_religion_id === (int)$request->input('religion');
+                            $candidate->per_current_residence_country === $country;
+                            $candidates->per_religion_id === (int)$request->input('religion');
                     });
 
             if ($members->count() === 0) {
