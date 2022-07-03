@@ -33,7 +33,9 @@ class CandidatePersonalContactInformationRequest  extends APIRequest
             'per_permanent_city' => 'nullable|max:255',
             'per_county' => 'nullable|max:255',
             'per_permanent_post_code' => 'nullable|max:255',
-            'per_permanent_address' => 'nullable|max:255'
+            'per_permanent_address' => 'nullable|max:255',
+            'address_1' => 'nullable|string',
+            'address_2' => 'nullable|string',
         ];
     }
 
