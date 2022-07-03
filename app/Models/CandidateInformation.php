@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ImageTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CandidateInformation extends Model
 {
-    use HasFactory;
+    use HasFactory, ImageTrait;
 
     /**
      * @var string
@@ -531,18 +532,18 @@ class CandidateInformation extends Model
     public function getPerMainImageUrlAttribute($value)
     {
 
-        return $this->getImagePath($value);
+        return $this->getImagePath($value, $this->user_id);
     }
 
     public function getPerAvatarUrlAttribute($value)
     {
-        return $this->getImagePath($value);
+        return $this->getImagePath($value, $this->user_id);
     }
 
 
     public function getOtherImagesAttribute($value)
     {
-        return $this->getImagePath($value);
+        return $this->getImagePath($value, $this->user_id);
     }
 
     public function getDownloadableDocAttribute()
@@ -570,39 +571,18 @@ class CandidateInformation extends Model
        return $this->active_team ? (bool)$this->active_team->representativeOfTeamFromUser->filter(function($user){ return $user->account_type > 2; })->count() : false ;
     }
 
-    /**
-     * @param $value
-     * @return string|null
-     */
-    public function getImagePath($value): ?string
-    {
-
-        $id = '/'.(string)$this->user_id.'/';
-        $pattern = [
-            '/candidate/',
-            $id,
-        ];
-
-        $path = preg_replace($pattern, '', $value);
-
-        $path = str_replace('/_', '', $path);
-        $newPath = str_replace('image/', 'image/' . $this->user_id, $path);
-
-        return !empty($value) ? env('IMAGE_SERVER') . '/' . $newPath : null;
-    }
-
     public function getVerImageFrontAttribute($value)
     {
-        return $this->getImagePath($value);
+        return $this->getImagePath($value, $this->user_id);
     }
 
     public function getVerImageBackAttribute($value)
     {
-        return $this->getImagePath($value);
+        return $this->getImagePath($value, $this->user_id);
     }
 
     public function getPerAdditionalInfoDocAttribute($value)
     {
-        return $this->getImagePath($value);
+        return $this->getImagePath($value, $this->user_id);
     }
 }
