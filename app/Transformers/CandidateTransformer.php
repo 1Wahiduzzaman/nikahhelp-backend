@@ -450,6 +450,8 @@ class CandidateTransformer extends TransformerAbstract
             'per_permanent_address' => $item->per_permanent_address,
             'mobile_country_code' => $item->mobile_country_code,
             'mobile_number' => $item->mobile_number,
+            'address_1' => $item->address_1,
+            'address_2' => $item->address_2,
         ];
     }
 

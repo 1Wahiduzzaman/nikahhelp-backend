@@ -112,6 +112,9 @@ class SearchService extends ApiBaseService
 //            $activeTeam = '';
 
             $members = $this->candidateRepository->getModel()->with('user')->get()
+                ->filter(function ($candidate) {
+                    return $candidate->dob != null;
+                })
                     ->filter(static function ($candidate) use ($request) {
                         $min_age = (int)$request->input('min_age');
                         $max_age = (int)$request->input('max_age');
