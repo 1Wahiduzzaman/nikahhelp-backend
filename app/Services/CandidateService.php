@@ -490,6 +490,7 @@ class CandidateService extends ApiBaseService
             if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
+
             $input = $request->all(CandidateInformation::PERSONAL_CONTACT_INFO);
 
             $input = $candidate->fill($input)->toArray();
@@ -1166,7 +1167,6 @@ class CandidateService extends ApiBaseService
                 }
             }
 
-            /* edo Need to remove from image server  */
 
             return $this->sendSuccessResponse([], self::IMAGE_DELETED_SUCCESSFULLY);
 

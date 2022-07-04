@@ -305,6 +305,42 @@ class RepresentativeService extends ApiBaseService
         }
     }
 
+    public function removeImage(Request $request, int $imageType)
+    {
+        $userId = self::getUserId();
+        try {
+
+                $uploaded = [];
+                $representative = $this->representativeRepository->findOneByProperties([
+                    'user_id' => $userId
+                ]);
+
+
+                if($imageType == 0){
+                    $representative->per_avatar_url = null ;
+                    $this->deleteImageGuzzle('per_avatar_url');
+                   $representative->save();
+                   $uploaded[] = 0;
+                }
+
+                if ($imageType === 1){
+                    $representative->per_main_image_url = null ;
+                    $this->deleteImageGuzzle('per_main_image_url');
+                    $representative->save();
+                    $uploaded[] = 1;
+                }
+
+                if (count($uploaded)) {
+                   return $this->sendSuccessResponse([], self::IMAGE_DELETED_SUCCESSFULLY);
+                }
+
+            throw new \Error('provide image type');
+
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+    }
+
     /**
      * @param Request $request
      * @return array

@@ -252,7 +252,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('representative/verify/identity', [RepresentativeInformationController::class, 'verifyIdentity'])->name('representative.verify.identity');
         Route::POST('representative/image/upload', [RepresentativeInformationController::class, 'imageUpload'])->name('representative.image.upload');
         Route::POST('representative/final/submit', [RepresentativeInformationController::class, 'finalSubmit'])->name('representative.final.submit');
-
+        Route::delete('representative/remove-img', [RepresentativeInformationController::class, 'deleteImg'])->name('representative.image.delete');
         Route::patch('representative/personal-info-status', [RepresentativeInformationController::class, 'updateRepresentativeInfoStatus'])->name('update.candidate.info.status');
 
 
@@ -285,7 +285,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/notifications', [App\Http\Controllers\API\NotificationAPIController::class, 'index'])->name('notifications.list');
 
         // Search Candidate Information
-        Route::get('/searches', [SearchAPIController::class, 'filter'])->name('searches.list');
+        Route::get('/searches', [SearchAPIController::class, 'candidateSearch'])->name('searches.list');
 
         // User Dashboard
         Route::get('user-dashboard', [UserDashboardController::class, 'dashboard'])->name('user.dashboard');
