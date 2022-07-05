@@ -305,7 +305,7 @@ class RepresentativeService extends ApiBaseService
         }
     }
 
-    public function removeImage(Request $request, int $imageType)
+    public function removeImage(int $imageType)
     {
         $userId = self::getUserId();
         try {

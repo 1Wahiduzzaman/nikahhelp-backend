@@ -252,7 +252,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('representative/verify/identity', [RepresentativeInformationController::class, 'verifyIdentity'])->name('representative.verify.identity');
         Route::POST('representative/image/upload', [RepresentativeInformationController::class, 'imageUpload'])->name('representative.image.upload');
         Route::POST('representative/final/submit', [RepresentativeInformationController::class, 'finalSubmit'])->name('representative.final.submit');
-        Route::delete('representative/remove-img', [RepresentativeInformationController::class, 'deleteImg'])->name('representative.image.delete');
+        Route::delete('representative/remove-img/{imageType}', [RepresentativeInformationController::class, 'deleteImage'])->name('representative.image.delete');
         Route::patch('representative/personal-info-status', [RepresentativeInformationController::class, 'updateRepresentativeInfoStatus'])->name('update.candidate.info.status');
 
 

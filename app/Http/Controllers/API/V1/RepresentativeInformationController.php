@@ -231,8 +231,8 @@ class RepresentativeInformationController extends Controller
         return $this->representativeService->representativeStatus();
     }
 
-    public function deleteImage(Request $request, int $imageType)
+    public function deleteImage(int $imageType)
     {
-        return $this->representativeService->removeImage($request, $imageType);
+        return $this->representativeService->removeImage($imageType);
     }
 }
