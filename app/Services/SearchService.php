@@ -324,6 +324,41 @@ class SearchService extends ApiBaseService
         }
     }
 
+    public function searchCandidates(\App\Http\Requests\CandidateSearch $request)
+    {
+
+        try {
+            $searchedCandidates = $this->candidateRepository->getModel()->with(['user' => function($query) use ($request) {
+                $query->where('status', '3');
+            }])->where('per_gender', $request->input('per_gender'))
+                ->where('per_religion_id', $request->input('per_religion_id'))
+                ->where('per_country_id', $request->input('country'))
+                ->where('per_ethnicity', $request->input('ethnicity'))
+                ->where('per_marital_status', $request->input('marital_status'))
+                ->where('per_residence_country', $request->input('nationality'))
+                ->where('per_occupation', $request->input('employment_status'))
+                ->get()
+                ->filter(function ($candidate) use ($request) {
+                    $min_age = (int)$request->input('min_age');
+                    $max_age = (int)$request->input('max_age');
+
+                    $date_of_birth = new Carbon($candidate->dob);
+
+                    return $date_of_birth->diffInYears(now()) >= $min_age &&
+                        $date_of_birth->diffInYears(now()) <= $max_age;
+                });
+
+            return $this->sendSuccessResponse($searchedCandidates->toArray(), HttpStatusCode::SUCCESS);
+        } catch (Exception $exception)
+        {
+            $this->sendErrorResponse($exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+        }
+
+
+
+
+    }
+
     /**
      * @param $queryData
      * @return array
