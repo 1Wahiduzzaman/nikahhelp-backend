@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Requests\CandidateSearch;
 use App\Http\Requests\Search\CreateSearchAPIRequest;
 use App\Http\Requests\Search\UpdateSearchAPIRequest;
 use App\Models\CandidateInformation;
@@ -57,4 +58,8 @@ class SearchAPIController extends AppBaseController
         return $this->sendResponse($searches->toArray(), 'Searches retrieved successfully');
     }
 
+    public function candidateSearch(CandidateSearch $request)
+    {
+        return $this->searchService->searchCandidates($request);
+    }
 }
