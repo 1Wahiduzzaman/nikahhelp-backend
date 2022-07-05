@@ -103,10 +103,10 @@ class SearchService extends ApiBaseService
 
             $members = $this->candidateRepository->getModel()->with(['user' => function($query) {
                 $query->where('status', '3');
-            }])
-                ->where('per_gender', $request->input('gender'))
-                ->where('per_current_residence_country', $request->input('country'))
-                ->where('per_religion_id', $request->input('religion'))
+            }])->with('getReligion')
+                ->where('per_gender', (string)$request->input('gender'))
+                ->where('per_current_residence_country', (string)$request->input('country'))
+                ->where('per_religion_id', (string)$request->input('religion'))
                 ->get()
                 ->filter(function ($candidate) {
                     return $candidate->dob != null;
