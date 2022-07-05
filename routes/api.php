@@ -61,7 +61,7 @@ Route::get('v1/religions', [ReligionController::class, 'index'])->name('religion
 Route::get('v1/utilities/countries', [CountryController::class, 'index'])->name('utilities.countries.lists');//ok
 Route::get('v1/utilities/cities', [CountryController::class, 'getCityList'])->name('utilities.city.lists');//ok
 Route::get('v1/utilities/religions', [ReligionController::class, 'index'])->name('utilities.religions.lists');//ok
-Route::post('v1/feed-back', [\App\Http\Controllers\FeedBackController::class, ''])->name('help.feedback');
+Route::post('v1/feed-back', [\App\Http\Controllers\FeedBackController::class, 'feedBack'])->name('help.feedback');
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'v1'], function () {
         //  Settings
