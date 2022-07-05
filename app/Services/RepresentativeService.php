@@ -156,16 +156,16 @@ class RepresentativeService extends ApiBaseService
     {
         try {
             $userId = self::getUserId();
-            $representativeInfomation = $this->representativeRepository->findOneByProperties([
+            $representativeInformation = $this->representativeRepository->findOneByProperties([
                 'user_id' => $userId
             ]);
-            if (!$representativeInfomation) {
+            if (!$representativeInformation) {
                 return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
             $request['user_id'] = $userId;
-            $representative = $representativeInfomation->update($request);
+            $representative = $representativeInformation->update($request);
             if ($representative) {
-                return $this->sendSuccessResponse($representativeInfomation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($representativeInformation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }

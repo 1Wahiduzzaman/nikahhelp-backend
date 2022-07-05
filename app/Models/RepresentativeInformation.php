@@ -120,7 +120,9 @@ class RepresentativeInformation extends Model
         'only_team_can_see',
         'team_connection_can_see',
         'is_agree',
-        'data_input_status'
+        'data_input_status',
+        'address_1',
+        'address_2',
     ];
 
     /**
