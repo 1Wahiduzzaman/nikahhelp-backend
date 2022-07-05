@@ -469,7 +469,7 @@ class CandidateService extends ApiBaseService
                 'per_health_condition' => $candidate->per_health_condition
             ];
             $formRequest = [
-                'per_health_condition' => $request->input('per_health_condition');
+                'per_health_condition' => $request->input('per_health_condition')
             ];
             $isEdited = $this->isEditingTextField($formField, $formRequest);
 
