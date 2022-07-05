@@ -39,6 +39,7 @@ class VerifyIdentityRequest extends APIRequest
             'ver_recommender_occupation' => 'nullable|max:255',
             'ver_recommender_address' => 'nullable|max:255',
             'ver_recommender_mobile_no' => 'nullable|max:255',
+            'ver_recommender_email' => 'nullable|string|email'
         ];
     }
 
