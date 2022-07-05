@@ -297,14 +297,15 @@ class RepresentativeTransformer extends TransformerAbstract
             'ver_country' => $item->ver_country,
             'ver_city' => $item->ver_city,
             'ver_document_type' => $item->ver_document_type,
-            'ver_document_frontside' => $item->ver_document_frontside ? env('IMAGE_SERVER') .'/'. $item->ver_document_frontside : '',
-            'ver_document_backside' => $item->ver_document_backside ? env('IMAGE_SERVER') .'/'. $item->ver_document_backside : '',
+            'ver_document_frontside' => $item->ver_document_frontside,
+            'ver_document_backside' => $item->ver_document_backside,
             'ver_recommender_title' => $item->ver_recommender_title,
             'ver_recommender_first_name' => $item->ver_recommender_first_name,
             'ver_recommender_last_name' => $item->ver_recommender_last_name,
             'ver_recommender_occupation' => $item->ver_recommender_occupation,
             'ver_recommender_address' => $item->ver_recommender_address,
             'ver_recommender_mobile_no' => $item->ver_recommender_mobile_no,
+            'ver_recommender_email' => $item->per_email
         ];
     }
 
