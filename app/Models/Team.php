@@ -214,7 +214,7 @@ class Team extends Model
     }
 
     public function getLogoAttribute($value) {
-        return $this->getImagePath($value, $this->user->id);
+        return $this->getImagePath($value, self::CREATED_BY);
     }
 
     public function last_subscription()
