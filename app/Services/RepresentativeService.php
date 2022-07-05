@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Helpers\Notificationhelpers;
+use App\Http\Requests\Representative\ContactInformationRequest;
 use App\Models\Occupation;
 use App\Models\RepresentativeInformation;
 use App\Models\CandidateImage;
@@ -149,10 +150,10 @@ class RepresentativeService extends ApiBaseService
     }
 
     /**
-     * @param $request
+     * @param ContactInformationRequest $request
      * @return JsonResponse
      */
-    public function storeEssentialInformation($request)
+    public function storeEssentialInformation(ContactInformationRequest $request)
     {
         try {
             $userId = self::getUserId();
@@ -163,7 +164,7 @@ class RepresentativeService extends ApiBaseService
                 return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
             $request['user_id'] = $userId;
-            $representative = $representativeInformation->update($request);
+            $representative = $representativeInformation->update($request->all());
             if ($representative) {
                 return $this->sendSuccessResponse($representativeInformation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
             } else {
