@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\ImageTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model
 {
-    use HasFactory;
+    use HasFactory, ImageTrait;
 
     const TEAM_ID = 'team_id';
     const NAME ='name';
@@ -213,7 +214,7 @@ class Team extends Model
     }
 
     public function getLogoAttribute($value) {
-        return isset($value) ? env('IMAGE_SERVER').'/'.$value : null;
+        return $this->getImagePath($value, $this->user_id);
     }
 
     public function last_subscription()
