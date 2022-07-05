@@ -97,7 +97,7 @@ class RepresentativeInformationController extends Controller
      */
     public function contactInformation(ContactInformationRequest $request)
     {
-        return $this->representativeService->storeEssentialInformation($request->all());
+        return $this->representativeService->storeEssentialInformation($request);
 
     }
 
