@@ -282,6 +282,8 @@ class RepresentativeTransformer extends TransformerAbstract
             'mobile_country_code' => $item->mobile_country_code,
             'per_permanent_post_code' => $item->per_permanent_post_code,
             'per_permanent_address' => $item->per_permanent_address,
+            'address_1' => $item->address_1,
+            'address_2' => $item->address_2,
         ];
     }
 
