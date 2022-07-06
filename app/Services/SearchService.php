@@ -331,21 +331,26 @@ class SearchService extends ApiBaseService
             $searchedCandidates = $this->candidateRepository->getModel()->with(['user' => function($query) use ($request) {
                 $query->where('status', '3');
             }])->where('per_gender', $request->input('per_gender'))
-                ->orWhere('per_religion_id', $request->input('per_religion_id'))
-                ->orWhere('per_country_id', $request->input('country'))
-                ->orWhere('per_ethnicity', $request->input('ethnicity'))
-                ->orWhere('per_marital_status', $request->input('marital_status'))
-                ->orWhere('per_residence_country', $request->input('nationality'))
-                ->orWhere('per_occupation', $request->input('employment_status'))
+                ->orWhere(function ($query) use ($request){
+                    $query->where('per_religion_id', $request->input('religion'))
+                        ->orWhere('per_employment_status', $request->input('employment_status'))
+                        ->orWhere('per_ethnicity', $request->input('ethnicity'))
+                        ->orWhere('per_nationality', $request->input('nationality'))
+                        ->orWhere('per_current_residence_country', $request->input('country'))
+                        ->orWhere('per_marital_status', $request->input('marital_status'));
+                })
                 ->get()
                 ->filter(function ($candidate) use ($request) {
                     $min_age = (int)$request->input('min_age');
                     $max_age = (int)$request->input('max_age');
-
+                    $min_height = (int)$request->input('min_height');
+                    $max_height = (int) $request->input('max_height');
                     $date_of_birth = new Carbon($candidate->dob);
 
                     return $date_of_birth->diffInYears(now()) >= $min_age &&
-                        $date_of_birth->diffInYears(now()) <= $max_age;
+                        $date_of_birth->diffInYears(now()) <= $max_age &&
+                        $candidate->per_height >= $min_height &&
+                        $candidate->per_height <= $max_height;
                 });
 
             return $this->sendSuccessResponse($searchedCandidates->toArray(), HttpStatusCode::SUCCESS);
