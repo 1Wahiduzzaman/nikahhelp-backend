@@ -33,6 +33,8 @@ class CandidateSearch extends FormRequest
             'nationality' => 'string|nullable',
             'religion' => 'nullable|numeric',
             'marital_status' => 'nullable',
+            'min_age' => 'numeric|min:18',
+            'max_age' => 'numeric|max:60'
         ];
     }
 }
