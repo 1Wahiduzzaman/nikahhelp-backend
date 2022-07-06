@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Requests\CandidateSearch;
+use App\Http\Requests\Search\CandidateSearch;
 use App\Http\Requests\Search\CreateSearchAPIRequest;
 use App\Http\Requests\Search\UpdateSearchAPIRequest;
 use App\Models\CandidateInformation;
