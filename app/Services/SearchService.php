@@ -4,10 +4,8 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Http\Requests\Search\CandidateSearch;
 use App\Http\Requests\Search\CreateSearchAPIRequest;
-use App\Models\CandidateImage;
-use App\Models\Country;
-use App\Models\Generic;
 use App\Models\Team;
 use App\Models\TeamConnection;
 use App\Transformers\CandidateTransformer;
@@ -324,7 +322,7 @@ class SearchService extends ApiBaseService
         }
     }
 
-    public function searchCandidates(\App\Http\Requests\CandidateSearch $request)
+    public function searchCandidates(CandidateSearch $request)
     {
 
         try {
