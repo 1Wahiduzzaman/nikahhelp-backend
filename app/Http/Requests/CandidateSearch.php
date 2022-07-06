@@ -27,11 +27,11 @@ class CandidateSearch extends FormRequest
             'min_height' => 'nullable|numeric',
             'max_height' => 'nullable|numeric',
             'country' => 'nullable|numeric',
-            'gender' => 'nullable|numeric|1',
+            'gender' => 'required|numeric|min:1|max:2',
             'ethnicity' => 'nullable',
-            'employment_status' => 'nullable',
-            'nationality' => 'nullable',
-            'religion' => 'nullable',
+            'employment_status' => 'string|nullable',
+            'nationality' => 'string|nullable',
+            'religion' => 'nullable|numeric',
             'marital_status' => 'nullable',
         ];
     }
