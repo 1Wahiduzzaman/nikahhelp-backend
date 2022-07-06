@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Search;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\APIRequest;
 
-class CandidateSearch extends FormRequest
+class CandidateSearch extends APIRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class CandidateSearch extends FormRequest
     public function rules()
     {
         return [
-            'min_height' => 'nullable|numeric',
-            'max_height' => 'nullable|numeric',
+            'min_height' => 'required|nullable|numeric',
+            'max_height' => 'required|nullable|numeric',
             'country' => 'nullable|numeric',
             'gender' => 'required|numeric|min:1|max:2',
             'ethnicity' => 'nullable',
