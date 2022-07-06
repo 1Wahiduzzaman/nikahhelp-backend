@@ -324,11 +324,11 @@ class SearchService extends ApiBaseService
 
     public function searchCandidates(CandidateSearch $request)
     {
-        $gender = (int)$request->input('per_gender');
+        $gender = (int)$request->input('gender');
         try {
             $searchedCandidates = $this->candidateRepository->getModel()->with(['user' => function($query) use ($request) {
                 $query->where('status', '3');
-            }])->where('per_gender', '=', $gender)
+            }])->where('per_gender',  $gender)
                 ->orWhere(function ($query) use ($request){
                     $query->where('per_religion_id', $request->input('religion'))
                         ->orWhere('per_employment_status', $request->input('employment_status'))
