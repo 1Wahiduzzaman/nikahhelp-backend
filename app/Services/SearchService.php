@@ -308,7 +308,7 @@ class SearchService extends ApiBaseService
                     ],
                     [
                         'preference' => $this->candidateTransformer->transform($candidate)['preference']
-                    ],
+                    ]
                 );
             }
 
@@ -330,19 +330,7 @@ class SearchService extends ApiBaseService
             }])->where(function ($query) use ($request){
                     $query->where('per_gender', $request->input('gender'));
                 })
-                ->get()
-                ->filter(function ($candidate) use ($request) {
-                    $min_age = (int)$request->input('min_age');
-                    $max_age = (int)$request->input('max_age');
-                    $min_height = (int)$request->input('min_height');
-                    $max_height = (int) $request->input('max_height');
-                    $date_of_birth = new Carbon($candidate->dob);
-
-                    return $date_of_birth->diffInYears(now()) >= $min_age &&
-                        $date_of_birth->diffInYears(now()) <= $max_age &&
-                        $candidate->per_height >= $min_height &&
-                        $candidate->per_height <= $max_height;
-                });
+                ->get();
 
             return $this->sendSuccessResponse($searchedCandidates, 'searched successfully');
         } catch (Exception $exception)
