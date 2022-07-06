@@ -353,7 +353,7 @@ class SearchService extends ApiBaseService
                         $candidate->per_height <= $max_height;
                 });
 
-            return $this->sendSuccessResponse($searchedCandidates->toArray(), HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse($searchedCandidates, HttpStatusCode::SUCCESS);
         } catch (Exception $exception)
         {
             $this->sendErrorResponse($exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
