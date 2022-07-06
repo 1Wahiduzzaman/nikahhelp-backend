@@ -18,7 +18,6 @@ use App\Models\CandidateInformation;
 use App\Repositories\CandidateImageRepository;
 use App\Repositories\CountryRepository;
 use App\Repositories\UserRepository;
-use App\Traits\ProfileChangedTrait;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -42,7 +41,7 @@ use function PHPUnit\Framework\throwException;
 class CandidateService extends ApiBaseService
 {
 
-    use CrudTrait, ProfileChangedTrait;
+    use CrudTrait;
 
     const INFORMATION_FETCHED_SUCCESSFULLY = 'Information fetched Successfully!';
     const INFORMATION_UPDATED_SUCCESSFULLY = 'Information updated Successfully!';
@@ -465,16 +464,8 @@ class CandidateService extends ApiBaseService
             }
             $input = $request->all(CandidateInformation::PERSONAL_GENERAL_INFO);
 
-            $formField = [
-                'per_health_condition' => $candidate->per_health_condition
-            ];
-            $formRequest = [
-                'per_health_condition' => $request->input('per_health_condition')
-            ];
-            $isEdited = $this->isEditingTextField($formField, $formRequest);
-
-            if ($isEdited) {
-                $candidate->user->status = 3;
+            if ($candidate->isDirty()) {
+                $candidate->user->status = 2;
                 $candidate->user->save();
             }
             // As BaseRepository update method has bug that's why we have to fallback to model default methods.
@@ -542,20 +533,10 @@ class CandidateService extends ApiBaseService
                 $input['per_additional_info_doc'] = $candidateFile->per_additional_info_doc;
             }
 
-            $formField = [
-              'per_about' => $candidate->per_about,
-              'per_additional_info_text' => $candidate->per_additional_info_text,
-            ];
 
-            $formRequest = [
-              'per_about' => $request->input('per_about'),
-              'per_additional_info_text' => $request->input('per_additional_info_text'),
-            ];
 
-            $isEdited = $this->isEditingTextField($formRequest, $formField);
-
-            if ($isEdited) {
-                $candidate->user->status = 3;
+            if ($candidate->isDirty()) {
+                $candidate->user->status = 2;
                 $candidate->user->save();
             }
 
@@ -849,25 +830,8 @@ class CandidateService extends ApiBaseService
                 'user_id' => $uid
             ]);
             if (!empty($candidate)) {
-                $formFields = [
-                    'father_job' => $candidate->fi_father_profession,
-                    'mother_job' => $candidate->fi_mother_profession,
-                    'sibling_information' => $candidate->fi_siblings_desc,
-                    'country_of_origin' => $candidate->fi_country_of_origin,
-                    'family_info' => $candidate->fi_family_info,
-                ];
 
-                $familyRequest = [
-                    'father_job' => $request->input('father_profession'),
-                    'mother_job' => $request->input('mother_profession'),
-                    'sibling_information' => $request->input('sibling_desc'),
-                    'country_of_origin' => $request->input('country_of_origin'),
-                    'family_info' => $request->input('family_info'),
-                ];
-
-                $textFieldEdited = $this->isEditingTextField($formFields, $familyRequest);
-
-                if ($textFieldEdited) {
+                if ($candidate->isDirty()) {
                     $candidate->user->status = 2;
                     $candidate->user->save();
                 }
