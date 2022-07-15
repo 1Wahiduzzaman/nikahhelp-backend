@@ -282,6 +282,8 @@ class RepresentativeTransformer extends TransformerAbstract
             'mobile_country_code' => $item->mobile_country_code,
             'per_permanent_post_code' => $item->per_permanent_post_code,
             'per_permanent_address' => $item->per_permanent_address,
+            'address_1' => $item->address_1,
+            'address_2' => $item->address_2,
         ];
     }
 
@@ -297,14 +299,15 @@ class RepresentativeTransformer extends TransformerAbstract
             'ver_country' => $item->ver_country,
             'ver_city' => $item->ver_city,
             'ver_document_type' => $item->ver_document_type,
-            'ver_document_frontside' => $item->ver_document_frontside ? env('IMAGE_SERVER') .'/'. $item->ver_document_frontside : '',
-            'ver_document_backside' => $item->ver_document_backside ? env('IMAGE_SERVER') .'/'. $item->ver_document_backside : '',
+            'ver_document_frontside' => $item->ver_document_frontside,
+            'ver_document_backside' => $item->ver_document_backside,
             'ver_recommender_title' => $item->ver_recommender_title,
             'ver_recommender_first_name' => $item->ver_recommender_first_name,
             'ver_recommender_last_name' => $item->ver_recommender_last_name,
             'ver_recommender_occupation' => $item->ver_recommender_occupation,
             'ver_recommender_address' => $item->ver_recommender_address,
             'ver_recommender_mobile_no' => $item->ver_recommender_mobile_no,
+            'ver_recommender_email' => $item->per_email
         ];
     }
 
@@ -316,10 +319,8 @@ class RepresentativeTransformer extends TransformerAbstract
     private function imageUploadInfo(RepresentativeInformation $item): array
     {
         return [
-            'per_avatar_url' => $item->per_avatar_url ?  $item->per_avatar_url : '',
-            // 'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
-            // 'per_main_image_url' => $item->per_main_image_url ? env('IMAGE_SERVER') .'/'. $item->per_main_image_url : '',
-            'per_main_image_url' => $item->per_main_image_url ?  $item->per_main_image_url : '',
+            'per_avatar_url' => $item->per_avatar_url,
+            'per_main_image_url' => $item->per_main_image_url,
             'anybody_can_see' => $item->anybody_can_see,
             'only_team_can_see' => $item->only_team_can_see,
             'team_connection_can_see' => $item->team_connection_can_see,
@@ -330,12 +331,10 @@ class RepresentativeTransformer extends TransformerAbstract
     private function galleryInfo(RepresentativeInformation $item)
     {
         return [
-            'ver_document_frontside' => $item->ver_document_frontside ? env('IMAGE_SERVER') .'/'. $item->ver_document_frontside : '',
-            'ver_document_backside' => $item->ver_document_backside ? env('IMAGE_SERVER') .'/'. $item->ver_document_backside : '',
-            'per_avatar_url' => $item->per_avatar_url ? $item->per_avatar_url : '',
-            // 'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
-            // 'per_main_image_url' => $item->per_main_image_url ? env('IMAGE_SERVER') .'/'. $item->per_main_image_url : '',
-            'per_main_image_url' => $item->per_main_image_url ? $item->per_main_image_url : '',
+            'ver_document_frontside' => $item->ver_document_frontside,
+            'ver_document_backside' => $item->ver_document_backside,
+            'per_avatar_url' => $item->per_avatar_url,
+            'per_main_image_url' => $item->per_main_image_url,
         ];
     }
 }

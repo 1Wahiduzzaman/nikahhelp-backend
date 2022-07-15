@@ -61,7 +61,7 @@ Route::get('v1/religions', [ReligionController::class, 'index'])->name('religion
 Route::get('v1/utilities/countries', [CountryController::class, 'index'])->name('utilities.countries.lists');//ok
 Route::get('v1/utilities/cities', [CountryController::class, 'getCityList'])->name('utilities.city.lists');//ok
 Route::get('v1/utilities/religions', [ReligionController::class, 'index'])->name('utilities.religions.lists');//ok
-
+Route::post('v1/feed-back', [\App\Http\Controllers\FeedBackController::class, 'feedBack'])->name('help.feedback');
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'v1'], function () {
         //  Settings
@@ -252,7 +252,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('representative/verify/identity', [RepresentativeInformationController::class, 'verifyIdentity'])->name('representative.verify.identity');
         Route::POST('representative/image/upload', [RepresentativeInformationController::class, 'imageUpload'])->name('representative.image.upload');
         Route::POST('representative/final/submit', [RepresentativeInformationController::class, 'finalSubmit'])->name('representative.final.submit');
-
+        Route::delete('representative/remove-img/{imageType}', [RepresentativeInformationController::class, 'deleteImage'])->name('representative.image.delete');
         Route::patch('representative/personal-info-status', [RepresentativeInformationController::class, 'updateRepresentativeInfoStatus'])->name('update.candidate.info.status');
 
 
@@ -305,7 +305,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('site-visit-graph', [VisitController::class, 'visitGraph'])->name('user.site-visit-graph');
 
         //location requests
-        Route::post('search/location', [LocationController::class, 'postcode']);
+       // Route::post('search/location', [LocationController::class, 'postcode']);
 
     });
 /*

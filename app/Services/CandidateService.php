@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
+use App\Http\Requests\Candidate\CandidatePersonalContactInformationRequest;
 use App\Http\Resources\RecentJoinCandidateResource;
 use App\Http\Resources\SearchResource;
 use App\Models\Generic;
@@ -463,6 +464,10 @@ class CandidateService extends ApiBaseService
             }
             $input = $request->all(CandidateInformation::PERSONAL_GENERAL_INFO);
 
+            if ($candidate->isDirty()) {
+                $candidate->user->status = 2;
+                $candidate->user->save();
+            }
             // As BaseRepository update method has bug that's why we have to fallback to model default methods.
             $input = $candidate->fill($input)->toArray();
             $candidate->save($input);
@@ -475,10 +480,10 @@ class CandidateService extends ApiBaseService
 
     /**
      * Update resource
-     * @param Request $request
+     * @param CandidatePersonalContactInformationRequest $request
      * @return JsonResponse
      */
-    public function candidatePersonalContactInfoUpdate(Request $request): JsonResponse
+    public function candidatePersonalContactInfoUpdate(CandidatePersonalContactInformationRequest $request): JsonResponse
     {
         $userId = self::getUserId();
         try {
@@ -489,6 +494,7 @@ class CandidateService extends ApiBaseService
             if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
+
             $input = $request->all(CandidateInformation::PERSONAL_CONTACT_INFO);
 
             $input = $candidate->fill($input)->toArray();
@@ -525,6 +531,13 @@ class CandidateService extends ApiBaseService
                     'per_additional_info_doc'=>$request->file('per_additional_info_doc'),
                 ]);
                 $input['per_additional_info_doc'] = $candidateFile->per_additional_info_doc;
+            }
+
+
+
+            if ($candidate->isDirty()) {
+                $candidate->user->status = 2;
+                $candidate->user->save();
             }
 
             $candidate = $candidate->fill($input);
@@ -617,12 +630,14 @@ class CandidateService extends ApiBaseService
      */
     public function storePreferenceAbout(Request $request): JsonResponse
     {
+
         try {
             $userId = self::getUserId();
             $candidate = $this->candidateRepository->findOneByProperties(['user_id' => $userId]);
             if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
+
 
             $candidate->pre_partner_age_min = $request->input('pre_partner_age_min');
             $candidate->pre_partner_age_max = $request->input('pre_partner_age_max');
@@ -637,10 +652,27 @@ class CandidateService extends ApiBaseService
             $candidate->pre_occupation = $request->input('pre_occupation');
             $candidate->pre_preferred_divorcee = $request->input('pre_preferred_divorcee');
             $candidate->pre_preferred_divorcee_child = $request->input('pre_preferred_divorcee_child');
-            $candidate->pre_other_preference = $request->input('pre_other_preference');
-            $candidate->pre_description = $request->input('pre_description');
+
 
             DB::beginTransaction();
+            $description = (string) $request->input('pre_description');
+
+            if ($candidate->pre_description !== null &&
+                strcmp($candidate->pre_description, $description) !== 0) {
+                $candidate->user->status = 2;
+                $candidate->user->save();
+            }
+
+            $candidate->pre_description = $request->input('pre_description');
+
+            if ($candidate->pre_other_preference !== null &&
+                strcmp($candidate->pre_other_preference, (string)$request->input('pre_other_preference')) !== 0)
+            {
+                $candidate->user->status = 2;
+                $candidate->user->save();
+            }
+
+
             $candidate->save();
 
             if ($request->has('pre_has_country_allow_preference') && count($request->pre_partner_comes_from) > 0) {
@@ -798,14 +830,22 @@ class CandidateService extends ApiBaseService
                 'user_id' => $uid
             ]);
             if (!empty($candidate)) {
-                // Update family info
-                $candidate->fi_father_name = $request->get('father_name');
+
+                if ($candidate->isDirty()) {
+                    $candidate->user->status = 2;
+                    $candidate->user->save();
+                }
+
                 $candidate->fi_father_profession = $request->get('father_profession');
-                $candidate->fi_mother_name = $request->get('mother_name');
+//                $candidate->fi_mother_name = $request->get('mother_name');
                 $candidate->fi_mother_profession = $request->get('mother_profession');
+
                 $candidate->fi_siblings_desc = $request->get('siblings_desc');
+
                 $candidate->fi_country_of_origin = $request->get('country_of_origin');
+
                 $candidate->fi_family_info = $request->get('family_info');
+
                 $candidate->timestamps = false;
                 $candidate->save();
 
@@ -1165,7 +1205,6 @@ class CandidateService extends ApiBaseService
                 }
             }
 
-            /* edo Need to remove from image server  */
 
             return $this->sendSuccessResponse([], self::IMAGE_DELETED_SUCCESSFULLY);
 

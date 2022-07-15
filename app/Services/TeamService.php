@@ -663,7 +663,22 @@ class TeamService extends ApiBaseService
             //     $team->logo = isset($team->logo) ? env('IMAGE_SERVER') .'/'. $team->logo : '';
             //     //$team->logo = url('storage/' . $team->logo);
             // }
-            return $this->sendSuccessResponse($team, 'Successfully updated', [], HttpStatusCode::SUCCESS);
+            $teamInformation = [
+                'id' => $team->id,
+                'logo' => $team->logo,
+                'name' => $team->name,
+                'description' => $team->description,
+                'member_count' => $team->member_count,
+                'created_at' => $team->created_at,
+                'created_by' => $team->created_by,
+                'status' => $team->status,
+                'subscription_expire_at' => $team->subscription_expire_at,
+                'subscription_id' => $team->subscription_id,
+                'team_id' => $team->team_id,
+                'updated_at' => $team->updated_at,
+            ];
+
+            return $this->sendSuccessResponse($teamInformation, 'Successfully updated', [], HttpStatusCode::SUCCESS);
         } catch (\Illuminate\Database\QueryException $ex) {
             return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::BAD_REQUEST);
         }

@@ -26,6 +26,7 @@ class CandidatePersonalContactInformationRequest  extends APIRequest
     {
         return [
             'per_email' => 'nullable|max:255',
+            'mobile_country_code' => 'nullable|string',
             'mobile_number' => 'nullable|max:255',
             'per_current_residence_country' => 'nullable|max:255',
             'per_current_residence_city' => 'nullable|max:255',
@@ -33,7 +34,9 @@ class CandidatePersonalContactInformationRequest  extends APIRequest
             'per_permanent_city' => 'nullable|max:255',
             'per_county' => 'nullable|max:255',
             'per_permanent_post_code' => 'nullable|max:255',
-            'per_permanent_address' => 'nullable|max:255'
+            'per_permanent_address' => 'nullable|max:255',
+            'address_1' => 'nullable|string',
+            'address_2' => 'nullable|string',
         ];
     }
 
