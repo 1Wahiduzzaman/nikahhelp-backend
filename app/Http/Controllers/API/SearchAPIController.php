@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Requests\Search\CandidateSearch;
 use App\Http\Requests\Search\CreateSearchAPIRequest;
 use App\Http\Requests\Search\UpdateSearchAPIRequest;
 use App\Models\CandidateInformation;
@@ -22,7 +21,7 @@ class SearchAPIController extends AppBaseController
 {
     /** @var  SearchRepository */
     private $searchRepository;
-  /** @var  SearchService */
+    /** @var  SearchService */
     private $searchService;
 
     public function __construct(SearchRepository $searchRepository,SearchService $searchService)
@@ -32,10 +31,10 @@ class SearchAPIController extends AppBaseController
     }
 
     /**
-     * @param CreateSearchAPIRequest $request
+     * @param Request $request
      * @param User $user
      */
-    public function filter(CreateSearchAPIRequest $request)
+    public function filter(APICreateSearchAPIRequest $request)
     {
         return  $this->searchService->filter($request);
     }
@@ -57,4 +56,5 @@ class SearchAPIController extends AppBaseController
 
         return $this->sendResponse($searches->toArray(), 'Searches retrieved successfully');
     }
+
 }
