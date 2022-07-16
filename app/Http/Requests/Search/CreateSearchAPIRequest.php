@@ -26,11 +26,11 @@ class CreateSearchAPIRequest extends APIRequest
         return [
 //            "page" => 'numeric',
 //            "perpage" => 'numeric',
-            "min_age" => 'required|numeric|min:18',
-            "max_age" => 'required|numeric|max:80',
-            "gender" => 'required|numeric|min:1|max:2',
-            "country" => 'required|numeric',
-            "religion" => 'required|numeric',
+//            "min_age" => 'required|numeric|min:18',
+//            "max_age" => 'required|numeric|max:80',
+//            "gender" => 'required|boolean',
+//            "country" => 'string',
+//            "religion" => 'required|string',
         ];
     }
 }
