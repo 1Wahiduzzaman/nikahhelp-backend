@@ -4,8 +4,8 @@
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
-use App\Http\Requests\Search\CandidateSearch;
-use App\Http\Requests\Search\CreateSearchAPIRequest;
+use App\Models\CandidateImage;
+use App\Models\Generic;
 use App\Models\Team;
 use App\Models\TeamConnection;
 use App\Transformers\CandidateTransformer;
@@ -92,39 +92,28 @@ class SearchService extends ApiBaseService
 
     /**
      * Update resource
-     * @param CreateSearchAPIRequest $request
+     * @param Request $request
      * @return Response
      */
-    public function filter(CreateSearchAPIRequest $request)
+    public function filter($request)
     {
         try {
 
-            $members = $this->candidateRepository->getModel()->with(['user' => function($query) {
-                $query->where('status', '3');
-            }])->with('getReligion')
-                ->with('getCurrentResidenceCountry')
-                ->where('per_gender', (string)$request->input('gender'))
-                ->where('per_current_residence_country', (string)$request->input('country'))
-                ->where('per_religion_id', (string)$request->input('religion'))
-                ->get()
-                ->filter(function ($candidate) {
-                    return $candidate->dob != null;
-                })
-                ->filter(static function ($candidate) use ($request) {
-                    $min_age = (int)$request->input('min_age');
-                    $max_age = (int)$request->input('max_age');
+            $userInfo = [];
 
-                    $date_of_birth = new Carbon($candidate->dob);
-
-                    return $date_of_birth->diffInYears(now()) >= $min_age &&
-                        $date_of_birth->diffInYears(now()) <= $max_age;
-                });
-
-
-            if ($members->count() === 0) {
-                return $this->sendErrorResponse("No Candidates found", "no candidates", HttpStatusCode::NOT_FOUND);
+            /*Attempt log in */
+            try {
+                JWTAuth::parseToken()->authenticate();
+            }catch (\Exception $e){
             }
-            return $this->sendSuccessResponse($members, "Candidates fetched successfully");
+
+            $userInfo['shortList'] = [];
+            $userInfo['blockList'] = [];
+            $userInfo['teamList'] = [];
+            $connectFrom = [];
+            $connectTo = [];
+            $userInfo['connectList'] = [];
+            $activeTeam = '';
 
             $candidates = $this->candidateRepository->getModel();
 
@@ -308,7 +297,7 @@ class SearchService extends ApiBaseService
                     ],
                     [
                         'preference' => $this->candidateTransformer->transform($candidate)['preference']
-                    ]
+                    ],
                 );
             }
 
@@ -322,27 +311,6 @@ class SearchService extends ApiBaseService
         }
     }
 
-    public function searchCandidates(CandidateSearch $request)
-    {
-        try {
-            $searchedCandidates = $this->candidateRepository->getModel()->with(['user' => function($query) use ($request) {
-                $query->where('status', '3');
-            }])->where(function ($query) use ($request){
-                    $query->where('per_gender', $request->input('gender'));
-                })
-                ->get();
-
-            return $this->sendSuccessResponse($searchedCandidates, 'searched successfully');
-        } catch (Exception $exception)
-        {
-            $this->sendErrorResponse($exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
-        }
-
-
-
-
-    }
-
     /**
      * @param $queryData
      * @return array
@@ -350,10 +318,13 @@ class SearchService extends ApiBaseService
     protected function pagination($queryData)
     {
         $data = [
-            'total_items' => $queryData->count(),
+            'total_items' => $queryData->total(),
             'current_items' => $queryData->count(),
-            'first_item' => $queryData->first(),
-            'last_item' => $queryData->last(),
+            'first_item' => $queryData->firstItem(),
+            'last_item' => $queryData->lastItem(),
+            'current_page' => $queryData->currentPage(),
+            'last_page' => $queryData->lastPage(),
+            'has_more_pages' => $queryData->hasMorePages(),
         ];
         return $data;
     }
