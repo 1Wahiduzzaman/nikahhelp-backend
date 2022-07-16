@@ -285,7 +285,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/notifications', [App\Http\Controllers\API\NotificationAPIController::class, 'index'])->name('notifications.list');
 
         // Search Candidate Information
-        Route::post('/searches', [SearchAPIController::class, 'candidateSearch'])->name('searches.list');
+        Route::get('/searches', [SearchAPIController::class, 'filter'])->name('searches.list');
 
         // User Dashboard
         Route::get('user-dashboard', [UserDashboardController::class, 'dashboard'])->name('user.dashboard');

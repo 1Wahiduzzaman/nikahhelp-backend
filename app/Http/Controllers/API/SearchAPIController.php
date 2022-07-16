@@ -57,9 +57,4 @@ class SearchAPIController extends AppBaseController
 
         return $this->sendResponse($searches->toArray(), 'Searches retrieved successfully');
     }
-
-    public function candidateSearch(CandidateSearch $request)
-    {
-        return $this->searchService->searchCandidates($request);
-    }
 }
