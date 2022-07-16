@@ -97,7 +97,7 @@ class RepresentativeInformationController extends Controller
      */
     public function contactInformation(ContactInformationRequest $request)
     {
-        return $this->representativeService->storeEssentialInformation($request->all());
+        return $this->representativeService->storeEssentialInformation($request);
 
     }
 
@@ -229,5 +229,10 @@ class RepresentativeInformationController extends Controller
     public function representativeStatus() : JsonResponse
     {
         return $this->representativeService->representativeStatus();
+    }
+
+    public function deleteImage(int $imageType)
+    {
+        return $this->representativeService->removeImage($imageType);
     }
 }

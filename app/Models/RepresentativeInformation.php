@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ImageTrait;
 use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +18,8 @@ class RepresentativeInformation extends Model
     use SoftDeletes;
 
     use HasFactory;
+
+    use ImageTrait;
 
     public $table = 'representative_informations';
 
@@ -117,7 +120,9 @@ class RepresentativeInformation extends Model
         'only_team_can_see',
         'team_connection_can_see',
         'is_agree',
-        'data_input_status'
+        'data_input_status',
+        'address_1',
+        'address_2',
     ];
 
     /**
@@ -137,16 +142,6 @@ class RepresentativeInformation extends Model
     public static $rules = [
 
     ];
-
-    public function getPerMainImageUrlAttribute($value)
-    {
-        return $value ? env('IMAGE_SERVER').'/'.$value : '';
-    }
-
-    public function getPerAvatarUrlAttribute($value)
-    {
-        return $value ? env('IMAGE_SERVER').'/'.$value : '';
-    }
 
     /**
      * @return mixed
@@ -197,4 +192,23 @@ class RepresentativeInformation extends Model
 
     }
 
+    public function getPerAvatarUrlAttribute($value)
+    {
+        return $this->getImagePath($value, $this->user_id);
+    }
+
+    public function getPerMainImageUrlAttribute($value)
+    {
+        return $this->getImagePath($value, $this->user_id);
+    }
+
+    public function getVerDocumentFrontsideAttribute($value)
+    {
+        return $this->getImagePath($value, $this->user_id);
+    }
+
+    public function getVerDocumentBacksideAttribute($value)
+    {
+        return $this->getImagePath($value, $this->user_id);
+    }
 }

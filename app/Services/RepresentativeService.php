@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Helpers\Notificationhelpers;
+use App\Http\Requests\Representative\ContactInformationRequest;
 use App\Models\Occupation;
 use App\Models\RepresentativeInformation;
 use App\Models\CandidateImage;
@@ -149,23 +150,23 @@ class RepresentativeService extends ApiBaseService
     }
 
     /**
-     * @param $request
+     * @param ContactInformationRequest $request
      * @return JsonResponse
      */
-    public function storeEssentialInformation($request)
+    public function storeEssentialInformation(ContactInformationRequest $request)
     {
         try {
             $userId = self::getUserId();
-            $representativeInfomation = $this->representativeRepository->findOneByProperties([
+            $representativeInformation = $this->representativeRepository->findOneByProperties([
                 'user_id' => $userId
             ]);
-            if (!$representativeInfomation) {
+            if (!$representativeInformation) {
                 return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
             $request['user_id'] = $userId;
-            $representative = $representativeInfomation->update($request);
+            $representative = $representativeInformation->update($request->all());
             if ($representative) {
-                return $this->sendSuccessResponse($representativeInfomation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($representativeInformation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
@@ -300,6 +301,42 @@ class RepresentativeService extends ApiBaseService
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
+    }
+
+    public function removeImage(int $imageType)
+    {
+        $userId = self::getUserId();
+        try {
+
+                $uploaded = [];
+                $representative = $this->representativeRepository->findOneByProperties([
+                    'user_id' => $userId
+                ]);
+
+
+                if($imageType == 0){
+                    $representative->per_avatar_url = null ;
+                    $this->deleteImageGuzzle('per_avatar_url');
+                   $representative->save();
+                   $uploaded[] = 0;
+                }
+
+                if ($imageType === 1){
+                    $representative->per_main_image_url = null ;
+                    $this->deleteImageGuzzle('per_main_image_url');
+                    $representative->save();
+                    $uploaded[] = 1;
+                }
+
+                if (count($uploaded)) {
+                   return $this->sendSuccessResponse([], self::IMAGE_DELETED_SUCCESSFULLY);
+                }
+
+            throw new \Error('provide image type');
+
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }

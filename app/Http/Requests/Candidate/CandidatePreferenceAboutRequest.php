@@ -43,7 +43,7 @@ class CandidatePreferenceAboutRequest extends APIRequest
             'pre_partner_religions' => 'nullable|string',
             'pre_nationality' => 'nullable|array|min:1',
             'pre_nationality.*' =>
-            'nullable|numeric|distinct|exists:countries,id',
+            'nullable|numeric|distinct|',
             'pre_ethnicities' => 'nullable|string|max:255',
             'pre_study_level_id' => 'nullable|exists:study_level,id',
             'pre_employment_status' => 'sometimes',
