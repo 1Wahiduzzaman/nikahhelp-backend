@@ -198,7 +198,7 @@ class SearchService extends ApiBaseService
 
             /* FILTER - Employment Status  */
             if(isset($request->employment_status)){
-                $candidates = $candidates->where('pre_employment_status', $request->employment_status);
+                $candidates = $candidates->where('per_employment_status', $request->employment_status);
             }
 
             /* FILTER - Occupation */
@@ -423,6 +423,4 @@ class SearchService extends ApiBaseService
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
-
-
 }
