@@ -464,12 +464,15 @@ class CandidateService extends ApiBaseService
             }
             $input = $request->all(CandidateInformation::PERSONAL_GENERAL_INFO);
 
+
+            // As BaseRepository update method has bug that's why we have to fallback to model default methods.
+            $input = $candidate->fill($input)->toArray();
+
             if ($candidate->isDirty()) {
                 $candidate->user->status = 2;
                 $candidate->user->save();
             }
-            // As BaseRepository update method has bug that's why we have to fallback to model default methods.
-            $input = $candidate->fill($input)->toArray();
+
             $candidate->save($input);
             $personal_info = $this->candidateTransformer->transformPersonalGeneral($candidate);
             return $this->sendSuccessResponse($personal_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
@@ -498,6 +501,12 @@ class CandidateService extends ApiBaseService
             $input = $request->all(CandidateInformation::PERSONAL_CONTACT_INFO);
 
             $input = $candidate->fill($input)->toArray();
+
+            if ($candidate->isDirty()) {
+                $candidate->user->status = 2;
+                $candidate->user->save();
+            }
+
             $candidate->save($input);
             $personal_info = $this->candidateTransformer->transformPersonalContact($candidate);
             return $this->sendSuccessResponse($personal_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
@@ -535,12 +544,15 @@ class CandidateService extends ApiBaseService
 
 
 
+
+
+            $candidate = $candidate->fill($input);
+
             if ($candidate->isDirty()) {
                 $candidate->user->status = 2;
                 $candidate->user->save();
             }
 
-            $candidate = $candidate->fill($input);
             $candidate->save();
             $personal_info = $this->candidateTransformer->transformPersonalMoreAbout($candidate);
             return $this->sendSuccessResponse($personal_info, self::INFORMATION_UPDATED_SUCCESSFULLY);
@@ -672,6 +684,7 @@ class CandidateService extends ApiBaseService
                 $candidate->user->save();
             }
 
+            $candidate->pre_other_preference = $request->input('pre_other_preference');
 
             $candidate->save();
 
@@ -831,10 +844,7 @@ class CandidateService extends ApiBaseService
             ]);
             if (!empty($candidate)) {
 
-                if ($candidate->isDirty()) {
-                    $candidate->user->status = 2;
-                    $candidate->user->save();
-                }
+
 
                 $candidate->fi_father_profession = $request->get('father_profession');
 //                $candidate->fi_mother_name = $request->get('mother_name');
@@ -847,6 +857,12 @@ class CandidateService extends ApiBaseService
                 $candidate->fi_family_info = $request->get('family_info');
 
                 $candidate->timestamps = false;
+
+                if ($candidate->isDirty()) {
+                    $candidate->user->status = 2;
+                    $candidate->user->save();
+                }
+
                 $candidate->save();
 
                 return $this->sendSuccessResponse($candidate, 'Family Info updated successfully');
@@ -1048,6 +1064,12 @@ class CandidateService extends ApiBaseService
             if (isset($request['team_connection_can_see'])) {
                 $checkRepresentative->team_connection_can_see = $request['team_connection_can_see'];
             }
+
+            if ($checkRepresentative->isDirty()) {
+                $checkRepresentative->user->status = 2;
+                $checkRepresentative->user->save();
+            }
+            
             $checkRepresentative->save();
 
 
