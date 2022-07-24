@@ -245,8 +245,8 @@ class SearchService extends ApiBaseService
 
             $candidates = $candidates->with('getNationality','getReligion','candidateTeam','activeTeams','activeTeams.team_members')->paginate($parPage);
 
-            if(!count($candidates->items())){
-                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::SUCCESS);
+            if($candidates->total() < 1){
+                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND);
             }
 
             $candidatesResponse = [];
