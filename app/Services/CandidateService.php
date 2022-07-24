@@ -468,7 +468,7 @@ class CandidateService extends ApiBaseService
             // As BaseRepository update method has bug that's why we have to fallback to model default methods.
             $input = $candidate->fill($input)->toArray();
 
-            if ($candidate->isDirty()) {
+            if ($candidate->isDirty('per_health_condition')) {
                 $candidate->user->status = 2;
                 $candidate->user->save();
             }
@@ -502,7 +502,13 @@ class CandidateService extends ApiBaseService
 
             $input = $candidate->fill($input)->toArray();
 
-            if ($candidate->isDirty()) {
+            $info = collect(CandidateInformation::PERSONAL_CONTACT_INFO)->filter(function ($item) {
+                return $item !== 'per_permanent_country';
+            })->filter(function ($item) {
+                return $item !== 'mobile_number';
+            })->toArray();
+
+            if ($candidate->isDirty($info)) {
                 $candidate->user->status = 2;
                 $candidate->user->save();
             }
@@ -548,7 +554,7 @@ class CandidateService extends ApiBaseService
 
             $candidate = $candidate->fill($input);
 
-            if ($candidate->isDirty()) {
+            if ($candidate->isDirty(['per_about', 'per_additional_info_text'])) {
                 $candidate->user->status = 2;
                 $candidate->user->save();
             }
@@ -669,16 +675,14 @@ class CandidateService extends ApiBaseService
             DB::beginTransaction();
             $description = (string) $request->input('pre_description');
 
-            if ($candidate->pre_description !== null &&
-                strcmp($candidate->pre_description, $description) !== 0) {
+            if (strcmp($candidate->pre_description, $description) !== 0) {
                 $candidate->user->status = 2;
                 $candidate->user->save();
             }
 
             $candidate->pre_description = $request->input('pre_description');
 
-            if ($candidate->pre_other_preference !== null &&
-                strcmp($candidate->pre_other_preference, (string)$request->input('pre_other_preference')) !== 0)
+            if (strcmp($candidate->pre_other_preference, (string)$request->input('pre_other_preference')) !== 0)
             {
                 $candidate->user->status = 2;
                 $candidate->user->save();
@@ -858,7 +862,8 @@ class CandidateService extends ApiBaseService
 
                 $candidate->timestamps = false;
 
-                if ($candidate->isDirty()) {
+                if ($candidate->isDirty(['fi_father_profession', 'fi_mother_profession', 'fi_siblings_desc', 'fi_family_info']))
+                {
                     $candidate->user->status = 2;
                     $candidate->user->save();
                 }
@@ -1065,11 +1070,11 @@ class CandidateService extends ApiBaseService
                 $checkRepresentative->team_connection_can_see = $request['team_connection_can_see'];
             }
 
-            if ($checkRepresentative->isDirty()) {
+            if ($checkRepresentative->isDirty(['other_images', 'per_main_image_url', 'per_avatar_url'])) {
                 $checkRepresentative->user->status = 2;
                 $checkRepresentative->user->save();
             }
-            
+
             $checkRepresentative->save();
 
 
