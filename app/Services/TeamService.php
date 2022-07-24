@@ -242,7 +242,7 @@ class TeamService extends ApiBaseService
      */
     public function getTeamList(array $data): JsonResponse
     {
-        $user_id = Auth::id();
+        $user_id = self::getUserId();
         try {
             $team_list = $this->teamMemberRepository->findByProperties([
                 "user_id" => $user_id
