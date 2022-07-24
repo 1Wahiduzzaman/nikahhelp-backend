@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class TeamToTeamMessage extends Model
 {
     use HasFactory;
+
+    protected $table = 'team_to_team_messages';
+
     public function sender() {
         return $this->belongsTo(User::class, 'sender', 'id');
     }
