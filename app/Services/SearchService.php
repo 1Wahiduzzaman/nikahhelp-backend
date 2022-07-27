@@ -171,7 +171,7 @@ class SearchService extends ApiBaseService
 
             /* FILTER - Gender  */
             if (isset($request->country)) {
-                $candidates = $candidates->where('per_current_residence_country', $request->country);
+                $candidates = $candidates->where('per_permanent_country', $request->country);
             }
 
             /* FILTER - Religion  */
@@ -223,7 +223,7 @@ class SearchService extends ApiBaseService
 
             /* FILTER - Current Residence */
             if(isset($request->current_residence_country)){
-                $candidates = $candidates->where('per_current_residence_id', $request->country);
+                $candidates = $candidates->where('per_current_residence_country', $request->country);
             }
 
             /* FILTER - Currently Living With */
