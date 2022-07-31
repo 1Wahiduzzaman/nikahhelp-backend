@@ -1081,20 +1081,20 @@ class MessageService extends ApiBaseService
      * For One to One Support Chat
      */
     public function storeSupportChatData($request_data) {
-        try{                        
+        try{
             $sender = $request_data->sender;
             $receiver = $request_data->receiver;
-    
-            $user_id = Auth::id();
+
+            $user_id = self::getUserId();
             $is_friend = SupportChat::where('sender', $user_id)
             ->orWhere('receiver', $user_id)
-            ->first();            
+            ->first();
             if(!$is_friend) {
-                $cm = new SupportChat();                
+                $cm = new SupportChat();
                 $cm->sender = $sender;
                 $cm->receiver = $receiver;
                 if($cm->save()) {
-                    $md = new SupportMessage();                   
+                    $md = new SupportMessage();
                     $md->chat_id = $cm->id;
                     $md->sender = $request_data->sender;
                     $md->receiver = $request_data->receiver;
