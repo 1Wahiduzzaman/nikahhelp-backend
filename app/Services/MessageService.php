@@ -787,32 +787,33 @@ class MessageService extends ApiBaseService
             }
 
             //get team members
-            // $team_members = TeamMember::select('user_id')             
+            // $team_members = TeamMember::select('user_id')
             //     ->where('team_id', $request_data->team_id)
             //     ->where('status', 1)
-            //     ->get();           
-               
+            //     ->get();
+
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
-        }       
-    }    
+        }
+    }
 
     /**
      * Recent | Single and Group chat history with last messgae
-     */   
-    public function chatHistory(array $data): JsonResponse {      
-        $user_id = Auth::id();                
+     */
+    public function chatHistory(array $data): JsonResponse {
+        $user_id = self::getUserId();
         try {
             $active_team = TeamMember::where('user_id', $user_id)
             ->where('status', 1)
             ->first();
+
             $active_team_id = isset($active_team) ? $active_team->team_id : 0;
             $this->team_id = $active_team_id;
 
-            $chats = Chat::select('*')    
-            ->with(['last_message'=> function($query){                    
+            $chats = Chat::select('*')
+            ->with(['last_message'=> function($query){
                     $query->where('team_id', $this->team_id);
-            }])                  
+            }])
             ->with(['sender_data' => function($q) {
                 $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
                 $q->with(
