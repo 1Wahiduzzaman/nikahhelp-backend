@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FormTypeRequest;
+use App\Models\Admin;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use JWTAuth;
 use App\Services\UserService;
@@ -161,7 +163,7 @@ class UserController extends Controller
     }
 
     public function getSuportUserId() {
-        $data = User::where('account_type', 11)->first();
+        $data = Role::with('admin')->get();
         return $this->sendSuccessResponse($data, 'Support Admin Loaded Successfully');
     }
 
