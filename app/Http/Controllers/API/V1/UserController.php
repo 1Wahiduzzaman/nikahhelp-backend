@@ -140,23 +140,24 @@ class UserController extends Controller
         dd("Email is Sent.");
     }
 
-    //Raz 
-    public function postDocUpload(Request $request) {    
-        $is_exist = CandidateInformation::where('user_id', Auth::id())->first();
+    //Raz
+    public function postDocUpload(Request $request) {
+        $is_exist = CandidateInformation::where('user_id', JWTAuth::parseToken()->authenticate()['id'])->first();
         if($is_exist) {
-            $res = CandidateInformation::where('user_id', Auth::id())->update(['is_uplaoded_doc'=>$request->is_uplaoded_doc]);    
-            return $this->sendSuccessResponse([], 'Successfully Updated');     
+            $res = CandidateInformation::where('user_id', JWTAuth::parseToken()->authenticate()['id'])->update(['is_uplaoded_doc'=>$request->is_uplaoded_doc]);
+            return $this->sendSuccessResponse([], 'Successfully Updated');
         } else {
             return $this->sendErrorResponse('Candidate not found');
-        }      
+        }
     }
-    public function postDocUploadRep(Request $request) {    
-        $res = RepresentativeInformation::where('user_id', Auth::id())->update(['is_uplaoded_doc'=>$request->is_uplaoded_doc]);    
+
+    public function postDocUploadRep(Request $request) {
+        $res = RepresentativeInformation::where('user_id', JWTAuth::parseToken()->authenticate()['id'])->update(['is_uplaoded_doc'=>$request->is_uplaoded_doc]);
         if($res) {
             return $this->sendSuccessResponse([], 'Successfully Updated');
         }  else {
             return $this->sendErrorResponse('Rep not found');
-        }       
+        }
     }
 
     public function getSuportUserId() {
