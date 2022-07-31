@@ -163,7 +163,7 @@ class UserController extends Controller
     }
 
     public function getSuportUserId() {
-        $data = Role::with('admin')->get();
+        $data = Role::with('admins')->get();
         return $this->sendSuccessResponse($data, 'Support Admin Loaded Successfully');
     }
 
