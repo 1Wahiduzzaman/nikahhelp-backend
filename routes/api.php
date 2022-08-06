@@ -147,10 +147,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         //Support Chat By Raz
         Route::POST('support-send-message', [MessageController::class, 'sendMessageToSupport'])->name('support.support-send-message');
-        Route::POST('individual-support-user-chat-history', [MessageController::class, 'individualSupportChatHistory'])->name('support.individual-support-user-chat-history');
-        Route::GET('support-chat-list', [MessageController::class, 'supportChatHistory'])->name('support.support-chat-list');
-        Route::GET('support-admin', [UserController::class, 'getSuportUserId'])->name('support.support-admin');
-        //End Support Chat
+
 
         // Teams API
         Route::DELETE('member-invitation-delete', [MembersInvitationController::class, 'destroy'])->name('team.member-invitation-delete');

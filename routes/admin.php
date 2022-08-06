@@ -6,6 +6,8 @@ use App\Http\Controllers\API\V1\TeamController;
 use App\Http\Controllers\Auth\AdminController;
 use App\Http\Middleware\CorsHandler;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\V1\MessageController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +24,10 @@ Route::POST('v1/admin/login', [AdminController::class, 'login']);
 
 Route::group(['prefix' => 'v1/admin','middleware'=>'admin'], function () {
 
+    Route::POST('support-send-message', [MessageController::class, 'sendMessageToSupport'])->name('support.support-send-message');
+    Route::POST('individual-support-user-chat-history', [MessageController::class, 'individualSupportChatHistory'])->name('support.individual-support-user-chat-history');
+    Route::GET('support-chat-list', [MessageController::class, 'supportChatHistory'])->name('support.support-chat-list');
+    //End Support Chat
     // User report
     Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('count-can-rep', [AdminDashboardController::class, 'count_can_rep'])->name('user.count-can-rep');
