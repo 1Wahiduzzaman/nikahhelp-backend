@@ -78,7 +78,7 @@ class MemberInvitationService extends ApiBaseService
                 $tempinvitation["link"] = $invitation["invitation_link"];
                 $tempinvitation["user_type"] = $invitation["add_as_a"];
                 $tempinvitation["relationship"] = $invitation["relationship"];
-                $res = $this->memberInvitationRepository->save($tempinvitation);             
+                $res = $this->memberInvitationRepository->save($tempinvitation);
 
                 // For clarity sending always string team_id column of team table as team_id to frontend
                 $tempinvitation["team_id"] = $team_id;
@@ -94,12 +94,12 @@ class MemberInvitationService extends ApiBaseService
 
     public function edit($data)
     {
-        try{            
+        try{
             TeamMemberInvitation::where('id', $data['invitation_id'])->update(['email'=> $data['email']]);
             return $this->sendSuccessResponse([], 'Information Updated Successfully!');
         } catch(Exception $exception){
             return $this->sendErrorResponse($exception->getMessage());
-        }        
+        }
     }
 
     /**
@@ -144,7 +144,7 @@ class MemberInvitationService extends ApiBaseService
             }
 
             // Get user id
-            $user_id = Auth::id();
+            $user_id = $this->getUserId();
 
             // Check if already a member
             $team_member = $this->teamMemberRepository->findOneByProperties(
@@ -174,9 +174,9 @@ class MemberInvitationService extends ApiBaseService
                 "user_type" => 'Candidate',
             ]);
 
-            if($is_candidate && $invitation->user_type=='Candidate'){
+            if(($is_candidate && $invitation->user_type == 'Candidate')){
                 return $this->sendErrorResponse('You can not join as a Candidate in multiple teams.', [], HttpStatusCode::BAD_REQUEST);
-            }            
+            }
 
             // If everything alright add in team members
             $new_team_member = array();
@@ -209,7 +209,7 @@ class MemberInvitationService extends ApiBaseService
             return $this->sendSuccessResponse(array(), 'Information inserted Successfully!');
         // } else {
         //     return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST);
-        // }        
+        // }
     }
 
     public function delete($request)
@@ -219,7 +219,7 @@ class MemberInvitationService extends ApiBaseService
             [
                 "id" => $request->id
             ]
-        );        
+        );
         $this->memberInvitationRepository->delete($row);
         return $this->sendSuccessResponse(array(), 'Invitation Request Deleted Successfully!');
     }
