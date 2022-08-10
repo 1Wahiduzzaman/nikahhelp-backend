@@ -24,32 +24,32 @@ class PackageSeeder extends Seeder
             ]
         );
 
-        Package::create(            
-            [
-                'title' => '3 Months',
-                'description' => null,
-                'price' => 30,
-                'discount' => 6,
-                'promo_code' => null,
-            ]
-        );
-        Package::create(
-            [
-                'title' => '6 Months',
-                'description' => null,
-                'price' => 60,
-                'discount' => 12,
-                'promo_code' => null,
-            ]
-        );
-        Package::create(            
-            [
-                'title' => '1 Year',
-                'description' => null,
-                'price' => 120,
-                'discount' => 24,
-                'promo_code' => null,
-            ]
-        );
+        // Package::create(
+        //     [
+        //         'title' => '3 Months',
+        //         'description' => null,
+        //         'price' => 30,
+        //         'discount' => 6,
+        //         'promo_code' => null,
+        //     ]
+        // );
+        // Package::create(
+        //     [
+        //         'title' => '6 Months',
+        //         'description' => null,
+        //         'price' => 60,
+        //         'discount' => 12,
+        //         'promo_code' => null,
+        //     ]
+        // );
+        // Package::create(
+        //     [
+        //         'title' => '1 Year',
+        //         'description' => null,
+        //         'price' => 120,
+        //         'discount' => 24,
+        //         'promo_code' => null,
+        //     ]
+        // );
     }
 }
