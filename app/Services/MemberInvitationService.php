@@ -174,7 +174,7 @@ class MemberInvitationService extends ApiBaseService
                 "user_type" => 'Candidate',
             ]);
 
-            if(($is_candidate && $invitation->user_type == 'Candidate')){
+            if($is_candidate->count()){
                 return $this->sendErrorResponse('You can not join as a Candidate in multiple teams.', [], HttpStatusCode::BAD_REQUEST);
             }
 
