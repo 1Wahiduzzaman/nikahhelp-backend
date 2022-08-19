@@ -5,6 +5,8 @@ namespace App\Services;
 
 
 use App\Enums\HttpStatusCode;
+use App\Http\Requests\TicketSubmissionRequest;
+use App\Models\TicketSubmission;
 use App\Models\User;
 use App\Models\ProfileLog;
 use App\Models\VerifyUser;
@@ -690,4 +692,34 @@ class UserService extends ApiBaseService
          return $this->sendSuccessResponse(['accepted' => $tokenExistInDB], 'Token accepted');
     }
 
+
+    public function ticketSubmission(TicketSubmissionRequest $request)
+    {
+
+        $user_id = $this->getUserId();
+        //send it to chobi
+        //
+
+        try {
+            $screenshot_path = $this->uploadImageThrowGuzzle([
+                'screenshot' => $request->file('screenshot') ]);
+
+            $ticket = new TicketSubmission([
+                'issue_type' => $request->issue_type,
+                'issue' => $request->issue,
+                'user_id' => $user_id,
+                'user' => $request->user,
+                'screen_shot_path' => $screenshot_path
+            ]);
+
+            $ticket->save();
+            return $this->sendSuccessResponse($ticket, 'successfully submittedTicket');
+
+        } catch (Exception $exception) {
+           return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+        }
+
+
+
+    }
 }
