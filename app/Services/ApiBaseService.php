@@ -112,6 +112,9 @@ class ApiBaseService implements ApiBaseServiceInterface
     {
         $userId = self::getUserId();
 
+        $folderType = array_key_exists('screenshot', $images) ? 'candidate_support/screenshot_'.$userId. '/':
+            'candidate/candidate_'.$userId.'/';
+
         $output = [];
         $i = 0;
         foreach ($images as $key=>$image){
@@ -127,9 +130,10 @@ class ApiBaseService implements ApiBaseServiceInterface
                 ],
                 [
                     'name'     => 'image['.$i.'][path]',
-                    'contents' => 'candidate/candidate_'.$userId.'/',
+                    'contents' => $folderType,
                 ],
             ];
+
             $output = array_merge($output,$data[$i]);
 
             $i++;
