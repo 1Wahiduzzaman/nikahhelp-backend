@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TicketSubmissionRequest extends FormRequest
+class TicketSubmissionRequest extends APIRequest
 {
     /**
      * Determine if the user is authorized to make this request.
