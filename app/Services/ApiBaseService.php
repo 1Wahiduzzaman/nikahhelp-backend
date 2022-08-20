@@ -58,7 +58,7 @@ class ApiBaseService implements ApiBaseServiceInterface
      * @param $message
      * @param array $errorMessages
      * @param int $status_code
-     * @return Response
+     * @return JsonResponse
      */
     public function sendErrorResponse($message, $errorMessages = [], $status_code = HttpStatusCode::VALIDATION_ERROR)
     {
