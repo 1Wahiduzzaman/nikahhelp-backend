@@ -718,8 +718,5 @@ class UserService extends ApiBaseService
         } catch (Exception $exception) {
            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
         }
-
-
-
     }
 }
