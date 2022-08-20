@@ -23,7 +23,7 @@ use App\Http\Controllers\API\UserDashboardController;
 use App\Http\Controllers\API\AdminDashboardController;
 use App\Http\Controllers\API\V1\AllNotificationController;
 use App\Http\Controllers\HomeController;
-
+use App\Http\Controllers\API\V1\SubmitTicketController;
 use App\Http\Controllers\API\V1\ChatInfoController;
 use App\Http\Controllers\API\V1\MatchMakerAPIController;
 use App\Http\Controllers\API\V1\MessageController;
@@ -146,7 +146,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
 
         //Support Chat By Raz
-        Route::POST('support-send-message', [MessageController::class, 'sendMessageToSupport'])->name('support.support-send-message');
 
 
         // Teams API
@@ -304,7 +303,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         //location requests
        // Route::post('search/location', [LocationController::class, 'postcode']);
 
-        Route::post('ticket-submission', [\App\Http\Controllers\API\V1\SubmitTicketController::class]);
+        Route::post('ticket-submission', [SubmitTicketController::class, 'submitTicket']);
     });
 /*
     Route::group(['prefix' => 'v1/admin'], function () {
