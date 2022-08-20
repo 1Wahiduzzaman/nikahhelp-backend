@@ -21,7 +21,6 @@ class SubmitTicketController extends Controller
      * Handle the incoming request.
      *
      * @param  TicketSubmissionRequest  $request
-     * @return JsonResponse
      */
     public function submitTicket(TicketSubmissionRequest $request)
     {

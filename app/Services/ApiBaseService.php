@@ -28,7 +28,7 @@ class ApiBaseService implements ApiBaseServiceInterface
      * @param array $pagination
      * @param int $http_status
      * @param int $status_code
-     * @return JsonResponse
+     *
      */
     public function sendSuccessResponse(
         $result,
@@ -58,7 +58,7 @@ class ApiBaseService implements ApiBaseServiceInterface
      * @param $message
      * @param array $errorMessages
      * @param int $status_code
-     * @return JsonResponse
+     *
      */
     public function sendErrorResponse($message, $errorMessages = [], $status_code = HttpStatusCode::VALIDATION_ERROR)
     {
