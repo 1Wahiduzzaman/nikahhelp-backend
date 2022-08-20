@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\ApiCustomStatusCode;
 use App\Enums\HttpStatusCode;
 use http\Env\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use App\Contracts\ApiBaseServiceInterface;
 use Illuminate\Support\Facades\Http;
