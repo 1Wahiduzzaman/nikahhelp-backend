@@ -28,7 +28,7 @@ class ApiBaseService implements ApiBaseServiceInterface
      * @param array $pagination
      * @param int $http_status
      * @param int $status_code
-     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function sendSuccessResponse(
         $result,
