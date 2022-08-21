@@ -723,8 +723,13 @@ class UserService extends ApiBaseService
         $user_id = $this->getUserId();
 
         try {
-            $screenshot_path = $this->uploadImageThrowGuzzle([
-                'screenshot' => $request->file('screenshot') ]);
+            if ($request->hasFile('screenshot')) {
+                $screenshot_path = $this->uploadImageThrowGuzzle([
+                    'screen_shot' => $request->file('screen_shot') ]);
+            } else {
+                throw error_log('no file');
+            }
+
 
            $issueTicket =  TicketSubmission::where('user_id', $user_id);
 
