@@ -16,11 +16,11 @@ class CreateSubmitTicket extends Migration
         Schema::create('submit_ticket', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id');
-            $table->json('user');
-            $table->string('issue_type');
-            $table->string('issue');
-            $table->bigInteger('screen_shot_id');
-            $table->string('screen_shot_path');
+            $table->json('user')->nullable();
+            $table->string('issue_type')->nullable();
+            $table->string('issue')->nullable();
+            $table->bigInteger('screen_shot_id')->nullable();
+            $table->string('screen_shot_path')->nullable();
             $table->timestamps();
         });
     }
