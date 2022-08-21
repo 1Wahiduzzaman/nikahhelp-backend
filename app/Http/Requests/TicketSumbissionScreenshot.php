@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TicketSubmissionRequest extends APIRequest
+class TicketSumbissionScreenshot extends APIRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,7 @@ class TicketSubmissionRequest extends APIRequest
     public function rules()
     {
         return [
-            'issue_type' => 'required|string',
-            'issue' => 'required|string',
-            'user' => 'json|required'
+            'screen_shot' => 'sometimes|image|mimes:jpeg,png,jpg,webp,avf|max:2048'
         ];
     }
 }

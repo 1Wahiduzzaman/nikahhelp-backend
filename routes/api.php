@@ -304,6 +304,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
        // Route::post('search/location', [LocationController::class, 'postcode']);
 
         Route::post('/ticket-submission', [SubmitTicketController::class, 'submitTicket']);
+        Route::post('/issue-screen-shot', [SubmitTicketController::class, 'screenShot']);
     });
 /*
     Route::group(['prefix' => 'v1/admin'], function () {

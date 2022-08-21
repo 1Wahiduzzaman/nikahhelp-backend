@@ -701,15 +701,13 @@ class UserService extends ApiBaseService
         //
 
         try {
-            $screenshot_path = $this->uploadImageThrowGuzzle([
-                'screenshot' => $request->file('screenshot') ]);
+
 
             $ticket = new TicketSubmission([
                 'issue_type' => $request->issue_type,
                 'issue' => $request->issue,
                 'user_id' => $user_id,
                 'user' => $request->user,
-                'screen_shot_path' => $screenshot_path
             ]);
 
             $ticket->save();
@@ -717,6 +715,26 @@ class UserService extends ApiBaseService
 
         } catch (Exception $exception) {
            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+        }
+    }
+
+    public function issueScreenShot(\App\Http\Requests\TicketSumbissionScreenshot $request)
+    {
+        $user_id = $this->getUserId();
+
+        try {
+            $screenshot_path = $this->uploadImageThrowGuzzle([
+                'screenshot' => $request->file('screenshot') ]);
+
+           $issueTicket =  TicketSubmission::where('user_id', $user_id);
+
+           $issueTicket->screen_shot_path = $screenshot_path;
+
+           $issueTicket->save();
+
+           return $this->sendSuccessResponse($issueTicket, 'screenshot updated');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage(), 'failed');
         }
     }
 }
