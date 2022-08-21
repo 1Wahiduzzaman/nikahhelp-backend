@@ -732,7 +732,7 @@ class UserService extends ApiBaseService
 
            $issueTicket->save();
 
-           return $this->sendSuccessResponse($issueTicket, 'screenshot updated');
+           return $this->sendSuccessResponse(['not success'], 'screenshot updated');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), 'failed');
         }
