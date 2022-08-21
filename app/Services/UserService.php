@@ -723,7 +723,7 @@ class UserService extends ApiBaseService
         $user_id = $this->getUserId();
 
         try {
-            if ($request->hasFile('screenshot')) {
+            if ($request->hasFile('screen_shot')) {
                 $screenshot_path = $this->uploadImageThrowGuzzle([
                     'screen_shot' => $request->file('screen_shot') ]);
             } else {
