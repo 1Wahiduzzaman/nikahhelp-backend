@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AdminController;
 use App\Http\Middleware\CorsHandler;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\MessageController;
+use App\Http\Controllers\API\V1\UserController;
 
 
 /*
@@ -27,6 +28,7 @@ Route::group(['prefix' => 'v1/admin','middleware'=>'admin'], function () {
     Route::POST('support-send-message', [MessageController::class, 'sendMessageToSupport'])->name('support.support-send-message');
     Route::POST('individual-support-user-chat-history', [MessageController::class, 'individualSupportChatHistory'])->name('support.individual-support-user-chat-history');
     Route::GET('support-chat-list', [MessageController::class, 'supportChatHistory'])->name('support.support-chat-list');
+    Route::GET('support-admin', [UserController::class, 'getSuportUserId'])->name('support.support-admin');
     //End Support Chat
     // User report
     Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
@@ -53,7 +55,10 @@ Route::group(['prefix' => 'v1/admin','middleware'=>'admin'], function () {
     Route::GET('connected-team-list/{id}', [TeamController::class, 'adminConnectedTeamList'])->name('team.connected-list'); // param team pk
     Route::DELETE('team-del', [TeamController::class, 'adminTeamDelete'])->name('team.team-del'); // param team pk
 
+    Route::get('get-all-tickets', [\App\Http\Controllers\API\SupportTicketController::class, 'getALlTicket'])->name('all-ticket');
+    Route::get('getTickets/{id}', [App\Http\Controllers\API\SupportTicketController::class, 'getUserTickets'])->name('userTickets');
     // Send Global Notification
+
     Route::GET('all-user', [AllNotificationController::class, 'getAllUsers'])->name('all-notification.all-user');
     Route::POST('send-notification', [AllNotificationController::class, 'sendGlobalNotification'])->name('all-notification.send-notification');
 });

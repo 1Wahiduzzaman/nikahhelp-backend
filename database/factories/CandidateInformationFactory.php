@@ -99,7 +99,7 @@ class CandidateInformationFactory extends Factory
             "anybody_can_see" => 1,
             "only_team_can_see" => 1,
             "team_connection_can_see" => 0,
-            "ver_country_id" => 1,
+//            "ver_country_id" => 1,
             "ver_city_id" => 2,
             "ver_document_type" => "Nation ID",
             "ver_image_front" => $this->faker->randomElement([

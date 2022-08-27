@@ -12,9 +12,11 @@ use App\Models\ProfileLog;
 use App\Models\VerifyUser;
 use App\Mail\VerifyMail as VerifyEmail;
 use App\Repositories\RepresentativeInformationRepository;
+use App\Repositories\TicketRepository;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\JsonResponse;
 use App\Traits\CrudTrait;
@@ -74,6 +76,11 @@ class UserService extends ApiBaseService
     protected $profileLogRepository;
 
 
+    /**
+     * @var TicketRepository
+     */
+    protected $ticketRepository;
+
     protected $domain;
 
     /**
@@ -94,6 +101,7 @@ class UserService extends ApiBaseService
         CandidateTransformer $candidateTransformer,
         CandidateRepository $candidateRepository,
         ProfileLogRepository $profileLogRepository,
+        TicketRepository $ticketRepository,
         Domain $domain
     )
     {
@@ -103,6 +111,7 @@ class UserService extends ApiBaseService
         $this->candidateTransformer = $candidateTransformer;
         $this->candidateRepository = $candidateRepository;
         $this->profileLogRepository = $profileLogRepository;
+        $this->ticketRepository = $ticketRepository;
         $this->domain = $domain;
     }
 
@@ -727,11 +736,11 @@ class UserService extends ApiBaseService
                 $screenshot_path = $this->uploadImageThrowGuzzle([
                     'screen_shot' => $request->file('screen_shot') ]);
             } else {
-                throw error_log('no file');
+                throw new Exception('no file');
             }
 
 
-           $issueTicket =  TicketSubmission::where('user_id', $user_id);
+           $issueTicket =  TicketSubmission::where('user_id', $user_id)->first();
 
            $issueTicket->screen_shot_path = $screenshot_path;
 
@@ -740,6 +749,31 @@ class UserService extends ApiBaseService
            return $this->sendSuccessResponse(['not success'], 'screenshot updated');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), 'failed');
+        }
+    }
+
+    public function allTickets(Request $request)
+    {
+        $user_id = $this->getUserId();
+        try {
+            $tickets = $this->candidateRepository->model()->with(['TicketSubmission'])->get();
+            return $this->sendSuccessResponse($tickets, 'All tickets');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse('error', $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+        }
+    }
+
+    public function userTickets(Request $request, int $id)
+    {
+
+        try {
+            $userTickets = $this->ticketRepository->findByProperties([
+                'user_id' => $id
+            ]);
+
+            $this->sendSuccessResponse(userTickets, 'successful');
+        } catch (Exception $exception) {
+            $this->sendErrorResponse('problem with server');
         }
     }
 }

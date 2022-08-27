@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
 //            CandidateSeeder::class,
             PackageSeeder::class,
+            TicketSeeder::class
         ]);
     }
 }

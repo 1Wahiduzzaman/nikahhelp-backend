@@ -18,7 +18,7 @@ class RoleSeeder extends Seeder
          // Admin Role
         Role::create(['name' => 'Superadmin', 'slug' => 'superadmin', 'description' => 'Superadmin description']);
         Role::create(['name' => 'admin', 'slug' => 'admin', 'description' => 'admin provider']);
-        Role::create(['name' => 'support', 'slug' => 'Support', 'description' => 'support provider']);
+        Role::create(['name' => 'support', 'slug' => 'support', 'description' => 'support provider']);
         Role::create(['name' => 'user', 'slug' => 'user', 'description' => 'user provider']);
 
         // Others Role
@@ -40,6 +40,10 @@ class RoleSeeder extends Seeder
                 $roleAdmin->givePermissionTo($permission);
             }
             if($permission->for == 'team'){
+                $roleSupport->givePermissionTo($permission);
+            }
+
+            if ($permission->for == 'support') {
                 $roleSupport->givePermissionTo($permission);
             }
 

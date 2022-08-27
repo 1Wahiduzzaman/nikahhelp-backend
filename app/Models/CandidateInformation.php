@@ -585,4 +585,9 @@ class CandidateInformation extends Model
     {
         return $this->getImagePath($value, $this->user_id);
     }
+
+    public function ticketSubmission()
+    {
+        return $this->hasOne(TicketSubmission::class, 'user_id', 'id');
+    }
 }

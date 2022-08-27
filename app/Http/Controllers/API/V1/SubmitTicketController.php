@@ -32,4 +32,9 @@ class SubmitTicketController extends Controller
     {
         return $this->matrimonyUsers->issueScreenShot($request);
     }
+
+    public function getAllTicket(Request $request)
+    {
+        return $this->matrimonyUsers->allTickets($request);
+    }
 }

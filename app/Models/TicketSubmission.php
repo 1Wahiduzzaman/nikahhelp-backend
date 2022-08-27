@@ -19,4 +19,9 @@ class TicketSubmission extends Model
         'screen_shot_path',
         'screen_shot_id'
     ];
+
+    public function user()
+    {
+        $this->belongsTo(User::class, 'id', 'user_id');
+    }
 }
