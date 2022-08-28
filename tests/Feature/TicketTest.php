@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Mockery\Mock;
 use Tests\TestCase;
 
 class TicketTest extends TestCase
@@ -51,11 +52,22 @@ class TicketTest extends TestCase
        $response =  $this->withToken($this->adminToken)->get('/api/v1/admin/get-all-tickets');
 
 
-       $singleResponse = $response->json('data')[0];
+       $singleResponse = $response->json();
 
-     $secondResponse =  $this->withToken($this->adminToken)->get('/api/v1/admin/getTickets/' . $singleResponse['id']);
+     $secondResponse =  $this->withToken($this->adminToken)->get('/api/v1/admin/getTickets/' . $singleResponse['data'][0]['id']);
 
-   dd($secondResponse);
 
+        $secondResponse->assertJsonStructure(['data']);
+        $secondResponse->assertJson($secondResponse->json());
+    }
+
+    public function  test_send_resolve_Ticket()
+    {
+        $response = $this->withToken($this->adminToken)->withHeaders([
+            'message' => 'hello resolved'
+        ])->post('/api/v1/admin/submitTicketRequests');
+
+//        $response->assertStatus(200);
+        $response->assertJsonValidationErrors('new errors');
     }
 }

@@ -39,4 +39,13 @@ class SupportTicketController extends AppBaseController
         }
         return $this->matrimonyUsers->singleTicket($id);
     }
+
+    public function saveRequest(Request $request)
+    {
+        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+            return $this->sendUnauthorizedResponse();
+        }
+
+        return $this->matrimonyUsers->saveRequest($request);
+    }
 }

@@ -754,9 +754,10 @@ class UserService extends ApiBaseService
 
     public function allTickets(Request $request)
     {
-        $user_id = $this->getUserId();
         try {
-            $tickets = $this->candidateRepository->model()->with(['TicketSubmission'])->get();
+            $tickets = $this->userRepository->getModel()->has('ticketSubmission')->get();
+
+
             return $this->sendSuccessResponse($tickets, 'All tickets');
         } catch (Exception $exception) {
             return $this->sendErrorResponse('error', $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
@@ -771,9 +772,37 @@ class UserService extends ApiBaseService
                 'user_id' => $id
             ]);
 
-            $this->sendSuccessResponse(userTickets, 'successful');
+            return $this->sendSuccessResponse($userTickets, 'successful');
         } catch (Exception $exception) {
-            $this->sendErrorResponse('problem with server');
+           return $this->sendErrorResponse('problem with server');
+        }
+    }
+
+    public function saveRequest(Request $request)
+    {
+        try {
+           $validRequest =  Validator::make($request->all(), [
+                'message' => $request->input('message'),
+                'user_id' => $request->input('id'),
+                'ticket_id' => $request->input('ticket_id')
+            ]);
+
+           if ($validRequest->fails()) {
+               throw new  Exception($validRequest->errors());
+           }
+
+          $user =  $this->userRepository->getModel()->find($request->input('id'));
+
+           $user->processTicket->create([
+                'message' => $request->input('message'),
+                'user_id' => $request->input('id'),
+                'ticket_id' => $request->input('ticket_id')
+            ]);
+
+           $userWithTicket = $user->with(['processTicket'])->get();
+           return $this->sendSuccessResponse($userWithTicket, 'ticket processed', HttpStatusCode::SUCCESS);
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
         }
     }
 }

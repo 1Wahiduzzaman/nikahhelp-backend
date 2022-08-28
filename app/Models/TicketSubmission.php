@@ -22,6 +22,11 @@ class TicketSubmission extends Model
 
     public function user()
     {
-        $this->belongsTo(User::class, 'id', 'user_id');
+       return $this->belongsTo(User::class, 'id', 'user_id');
+    }
+
+    public function processTicket()
+    {
+        return $this->hasOne(ProcessTicket::class, 'ticket_id', 'id');
     }
 }

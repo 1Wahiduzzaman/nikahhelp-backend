@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\CandidateInformation;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CandidateInformationFactory extends Factory
@@ -144,6 +145,7 @@ class CandidateInformationFactory extends Factory
             ]),
             "is_publish" => 0,
             "data_input_status" => 6,
+            'user_id' => User::factory()->create()->id
         ];
     }
 

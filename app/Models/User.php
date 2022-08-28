@@ -146,4 +146,14 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->hasOne(BlockList::class, 'receiver', 'id')->orderBy('created_at', 'desc');
     }
+
+    public function ticketSubmission()
+    {
+        return $this->hasMany(TicketSubmission::class, 'user_id', 'id');
+    }
+
+    public function processTicket()
+    {
+        return $this->hasMany(ProcessTicket::class, 'user_id', 'id');
+    }
 }
