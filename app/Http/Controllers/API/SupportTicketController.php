@@ -48,4 +48,13 @@ class SupportTicketController extends AppBaseController
 
         return $this->matrimonyUsers->saveRequest($request);
     }
+
+    public function getTicketMessages(Request $request, $id)
+    {
+        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+            return $this->sendUnauthorizedResponse();
+        }
+
+        return $this->matrimonyUsers->ticketMessages($request, $id);
+    }
 }

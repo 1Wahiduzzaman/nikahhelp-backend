@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Http\Requests\TicketSubmissionRequest;
+use App\Models\ProcessTicket;
 use App\Models\TicketSubmission;
 use App\Models\User;
 use App\Models\ProfileLog;
@@ -755,10 +756,15 @@ class UserService extends ApiBaseService
     public function allTickets(Request $request)
     {
         try {
-            $tickets = $this->userRepository->getModel()->has('ticketSubmission')->get();
+            $candidates = $this->candidateRepository->getModel()
+                ->has('ticketSubmission')->with('ticketSubmission')->get();
 
+            $rep = $this->representativeRepository->getModel()
+                ->has('ticketSubmission')->with('ticketSubmission')->get();
 
-            return $this->sendSuccessResponse($tickets, 'All tickets');
+            $allUsers = $candidates->merge($rep);
+
+            return $this->sendSuccessResponse($allUsers, 'All tickets');
         } catch (Exception $exception) {
             return $this->sendErrorResponse('error', $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
         }
@@ -782,27 +788,39 @@ class UserService extends ApiBaseService
     {
         try {
            $validRequest =  Validator::make($request->all(), [
-                'message' => $request->input('message'),
-                'user_id' => $request->input('id'),
-                'ticket_id' => $request->input('ticket_id')
+                'message' => 'required|string',
+                'ticket_id' => 'required|int'
             ]);
 
            if ($validRequest->fails()) {
                throw new  Exception($validRequest->errors());
            }
 
-          $user =  $this->userRepository->getModel()->find($request->input('id'));
-
-           $user->processTicket->create([
+            $ticketProcess = new ProcessTicket([
                 'message' => $request->input('message'),
-                'user_id' => $request->input('id'),
-                'ticket_id' => $request->input('ticket_id')
+                'ticket_id' => $request->input('ticket_id'),
+                'status' => 0
             ]);
 
-           $userWithTicket = $user->with(['processTicket'])->get();
-           return $this->sendSuccessResponse($userWithTicket, 'ticket processed', HttpStatusCode::SUCCESS);
+           $ticketProcess->save();
+
+           return $this->sendSuccessResponse($ticketProcess, 'ticket processed', HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+        }
+    }
+
+    public function ticketMessages(Request $request, $id)
+    {
+        try {
+
+            $ticketProcessMessages = ProcessTicket::where('ticket_id', $id)->get();
+
+            return $this->sendSuccessResponse($ticketProcessMessages, 'Success', HttpStatusCode::SUCCESS);
+
+        } catch (Exception $exception)
+        {
+            return $this->sendErrorResponse($exception, $exception->getMessage());
         }
     }
 }

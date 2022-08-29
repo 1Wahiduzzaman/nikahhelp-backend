@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use App\Traits\ImageTrait;
-use Eloquent as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class RepresentativeInformation
@@ -210,5 +210,10 @@ class RepresentativeInformation extends Model
     public function getVerDocumentBacksideAttribute($value)
     {
         return $this->getImagePath($value, $this->user_id);
+    }
+
+    public function ticketSubmission()
+    {
+        return $this->hasMany(TicketSubmission::class, 'user_id', 'id');
     }
 }

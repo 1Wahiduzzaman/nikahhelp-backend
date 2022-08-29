@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSupportAdminTicketMessage extends Migration
+class CreateTicketProcessing extends Migration
 {
     /**
      * Run the migrations.
@@ -18,6 +18,7 @@ class CreateSupportAdminTicketMessage extends Migration
             $table->bigInteger('ticket_id')->nullable();
             $table->bigInteger('user_id')->nullable();
             $table->longText('message')->nullable();
+            $table->bigInteger('status')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateSupportAdminTicketMessage extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('support_admin_ticket_message');
+        Schema::dropIfExists('ticket_processing');
     }
 }

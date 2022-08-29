@@ -3,12 +3,17 @@
 namespace Tests\Feature;
 
 use App\Models\Admin;
+use App\Models\CandidateInformation;
+use App\Models\ProcessTicket;
+use App\Models\RepresentativeInformation;
+use App\Models\TicketSubmission;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Str;
 use Mockery\Mock;
 use Tests\TestCase;
@@ -41,33 +46,57 @@ class TicketTest extends TestCase
     public function test_status()
     {
 
-        $response =  $this->withToken($this->adminToken)->get('/api/v1/admin/get-all-tickets');
+        $response =  $this->withToken($this->adminToken)->get('/api/v1/admin/get-users-with-tickets');
+
+        $allCandidate = CandidateInformation::has('ticketSubmission')->with('ticketSubmission')->get();
+        $allRep = RepresentativeInformation::has('ticketSubmission')->with('ticketSubmission')->get();
+
+        $allusers = $allCandidate->merge($allRep);
+
+        $formData = collect([
+            'data' => $allusers,
+        ])->toArray();
 
         $response->assertStatus(200);
-    }
-
-
-    public function test_ticket()
-    {
-       $response =  $this->withToken($this->adminToken)->get('/api/v1/admin/get-all-tickets');
-
-
-       $singleResponse = $response->json();
-
-     $secondResponse =  $this->withToken($this->adminToken)->get('/api/v1/admin/getTickets/' . $singleResponse['data'][0]['id']);
-
-
-        $secondResponse->assertJsonStructure(['data']);
-        $secondResponse->assertJson($secondResponse->json());
+        $response->assertJson($formData);
     }
 
     public function  test_send_resolve_Ticket()
     {
-        $response = $this->withToken($this->adminToken)->withHeaders([
-            'message' => 'hello resolved'
-        ])->post('/api/v1/admin/submitTicketRequests');
+        $formData = [
+            'message' => 'hello world',
+            'ticket_id' => TicketSubmission::first()->id,
+        ];
 
-//        $response->assertStatus(200);
-        $response->assertJsonValidationErrors('new errors');
+        $response = $this->withToken($this->adminToken)
+            ->post('/api/v1/admin/submitTicketRequests', $formData);
+
+        $ticketProcess = new ProcessTicket([
+            'message' => 'hello world',
+            'ticket_id' => TicketSubmission::first()->id,
+            'status' => 0
+        ]);
+
+        $formData = collect([
+            'data' => $ticketProcess,
+        ])->toArray();
+
+       $response->assertJson($formData);
+    }
+
+    public function test_get_list_of_tickets()
+    {
+      $response =  $this->withToken($this->adminToken)
+            ->get('/api/v1/admin/getAllticketMessages/'.  TicketSubmission::first()->id);
+
+      $ticketProcessMessages = ProcessTicket::where('ticket_id', TicketSubmission::first()->id)->get();
+
+
+      $formData = collect([
+          'data' => $ticketProcessMessages
+      ]);
+
+      $response->assertStatus(200);
+      $response->assertJson($formData);
     }
 }
