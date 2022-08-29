@@ -305,6 +305,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::post('/ticket-submission', [SubmitTicketController::class, 'submitTicket']);
         Route::post('/issue-screen-shot', [SubmitTicketController::class, 'screenShot']);
+
+        Route::get('/getAllTickets/{id}', [SubmitTicketController::class, 'allTicket']);
+
     });
 /*
     Route::group(['prefix' => 'v1/admin'], function () {

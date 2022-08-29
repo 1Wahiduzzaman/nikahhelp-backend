@@ -58,7 +58,7 @@ Route::group(['prefix' => 'v1/admin','middleware'=>'admin'], function () {
     Route::post('submitTicketRequests', [\App\Http\Controllers\API\SupportTicketController::class, 'saveRequest'])->name('save-request-ticket');
     Route::get('get-users-with-tickets', [\App\Http\Controllers\API\SupportTicketController::class, 'getALlTicket'])->name('all-ticket');
     Route::get('getTickets/{id}', [App\Http\Controllers\API\SupportTicketController::class, 'getUserTickets'])->name('userTickets');
-    Route::get('getAllTicketMessages', [\App\Http\Controllers\API\SupportTicketController::class, 'getTicketMessages'])->name('ticketMessages');
+    Route::get('getAllTicketMessages/{id}', [\App\Http\Controllers\API\SupportTicketController::class, 'getTicketMessages'])->name('ticketMessages');
     // Send Global Notification
 
     Route::GET('all-user', [AllNotificationController::class, 'getAllUsers'])->name('all-notification.all-user');

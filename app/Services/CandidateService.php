@@ -12,6 +12,7 @@ use App\Models\Occupation;
 use App\Models\Religion;
 use App\Models\StudyLevel;
 use App\Models\TeamConnection;
+use App\Models\TicketSubmission;
 use App\Models\User;
 use App\Models\CandidateImage;
 use App\Models\CandidateInformation;
@@ -1255,6 +1256,18 @@ class CandidateService extends ApiBaseService
             throw new Exception('File can\'t be deleted!');
         }
         return $file_delete_status;
+    }
+
+    public function allTickets(Request $request, $id)
+    {
+        try {
+            $tickets = TicketSubmission::where('user_id', $id)->with('processTicket')->get();
+
+            return $this->sendSuccessResponse($tickets, 'success');
+        } catch (Exception $exception)
+        {
+            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+        }
     }
 
     /**

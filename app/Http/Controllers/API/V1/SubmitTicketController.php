@@ -5,18 +5,24 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TicketSubmissionRequest;
 use App\Http\Requests\TicketSumbissionScreenshot;
+use App\Models\CandidateInformation;
+use App\Models\RepresentativeInformation;
+use App\Services\CandidateService;
+use App\Services\RepresentativeService;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SubmitTicketController extends Controller
 {
+    public $representative;
 
-    public $matrimonyUsers;
+    public $candidate;
 
-    public function __construct(UserService $matrimonyUsers)
+    public function __construct(CandidateService $candidate, RepresentativeService $representative)
     {
-        $this->matrimonyUsers = $matrimonyUsers;
+        $this->candidate = $candidate;
+        $this->representative = $representative;
     }
     /**
      * Handle the incoming request.
@@ -33,8 +39,12 @@ class SubmitTicketController extends Controller
         return $this->matrimonyUsers->issueScreenShot($request);
     }
 
-    public function getAllTicket(Request $request)
+    public function allTicket(Request $request, $id)
     {
-        return $this->matrimonyUsers->allTickets($request);
+        if ($this->candidate->getUserId() == $id) {
+            return $this->candidate->allTickets($request, $id);
+        }
+
+        return $this->representative->allTickets($request, $id);
     }
 }
