@@ -2,27 +2,20 @@
 
 namespace Tests\Feature;
 
-use App\Models\Admin;
 use App\Models\CandidateInformation;
 use App\Models\ProcessTicket;
 use App\Models\RepresentativeInformation;
 use App\Models\TicketSubmission;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
-use Mockery\Mock;
 use Tests\TestCase;
+use JWTAuth;
 
 class TicketTest extends TestCase
 {
 
     protected $adminToken;
 
+    protected $user;
     protected $seed = true;
 
     protected function setUp(): void
@@ -34,6 +27,11 @@ class TicketTest extends TestCase
             'email' => 'support@mail.com',
             'password' => 12345678
         ])->json('data.token.access_token');
+
+        $this->user = User::factory()
+            ->has(CandidateInformation::factory()->has(TicketSubmission::factory()->count(3), 'ticketSubmission')
+                ->count(1), 'getCandidate')
+            ->create();
 
     }
 
@@ -73,7 +71,7 @@ class TicketTest extends TestCase
         $ticketProcess = new ProcessTicket([
             'message' => 'hello world',
             'ticket_id' => TicketSubmission::first()->id,
-            'status' => 0
+            'status' => 1
         ]);
 
         $formData = collect([
@@ -101,18 +99,78 @@ class TicketTest extends TestCase
 
     public function test_user_get_ticket_list()
     {
-        $user = User::factory()
-            ->has(CandidateInformation::factory()->has(TicketSubmission::factory()->count(3), 'ticketSubmission')
-           ->count(1), 'getCandidate')
-            ->create();
-        
-       $response = $this->actingAs($user, 'api')->withToken()->get('/api/v1/getAllTickets/'. $user->id);
 
-      $allTicket = TicketSubmission::where('user_id', $user->id)->with('processTicket')->get();
+       $token = JWTAuth::fromUser($this->user);
+
+       $response = $this->actingAs($this->user, 'api')->withToken($token)->get('/api/v1/getAllTickets/'. $this->user->id);
+
+      $allTicket = TicketSubmission::where('user_id', $this->user->id)->with('processTicket')->get();
 
         $formData = collect([
             'data' => $allTicket
         ])->toArray();
+
       $response->assertJson($formData);
+    }
+
+    public function test_resolve_ticket_for_user()
+    {
+        $token = JWTAuth::fromUser($this->user);
+        $messageId = ProcessTicket::first()->id;
+       $response = $this->actingAs($this->user, 'api')->withToken($token)->post('/api/v1/resolveTicket', [
+            'message_id' => $messageId
+        ]);
+
+       $resolveIssue = ProcessTicket::find($messageId);
+       $resolveIssue->status = 3;
+
+       $formData = collect([
+           'data' => $resolveIssue
+       ])->toArray();
+
+       $response->assertOk();
+       $response->assertJson($formData);
+    }
+
+    public function test_resolving_ticket_by_admin()
+    {
+        $id = TicketSubmission::first()->id;
+        $ticket = TicketSubmission::find($id);
+       $response = $this->withToken($this->adminToken)->post('/api/v1/admin/ticketResolve', [
+            'ticket_id' => $id
+        ]);
+
+
+
+       $formData = collect([
+           'data' => $ticket,
+       ])->toArray();
+
+       $response->assertJson($formData);
+
+        $response->assertOk();
+    }
+
+    public function test_user_reply_back()
+    {
+        $token = JWTAuth::fromUser($this->user);
+
+      $response =  $this->actingAs($this->user, 'api')->withToken($token)->post('/api/v1/send-support-message', [
+            'message' => 'hello customer',
+            'ticket_id' => TicketSubmission::first()->id
+      ]);
+
+      $message = new ProcessTicket([
+          'message' => 'hello customer',
+          'ticket_id' => TicketSubmission::first()->id,
+          'status' => 1
+      ]);
+
+      $formData = collect([
+          'data' => $message
+      ])->toArray();
+      $response->assertJson($formData);
+
+      $response->assertOk();
     }
 }

@@ -19,10 +19,13 @@ class SubmitTicketController extends Controller
 
     public $candidate;
 
-    public function __construct(CandidateService $candidate, RepresentativeService $representative)
+    public $matrimonyUsers;
+
+    public function __construct(UserService $matrimonyUsers, CandidateService $candidate, RepresentativeService $representative)
     {
         $this->candidate = $candidate;
         $this->representative = $representative;
+        $this->matrimonyUsers = $matrimonyUsers;
     }
     /**
      * Handle the incoming request.
@@ -46,5 +49,15 @@ class SubmitTicketController extends Controller
         }
 
         return $this->representative->allTickets($request, $id);
+    }
+
+    public function resolveTicket(Request $request)
+    {
+        return $this->matrimonyUsers->resolveTicket($request);
+    }
+
+    public function sendTicketMessage(Request $request)
+    {
+        return $this->matrimonyUsers->sendMessage($request);
     }
 }

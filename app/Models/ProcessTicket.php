@@ -14,7 +14,8 @@ class ProcessTicket extends Model
     protected $fillable = [
         'ticket_id',
         'user_id',
-        'message'
+        'message',
+        'status'
     ];
 
     public function ticket()

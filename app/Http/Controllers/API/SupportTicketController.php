@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\AppBaseController;
+use App\Services\AdminService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -11,9 +12,11 @@ class SupportTicketController extends AppBaseController
 {
     public $matrimonyUsers;
 
-    public function __construct(UserService $matrimonyUsers)
+    public  $adminService;
+    public function __construct(UserService $matrimonyUsers, AdminService $adminService)
     {
-        return $this->matrimonyUsers = $matrimonyUsers;
+        $this->matrimonyUsers = $matrimonyUsers;
+        $this->adminService = $adminService;
     }
 
     public  function getALlTicket(Request $request)
@@ -56,5 +59,14 @@ class SupportTicketController extends AppBaseController
         }
 
         return $this->matrimonyUsers->ticketMessages($request, $id);
+    }
+
+    public function ticketResolve(Request $request)
+    {
+        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+            return $this->sendUnauthorizedResponse();
+        }
+
+        return $this->adminService->resolveTicket($request);
     }
 }

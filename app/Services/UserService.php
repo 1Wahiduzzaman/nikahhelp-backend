@@ -707,8 +707,7 @@ class UserService extends ApiBaseService
     {
 
         $user_id = $this->getUserId();
-        //send it to chobi
-        //
+
 
         try {
 
@@ -799,7 +798,7 @@ class UserService extends ApiBaseService
             $ticketProcess = new ProcessTicket([
                 'message' => $request->input('message'),
                 'ticket_id' => $request->input('ticket_id'),
-                'status' => 0
+                'status' => 1
             ]);
 
            $ticketProcess->save();
@@ -821,6 +820,40 @@ class UserService extends ApiBaseService
         } catch (Exception $exception)
         {
             return $this->sendErrorResponse($exception, $exception->getMessage());
+        }
+    }
+
+    public function resolveTicket(Request $request)
+    {
+        try {
+           $valid = Validator::make($request->all(), [
+                'message_id' => 'required|number'
+            ]);
+
+            $resolveIssue = ProcessTicket::find($request->input('message_id'));
+            $resolveIssue->status = 3;
+            $resolveIssue->save();
+            return $this->sendSuccessResponse($resolveIssue, 'Pending to resolve', [], HttpStatusCode::SUCCESS);
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage(), 'Failed to resolve', HttpStatusCode::INTERNAL_ERROR);
+        }
+
+    }
+
+    public function sendMessage(Request $request)
+    {
+        try {
+           $message = new ProcessTicket([
+                'message' => $request->input('message'),
+                'ticket_id' => $request->input('ticket_id'),
+                'status' => 1
+            ]);
+
+           $message->save();
+
+           return $this->sendSuccessResponse($message, 'Message sent', [],HttpStatusCode::SUCCESS);
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse('failed', 'failed', HttpStatusCode::INTERNAL_ERROR);
         }
     }
 }
