@@ -19,4 +19,14 @@ class TicketSubmission extends Model
         'screen_shot_path',
         'screen_shot_id'
     ];
+
+    public function user()
+    {
+       return $this->belongsTo(User::class, 'id', 'user_id');
+    }
+
+    public function processTicket()
+    {
+        return $this->hasOne(ProcessTicket::class, 'ticket_id', 'id');
+    }
 }

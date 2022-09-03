@@ -6,15 +6,18 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Http\Requests\TicketSubmissionRequest;
+use App\Models\ProcessTicket;
 use App\Models\TicketSubmission;
 use App\Models\User;
 use App\Models\ProfileLog;
 use App\Models\VerifyUser;
 use App\Mail\VerifyMail as VerifyEmail;
 use App\Repositories\RepresentativeInformationRepository;
+use App\Repositories\TicketRepository;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\JsonResponse;
 use App\Traits\CrudTrait;
@@ -74,6 +77,11 @@ class UserService extends ApiBaseService
     protected $profileLogRepository;
 
 
+    /**
+     * @var TicketRepository
+     */
+    protected $ticketRepository;
+
     protected $domain;
 
     /**
@@ -94,6 +102,7 @@ class UserService extends ApiBaseService
         CandidateTransformer $candidateTransformer,
         CandidateRepository $candidateRepository,
         ProfileLogRepository $profileLogRepository,
+        TicketRepository $ticketRepository,
         Domain $domain
     )
     {
@@ -103,6 +112,7 @@ class UserService extends ApiBaseService
         $this->candidateTransformer = $candidateTransformer;
         $this->candidateRepository = $candidateRepository;
         $this->profileLogRepository = $profileLogRepository;
+        $this->ticketRepository = $ticketRepository;
         $this->domain = $domain;
     }
 
@@ -697,8 +707,7 @@ class UserService extends ApiBaseService
     {
 
         $user_id = $this->getUserId();
-        //send it to chobi
-        //
+
 
         try {
 
@@ -727,11 +736,11 @@ class UserService extends ApiBaseService
                 $screenshot_path = $this->uploadImageThrowGuzzle([
                     'screen_shot' => $request->file('screen_shot') ]);
             } else {
-                throw error_log('no file');
+                throw new Exception('no file');
             }
 
 
-           $issueTicket =  TicketSubmission::where('user_id', $user_id);
+           $issueTicket =  TicketSubmission::where('user_id', $user_id)->first();
 
            $issueTicket->screen_shot_path = $screenshot_path;
 
@@ -740,6 +749,111 @@ class UserService extends ApiBaseService
            return $this->sendSuccessResponse(['not success'], 'screenshot updated');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), 'failed');
+        }
+    }
+
+    public function allTickets(Request $request)
+    {
+        try {
+            $candidates = $this->candidateRepository->getModel()
+                ->has('ticketSubmission')->with('ticketSubmission')->get();
+
+            $rep = $this->representativeRepository->getModel()
+                ->has('ticketSubmission')->with('ticketSubmission')->get();
+
+            $allUsers = $candidates->merge($rep);
+
+            return $this->sendSuccessResponse($allUsers, 'All tickets');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse('error', $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+        }
+    }
+
+    public function userTickets(Request $request, int $id)
+    {
+
+        try {
+            $userTickets = $this->ticketRepository->findByProperties([
+                'user_id' => $id
+            ]);
+
+            return $this->sendSuccessResponse($userTickets, 'successful');
+        } catch (Exception $exception) {
+           return $this->sendErrorResponse('problem with server');
+        }
+    }
+
+    public function saveRequest(Request $request)
+    {
+        try {
+           $validRequest =  Validator::make($request->all(), [
+                'message' => 'required|string',
+                'ticket_id' => 'required|int'
+            ]);
+
+           if ($validRequest->fails()) {
+               throw new  Exception($validRequest->errors());
+           }
+
+            $ticketProcess = new ProcessTicket([
+                'message' => $request->input('message'),
+                'ticket_id' => $request->input('ticket_id'),
+                'status' => 1
+            ]);
+
+           $ticketProcess->save();
+
+           return $this->sendSuccessResponse($ticketProcess, 'ticket processed', HttpStatusCode::SUCCESS);
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+        }
+    }
+
+    public function ticketMessages(Request $request, $id)
+    {
+        try {
+
+            $ticketProcessMessages = ProcessTicket::where('ticket_id', $id)->get();
+
+            return $this->sendSuccessResponse($ticketProcessMessages, 'Success', HttpStatusCode::SUCCESS);
+
+        } catch (Exception $exception)
+        {
+            return $this->sendErrorResponse($exception, $exception->getMessage());
+        }
+    }
+
+    public function resolveTicket(Request $request)
+    {
+        try {
+           $valid = Validator::make($request->all(), [
+                'message_id' => 'required|number'
+            ]);
+
+            $resolveIssue = ProcessTicket::find($request->input('message_id'));
+            $resolveIssue->status = 3;
+            $resolveIssue->save();
+            return $this->sendSuccessResponse($resolveIssue, 'Pending to resolve', [], HttpStatusCode::SUCCESS);
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage(), 'Failed to resolve', HttpStatusCode::INTERNAL_ERROR);
+        }
+
+    }
+
+    public function sendMessage(Request $request)
+    {
+        try {
+           $message = new ProcessTicket([
+                'message' => $request->input('message'),
+                'ticket_id' => $request->input('ticket_id'),
+                'status' => 1
+            ]);
+
+           $message->save();
+
+           return $this->sendSuccessResponse($message, 'Message sent', [],HttpStatusCode::SUCCESS);
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse('failed', 'failed', HttpStatusCode::INTERNAL_ERROR);
         }
     }
 }

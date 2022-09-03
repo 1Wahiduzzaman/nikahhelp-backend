@@ -9,6 +9,7 @@ use App\Http\Requests\Representative\ContactInformationRequest;
 use App\Models\Occupation;
 use App\Models\RepresentativeInformation;
 use App\Models\CandidateImage;
+use App\Models\TicketSubmission;
 use App\Models\User;
 use App\Repositories\CandidateRepository;
 use App\Repositories\CountryRepository;
@@ -25,6 +26,7 @@ use \Illuminate\Support\Facades\DB;
 use App\Transformers\CandidateTransformer;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use PragmaRX\Health\Checkers\Http;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Http\Resources\RepresentativeResource;
@@ -339,6 +341,16 @@ class RepresentativeService extends ApiBaseService
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
+        }
+    }
+
+    public function allTickets(Request $request, $id)
+    {
+        try {
+          $ticket  = TicketSubmission::where('user_id', $id)->with('processTicket')->get();
+            return $this->sendSuccessResponse($ticket, 'Success');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
         }
     }
 

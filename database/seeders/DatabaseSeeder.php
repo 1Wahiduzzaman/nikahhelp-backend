@@ -24,8 +24,10 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             RoleSeeder::class,
             UserSeeder::class,
-//            CandidateSeeder::class,
+            CandidateSeeder::class,
             PackageSeeder::class,
+            RepresentativeSeeder::class,
+//            TicketSeeder::class
         ]);
     }
 }

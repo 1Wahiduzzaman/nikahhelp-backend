@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\RepresentativeInformation;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RepresentativeInformationFactory extends Factory
@@ -21,9 +22,37 @@ class RepresentativeInformationFactory extends Factory
      */
     public function definition()
     {
-        return [
-            'created_at' => $this->faker->date('Y-m-d H:i:s'),
-        'updated_at' => $this->faker->date('Y-m-d H:i:s')
-        ];
+        $basic = collect(RepresentativeInformation::BASIC_INFO)->map(function ($info) {
+            if ($info == 'user_id') {
+                return [$info => User::factory()->create()->id];
+            }
+
+            return [$info => $this->faker->name];
+        });
+
+        $essential = collect(RepresentativeInformation::ESSENTIAL_INFO)->map(function ($info) {
+            return [$info => $this->faker->randomNumber()];
+        });
+
+        $upload = collect(RepresentativeInformation::IMAGE_UPLOAD_INFO)->map(function ($info) {
+            return [$info => $this->faker->randomNumber()];
+        });
+
+       $personal = collect(RepresentativeInformation::PERSONAL_INFO)->map(function ($info) {
+            return [$info => $this->faker->randomLetter()];
+        });
+
+        $repInfo = collect(RepresentativeInformation::VERIFICATION_INFO)->map(function ($info) {
+            if ($info == 'is_document_upload') {
+                return [$info => $this->faker->randomNumber()];
+            }
+            return [$info => $this->faker->randomLetter()];
+        });
+
+        $allFields = $basic->merge($essential)->merge($upload)->merge($personal)->merge($repInfo)->mapWithKeys(function ($info) {
+           return collect($info);
+        });
+
+        return $allFields->all();
     }
 }

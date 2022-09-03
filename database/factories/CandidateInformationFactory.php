@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\CandidateInformation;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CandidateInformationFactory extends Factory
@@ -99,7 +100,7 @@ class CandidateInformationFactory extends Factory
             "anybody_can_see" => 1,
             "only_team_can_see" => 1,
             "team_connection_can_see" => 0,
-            "ver_country_id" => 1,
+//            "ver_country_id" => 1,
             "ver_city_id" => 2,
             "ver_document_type" => "Nation ID",
             "ver_image_front" => $this->faker->randomElement([
@@ -144,6 +145,7 @@ class CandidateInformationFactory extends Factory
             ]),
             "is_publish" => 0,
             "data_input_status" => 6,
+            'user_id' => User::factory()->create()->id
         ];
     }
 

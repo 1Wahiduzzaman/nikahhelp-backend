@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Enums\HttpStatusCode;
 use App\Models\Admin;
 use App\Models\Permission;
+use App\Models\TicketSubmission;
 use App\Repositories\CandidateRepository;
 use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
 use App\Repositories\UserRepository;
@@ -182,6 +183,18 @@ class AdminService extends ApiBaseService
         }
 
         return $adminPermissions;
+    }
+
+    public function resolveTicket(Request $request)
+    {
+        try {
+          $ticket =  TicketSubmission::find($request->input('ticket_id'));
+          $ticket->delete();
+
+          return $this->sendSuccessResponse($ticket, 'Resolved', 0, HttpStatusCode::SUCCESS);
+        } catch(Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage(), 'failed to resolve');
+        }
     }
 
 

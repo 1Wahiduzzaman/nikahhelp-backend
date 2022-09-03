@@ -109,6 +109,8 @@ class MemberInvitationService extends ApiBaseService
      */
     public function join(array $data)
     {
+        //user is public
+        //
         $userInfo = self::getUserInfo();
         //if ( $userInfo->status == 5) {
             // Find invitation from link
