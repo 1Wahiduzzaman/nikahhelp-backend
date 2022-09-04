@@ -788,7 +788,8 @@ class UserService extends ApiBaseService
         try {
            $validRequest =  Validator::make($request->all(), [
                 'message' => 'required|string',
-                'ticket_id' => 'required|int'
+                'ticket_id' => 'required|int',
+                'user' => 'json'
             ]);
 
            if ($validRequest->fails()) {
@@ -798,7 +799,8 @@ class UserService extends ApiBaseService
             $ticketProcess = new ProcessTicket([
                 'message' => $request->input('message'),
                 'ticket_id' => $request->input('ticket_id'),
-                'status' => 1
+                'status' => 1,
+                'user' => $request->input('user')
             ]);
 
            $ticketProcess->save();

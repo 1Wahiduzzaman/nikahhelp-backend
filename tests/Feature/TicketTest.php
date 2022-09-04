@@ -60,9 +60,11 @@ class TicketTest extends TestCase
 
     public function  test_send_resolve_Ticket()
     {
+        $user = json_encode(User::factory()->create());
         $formData = [
             'message' => 'hello world',
             'ticket_id' => TicketSubmission::first()->id,
+            'user' => $user,
         ];
 
         $response = $this->withToken($this->adminToken)
@@ -71,7 +73,8 @@ class TicketTest extends TestCase
         $ticketProcess = new ProcessTicket([
             'message' => 'hello world',
             'ticket_id' => TicketSubmission::first()->id,
-            'status' => 1
+            'status' => 1,
+            'user' => $user
         ]);
 
         $formData = collect([
