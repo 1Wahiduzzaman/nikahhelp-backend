@@ -27,6 +27,6 @@ class TicketSubmission extends Model
 
     public function processTicket()
     {
-        return $this->hasOne(ProcessTicket::class, 'ticket_id', 'id');
+        return $this->hasMany(ProcessTicket::class, 'ticket_id', 'id');
     }
 }
