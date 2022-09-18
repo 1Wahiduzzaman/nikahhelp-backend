@@ -119,13 +119,13 @@ class TicketTest extends TestCase
     public function test_resolve_ticket_for_user()
     {
         $token = JWTAuth::fromUser($this->user);
-        $messageId = ProcessTicket::first()->id;
+        $ticket_id = TicketSubmission::first()->id;
        $response = $this->actingAs($this->user, 'api')->withToken($token)->post('/api/v1/resolveTicket', [
-            'message_id' => $messageId
+            'ticket_id' => $ticket_id
         ]);
 
-       $resolveIssue = ProcessTicket::find($messageId);
-       $resolveIssue->status = 3;
+       $resolveIssue = TicketSubmission::find($ticket_id);
+       $resolveIssue->resolve = 1;
 
        $formData = collect([
            'data' => $resolveIssue

@@ -17,7 +17,8 @@ class TicketSubmission extends Model
         'user',
         'user_id',
         'screen_shot_path',
-        'screen_shot_id'
+        'screen_shot_id',
+        'resolve'
     ];
 
     public function user()
