@@ -829,11 +829,11 @@ class UserService extends ApiBaseService
     {
         try {
            $valid = Validator::make($request->all(), [
-                'message_id' => 'required|number'
+                'ticket_id' => 'required|number'
             ]);
 
-            $resolveIssue = ProcessTicket::find($request->input('message_id'));
-            $resolveIssue->status = 3;
+            $resolveIssue = TicketSubmission::find($request->input('ticket_id'));
+            $resolveIssue->resolve = 1;
             $resolveIssue->save();
             return $this->sendSuccessResponse($resolveIssue, 'Pending to resolve', [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
