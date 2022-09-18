@@ -45,13 +45,11 @@ class TicketTest extends TestCase
 
         $response =  $this->withToken($this->adminToken)->get('/api/v1/admin/get-users-with-tickets');
 
-        $allCandidate = CandidateInformation::has('ticketSubmission')->with('ticketSubmission')->get();
-        $allRep = RepresentativeInformation::has('ticketSubmission')->with('ticketSubmission')->get();
 
-        $allusers = $allCandidate->merge($allRep);
+        $alltickets = TicketSubmission::all();
 
         $formData = collect([
-            'data' => $allusers,
+            'data' => $alltickets,
         ])->toArray();
 
         $response->assertStatus(200);
