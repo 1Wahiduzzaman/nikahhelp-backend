@@ -755,15 +755,11 @@ class UserService extends ApiBaseService
     public function allTickets(Request $request)
     {
         try {
-            $candidates = $this->candidateRepository->getModel()
-                ->has('ticketSubmission')->with('ticketSubmission')->get();
 
-            $rep = $this->representativeRepository->getModel()
-                ->has('ticketSubmission')->with('ticketSubmission')->get();
 
-            $allUsers = $candidates->merge($rep);
+            $allTickets = TicketSubmission::all();
 
-            return $this->sendSuccessResponse($allUsers, 'All tickets');
+            return $this->sendSuccessResponse($allTickets, 'All tickets');
         } catch (Exception $exception) {
             return $this->sendErrorResponse('error', $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
         }
