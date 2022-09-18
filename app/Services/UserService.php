@@ -848,6 +848,7 @@ class UserService extends ApiBaseService
            $message = new ProcessTicket([
                 'message' => $request->input('message'),
                 'ticket_id' => $request->input('ticket_id'),
+                'user' => $request->input('user'),
                 'status' => 1
             ]);
 
