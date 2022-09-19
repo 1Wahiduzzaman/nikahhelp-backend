@@ -757,7 +757,7 @@ class UserService extends ApiBaseService
         try {
 
 
-            $allTickets = TicketSubmission::all();
+            $allTickets = TicketSubmission::with('processTicket')->get();
 
             return $this->sendSuccessResponse($allTickets, 'All tickets');
         } catch (Exception $exception) {
