@@ -46,7 +46,7 @@ class TicketTest extends TestCase
         $response =  $this->withToken($this->adminToken)->get('/api/v1/admin/get-users-with-tickets');
 
 
-        $alltickets = TicketSubmission::all();
+        $alltickets = TicketSubmission::with('processTicket')->get();
 
         $formData = collect([
             'data' => $alltickets,
