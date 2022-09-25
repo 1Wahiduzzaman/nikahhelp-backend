@@ -99,7 +99,7 @@
     {{-- @php
         $chobi= config('chobi.chobi').'/logo/site/ma_logo_white.svg';
     @endphp --}}
-    <a><img src="{{ $message->embed(resource_path('images/email/ma_logo_white.svg')) }}" alt="logo" style="width: 170px; height: 110px;" /></a>
+    <a>{{ $message->embed(resource_path('images/email/ma_logo_white.svg')) }}</a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
