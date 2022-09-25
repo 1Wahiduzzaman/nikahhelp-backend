@@ -96,10 +96,10 @@
 </head>
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
-    @php
+    {{-- @php
         $chobi= config('chobi.chobi').'/logo/site/ma_logo_white.svg';
-    @endphp
-    <a><img src="{{ $chobi }}" alt="logo" style="width: 170px; height: 110px;" /></a>
+    @endphp --}}
+    <a><img src="{{ public_path('images/email/ma_logo_white.svg') }}" alt="logo" style="width: 170px; height: 110px;" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
