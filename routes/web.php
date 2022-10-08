@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\V1\SubscriptionController;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
 
@@ -15,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/logo', static function () {
-   $image = file_get_contents(asset(resource_path('/images/email/white@2x-100.jpg')));
+Route::get('/logo',  function () {
+   $image = File::get(asset(resource_path('/images/email/white@2x-100.jpg')));
     return response()->make($image, 200)->header('Content-Type', 'image/jpeg');
 });
 
