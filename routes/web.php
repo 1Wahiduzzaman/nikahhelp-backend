@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/logo', static function () {
+   $image = file_get_contents(asset(resource_path('/images/email/white@2x-100.jpg')));
+    return response()->make($image, 200)->header('Content-Type', 'image/jpeg');
+});
 
 Route::get('/', function () {
     return view('emails.subscription.new_subscription');
