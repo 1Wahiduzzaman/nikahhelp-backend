@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/logo',  function () {
-   $image = File::get(asset(resource_path('/images/email/white@2x-100.jpg')));
+   $image = File::get(resource_path('/images/email/white@2x-100.jpg'));
     return response()->make($image, 200)->header('Content-Type', 'image/jpeg');
 });
 
