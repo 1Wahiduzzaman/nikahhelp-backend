@@ -96,7 +96,7 @@
 </head>
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
-    <a><img src="{{ route('logo') }}" style="" /></a>
+    <a><img src="biya.arranzed.com/logo" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
