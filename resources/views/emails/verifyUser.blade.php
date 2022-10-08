@@ -96,7 +96,7 @@
 </head>
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
-    <a><img src="{{ asset('images/email/white@2x-100.jpg') }}" /></a>
+    <a><img src="{{ $message->embed(asset('images/email/white@2x-100.jpg')) }}" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
