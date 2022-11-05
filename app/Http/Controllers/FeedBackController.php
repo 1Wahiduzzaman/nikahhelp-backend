@@ -28,7 +28,7 @@ class FeedBackController extends Controller
                 'name' => substr($email, 0, strpos($email, '@')), // here we take the name form email (string before "@")
             ];
 
-            Mail::to($user)->send(new ContactEmail($request->all()));
+            Mail::to($user->email)->send(new ContactEmail($request->all()));
 
             return $this->sendSuccessResponse('Sent successfully', HttpStatusCode::SUCCESS);
         } catch (\Exception $exception)
