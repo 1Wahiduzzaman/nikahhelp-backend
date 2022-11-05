@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\HttpStatusCode;
+use App\Mail\ContactEmail;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -20,9 +22,13 @@ class FeedBackController extends Controller
                 'email' => 'email',
             ]);
 
-            Mail::send('emails.contact', $request->all(), function ($mail) use ($request){
-                $mail->to('thesyed.london@gmail.com');
-            });
+            $email = 'thesyed.london@gmail.com';
+            $user = (object)[
+                'email' => $email,
+                'name' => substr($email, 0, strpos($email, '@')), // here we take the name form email (string before "@")
+            ];
+
+            Mail::to($user)->send(new ContactEmail($request->all()));
 
             return $this->sendSuccessResponse('Sent successfully', HttpStatusCode::SUCCESS);
         } catch (\Exception $exception)
