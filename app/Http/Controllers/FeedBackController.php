@@ -21,8 +21,7 @@ class FeedBackController extends Controller
             ]);
 
             Mail::send('emails.contact', $request->all(), function ($mail) use ($request){
-                $mail->from($request->input('email'), 'help')
-                    ->to('thesyed.london@gmail.com');
+                $mail->to('thesyed.london@gmail.com');
             });
 
             return $this->sendSuccessResponse('Sent successfully', HttpStatusCode::SUCCESS);
