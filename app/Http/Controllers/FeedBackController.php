@@ -22,7 +22,7 @@ class FeedBackController extends Controller
 
             Mail::send('contact', $request->all(), function ($mail) use ($request){
                 $mail->from($request->input('email'), 'help')
-                    ->to('info@thehmsg.com');
+                    ->to('thesyed.london@gmail.com');
             });
 
             return $this->sendSuccessResponse('Sent successfully', HttpStatusCode::SUCCESS);
