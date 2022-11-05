@@ -20,7 +20,7 @@ class FeedBackController extends Controller
                 'email' => 'email',
             ]);
 
-            Mail::send('contact', $request->all(), function ($mail) use ($request){
+            Mail::send('emails.contact', $request->all(), function ($mail) use ($request){
                 $mail->from($request->input('email'), 'help')
                     ->to('thesyed.london@gmail.com');
             });
