@@ -14,15 +14,15 @@ class PackageSeeder extends Seeder
      */
     public function run()
     {
-        Package::create(
-            [
-                'title' => '1 Month',
-                'description' => null,
-                'price' => 10,
-                'discount' => 2,
-                'promo_code' => null,
-            ]
-        );
+        // Package::create(
+        //     [
+        //         'title' => '1 Month',
+        //         'description' => null,
+        //         'price' => 10,
+        //         'discount' => 2,
+        //         'promo_code' => null,
+        //     ]
+        // );
 
         // Package::create(
         //     [
@@ -42,14 +42,14 @@ class PackageSeeder extends Seeder
         //         'promo_code' => null,
         //     ]
         // );
-        // Package::create(
-        //     [
-        //         'title' => '1 Year',
-        //         'description' => null,
-        //         'price' => 120,
-        //         'discount' => 24,
-        //         'promo_code' => null,
-        //     ]
-        // );
+        Package::create(
+            [
+                'title' => 'Plan 1',
+                'description' => 'This promotional Plan 1 launch offer of £9.99 annual membership is for each team with up to five members comprising 1 candidate and up to 4 representatives.',
+                'price' => 9.99,
+                // 'discount' => 24,
+                'promo_code' => null,
+            ]
+        );
     }
 }
