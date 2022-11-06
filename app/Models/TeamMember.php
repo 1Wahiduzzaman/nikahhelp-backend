@@ -49,4 +49,14 @@ class TeamMember extends Model
     {
         return $this->hasOne(Message::class, 'receiver', 'user_id')->orderBy('created_at', 'desc');
     }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class, 'id', 'team_id');
+    }
+
+    public function userTeam()
+    {
+        return $this->belongsTo(User::class, 'id');
+    }
 }

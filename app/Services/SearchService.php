@@ -122,13 +122,14 @@ class SearchService extends ApiBaseService
                 $q->where('status',3);
             });
 
+            // $candidates->whereHas('candidateTeam')
+
             if(Auth::check()){
 
                 $userId = self::getUserId();
                 $loggedInCandidate = $this->candidateRepository->findOneByProperties([
                     'user_id' => $userId
                 ]);
-
                 $activeTeam = $loggedInCandidate->active_team;
 
                 if (!$activeTeam) {
@@ -155,6 +156,8 @@ class SearchService extends ApiBaseService
                 /* FILTER - Country not preferred  */
                 $candidates = $candidates->whereNotIn('per_current_residence_country',$loggedInCandidate->bloked_countries->pluck('id')->toArray());
             }
+
+
 
             /* FILTER - Gender  */
             if (isset($request->gender)) {
@@ -243,7 +246,10 @@ class SearchService extends ApiBaseService
 
             $parPage = $request->input('parpage',10);
 
-            $candidates = $candidates->with('getNationality','getReligion','candidateTeam','activeTeams','activeTeams.team_members')->paginate($parPage);
+
+            $candidates = $candidates->whereHas('candidateTeam')->with('getNationality','getReligion','candidateTeam','activeTeams','activeTeams.team_members')->paginate($parPage);
+
+            // $caniddateInTeam = $candidates->whereHas('candidateTeam')->get();
 
             if($candidates->total() < 1){
                 return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND);
