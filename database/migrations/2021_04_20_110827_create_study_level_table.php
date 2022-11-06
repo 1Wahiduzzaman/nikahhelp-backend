@@ -16,6 +16,7 @@ class CreateStudyLevelTable extends Migration
         Schema::create('study_level', function (Blueprint $table) {
             $table->id();
             $table->string('name',100)->unique('study_level')->comment('Ex.Undergraduate,Graduate / Postgraduate');
+            $table->timestamps();
         });
     }
 

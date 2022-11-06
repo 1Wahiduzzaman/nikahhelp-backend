@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\CandidateInformation;
+use App\Models\EducationLevel;
+use App\Models\Religion;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -33,7 +35,7 @@ class CandidateInformationFactory extends Factory
             'per_gender'=>$this->faker->randomElement([1,2]),
             'per_employment_status'=>$this->faker->randomElement(['Employment','Unemployment']),
             'per_education_level_id'=>$this->faker->randomElement([1,2,3]),
-            'per_religion_id'=>$this->faker->randomElement([1,2,3]),
+            'per_religion_id'=>Religion::factory()->create()->id,
             'per_occupation'=>$this->faker->randomElement($this->occupation()),
             'per_ethnicity'=>$this->faker->randomElement($this->ethnicities()),
             'per_mother_tongue'=>$this->faker->randomElement($this->language()),
@@ -70,7 +72,7 @@ class CandidateInformationFactory extends Factory
             "pre_has_country_disallow_preference" => 1,
             "pre_partner_religions" => "2,1",
             "pre_ethnicities" => $this->faker->randomElement($this->ethnicities()),
-            "pre_study_level_id" => $this->faker->randomElement([1,2,3]),
+            "pre_study_level_id" => EducationLevel::factory()->create()->id,
             "pre_employment_status" => "Employment",
             "pre_occupation" => '[{"id":1,"name":"Architect","status":0,"created_at":null,"updated_at":null},{"id":4,"name":"Designer","status":0,"created_at":null,"updated_at":null},{"id":10," ▶',
             "pre_preferred_divorcee" => 1,

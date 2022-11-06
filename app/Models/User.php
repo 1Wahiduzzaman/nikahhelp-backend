@@ -156,4 +156,14 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->hasMany(ProcessTicket::class, 'user_id', 'id');
     }
+
+    public function teams()
+    {
+        return $this->hasMany(Team::class, 'created_by', 'id');
+    }
+
+    public function team_member()
+    {
+        return $this->hasOne(TeamMember::class, 'user_id', 'id');
+    }
 }

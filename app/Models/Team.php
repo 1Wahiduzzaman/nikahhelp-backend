@@ -233,4 +233,9 @@ class Team extends Model
         return $connectedTeam;
     }
 
+    public function userTeam()
+    {
+        return $this->belongsTo(User::class, 'id', 'created_by');
+    }
+
 }

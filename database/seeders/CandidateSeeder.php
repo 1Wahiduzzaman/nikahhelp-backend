@@ -61,8 +61,7 @@ class CandidateSeeder extends Seeder
 
 
         User::factory()
-            ->has(CandidateInformation::factory()
-                ->has(TicketSubmission::factory()->count(3), 'ticketSubmission')
+            ->has(CandidateInformation::factory()->has(TicketSubmission::factory()->count(3), 'ticketSubmission')
                 ->count(1), 'getCandidate')->create();
 
     }
