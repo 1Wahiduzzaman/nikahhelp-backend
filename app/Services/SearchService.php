@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Facades\JWTAuth;
-
+use App\Repositories\RepresentativeInformationRepository;
 class SearchService extends ApiBaseService
 {
 
@@ -47,6 +47,8 @@ class SearchService extends ApiBaseService
      * @var TeamMemberRepository
      */
     protected $teamMemberRepository;
+
+    protected $representativeRepository;
 
     /**
      * @var TeamRepository
@@ -76,7 +78,8 @@ class SearchService extends ApiBaseService
         UserRepository $userRepository,
         CandidateRepository $candidateRepository,
         BlockListService $blockListService,
-        CandidateTransformer $candidateTransformer
+        CandidateTransformer $candidateTransformer,
+        RepresentativeInformationRepository $representativeInformationRepository,
     )
     {
         $this->teamRepository = $teamRepository;
@@ -87,6 +90,7 @@ class SearchService extends ApiBaseService
         $this->blockListService = $blockListService;
         $this->setActionRepository($candidateRepository);
         $this->candidateTransformer = $candidateTransformer;
+        $this->representativeRepository = $representativeInformationRepository;
     }
 
 
@@ -117,6 +121,8 @@ class SearchService extends ApiBaseService
 
             $candidates = $this->candidateRepository->getModel();
 
+
+            $representative = $this->representativeRepository->getModel();
             /* FILTER - Candidate Must be verified  */
             $candidates = $candidates->whereHas('user',function ($q){
                 $q->where('status',3);
@@ -127,10 +133,26 @@ class SearchService extends ApiBaseService
             if(Auth::check()){
 
                 $userId = self::getUserId();
+                $loggedInRepresentative = null;
                 $loggedInCandidate = $this->candidateRepository->findOneByProperties([
                     'user_id' => $userId
                 ]);
-                $activeTeam = $loggedInCandidate->active_team;
+
+                if ($loggedInCandidate) {
+                    $activeTeam = $loggedInCandidate->active_team;
+
+                }
+
+
+                if (!$loggedInCandidate) {
+                    $loggedInRepresentative = $this->representativeRepository->findOneByProperties([
+                        'user_id' => $userId
+                    ]);
+
+                    $activeTeam = $loggedInRepresentative->active_team;
+
+                    $loggedInCandidate = $loggedInRepresentative;
+                }
 
                 if (!$activeTeam) {
                     throw new Exception('Team not found, Please create team first');
