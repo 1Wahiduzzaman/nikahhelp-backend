@@ -155,7 +155,7 @@ class CandidateService extends ApiBaseService
         ]);
 
         $representativeId = self::getUserId();
-        $representative = $this->representativeRepository->findByProperties([
+        $representative = $this->representativeRepository->findOneByProperties([
             'user_id' => $representativeId
         ]);
 
