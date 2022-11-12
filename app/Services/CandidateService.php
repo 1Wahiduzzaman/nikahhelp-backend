@@ -153,6 +153,12 @@ class CandidateService extends ApiBaseService
         $candidate = $this->candidateRepository->findOneByProperties([
             'user_id' => $userId
         ]);
+
+        $representativeId = self::getUserId();
+        $representative = $this->representativeRepository->findByProperties([
+            'user_id' => $representativeId
+        ]);
+
         if (!$candidate) {
             throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
         }
@@ -168,7 +174,7 @@ class CandidateService extends ApiBaseService
         $candidateTeam = $candidate->active_team ;
 
         if($candidateTeam){
-            $activeTeam = Auth::user()->getCandidate->active_team;
+            $activeTeam = Auth::user()->getCandidate ? Auth::user()->getCandidate->active_team  : $representative->active_team;
 
             $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
             $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
