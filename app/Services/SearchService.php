@@ -175,7 +175,7 @@ class SearchService extends ApiBaseService
                 $candidates = $candidates->whereNotIn('user_id',$exceptIds);
 
                 /* FILTER - Country not preferred  */
-                $candidates = $candidates->whereNotIn('per_current_residence_country'/**$loggedInCandidate->bloked_countries->pluck('id')->toArray()**/);
+               // $candidates = $candidates->whereNot('per_current_residence_country'/**$loggedInCandidate->bloked_countries->pluck('id')->toArray()**/);
             }
 
 
