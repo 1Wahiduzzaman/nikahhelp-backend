@@ -140,7 +140,6 @@ class SearchService extends ApiBaseService
 
                 if ($loggedInCandidate) {
                     $activeTeam = $loggedInCandidate->active_team;
-
                 }
 
 
@@ -158,9 +157,9 @@ class SearchService extends ApiBaseService
                     throw new Exception('Team not found, Please create team first');
                 }
 
-                $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('user_id')->toArray();
-                $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
-                $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
+                // $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('user_id')->toArray();
+                // $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
+                // $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
                 $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
                 $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
                 $userInfo['connectList'] = array_unique(array_merge($connectFrom,$connectTo)) ;
@@ -172,7 +171,7 @@ class SearchService extends ApiBaseService
                 $connectFromMembersId = $activeTeam->sentRequestMembers->pluck('user_id')->toArray();
                 $connectToMembersId = $activeTeam->receivedRequestMembers->pluck('user_id')->toArray();
 
-                $exceptIds = array_unique(array_merge($userInfo['blockList'],$activeTeamUserIds,$connectFromMembersId,$connectToMembersId));
+                $exceptIds = array_unique(array_merge(/**$userInfo['blockList']**/$activeTeamUserIds,$connectFromMembersId,$connectToMembersId));
                 $candidates = $candidates->whereNotIn('user_id',$exceptIds);
 
                 /* FILTER - Country not preferred  */
