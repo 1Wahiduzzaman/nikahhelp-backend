@@ -320,6 +320,9 @@ class SearchService extends ApiBaseService
                 $candidatesResponse[] = array_merge(
                     $this->candidateTransformer->transformSearchResult($candidate),
                     [
+                        'contact' => $this->candidateTransformer->transformPersonal($candidate)['contact']
+                    ],
+                    [
                         'personal' => $this->candidateTransformer->transform($candidate)['personal']
                     ],
                     [
