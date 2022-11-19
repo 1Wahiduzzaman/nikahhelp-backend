@@ -568,7 +568,9 @@ class CandidateInformation extends Model
 
     public function getRepresentativeStatusAttribute()
     {
-       return $this->active_team ? (bool)$this->active_team->representativeOfTeamFromUser->filter(function($user){ return $user->account_type > 2; })->count() : false ;
+       return $this->active_team ? (bool)$this->active_team->representativeOfTeamFromUser->filter(function($user){
+         return $user ? $user->account_type > 2 : false;
+     })->count() : false ;
     }
 
     public function getVerImageFrontAttribute($value)
