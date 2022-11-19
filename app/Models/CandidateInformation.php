@@ -548,7 +548,8 @@ class CandidateInformation extends Model
 
     public function getDownloadableDocAttribute()
     {
-        if(Auth::user()->account_type=='10') {
+
+        if(Auth::user()) {
             return $this->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $this->per_additional_info_doc : '';
         } else {
             $authUserActiveTeam = $this->active_team;
