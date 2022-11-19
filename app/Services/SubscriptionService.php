@@ -93,7 +93,7 @@ class SubscriptionService extends ApiBaseService
                 'name' => $user->full_name,
                 'email' => $user->email
             ]);
-            $expireDate = Carbon::parse(self::expireDateCalculation($request['plane']))->format('Y-m-d');
+            $expireDate = Carbon::parse(self::expireDateCalculation(4))->format('Y-m-d');
             $suBInfo = Subscription::find($subscriptionInfo->id);
             $suBInfo->team_id = $request['team_id'];  //pk
             $suBInfo->plan_id = $request['plane'];
