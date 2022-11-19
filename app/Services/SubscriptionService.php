@@ -86,8 +86,8 @@ class SubscriptionService extends ApiBaseService
                 return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
             }
             $stripeToken = $request['stripeToken'];
-            $packageID = Self::selectPlaneID($request['plane']);
-            $packageName = Self::selectPlaneName($request['plane']).date('YmdHis');
+            $packageID = Self::selectPlaneID(5);
+            $packageName = Self::selectPlaneName(5).date('YmdHis');
 
             $subscriptionInfo = $user->newSubscription("$packageName", "$packageID")->create($stripeToken, [
                 'name' => $user->full_name,
@@ -215,7 +215,7 @@ class SubscriptionService extends ApiBaseService
                 return env('PLANE_FIX');
                 break;
             case 5:
-                return env('PLANE_ONE_YEAR');
+                return env('PLANE_PROMO_OFFER');
                 break;
             default:
                 return env('PLANE_ONE_DAY', 'PLANE_ONE_DAY');
@@ -246,6 +246,9 @@ class SubscriptionService extends ApiBaseService
                 break;
             case 4:
                 return 'PLANE_ONE_YEAR';
+                break;
+            case 5:
+                return 'PLANE_PROMO_OFFER';
                 break;
             default:
                 return 'PLANE_ONE_DAY_FREE';
