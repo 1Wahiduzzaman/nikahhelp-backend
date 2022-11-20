@@ -86,8 +86,8 @@ class SubscriptionService extends ApiBaseService
                 return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
             }
             $stripeToken = $request['stripeToken'];
-            $packageID = Self::selectPlaneID(3);
-            $packageName = Self::selectPlaneName(3).date('YmdHis');
+            $packageID = Self::selectPlaneID(5);
+            $packageName = Self::selectPlaneName(5).date('YmdHis');
 
             $subscriptionInfo = $user->newSubscription("$packageName", "$packageID")->create($stripeToken, [
                 'name' => $user->full_name,
@@ -102,7 +102,7 @@ class SubscriptionService extends ApiBaseService
             $teamExpireDateUpdate = Team::with(['created_by'])->find($request['team_id']);   //pk team_id
             $current_expire_date  = $teamExpireDateUpdate->subscription_expire_at;
             if($current_expire_date) {
-                $exp_date = Carbon::parse($this->reNewExpiryDate($request['plane'], $current_expire_date))->format('Y-m-d');
+                $exp_date = Carbon::parse($this->reNewExpiryDate(4, $current_expire_date))->format('Y-m-d');
             } else {
                 $exp_date = $expireDate;
             }
