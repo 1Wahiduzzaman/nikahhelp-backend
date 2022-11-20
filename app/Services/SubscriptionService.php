@@ -85,14 +85,14 @@ class SubscriptionService extends ApiBaseService
             if (!$user) {
                 return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
             }
-            // $stripeToken = $request['stripeToken'];
+            $stripeToken = $request['stripeToken'];
             $packageID = Self::selectPlaneID(5);
             $packageName = Self::selectPlaneName(5).date('YmdHis');
 
-            $subscriptionInfo = $user->newSubscription("$packageName", "$packageID");/**->create($stripeToken, [
+            $subscriptionInfo = $user->newSubscription("$packageName", "$packageID")->create($stripeToken, [
                 'name' => $user->full_name,
                 'email' => $user->email
-            ]);**/
+            ]);
             $expireDate = Carbon::parse(self::expireDateCalculation(4))->format('Y-m-d');
             $suBInfo = Subscription::find($subscriptionInfo->id);
             $suBInfo->team_id = $request['team_id'];  //pk
