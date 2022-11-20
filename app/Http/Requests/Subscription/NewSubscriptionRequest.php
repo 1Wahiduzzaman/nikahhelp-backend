@@ -28,7 +28,7 @@ class NewSubscriptionRequest extends APIRequest
         return [
             'stripeToken' => 'required',
             'plane' => 'required',
-            'auto_renewal' => 'sometime',
+            // 'auto_renewal' => '',
             'team_id' => 'required',
         ];
     }
