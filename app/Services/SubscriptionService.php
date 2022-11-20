@@ -86,8 +86,8 @@ class SubscriptionService extends ApiBaseService
                 return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
             }
             $stripeToken = $request['stripeToken'];
-            $packageID = Self::selectPlaneID(5);
-            $packageName = Self::selectPlaneName(5).date('YmdHis');
+            $packageID = Self::selectPlaneID(3);
+            $packageName = Self::selectPlaneName(3).date('YmdHis');
 
             $subscriptionInfo = $user->newSubscription("$packageName", "$packageID")->create($stripeToken, [
                 'name' => $user->full_name,
