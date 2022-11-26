@@ -23,14 +23,23 @@ class FeedBackController extends Controller
                 'email' => 'email',
             ]);
 
-            $email = 'thesyed.london@gmail.com';
+            $email = 'khorramk.kbsk@gmail.com';
             $user = (object)[
                 'email' => $email,
                 'name' => substr($email, 0, strpos($email, '@')), // here we take the name form email (string before "@")
             ];
 
+            $data = [
+                'firstname' => $request->input('firstname'),
+                'lastname' => $request->input('lastname'),
+                'telephone' => $request->input('telephone'),
+                'email' => $request->input('email'),
+                'message' => $request->input('message'),
+                'query' => $request->input('query')
+            ];
+
             try {
-                Mail::to($user->email)->send(new ContactEmail($request->all()));
+                Mail::to($user->email)->send(new ContactEmail($data));
             } catch(Exception $exception) {
                 return $this->sendSuccessResponse($exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
             }
