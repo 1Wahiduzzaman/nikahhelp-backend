@@ -16,6 +16,7 @@ class ContactEmail extends Mailable
     public $lastname;
     public $telephone;
     public $message;
+    public $data;
     /**
      * Create a new message instance.
      *
@@ -23,6 +24,7 @@ class ContactEmail extends Mailable
      */
     public function __construct($data)
     {
+           $this->data = $data;
            $this->message = $data['message'];
            $this->firstname = $data['firstname'];
            $this->lastname = $data['lastname'];
