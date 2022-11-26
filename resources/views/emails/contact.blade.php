@@ -3,13 +3,14 @@
 
 </head>
 <body>
-    <h1>{{ $firstname }} has requested help</h1>
+    {{ $data->dump() }}
+    <h1>{{ $data->firstname }} has requested help</h1>
     <p>please read the message to help:</p>
     <p>
-        {{ $message }}
+        {{ $data->message }}
     </p>
 
-    <p>{{ $email }}</p>
-    <p>{{ $telephone }}</p>
+    <p>{{ $data->email }}</p>
+    <p>{{ $data->telephone }}</p>
 </body>
 </html>
