@@ -37,12 +37,6 @@ class ContactEmail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.contact')->compact([
-            'firstname' => $this->firstname,
-            'lastaname' => $this->lastname,
-            'telephone' => $this->telephone,
-            'email' => $this->email,
-            'message' => $this->message,
-        ]);
+        return $this->view('emails.contact');
     }
 }
