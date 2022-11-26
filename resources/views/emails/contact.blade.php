@@ -3,7 +3,6 @@
 
 </head>
 <body>
-    {{ $data->dump() }}
     <h1>{{ $data->firstname }} has requested help</h1>
     <p>please read the message to help:</p>
     <p>
