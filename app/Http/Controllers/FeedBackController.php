@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\HttpStatusCode;
 use App\Mail\ContactEmail;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -28,7 +29,11 @@ class FeedBackController extends Controller
                 'name' => substr($email, 0, strpos($email, '@')), // here we take the name form email (string before "@")
             ];
 
-            Mail::to($user->email)->send(new ContactEmail($request->all()));
+            try {
+                Mail::to($user->email)->send(new ContactEmail($request->all()));
+            } catch(Exception $exception) {
+                return $this->sendSuccessResponse($exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+            }
 
             return $this->sendSuccessResponse('Sent successfully', HttpStatusCode::SUCCESS);
         } catch (\Exception $exception)
