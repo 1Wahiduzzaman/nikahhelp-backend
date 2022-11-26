@@ -23,7 +23,7 @@ class FeedBackController extends Controller
                 'email' => 'email',
             ]);
 
-            $email = 'khorramk.kbsk@gmail.com';
+            $email = 'support@matrimonyassist.com';
             $user = (object)[
                 'email' => $email,
                 'name' => substr($email, 0, strpos($email, '@')), // here we take the name form email (string before "@")
