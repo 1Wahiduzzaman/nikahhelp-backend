@@ -2,50 +2,60 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Enums\HttpStatusCode;
 use App\Http\Controllers\Controller;
 use App\Models\Generic;
 use App\Models\Visit;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Expr;
 
 class VisitController extends Controller
 {
-    public function visit(Request $request){
-        $active_team_id = (new Generic())->getActiveTeamId();
-        if($active_team_id!=$request->from_team_id || $active_team_id!=$request->to_team_id) {
-            $conditions = [
-                'from_team_id' => $request->from_team_id,
-                'to_team_id' => $request->to_team_id,
-                'user_id' => Auth::id(),
-            ];
-            $visit_count = Visit::where('from_team_id', $request->from_team_id)
-            ->where('to_team_id', $request->to_team_id)
-            ->where('user_id', Auth::id())
-            ->first();
-            if(isset($visit_count->visit_count) && !empty($visit_count->visit_count)) {
-                $visit = $visit_count->visit_count + 1;
-            } else {
-                $visit = 1;
+    public function visit(Request $request)
+    {
+        try {
+            //code...
+            $active_team_id = (new Generic())->getActiveTeamId();
+            if ($active_team_id != $request->from_team_id || $active_team_id != $request->to_team_id) {
+                $conditions = [
+                    'from_team_id' => $request->from_team_id,
+                    'to_team_id' => $request->to_team_id,
+                    'user_id' => Auth::id(),
+                ];
+                $visit_count = Visit::where('from_team_id', $request->from_team_id)
+                    ->where('to_team_id', $request->to_team_id)
+                    ->where('user_id', Auth::id())
+                    ->first();
+                if (isset($visit_count->visit_count) && !empty($visit_count->visit_count)) {
+                    $visit = $visit_count->visit_count + 1;
+                } else {
+                    $visit = 1;
+                }
+                $data = [
+                    'from_team_id' => $request->from_team_id,
+                    'to_team_id' => $request->to_team_id,
+                    'user_id' => Auth::id(),
+                    'visit_count' => $visit,
+                ];
+                Visit::updateOrCreate($conditions, $data);
+                return $this->sendSuccessResponse([], 'Hit counted successfully');
             }
-            $data = [
-                'from_team_id' => $request->from_team_id,
-                'to_team_id' => $request->to_team_id,
-                'user_id' => Auth::id(),
-                'visit_count' => $visit,
-            ];
-            Visit::updateOrCreate($conditions, $data);
-            return $this->sendSuccessResponse([], 'Hit counted successfully');
+        } catch (Exception $th) {
+            return $this->sendErrorResponse($th->getMessage(), HttpStatusCode::INTERNAL_ERROR);
         }
     }
 
-    public function visitGraph(Request $request) {
+    public function visitGraph(Request $request)
+    {
         // $data = Visit::
         // select(["SUM(visit_count)", 'created_at', 'to_team_id'])
         // ->where('to_team_id', $active_team_id)
         // ->groupBy('created_at')
         // ->get();
-         $visits =  Visit::where('from_team_id', $request->input('from_team_id'))->get();
+        $visits =  Visit::where('from_team_id', $request->input('from_team_id'))->get();
         // $data = Visit::select(
         //     DB::raw("(sum(visit_count)) as view"),
         //     // DB::raw("(DATE_FORMAT(created_at, '%d-%m-%Y')) as my_date")
@@ -59,6 +69,6 @@ class VisitController extends Controller
         //         'view' => $data->pluck('view')->toArray(),
         //         'date' => $data->pluck('my_date')->toArray(),
         //     ];
-            return $this->sendSuccessResponse($visits, 'Hit counted successfully');
+        return $this->sendSuccessResponse($visits, 'Hit counted successfully');
     }
 }
