@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class VisitController extends Controller
 {
     public function visit(Request $request){
-        $active_team_id = Generic::getActiveTeamId();
+        $active_team_id = (new Generic())->getActiveTeamId();
         if($active_team_id!=$request->from_team_id || $active_team_id!=$request->to_team_id) {
             $conditions = [
                 'from_team_id' => $request->from_team_id,
