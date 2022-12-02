@@ -20,7 +20,7 @@ class VisitController extends Controller
             //code...
 
             $request->validateWithBag('request failed', [
-                'from_team_id' => 'string|required',
+                'from_team_id' => 'required|numeric',
                 'to_team_id' => 'array|required'
             ]);
 
