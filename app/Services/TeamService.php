@@ -624,8 +624,14 @@ class TeamService extends ApiBaseService
         ];
     }
 
-    public function teamUpdate($request, $id)
+    public function teamUpdate(Request $request, $id)
     {
+       $validate =  $request->validate( [
+            'old_password' => 'required|string|max:4',
+            'new_password' => 'required|string|max:4'
+        ]);
+
+
         if (empty($id)) {
             return $this->sendErrorResponse('Please select what you want to edit', [], FResponse::HTTP_BAD_REQUEST);
         }
@@ -656,7 +662,7 @@ class TeamService extends ApiBaseService
                     ]);
                     $team->logo = $image->logo;
                 }
-                $team->update();
+               $updated =  $team->update();
 
             }
             // if (!empty($team->logo)) {

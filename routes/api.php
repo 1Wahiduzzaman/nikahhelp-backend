@@ -298,7 +298,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         //Raz - Visitor count in site
         Route::post('site-visit', [VisitController::class, 'visit'])->name('user.site-visit');
-        Route::get('site-visit-graph', [VisitController::class, 'visitGraph'])->name('user.site-visit-graph');
+        Route::get('site-visit-graph/{id}', [VisitController::class, 'visitGraph'])->name('user.site-visit-graph');
 
         //location requests
        // Route::post('search/location', [LocationController::class, 'postcode']);
