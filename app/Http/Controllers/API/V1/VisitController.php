@@ -37,14 +37,12 @@ class VisitController extends Controller
         }
     }
 
-    public function visitGraph(Request $request, $id)
+    public function visitGraph(Request $request, string $id)
     {
         try {
             //code...
-            $request->validate([
-                'id' => 'required|string',
-            ]);
-            $visits =  Visit::where('to_team_id', $request->input('id'))->get();
+
+            $visits =  Visit::where('to_team_id', $id)->get();
 
             return $this->sendSuccessResponse($visits, 'Hit counted successfully');
         } catch (\Exception $th) {
