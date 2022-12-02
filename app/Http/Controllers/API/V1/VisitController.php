@@ -18,31 +18,20 @@ class VisitController extends Controller
     {
         try {
             //code...
-            $active_team_id = (new Generic())->getActiveTeamId();
-            if ($active_team_id != $request->from_team_id || $active_team_id != $request->to_team_id) {
-                $conditions = [
-                    'from_team_id' => $request->from_team_id,
-                    'to_team_id' => $request->to_team_id,
-                    'user_id' => Auth::id(),
-                ];
-                $visit_count = Visit::where('from_team_id', $request->from_team_id)
-                    ->where('to_team_id', $request->to_team_id)
-                    ->where('user_id', Auth::id())
-                    ->first();
-                if (isset($visit_count->visit_count) && !empty($visit_count->visit_count)) {
-                    $visit = $visit_count->visit_count + 1;
-                } else {
-                    $visit = 1;
-                }
-                $data = [
-                    'from_team_id' => $request->from_team_id,
-                    'to_team_id' => $request->to_team_id,
-                    'user_id' => Auth::id(),
-                    'visit_count' => $visit,
-                ];
-                Visit::updateOrCreate($conditions, $data);
-                return $this->sendSuccessResponse([], 'Hit counted successfully');
-            }
+
+            $request->validateWithBag('request failed', [
+                'from_team_id' => 'string|required',
+                'to_team_id' => 'array|required'
+            ]);
+
+            collect($request->input('to_team_id'))->each(function ($data) use  ($request) {
+                    Visit::create([
+                        'from_team_id' => $request->input('from_team_id'),
+                        'to_team_id' => $data
+                    ]);
+            });
+            return $this->sendSuccessResponse(['saved' => 'successfuly'], HttpStatusCode::SUCCESS);
+
         } catch (Exception $th) {
             return $this->sendErrorResponse($th->getMessage(), HttpStatusCode::INTERNAL_ERROR);
         }
@@ -50,25 +39,11 @@ class VisitController extends Controller
 
     public function visitGraph(Request $request)
     {
-        // $data = Visit::
-        // select(["SUM(visit_count)", 'created_at', 'to_team_id'])
-        // ->where('to_team_id', $active_team_id)
-        // ->groupBy('created_at')
-        // ->get();
-        $visits =  Visit::where('from_team_id', $request->input('from_team_id'))->get();
-        // $data = Visit::select(
-        //     DB::raw("(sum(visit_count)) as view"),
-        //     // DB::raw("(DATE_FORMAT(created_at, '%d-%m-%Y')) as my_date")
-        //     DB::raw("(DATE_FORMAT(created_at, '%M')) as my_date")
-        //     )
-        //     ->orderBy(DB::raw("DATE_FORMAT(created_at, '%m')"))
-        //     // ->groupBy(DB::raw("DATE_FORMAT(created_at, '%d-%m-%Y')"))
-        //     ->groupBy(DB::raw("DATE_FORMAT(created_at, '%m')"))
-        //     ->get();
-        //     $result = [
-        //         'view' => $data->pluck('view')->toArray(),
-        //         'date' => $data->pluck('my_date')->toArray(),
-        //     ];
+        $request->validate([
+            'from_team_id' => 'required|string',
+        ]);
+        $visits =  Visit::where('to_team_id', $request->input('from_team_id'))->get();
+        
         return $this->sendSuccessResponse($visits, 'Hit counted successfully');
     }
 }
