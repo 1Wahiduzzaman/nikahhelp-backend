@@ -216,4 +216,28 @@ class RepresentativeInformation extends Model
     {
         return $this->hasMany(TicketSubmission::class, 'user_id', 'id');
     }
+
+      /**
+     * Convert gender id to sting
+     * @param $id
+     * @return string
+     */
+    public static function getGender ($id) : string
+    {
+        $gender = null;
+
+        switch ($id){
+            case 1:
+                $gender = 'Male';
+                break;
+            case 2:
+                $gender = 'Female';
+                break;
+            default:
+                $gender = "";
+        }
+
+        return $gender ;
+
+    }
 }

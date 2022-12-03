@@ -21,6 +21,7 @@ use App\Http\Controllers\API\V1\TeamConnectionController;
 use App\Http\Controllers\API\SearchAPIController;
 use App\Http\Controllers\API\UserDashboardController;
 use App\Http\Controllers\API\AdminDashboardController;
+use App\Http\Controllers\API\ShortListedRepresentativeController;
 use App\Http\Controllers\API\V1\AllNotificationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\API\V1\SubmitTicketController;
@@ -217,6 +218,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('short-listed-candidates', [ShortListedCandidateController::class, 'index'])->name('get_short_listed_candidates');
         Route::POST('short-listed-candidates/store', [ShortListedCandidateController::class, 'store'])->name('short.list.store');
         Route::delete('delete-short-listed-by-candidates', [ShortListedCandidateController::class, 'destroyByCandidate'])->name('delete.shortlisted.item.by.candidate');
+        Route::get('short-listed-representative', [ShortListedRepresentativeController::class, 'index'])->name('get_short_listed_candidates');
+        Route::POST('short-listed-representative/store', [ShortListedRepresentativeController::class, 'store'])->name('short.list.store');
+        Route::delete('delete-short-listed-by-representative', [ShortListedRepresentativeController::class, 'destroyByCandidate'])->name('delete.shortlisted.item.by.candidate');
 
         // Team listed | by Rabbi
         Route::get('team-short-listed-candidates', [ShortListedCandidateController::class, 'teamShortListedCandidate'])->name('get_team_short_listed_candidates');
