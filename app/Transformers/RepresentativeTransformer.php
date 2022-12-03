@@ -337,4 +337,47 @@ class RepresentativeTransformer extends TransformerAbstract
             'per_main_image_url' => $item->per_main_image_url,
         ];
     }
+
+
+    /**
+     * @param CandidateInformation $item
+     * @return array
+     */
+    public function transformSearchResult(RepresentativeInformation $item): array
+    {
+        return $this->candidateCartData($item);
+    }
+
+     /**
+     * @param CandidateInformation $item
+     * @return array
+     */
+    private function candidateCartData(CandidateInformation $item): array
+    {
+        return [
+            'user_id' => $item->user_id,
+            'image' => $item->avatar_url,
+            'first_name' => $item->first_name,
+            'last_name' => $item->last_name,
+            'screen_name' => $item->screen_name,
+            'per_age' => Carbon::now()->diffInYears($item->dob),
+            'per_gender' => RepresentativeInformation::getGender($item->per_gender),
+            'per_nationality_id' => $item->per_nationality,
+            'per_nationality' => $item->getNationality()->exists() ? $item->getNationality->name : null,
+            'per_religion_id' => $item->per_religion_id,
+            'per_religion' => $item->getReligion()->exists() ? $item->getReligion->name : null,
+            'per_ethnicity' => $item->per_ethnicity,
+            'height' => $item->per_height,
+            'is_short_listed' => $item->is_short_listed ?? null,
+            'is_block_listed' => $item->is_block_listed ?? null,
+            'is_connect' => $item->is_connect ?? null,
+            'is_teamListed' => $item->is_teamListed ?? null,
+            'team_id' => $item->team_id ?? null,
+            'connectionRequestSendType' => $item->connectionRequestSendType ?? null,
+            'teamConnectStatus' => $item->teamConnectStatus ?? null,
+            'verification_status' => $item->user->status,
+            'team' => $item->team_info ?? null,
+            'representative_status' => $item->representative_status ?? null,
+        ];
+    }
 }
