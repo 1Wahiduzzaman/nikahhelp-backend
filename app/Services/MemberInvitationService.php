@@ -13,6 +13,8 @@ use App\Repositories\TeamRepository;
 use App\Repositories\MemberInvitationRepository;
 use App\Repositories\TeamMemberRepository;
 use App\Enums\HttpStatusCode;
+use App\Models\CandidateInformation;
+use App\Models\TeamMember;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -171,14 +173,18 @@ class MemberInvitationService extends ApiBaseService
             }
 
             //If already member as a candidate  By Raz
-            $is_candidate = $this->teamMemberRepository->findByProperties([
-                "user_id" => $user_id,
-                "user_type" => 'Candidate',
-            ]);
+            // $is_candidate = $this->teamMemberRepository->findByProperties([
+            //     "user_id" => $user_id,
+            //     ''
+            // ]);
 
-            if($is_candidate->count()){
-                return $this->sendErrorResponse('You can not join as a Candidate in multiple teams.', [], HttpStatusCode::BAD_REQUEST);
-            }
+            // if ($invitation) {
+            //     # code...
+            // }
+
+            // if($is_candidate->count()){
+            //     return $this->sendErrorResponse('You can not join as a Candidate in multiple teams.', [], HttpStatusCode::BAD_REQUEST);
+            // }
 
             // If everything alright add in team members
             $new_team_member = array();
