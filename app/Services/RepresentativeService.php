@@ -30,7 +30,7 @@ use PragmaRX\Health\Checkers\Http;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Http\Resources\RepresentativeResource;
-
+use Illuminate\Support\Facades\Log;
 class RepresentativeService extends ApiBaseService
 {
     use CrudTrait;
@@ -230,6 +230,7 @@ class RepresentativeService extends ApiBaseService
 
     public function storeVerifyIdentity($request)
     {
+
         $requestData = $request->all();
         if (!empty($request['ver_document_frontside'])) {
             $image = $this->uploadImageThrowGuzzle([
@@ -243,6 +244,9 @@ class RepresentativeService extends ApiBaseService
             ]);
             $requestData['ver_document_backside'] = $image->ver_document_backside;
         }
+
+        Log::info($requestData);
+
         try {
             $userId = self::getUserId();
             $representativeInformation = $this->representativeRepository->findOneByProperties([
@@ -252,6 +256,7 @@ class RepresentativeService extends ApiBaseService
                 return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
 
+            Log::info("message");
             $representative = $representativeInformation->update($requestData);
 
             $data = $this->representativeTransformer->transformVerificationInformation($representativeInformation);
