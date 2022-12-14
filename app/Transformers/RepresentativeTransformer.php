@@ -307,7 +307,7 @@ class RepresentativeTransformer extends TransformerAbstract
             'ver_recommender_occupation' => $item->ver_recommender_occupation,
             'ver_recommender_address' => $item->ver_recommender_address,
             'ver_recommender_mobile_no' => $item->ver_recommender_mobile_no,
-            'ver_recommender_email' => $item->per_email
+            'ver_recommender_email' => $item->ver_recommender_email
         ];
     }
 
