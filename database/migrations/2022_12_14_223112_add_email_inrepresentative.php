@@ -14,7 +14,7 @@ class AddEmailInrepresentative extends Migration
     public function up()
     {
         Schema::table('representative_informations', function (Blueprint $table) {
-            $table->string('ver_recommender_email');
+            $table->string('ver_recommender_email')->nullable();
         });
     }
 
