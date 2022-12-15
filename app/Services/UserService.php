@@ -350,7 +350,7 @@ class UserService extends ApiBaseService
                         $status['is_short_listed'] = in_array($candidate->user_id,$loggedInCandidate->shortList->pluck('user_id')->toArray());
                         $status['is_block_listed'] = in_array($candidate->user_id,$loggedInCandidate->blockList->pluck('user_id')->toArray());
                         $teamTableId = $candidate->active_team ? $candidate->active_team->id : '';
-                        $teamid = $candidate->active_team->id;
+                        $teamid = $candidate->active_team->team_id;
                         $status['is_teamListed'] = null;
                         $status['is_connect'] =  null;;
 
