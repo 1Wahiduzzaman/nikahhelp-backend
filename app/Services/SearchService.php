@@ -265,6 +265,13 @@ class SearchService extends ApiBaseService
                 $candidates = $candidates->where('per_hobbies_interests', $request->smoker);
             }
 
+            $candidates = $candidates->where('is_short_listed' , false);
+
+            $candidates = $candidates->where('is_block_listed', false);
+
+            $candidates = $candidates->where('is_teamListed', false);
+
+
             $parPage = $request->input('parpage',10);
 
 
