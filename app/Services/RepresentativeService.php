@@ -249,14 +249,14 @@ class RepresentativeService extends ApiBaseService
 
         try {
             $userId = self::getUserId();
-            $representativeInformation = $this->representativeRepository->findOneByProperties([
-                'user_id' => $userId
-            ]);
+            $representativeInformation = RepresentativeInformation::where('user_id', $userId)->first();
+
             if (!$representativeInformation) {
                 return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
 
             Log::info("message");
+
             $representative = $representativeInformation->update($requestData);
 
             $data = $this->representativeTransformer->transformVerificationInformation($representativeInformation);
