@@ -261,6 +261,7 @@ class RepresentativeService extends ApiBaseService
 
             $data = $this->representativeTransformer->transformVerificationInformation($representativeInformation);
 
+            Log::info($data);
             if ($representative) {
 
                 return $this->sendSuccessResponse($data, 'Information save Successfully!', [], HttpStatusCode::CREATED);
