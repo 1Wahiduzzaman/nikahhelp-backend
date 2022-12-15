@@ -157,7 +157,11 @@ class SearchService extends ApiBaseService
                     throw new Exception('Team not found, Please create team first');
                 }
 
-                // $userInfo['shortList'] = $loggedInCandidate->shortList->pluck('user_id')->toArray();
+            $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
+            $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
+            $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
+
+                //$userInfo['shortList'] = $loggedInCandidate->shortList->pluck('user_id')->toArray();
                 // $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
                 // $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
                 $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
@@ -171,7 +175,15 @@ class SearchService extends ApiBaseService
                 $connectFromMembersId = $activeTeam->sentRequestMembers->pluck('user_id')->toArray();
                 $connectToMembersId = $activeTeam->receivedRequestMembers->pluck('user_id')->toArray();
 
-                $exceptIds = array_unique(array_merge(/**$userInfo['blockList']**/$activeTeamUserIds,$connectFromMembersId,$connectToMembersId));
+                $exceptIds = array_unique(array_merge(
+                    $userInfo['blockList'],
+                    $userInfo['teamList'],
+                    $userInfo['shortList'],
+                    $activeTeamUserIds,
+                    $connectFromMembersId,
+                    $connectToMembersId
+                ));
+
                 $candidates = $candidates->whereNotIn('user_id',$exceptIds);
 
                 /* FILTER - Country not preferred  */
@@ -265,11 +277,6 @@ class SearchService extends ApiBaseService
                 $candidates = $candidates->where('per_hobbies_interests', $request->smoker);
             }
 
-            $candidates = $candidates->where('is_short_listed' , false);
-
-            $candidates = $candidates->where('is_block_listed', false);
-
-            $candidates = $candidates->where('is_teamListed', false);
 
 
             $parPage = $request->input('parpage',10);
