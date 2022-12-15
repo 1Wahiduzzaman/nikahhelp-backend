@@ -26,6 +26,7 @@ use App\Models\TeamConnection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use App\Http\Resources\TeamConnectionResource;
+use App\Models\Subscription;
 
 class TeamConnectionService extends ApiBaseService
 {
@@ -81,6 +82,7 @@ class TeamConnectionService extends ApiBaseService
             "team_id" => $request->from_team_id
         ]);
 
+
         if (!$from_team) {
             return $this->sendErrorResponse('From team not found.', [], HttpStatusCode::VALIDATION_ERROR);
         }
@@ -88,6 +90,14 @@ class TeamConnectionService extends ApiBaseService
         $to_team = $this->teamRepository->findOneByProperties([
             "team_id" => $request->to_team_id
         ]);
+
+        $expire_date = $to_team->subscription_expire_at;
+
+        $expired_now = $expire_date->lessThanOrEqualTo(now());
+
+        if ($expired_now) {
+            return $this->sendErrorResponse('Team expired', HttpStatusCode::NOT_FOUND);
+        }
 
         if (!$to_team) {
             return $this->sendErrorResponse('To team not found.', [], HttpStatusCode::VALIDATION_ERROR);
@@ -132,7 +142,7 @@ class TeamConnectionService extends ApiBaseService
         $from_team_verified_reps = TeamMember::select("*")
             ->with("user")
             ->where('team_id', $from_team_id)
-//            ->where('user_type', "Representative")
+        //     ->where('user_type', "Representative")
             ->whereHas('user', function (Builder $query) {
                 $query->where('is_verified', '=', 1);
             })
@@ -295,7 +305,7 @@ class TeamConnectionService extends ApiBaseService
         // Connected
         $connection_status = 1;
         $searchResult = $this->teamConnectionRepository->getModel()->newQuery();
-                
+
         $searchResult->where('from_team_id', $teamInformation->id);
         $searchResult->orWhere('to_team_id', $teamInformation->id);
         $queryData = $searchResult->get();
