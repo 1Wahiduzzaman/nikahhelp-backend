@@ -92,14 +92,14 @@ class TeamConnectionService extends ApiBaseService
             "team_id" => $request->to_team_id
         ]);
 
-        $expire_date = $to_team->subscription_expire_at;
+        // $expire_date = $to_team->subscription_expire_at;
 
-        $expired_now = $expire_date->lessThanOrEqualTo(now());
+        // $expired_now = $expire_date->lessThanOrEqualTo(now());
 
 
-        if ($expired_now) {
-            return $this->sendErrorResponse('Team expired', [], HttpStatusCode::NOT_FOUND);
-        }
+        // if ($expired_now) {
+        //     return $this->sendErrorResponse('Team expired', [], HttpStatusCode::NOT_FOUND);
+        // }
 
         // Log::info('sending');
 
