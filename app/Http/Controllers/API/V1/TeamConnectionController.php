@@ -10,6 +10,7 @@ use App\Services\TeamConnectionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class TeamConnectionController extends Controller
 {
@@ -31,6 +32,7 @@ class TeamConnectionController extends Controller
      */
     public function store(Request $request)
     {
+        Log::error('not going');
         return $this->teamConnectionService->sendRequest($request);
     }
 
