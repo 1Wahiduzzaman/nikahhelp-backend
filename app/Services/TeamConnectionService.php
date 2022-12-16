@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use App\Http\Resources\TeamConnectionResource;
 use App\Models\Subscription;
+use Illuminate\Support\Facades\Log;
 
 class TeamConnectionService extends ApiBaseService
 {
@@ -95,9 +96,12 @@ class TeamConnectionService extends ApiBaseService
 
         $expired_now = $expire_date->lessThanOrEqualTo(now());
 
+
         if ($expired_now) {
-            return $this->sendErrorResponse('Team expired', HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Team expired', [], HttpStatusCode::NOT_FOUND);
         }
+
+        Log::info('sending');
 
         if (!$to_team) {
             return $this->sendErrorResponse('To team not found.', [], HttpStatusCode::VALIDATION_ERROR);
