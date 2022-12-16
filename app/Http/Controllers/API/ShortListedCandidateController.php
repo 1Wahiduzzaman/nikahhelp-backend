@@ -94,7 +94,7 @@ class ShortListedCandidateController extends AppBaseController
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
 
-            $activeTeamId = Generic::getActiveTeamId();
+            $activeTeamId =  (new Generic())->getActiveTeamId();
 
             if (!$activeTeamId) {
                 throw new Exception('Team not found, Please create team first');
