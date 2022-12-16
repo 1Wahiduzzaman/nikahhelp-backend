@@ -32,7 +32,6 @@ class TeamConnectionController extends Controller
      */
     public function store(Request $request)
     {
-        Log::error('not going');
         return $this->teamConnectionService->sendRequest($request);
     }
 
