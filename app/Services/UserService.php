@@ -350,7 +350,7 @@ class UserService extends ApiBaseService
                         $loggedInCandidate = $loggedInUser->getCandidate;
                         $status['is_short_listed'] = in_array($candidate->user_id,$loggedInCandidate->shortList->pluck('user_id')->toArray());
                         $status['is_block_listed'] = in_array($candidate->user_id,$loggedInCandidate->blockList->pluck('user_id')->toArray());
-                        $teamTableId = $candidate->active_team ? $candidate->active_team->team_id : '';
+                        $teamTableId = $candidate->active_team ? $candidate->active_team : '';
                         $teamid = $candidate->active_team->team_id;
                         $status['is_teamListed'] = null;
                         $status['is_connect'] =  null;;
@@ -393,6 +393,7 @@ class UserService extends ApiBaseService
         $data['candidate_information'] = $candidateInformation;
         $data['representative_information'] = $representativeInformation;
         $data['team_id'] = $teamid;
+        $data['team'] = $teamTableId;
 
         return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS);
 
