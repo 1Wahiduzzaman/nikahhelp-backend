@@ -59,7 +59,7 @@ class TeamConnectionResource extends JsonResource
                 $result['total_teamMember'] = $countTeamMember;
             }
             $result['connection'] = 'pending';
-            $result['connection_type'] = 'Request send';
+            $result['connection_type'] = 'Request sent';
         }
 
 //        Request received
