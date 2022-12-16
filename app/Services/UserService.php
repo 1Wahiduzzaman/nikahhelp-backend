@@ -41,6 +41,7 @@ use App\Models\TeamMember;
 use App\Models\TeamMemberInvitation;
 use Illuminate\Support\Facades\Validator;
 use App\Models\PasswordReset;
+use App\Models\TeamConnection;
 
 class UserService extends ApiBaseService
 {
@@ -349,15 +350,17 @@ class UserService extends ApiBaseService
                         $loggedInCandidate = $loggedInUser->getCandidate;
                         $status['is_short_listed'] = in_array($candidate->user_id,$loggedInCandidate->shortList->pluck('user_id')->toArray());
                         $status['is_block_listed'] = in_array($candidate->user_id,$loggedInCandidate->blockList->pluck('user_id')->toArray());
-                        $teamTableId = $candidate->active_team ? $candidate->active_team->id : '';
+                        $teamTableId = $candidate->active_team ? $candidate->active_team->team_id : '';
                         $teamid = $candidate->active_team->team_id;
                         $status['is_teamListed'] = null;
                         $status['is_connect'] =  null;;
 
+                        $connection_status = TeamConnection::where('to_team_id', $teamid)->first();
+
                         $activeTeam = $loggedInCandidate->active_team;
                         if($activeTeam){
                             $status['is_teamListed'] = in_array($candidate->user_id,$activeTeam->teamListedUser->pluck('id')->toArray());
-                            $status['is_connect'] = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;;
+                            $status['is_connect'] = $connection_status->connection_status;
                         }
 
                     }
