@@ -356,7 +356,7 @@ class UserService extends ApiBaseService
                         $status['is_connect'] =  null;;
 
                         try {
-                            $connection_status = TeamConnection::where('to_team_id', $teamid)->first();
+                            $connection = TeamConnection::where('to_team_id', $teamid)->get();
 
                         } catch (\Exception $th) {
                             throw $th;
@@ -365,7 +365,7 @@ class UserService extends ApiBaseService
                         $activeTeam = $loggedInCandidate->active_team;
                         if($activeTeam){
                             $status['is_teamListed'] = in_array($candidate->user_id,$activeTeam->teamListedUser->pluck('id')->toArray());
-                            $status['is_connect'] = $connection_status->connection_status;
+                            $status['is_connect'] = $connection;
                         }
 
                     }
