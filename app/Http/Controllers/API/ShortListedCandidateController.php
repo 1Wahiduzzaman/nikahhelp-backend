@@ -170,7 +170,7 @@ class ShortListedCandidateController extends AppBaseController
             }
 
             /* Get Active Team instance */
-            $activeTeamId = Generic::getActiveTeamId();
+            $activeTeamId = (new Generic())->getActiveTeamId();
             if (!$activeTeamId) {
                 throw new Exception('Team not found, Please create team first');
             }
