@@ -356,7 +356,7 @@ class UserService extends ApiBaseService
                         $status['is_connect'] =  null;;
 
                         try {
-                            $connection = TeamConnection::where('from_team_id', $candidate->active_team->id)->get();
+                            $connection = TeamConnection::where('from_team_id', $candidate->active_team->id)->orWhere('to_team_id', $candidate->active_team->id)->get();
 
                         } catch (\Exception $th) {
                             throw $th;
