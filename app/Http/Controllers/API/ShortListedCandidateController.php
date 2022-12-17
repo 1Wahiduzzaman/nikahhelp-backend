@@ -26,6 +26,7 @@ use Response;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Http\Resources\ShortlistedCandidateResource;
+use App\Models\TeamConnection;
 
 /**
  * Class ShortListedCandidateController
@@ -136,8 +137,15 @@ class ShortListedCandidateController extends AppBaseController
                 }
                 $candidate->team_id = $teamId;
 
-                $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
+                $getTeamId = $candidate->active_team->id;
+                $connectedTeam = TeamConnection::where('from_team_id', $activeTeamId)->where('to_team_id', $getTeamId)->get();
+
                 $candidatesResponse[] = $this->candidateTransformer->transformSearchResult($candidate);
+
+                if (count($connectedTeam) > 0) {
+                    $candidatesResponse = [];
+                }
+                // $candidate->is_connect = in_array($teamId,$userInfo['connectList']);
             }
 
             $pagination = $this->paginationResponse($shortListCandidates);
