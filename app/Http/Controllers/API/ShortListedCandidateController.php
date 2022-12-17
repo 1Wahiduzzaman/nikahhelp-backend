@@ -221,6 +221,14 @@ class ShortListedCandidateController extends AppBaseController
                 $shortListedBy = CandidateInformation::where('user_id', $teamShortListUser->pivot->team_listed_by)->first();
                 $teamShortListUser->pivot->shortlisted_by =$shortListedBy->first_name.' '. $shortListedBy->last_name;
                 $candidatesResponse[] = $this->candidateTransformer->transformShortListUser($teamShortListUser);
+
+                $teamUser = CandidateInformation::where('user_id', $teamShortListUser->id)->first();
+
+                $connectedTeam = TeamConnection::where('from_team_id', $activeTeam->id)->where('to_team_id', $teamUser->active_team->id)->get();
+
+                if (count($connectedTeam) > 0) {
+                    $candidatesResponse = [];
+                }
             }
 
             $pagination = $this->paginationResponse($teamShortListUsers);
