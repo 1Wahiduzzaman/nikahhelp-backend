@@ -363,7 +363,7 @@ class UserService extends ApiBaseService
 
                         try {
                             $userActive = $this->getRightUser();
-                            // $fromTeamId =  $userActive->active_team->id;
+                            $fromTeamId =  $userActive->active_team->id;
                             // $connection = TeamConnection::where('from_team_id', $fromTeamId)->where('to_team_id', $candidate->active_team->id)->get();
                         } catch (\Exception $th) {
                            return $this->sendErrorResponse($th->getMessage(), [], HttpStatusCode::FORBIDDEN);
@@ -409,9 +409,6 @@ class UserService extends ApiBaseService
     protected function getRightUser()
     {
         $fromCandidate = CandidateInformation::where('user_id', self::getUserId())->get();
-
-        Log::info(CandidateInformation::where('user_id', self::getUserId())->first()->active_team);
-        Log::info(RepresentativeInformation::where('user_id', self::getUserId())->first()->active_team);
 
         return count($fromCandidate) > 0 ? CandidateInformation::where('user_id', self::getUserId())->first() : RepresentativeInformation::where('user_id', self::getUserId())->first();
     }
