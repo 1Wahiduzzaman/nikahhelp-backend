@@ -323,6 +323,8 @@ class UserService extends ApiBaseService
     public function getUserProfile($request)
     {
         $teamid = null;
+
+        $userid = self::getUserId();
         try {
 
             $user = $this->userRepository->findOneByProperties([
@@ -356,7 +358,7 @@ class UserService extends ApiBaseService
                         $status['is_connect'] =  null;;
 
                         try {
-                            $connection = TeamConnection::where('from_team_id', $candidate->active_team->id)->orWhere('to_team_id', $candidate->active_team->id)->get();
+                            $connection = TeamConnection::where('requested_by', $userid)->where('to_team_id', $candidate->active_team->team_id)->get();
                         } catch (\Exception $th) {
                             throw $th;
                         }
