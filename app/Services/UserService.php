@@ -372,7 +372,7 @@ class UserService extends ApiBaseService
                         $activeTeam = $loggedInCandidate->active_team;
                         if($activeTeam){
                             $status['is_teamListed'] = in_array($candidate->user_id,$activeTeam->teamListedUser->pluck('id')->toArray());
-                            $status['is_connect'] = $connection;
+                            $status['is_connect'] = null;
                         }
 
                     }
