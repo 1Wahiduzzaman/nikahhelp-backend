@@ -37,10 +37,13 @@ use Symfony\Component\HttpFoundation\Response as FResponse;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use \App\Domain;
+use App\Models\CandidateInformation;
 use App\Models\TeamMember;
 use App\Models\TeamMemberInvitation;
 use Illuminate\Support\Facades\Validator;
 use App\Models\PasswordReset;
+use App\Models\RepresentativeInformation;
+use App\Models\Team;
 use App\Models\TeamConnection;
 
 class UserService extends ApiBaseService
@@ -358,7 +361,9 @@ class UserService extends ApiBaseService
                         $status['is_connect'] =  null;;
 
                         try {
-                            $connection = TeamConnection::where('requested_by', $userid)->where('to_team_id', $candidate->active_team->team_id)->get();
+                            $userActive = CandidateInformation::where('user_id', $userid) ? CandidateInformation::where('user_id', $userid) : RepresentativeInformation::where('user_id', $userid);
+                            $fromTeamId =  $userActive->active_team->id;
+                            $connection = TeamConnection::where('from_team_id', $fromTeamId)->where('to_team_id', $candidate->active_team->id)->get();
                         } catch (\Exception $th) {
                             throw $th;
                         }
