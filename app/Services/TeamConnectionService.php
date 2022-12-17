@@ -112,7 +112,7 @@ class TeamConnectionService extends ApiBaseService
         $from_team_id = $from_team->id;
         $from_team_candidate = TeamMember::select("*")
             ->with("user")
-            ->where('team_id', "$from_team_id")
+            ->where('team_id', $from_team_id)
             ->where('user_type', "Candidate")
             ->get();
 //        dd($from_team_id,$from_team_candidate);
@@ -146,12 +146,14 @@ class TeamConnectionService extends ApiBaseService
         $from_team_verified_reps = TeamMember::select("*")
             ->with("user")
             ->where('team_id', $from_team_id)
-        //     ->where('user_type', "Representative")
-            ->whereHas('user', function (Builder $query) {
-                $query->where('is_verified', '=', 1);
-            })
+            ->where('user_type', "Representative")
             ->get();
-        if (count($from_team_verified_reps) == 0) {
+
+        if (count($from_team_verified_reps) > 0) {
+            $from_team_verified_reps_user = $from_team_verified_reps[0]->user;
+            if ($from_team_verified_reps_user->is_verified != 1) {
+                return $this->sendErrorResponse('Your team representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+            }
             return $this->sendErrorResponse('No verified representative found in your team.', [], HttpStatusCode::VALIDATION_ERROR);
         }
 
@@ -160,12 +162,13 @@ class TeamConnectionService extends ApiBaseService
         $to_team_verified_reps = TeamMember::select("*")
             ->with("user")
             ->where('team_id', $to_team_id)
-//            ->where('user_type', "Representative")
-            ->whereHas('user', function (Builder $query) {
-                $query->where('is_verified', '=', 1);
-            })
+            ->where('user_type', "Representative")
             ->get();
-        if (count($to_team_verified_reps) == 0) {
+        if (count($to_team_verified_reps) > 0) {
+            $to_team_verified_reps_user = $from_team_verified_reps[0]->user;
+            if ($to_team_verified_reps_user->is_verified != 1) {
+                return $this->sendErrorResponse('Their Team representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+            }
             return $this->sendErrorResponse('No verified representative found in their team.', [], HttpStatusCode::VALIDATION_ERROR);
         }
         /// verification validation end
