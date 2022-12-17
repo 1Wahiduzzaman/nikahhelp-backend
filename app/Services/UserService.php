@@ -356,7 +356,12 @@ class UserService extends ApiBaseService
                         $loggedInCandidate = $loggedInUser->getCandidate;
                         $status['is_short_listed'] = in_array($candidate->user_id,$loggedInCandidate->shortList->pluck('user_id')->toArray());
                         $status['is_block_listed'] = in_array($candidate->user_id,$loggedInCandidate->blockList->pluck('user_id')->toArray());
-                        $teamTableId = $candidate->active_team ? $candidate->active_team : '';
+                        $teamTableId = $candidate->active_team ? [
+                            'team_name' => $candidate->active_team->name,
+                            'member' => $candidate->active_team->member_count,
+                            'created_by' => CandidateInformation::where('user_id', $candidate->active_team->created_by)->get(),
+                            'created_at' => $candidate->active_team->created_at
+                        ] : '';
                         $teamid = $candidate->active_team->team_id;
                         $status['is_teamListed'] = null;
                         $status['is_connect'] =  null;;
