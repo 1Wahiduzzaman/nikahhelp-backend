@@ -331,7 +331,7 @@ class UserService extends ApiBaseService
     public function getUserProfile($request)
     {
         $teamid = null;
-
+        $teamTableId = null;
         $userid = self::getUserId();
         try {
 
