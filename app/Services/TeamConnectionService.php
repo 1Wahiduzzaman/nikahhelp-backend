@@ -154,7 +154,9 @@ class TeamConnectionService extends ApiBaseService
             if ($from_team_verified_reps_user->is_verified != 1) {
                 return $this->sendErrorResponse('Your team representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
             }
+        } else {
             return $this->sendErrorResponse('No verified representative found in your team.', [], HttpStatusCode::VALIDATION_ERROR);
+
         }
 
 
@@ -169,7 +171,9 @@ class TeamConnectionService extends ApiBaseService
             if ($to_team_verified_reps_user->is_verified != 1) {
                 return $this->sendErrorResponse('Their Team representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
             }
+        } else {
             return $this->sendErrorResponse('No verified representative found in their team.', [], HttpStatusCode::VALIDATION_ERROR);
+
         }
         /// verification validation end
 
