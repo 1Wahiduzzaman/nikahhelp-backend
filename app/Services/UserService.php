@@ -45,6 +45,7 @@ use App\Models\PasswordReset;
 use App\Models\RepresentativeInformation;
 use App\Models\Team;
 use App\Models\TeamConnection;
+use App\Transformers\RepresentativeTransformer;
 use Illuminate\Support\Facades\Log;
 
 class UserService extends ApiBaseService
@@ -81,6 +82,7 @@ class UserService extends ApiBaseService
      */
     protected $profileLogRepository;
 
+    protected $repTransformer;
 
     /**
      * @var TicketRepository
@@ -106,6 +108,7 @@ class UserService extends ApiBaseService
         RepresentativeRepository $representativeRepository,
         CandidateTransformer $candidateTransformer,
         CandidateRepository $candidateRepository,
+        RepresentativeTransformer $repTransformer,
         ProfileLogRepository $profileLogRepository,
         TicketRepository $ticketRepository,
         Domain $domain
@@ -119,6 +122,7 @@ class UserService extends ApiBaseService
         $this->profileLogRepository = $profileLogRepository;
         $this->ticketRepository = $ticketRepository;
         $this->domain = $domain;
+        $this->repTransformer = $repTransformer;
     }
 
     /**
@@ -343,6 +347,7 @@ class UserService extends ApiBaseService
                 ]);
                 if (!$candidate) {
                     $candidateInformation = array();
+
                 } else {
 
                     $status['is_short_listed'] = null;
@@ -352,6 +357,12 @@ class UserService extends ApiBaseService
 
                     $loggedInUser = Auth::user();
 
+                    if (empty($candidate)) {
+                        $candidate = $this->representativeRepository->findOneByProperties([
+                            'user_id' => $request->user_id
+                        ]);
+                    }
+
                     if($loggedInUser && $loggedInUser->getCandidate()->exists()){
                         $loggedInCandidate = $loggedInUser->getCandidate;
                         $status['is_short_listed'] = in_array($candidate->user_id,$loggedInCandidate->shortList->pluck('user_id')->toArray());
@@ -359,7 +370,7 @@ class UserService extends ApiBaseService
                         $teamTableId = $candidate->active_team ? [
                             'team_name' => $candidate->active_team->name,
                             'member' => $candidate->active_team->member_count,
-                            'created_by' => CandidateInformation::where('user_id', $candidate->active_team->created_by)->get(),
+                            'created_by' => User::find($candidate->active_team->created_by),
                             'created_at' => $candidate->active_team->created_at
                         ] : '';
                         $teamid = $candidate->active_team->team_id;
@@ -382,10 +393,20 @@ class UserService extends ApiBaseService
 
                     }
 
-                    $candidateInformation = $this->candidateTransformer->transform($candidate);
-                    $candidateInformation['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
-                    $candidateInformation['status'] = $status;
-                    $candidateInformation['more_about'] = $this->candidateTransformer->transformPersonalMoreAbout($candidate)['more_about'];
+
+                    if (is_a($candidate, 'RepresentativeInformation')) {
+                        $candidateInformation = $this->repTransformer->transform($candidate);
+                        $candidateInformation['essential'] = $this->repTransformer->transformPersonalEssential($candidate)['essential'];
+                        $candidateInformation['status'] = $status;
+                        $candidateInformation['more_about'] = $this->repTransformer->transformPersonalMoreAbout($candidate)['more_about'];
+
+                    } else {
+                        $candidateInformation = $this->candidateTransformer->transform($candidate);
+                        $candidateInformation['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
+                        $candidateInformation['status'] = $status;
+                        $candidateInformation['more_about'] = $this->candidateTransformer->transformPersonalMoreAbout($candidate)['more_about'];
+
+                    }
                 }
 
                 $representativeInformation = $this->representativeRepository->findBy(['user_id' => $request->user_id]);
