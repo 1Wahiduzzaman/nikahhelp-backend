@@ -45,6 +45,7 @@ use App\Models\PasswordReset;
 use App\Models\RepresentativeInformation;
 use App\Models\Team;
 use App\Models\TeamConnection;
+use Illuminate\Support\Facades\Log;
 
 class UserService extends ApiBaseService
 {
@@ -361,9 +362,9 @@ class UserService extends ApiBaseService
                         $status['is_connect'] =  null;;
 
                         try {
-                            $userActive = CandidateInformation::where('user_id', $userid) ? CandidateInformation::where('user_id', $userid) : RepresentativeInformation::where('user_id', $userid);
-                            $fromTeamId =  $userActive->active_team->id;
-                            $connection = TeamConnection::where('from_team_id', $fromTeamId)->where('to_team_id', $candidate->active_team->id)->get();
+                            $userActive = $this->getRightUser();
+                            // $fromTeamId =  $userActive->active_team->id;
+                            // $connection = TeamConnection::where('from_team_id', $fromTeamId)->where('to_team_id', $candidate->active_team->id)->get();
                         } catch (\Exception $th) {
                             throw $th;
                         }
@@ -403,6 +404,16 @@ class UserService extends ApiBaseService
 
         return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS);
 
+    }
+
+    protected function getRightUser()
+    {
+        $fromCandidate = CandidateInformation::where('user_id', self::getUserId())->get();
+
+        Log::info(CandidateInformation::where('user_id', self::getUserId())->first()->active_team);
+        Log::info(RepresentativeInformation::where('user_id', self::getUserId())->first()->active_team);
+
+        return count($fromCandidate) > 0 ? CandidateInformation::where('user_id', self::getUserId())->first() : RepresentativeInformation::where('user_id', self::getUserId())->first();
     }
 
     public function findUserInfo($request)
