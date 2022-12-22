@@ -32,6 +32,8 @@ use App\Repositories\CountryRepository;
 use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
 use App\Transformers\RepresentativeTransformer;
 use Exception;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 /**
@@ -464,6 +466,10 @@ class AdminDashboardController extends AppBaseController
                 }
             }
 
+            $this->deleteImageGuzzle('ver_image_front', $request->id);
+            $this->deleteImageGuzzle('ver_image_back', $request->id);
+
+
             return $this->sendSuccess($userInfo, 'User '. $request->status.' successfully', [], FResponse::HTTP_OK);
         } else {
             return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
@@ -787,6 +793,20 @@ class AdminDashboardController extends AppBaseController
             // 'per_main_image_url' => $item->per_main_image_url ? env('IMAGE_SERVER') .'/'. $item->per_main_image_url : '',
             'per_main_image_url' => $item->per_main_image_url ? $item->per_main_image_url : '',
         ];
+    }
+
+    public function deleteImageGuzzle(String $filename, String $userId)
+    {
+
+        try {
+            $response = Http::delete(config('chobi.chobi').'/img', [
+                'path' => 'candidate/candidate_'.$userId.'/',
+                'file' => $filename,
+            ]);
+            return $response->json();
+        } catch (\Exception $exception) {
+            Log::log('error', $exception->getMessage());
+        }
     }
 
 }
