@@ -14,10 +14,8 @@ class RecentJoinCandidateResource extends JsonResource
      */
     public function toArray($request)
     {
-        $firstName = $this->userinfo['first_name'] ?? "";
-        $lastName = $this->userinfo['last_name'] ?? "";
+       
         $candidateInfo = [
-            'name' => $firstName . ' ' . $lastName,
             'location' => $this->userinfo['per_nationality'] ?? "",
             'location_name' => $this->userinfo->getNationality['name'] ?? "",
             'age' => $this->userinfo['dob'] ?? "",
