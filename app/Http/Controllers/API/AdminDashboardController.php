@@ -466,8 +466,8 @@ class AdminDashboardController extends AppBaseController
                 }
             }
 
-            $this->deleteImageGuzzle('ver_image_front', $request->id);
-            $this->deleteImageGuzzle('ver_image_back', $request->id);
+            // $this->deleteImageGuzzle($request->filename, $request->id);
+            // $this->deleteImageGuzzle($request->filename, $request->id);
 
 
             return $this->sendSuccess($userInfo, 'User '. $request->status.' successfully', [], FResponse::HTTP_OK);
