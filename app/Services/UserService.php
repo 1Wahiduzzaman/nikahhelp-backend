@@ -381,6 +381,12 @@ class UserService extends ApiBaseService
                             $userActive = $this->getRightUser();
                             $fromTeamId =  $userActive->active_team->id;
                             $connection = TeamConnection::where('from_team_id', $fromTeamId)->where('to_team_id', $candidate->active_team->id)->get();
+
+                            if (count($connection) < 1) {
+                                $connection = TeamConnection::where('from_team_id', $candidate->active_team->id)->where('to_team_id', $fromTeamId)->get();
+                            }
+
+
                         } catch (\Exception $th) {
                            return $this->sendErrorResponse($th->getMessage(), [], HttpStatusCode::FORBIDDEN);
                         }
