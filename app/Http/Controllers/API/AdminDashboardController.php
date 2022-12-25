@@ -795,11 +795,11 @@ class AdminDashboardController extends AppBaseController
         ];
     }
 
-    public function deleteImageGuzzle(String $filename, String $userId)
+    public function deleteImageGuzzle(String $filename, int $userId)
     {
 
         try {
-            $response = Http::delete(config('chobi.chobi').'/img', [
+            $response = Http::delete(config('chobi.chobi').'/img'.'/'.$userId, [
                 'path' => 'candidate/candidate_'.$userId.'/',
                 'file' => $filename,
             ]);
