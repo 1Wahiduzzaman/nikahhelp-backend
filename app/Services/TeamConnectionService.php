@@ -253,10 +253,10 @@ class TeamConnectionService extends ApiBaseService
 
     public function updateResponse($user_id, $team_id, $connection_row, $connection_status)
     {
-        if($connection_status ==10) {
-            $connection_row = TeamConnection::where('id', $connection_row->id)->delete();
-            return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
-        } else {
+        // if($connection_status ==10) {
+        //     $connection_row = TeamConnection::where('id', $connection_row->id)->delete();
+        //     return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
+        // } else {
             // If connection status is pending only "To Team" can update the connection status
         $user_member_status = $this->teamMemberRepository->findOneByProperties(
             [
@@ -295,7 +295,7 @@ class TeamConnectionService extends ApiBaseService
         } catch (QueryException $ex) {
             return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR);
         }
-        }
+        // }
     }
 
     public function reports($request)
@@ -761,7 +761,7 @@ class TeamConnectionService extends ApiBaseService
         $input = $connection_row->fill($input)->toArray();
         // $connection_row->save($input);
         $connection_row->delete();
-        
+
         return $this->sendSuccessResponse($connection_row, 'Connection disconnected!');
     }
 
