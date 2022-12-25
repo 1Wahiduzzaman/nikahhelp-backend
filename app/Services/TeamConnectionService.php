@@ -759,8 +759,9 @@ class TeamConnectionService extends ApiBaseService
         $input = (array)$connection_row;
         // As BaseRepository update method has bug that's why we have to fallback to model default methods.
         $input = $connection_row->fill($input)->toArray();
-        $connection_row->save($input);
-
+        // $connection_row->save($input);
+        $connection_row->delete();
+        
         return $this->sendSuccessResponse($connection_row, 'Connection disconnected!');
     }
 
