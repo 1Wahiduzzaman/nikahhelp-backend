@@ -345,7 +345,7 @@ class SearchService extends ApiBaseService
                 );
             }
 
-            if(Auth::check()) {
+            if(!Auth::check()) {
                 $candidatesResponse[] = array_merge([
                     'image' => CandidateImage::getCandidateMainImage($candidate->user_id),
                     'screen_name' => $candidate->screen_name,
