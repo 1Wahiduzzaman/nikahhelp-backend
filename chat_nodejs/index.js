@@ -4,9 +4,10 @@ const _ = require("underscore");
 const http = require('https');
 const fs = require('fs');
 const options = {
-  key: fs.readFileSync('./ssl/biyashadi.key'),
-  cert: fs.readFileSync('./ssl/biyashadi.crt')
+    key: fs.readFileSync('/home/biyashadi/public_html/backend/chat_nodejs/ssl/biyashadi.key'),
+    cert: fs.readFileSync('/home/biyashadi/public_html/backend/chat_nodejs/ssl/biyashadi.crt')
 };
+
 
 const server = http.createServer(options, app);
 const {Server} = require("socket.io");
