@@ -343,21 +343,23 @@ class SearchService extends ApiBaseService
                         'preference' => $this->candidateTransformer->transform($candidate)['preference']
                     ],
                 );
+
+                if(!Auth::check()) {
+                    $candidatesResponse[] = array_merge([
+                        'image' => CandidateImage::getCandidateMainImage($candidate->user_id),
+                        'screen_name' => $candidate->screen_name,
+                        'per_age' => Carbon::now()->diffInYears($candidate->per_age),
+                        'per_nationality_id' => $candidate->per_nationality,
+                        'per_nationality' => $candidate->getNationality()->exists() ? $candidate->getNationality->name : null,
+                        'per_religion_id' => $candidate->per_religion_id,
+                        'per_religion' => $candidate->getReligion()->exists() ? $candidate->getReligion->name : null,
+                        'per_ethnicity' => $candidate->per_ethnicity,
+                        'per_hobbies_interests' => $candidate->per_hobbies_interests,
+                    ]);
+                }
             }
 
-            if(!Auth::check()) {
-                $candidatesResponse[] = array_merge([
-                    'image' => CandidateImage::getCandidateMainImage($candidate->user_id),
-                    'screen_name' => $candidate->screen_name,
-                    'per_age' => Carbon::now()->diffInYears($candidate->per_age),
-                    'per_nationality_id' => $candidate->per_nationality,
-                    'per_nationality' => $candidate->getNationality()->exists() ? $candidate->getNationality->name : null,
-                    'per_religion_id' => $candidate->per_religion_id,
-                    'per_religion' => $candidate->getReligion()->exists() ? $candidate->getReligion->name : null,
-                    'per_ethnicity' => $candidate->per_ethnicity,
-                    'per_hobbies_interests' => $candidate->per_hobbies_interests,
-                ]);
-            }
+
 
             $searchResult['data'] = $candidatesResponse;
             $searchResult['pagination'] = $this->paginationResponse($candidates);
