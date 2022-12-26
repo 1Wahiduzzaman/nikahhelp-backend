@@ -291,6 +291,7 @@ class SearchService extends ApiBaseService
             }
 
             $candidatesResponse = [];
+            $candidatesResponseUnAuth = [];
             foreach ($candidates as $candidate) {
                 /* Include additional info */
                 $candidate->is_short_listed = in_array($candidate->user_id,$userInfo['shortList']);
@@ -345,7 +346,7 @@ class SearchService extends ApiBaseService
                 );
 
                 if(!Auth::check()) {
-                    $candidatesResponse[] = array_merge([
+                    $candidatesResponseUnAuth[] = array_merge([
                         'image' => CandidateImage::getCandidateMainImage($candidate->user_id),
                         'screen_name' => $candidate->screen_name,
                         'per_age' => Carbon::now()->diffInYears($candidate->per_age),
@@ -360,11 +361,19 @@ class SearchService extends ApiBaseService
             }
 
 
+            if(!Auth::check()) {
+                $searchResult['data'] = $candidatesResponseUnAuth;
+                $searchResult['pagination'] = $this->paginationResponse($candidates);
+
+                return $this->sendSuccessResponse($searchResult, "Candidates fetched successfully");
+
+            }
 
             $searchResult['data'] = $candidatesResponse;
             $searchResult['pagination'] = $this->paginationResponse($candidates);
 
             return $this->sendSuccessResponse($searchResult, "Candidates fetched successfully");
+
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
