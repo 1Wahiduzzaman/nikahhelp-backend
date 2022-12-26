@@ -349,7 +349,7 @@ class SearchService extends ApiBaseService
                     $candidatesResponseUnAuth[] = array_merge([
                         'image' => CandidateImage::getCandidateMainImage($candidate->user_id),
                         'screen_name' => $candidate->screen_name,
-                        'per_age' => Carbon::now()->diffInYears($candidate->per_age),
+                        'per_age' => Carbon::now()->diffInYears($candidate->dob),
                         'per_nationality_id' => $candidate->per_nationality,
                         'per_nationality' => $candidate->getNationality()->exists() ? $candidate->getNationality->name : null,
                         'per_religion_id' => $candidate->per_religion_id,
