@@ -356,7 +356,7 @@ class SearchService extends ApiBaseService
                         'per_religion' => $candidate->getReligion()->exists() ? $candidate->getReligion->name : null,
                         'per_ethnicity' => $candidate->per_ethnicity,
                         'per_hobbies_interests' => $candidate->per_hobbies_interests,
-                        'per_permanent_country_name' => $candidate->getPermanentCountry()->exists() ? $item->getPermanentCountry->name :null,
+                        'per_permanent_country_name' => $candidate->getPermanentCountry()->exists() ? $candidate->getPermanentCountry->name :null,
 
                     ]);
                 }
