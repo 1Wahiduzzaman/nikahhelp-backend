@@ -639,7 +639,7 @@ class UserService extends ApiBaseService
     public function deleteUserAccount(Request $request)
     {
        $validPass = Validator::make($request->all(), [
-            'password' => 'required|confirmed',
+            'password' => 'required|string',
         ]);
 
 
@@ -660,7 +660,7 @@ class UserService extends ApiBaseService
         if ($check) {
             return $this->sendErrorResponse('Sorry you are not allowed to access', ['data' => false], HttpStatusCode::FORBIDDEN);
         }
-        
+
         try {
             $user->status = 0;
 
