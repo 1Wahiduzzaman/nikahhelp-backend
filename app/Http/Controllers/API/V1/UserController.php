@@ -122,9 +122,9 @@ class UserController extends Controller
         return $this->userService->logout($token);
     }
 
-    public function deleteAccount()
+    public function deleteAccount(Request $request)
     {
-        return $this->userService->deleteUserAccount();
+        return $this->userService->deleteUserAccount($request);
     }
 
     public function sendEmail()

@@ -636,13 +636,35 @@ class UserService extends ApiBaseService
     /**
      * @return JsonResponse
      */
-    public function deleteUserAccount()
+    public function deleteUserAccount(Request $request)
     {
+       $validPass = Validator::make($request->all(), [
+            'password' => 'required|confirmed',
+        ]);
+
+
+
+        if ($validPass->fails()) {
+            return $this->sendErrorResponse('Sorry you can not access', [], HttpStatusCode::FORBIDDEN);
+        }
+
+        $hashPassword = Hash::make($request->password);
+
+
+
         if (!$user = JWTAuth::parseToken()->authenticate()) {
             return $this->sendErrorResponse('User Not Found', [], HttpStatusCode::NOT_FOUND);
         }
+
+        $check = Hash::check($user->password, $hashPassword);
+        if ($check) {
+            return $this->sendErrorResponse('Sorry you are not allowed to access', ['data' => false], HttpStatusCode::FORBIDDEN);
+        }
+        
         try {
             $user->status = 0;
+
+
             if ($user->save()) {
                 JWTAuth::invalidate(JWTAuth::getToken());
                 return $this->sendSuccessResponse([], 'Your account has been delete');
