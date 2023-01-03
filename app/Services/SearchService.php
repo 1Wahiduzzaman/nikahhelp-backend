@@ -374,7 +374,7 @@ class SearchService extends ApiBaseService
                 $collection->forget('per_email');
                 $collection->forget('mobile_number');
                 return $collection;
-                })->toArray();
+                });
             })->toArray();
 
             if(!Auth::check()) {
