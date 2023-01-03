@@ -348,29 +348,11 @@ class SearchService extends ApiBaseService
                 );
 
                 $candidatesResponse[] = collect($candidatesResponse[$key])->map(static function ($data) {
-                   return  collect($data)->map(function ($result, string $key) {
-                        if ($key == 'dob') {
-                            return null;
-                        }
-
-                        if ($key == 'per_email') {
-                            return null;
-                        }
-
-                        if ($key == 'mobile_number') {
-                            return null;
-                        }
-
-                        if ($key == 'address_1' || $key == 'address_2') {
-                            return null;
-                        }
-
-                        if ($key == 'per_permanent_post_code') {
-                            return null;
-                        }
-
-                        return $result;
-                    })->toArray();
+                    $collection = collect($data);
+                    $collection->forget('dob');
+                    $collection->forget('per_email');
+                    $collection->forget('mobile_number');
+                    return $collection->toArray();
                 })->toArray();
 
                 if(!Auth::check()) {
