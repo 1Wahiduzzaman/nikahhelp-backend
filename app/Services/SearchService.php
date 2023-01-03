@@ -368,7 +368,7 @@ class SearchService extends ApiBaseService
                         }
 
                     });
-                });
+                })->toArray();
 
                 if(!Auth::check()) {
                     $candidatesResponseUnAuth[] = array_merge([
