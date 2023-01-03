@@ -345,8 +345,8 @@ class SearchService extends ApiBaseService
                     ],
                 );
 
-                $candidatesResponse[] = collect($candidatesResponse[$key])->map(static function (mixed $data) {
-                   return  collect($data)->filter(function (mixed $result, string $key) {
+                $candidatesResponse[] = collect($candidatesResponse[$key])->map(static function ($data) {
+                   return  collect($data)->filter(function ($result, string $key) {
                         if ($key == 'dob') {
                             return false;
                         }
