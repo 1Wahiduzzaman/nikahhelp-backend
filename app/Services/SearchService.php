@@ -367,6 +367,7 @@ class SearchService extends ApiBaseService
                             return false;
                         }
 
+                        return true;
                     })->toArray();
                 })->toArray();
 
