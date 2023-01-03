@@ -292,7 +292,7 @@ class SearchService extends ApiBaseService
 
             $candidatesResponse = [];
             $candidatesResponseUnAuth = [];
-            foreach ($candidates as $candidate) {
+            foreach ($candidates  as $key => $candidate) {
                 /* Include additional info */
                 $candidate->is_short_listed = in_array($candidate->user_id,$userInfo['shortList']);
                 $candidate->is_block_listed = in_array($candidate->user_id,$userInfo['blockList']);
@@ -344,6 +344,31 @@ class SearchService extends ApiBaseService
                         'preference' => $this->candidateTransformer->transform($candidate)['preference']
                     ],
                 );
+
+                $candidatesResponse[] = collect($candidatesResponse[$key])->map(static function (array $data) {
+                   return  collect($data)->filter(function (mixed $result, string $key) {
+                        if ($key == 'dob') {
+                            return false;
+                        }
+
+                        if ($key == 'per_email') {
+                            return false;
+                        }
+
+                        if ($key == 'mobile_number') {
+                            return false;
+                        }
+
+                        if ($key == 'address_1' || $key == 'address_2') {
+                            return false;
+                        }
+
+                        if ($key == 'per_permanent_post_code') {
+                            return false;
+                        }
+
+                    });
+                });
 
                 if(!Auth::check()) {
                     $candidatesResponseUnAuth[] = array_merge([
