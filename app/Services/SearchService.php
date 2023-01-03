@@ -373,7 +373,7 @@ class SearchService extends ApiBaseService
                 $collection->forget('dob');
                 $collection->forget('per_email');
                 $collection->forget('mobile_number');
-                return $collection->toArray();
+                return $collection;
                 })->toArray();
             })->toArray();
 
