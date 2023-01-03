@@ -370,7 +370,7 @@ class SearchService extends ApiBaseService
                         }
 
                         return $result;
-                    })->filtertoArray();
+                    })->toArray();
                 })->toArray();
 
                 if(!Auth::check()) {
