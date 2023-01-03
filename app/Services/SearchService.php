@@ -354,7 +354,7 @@ class SearchService extends ApiBaseService
                         }
 
                         if ($key == 'per_email') {
-                            return null
+                            return null;
                         }
 
                         if ($key == 'mobile_number') {
