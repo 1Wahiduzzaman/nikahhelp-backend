@@ -24,6 +24,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Repositories\RepresentativeInformationRepository;
+use phpDocumentor\Reflection\Types\Null_;
+
 class SearchService extends ApiBaseService
 {
 
@@ -346,28 +348,29 @@ class SearchService extends ApiBaseService
                 );
 
                 $candidatesResponse[] = collect($candidatesResponse[$key])->map(static function ($data) {
-                   return  collect($data)->filter(function ($result, string $key) {
+                   return  collect($data)->map(function ($result, string $key) {
                         if ($key == 'dob') {
-                            return false;
+                            return null;
                         }
 
                         if ($key == 'per_email') {
-                            return false;
+                            return null
                         }
 
                         if ($key == 'mobile_number') {
-                            return false;
+                            return null;
                         }
 
                         if ($key == 'address_1' || $key == 'address_2') {
-                            return false;
+                            return null;
                         }
 
                         if ($key == 'per_permanent_post_code') {
-                            return false;
+                            return null;
                         }
 
-                    })->toArray();
+                        return $result;
+                    })->filtertoArray();
                 })->toArray();
 
                 if(!Auth::check()) {
