@@ -366,7 +366,7 @@ class SearchService extends ApiBaseService
                 }
             }
 
-            $candidatesResponse = collect($candidatesResponse)->map(static function ($candidate, $key) {
+            $candidatesResponse = collect($candidatesResponse)->map(function ($candidate, $key) {
 
                 return collect($candidate)->map(function ($result) {
                      $collection = collect($result);
@@ -375,7 +375,7 @@ class SearchService extends ApiBaseService
                 $collection->forget('mobile_number');
                 return $collection;
                 });
-            })->toJson();
+            });
 
             if(!Auth::check()) {
                 $searchResult['data'] = $candidatesResponseUnAuth;
