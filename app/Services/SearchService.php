@@ -375,7 +375,7 @@ class SearchService extends ApiBaseService
                 $collection->forget('mobile_number');
                 return $collection;
                 });
-            });
+            })->toJson();
 
             if(!Auth::check()) {
                 $searchResult['data'] = $candidatesResponseUnAuth;
