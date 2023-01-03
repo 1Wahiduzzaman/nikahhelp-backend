@@ -354,7 +354,7 @@ class SearchService extends ApiBaseService
                         }
 
                         if ($key == 'per_email') {
-                            return null
+                            return null;
                         }
 
                         if ($key == 'mobile_number') {
@@ -370,7 +370,7 @@ class SearchService extends ApiBaseService
                         }
 
                         return $result;
-                    })->filtertoArray();
+                    })->toArray();
                 })->toArray();
 
                 if(!Auth::check()) {
