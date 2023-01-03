@@ -367,7 +367,7 @@ class SearchService extends ApiBaseService
                             return false;
                         }
 
-                    });
+                    })->toArray();
                 })->toArray();
 
                 if(!Auth::check()) {
