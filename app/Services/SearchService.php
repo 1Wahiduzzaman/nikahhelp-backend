@@ -347,13 +347,7 @@ class SearchService extends ApiBaseService
                     ],
                 );
 
-                $candidatesResponse[] = collect($candidatesResponse[$key])->map(static function ($data) {
-                    $collection = collect($data);
-                    $collection->forget('dob');
-                    $collection->forget('per_email');
-                    $collection->forget('mobile_number');
-                    return $collection->toArray();
-                })->toArray();
+
 
                 if(!Auth::check()) {
                     $candidatesResponseUnAuth[] = array_merge([
@@ -372,6 +366,16 @@ class SearchService extends ApiBaseService
                 }
             }
 
+            $candidatesResponse = collect($candidatesResponse)->map(static function ($candidate, $key) {
+
+                return collect($candidate)->map(function ($result) {
+                     $collection = collect($result);
+                $collection->forget('dob');
+                $collection->forget('per_email');
+                $collection->forget('mobile_number');
+                return $collection->toArray();
+                })->toArray();
+            })->toArray();
 
             if(!Auth::check()) {
                 $searchResult['data'] = $candidatesResponseUnAuth;
