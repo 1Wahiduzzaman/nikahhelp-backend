@@ -25,7 +25,7 @@ use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Repositories\RepresentativeInformationRepository;
 // use phpDocumentor\Reflection\Types\Null_;
-use App\Transformers\CandidateSearchTranformer;
+use App\Transformers\CandidateSearchTransformer;
 
 class SearchService extends ApiBaseService
 {
@@ -84,7 +84,7 @@ class SearchService extends ApiBaseService
         BlockListService $blockListService,
         CandidateTransformer $candidateTransformer,
         RepresentativeInformationRepository $representativeInformationRepository,
-        CandidateSearchTranformer $searchTransformer
+        CandidateSearchTransformer $searchTransformer
     )
     {
         $this->teamRepository = $teamRepository;
