@@ -321,10 +321,10 @@ class SearchService extends ApiBaseService
                 /* Set Auth Team related info */
                 $connectionRequestSendType = null;
                 $teamConnectStatus = null;
-                $teamAlreadyConnected = TeamConnection::where('from_team_id',$activeTeam->id)->first();
-                $teamConnectRecieved = TeamConnection::where('to_team_id', $candidate->active_team->id)->first();
+                $teamAlreadysentRequest = $activeTeam->sentRequest;
+                $teamConnectRecieved = $activeTeam->receivedRequest;
 
-                if ($teamAlreadyConnected || $teamConnectRecieved) {
+                if ($teamAlreadysentRequest || $teamConnectRecieved) {
                     continue;
                 }
 
