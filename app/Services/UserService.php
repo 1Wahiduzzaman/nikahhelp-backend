@@ -650,9 +650,9 @@ class UserService extends ApiBaseService
 
         $hashPassword = Hash::make($request->password);
 
+        $user = JWTAuth::parseToken()->authenticate();
 
-
-        if (!$user = JWTAuth::parseToken()->authenticate()) {
+        if (!$user) {
             return $this->sendErrorResponse('User Not Found', [], HttpStatusCode::NOT_FOUND);
         }
 

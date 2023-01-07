@@ -24,13 +24,15 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Repositories\RepresentativeInformationRepository;
-use phpDocumentor\Reflection\Types\Null_;
+// use phpDocumentor\Reflection\Types\Null_;
+use App\Transformers\CandidateSearchTranformer;
 
 class SearchService extends ApiBaseService
 {
 
     use CrudTrait;
 
+    protected $searchTransformer;
     /**
      * @var UserRepository
      */
@@ -82,6 +84,7 @@ class SearchService extends ApiBaseService
         BlockListService $blockListService,
         CandidateTransformer $candidateTransformer,
         RepresentativeInformationRepository $representativeInformationRepository
+        CandidateSearchTranformer $searchTransformer
     )
     {
         $this->teamRepository = $teamRepository;
@@ -93,6 +96,7 @@ class SearchService extends ApiBaseService
         $this->setActionRepository($candidateRepository);
         $this->candidateTransformer = $candidateTransformer;
         $this->representativeRepository = $representativeInformationRepository;
+        $this->searchTransformer = $searchTransformer;
     }
 
 
@@ -337,10 +341,10 @@ class SearchService extends ApiBaseService
                 $candidatesResponse[] = array_merge(
                     $this->candidateTransformer->transformSearchResult($candidate),
                     [
-                        'contact' => $this->candidateTransformer->transformPersonal($candidate)['contact']
+                        'contact' => $this->searchTransformer->personal($candidate),
                     ],
                     [
-                        'personal' => $this->candidateTransformer->transform($candidate)['personal']
+                        'personal' => $this->searchTransformer->contact($candidate),
                     ],
                     [
                         'preference' => $this->candidateTransformer->transform($candidate)['preference']
@@ -366,7 +370,7 @@ class SearchService extends ApiBaseService
                 }
             }
 
-            $candidatesResponse = collect($candidatesResponse)->map(static function ($candidate, $key) {
+            $candidatesResponse = collect($candidatesResponse)->map(function ($candidate, $key) {
 
                 return collect($candidate)->map(function ($result) {
                      $collection = collect($result);
@@ -375,7 +379,7 @@ class SearchService extends ApiBaseService
                 $collection->forget('mobile_number');
                 return $collection;
                 });
-            })->toJson();
+            });
 
             if(!Auth::check()) {
                 $searchResult['data'] = $candidatesResponseUnAuth;
