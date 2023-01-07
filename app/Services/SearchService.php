@@ -26,6 +26,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Repositories\RepresentativeInformationRepository;
 // use phpDocumentor\Reflection\Types\Null_;
 use App\Transformers\CandidateSearchTransformer;
+use Illuminate\Support\Facades\Log;
 
 class SearchService extends ApiBaseService
 {
