@@ -153,7 +153,7 @@ class CandidateTransformer extends TransformerAbstract
     private function candidateCartData(CandidateInformation $item): array
     {
         return [
-            'user_id' => $item->user_id,
+            // 'user_id' => $item->user_id,
             'image' => CandidateImage::getCandidateMainImage($item->user_id),
             'first_name' => $item->first_name,
             'last_name' => $item->last_name,
