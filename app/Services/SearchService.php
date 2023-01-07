@@ -370,16 +370,6 @@ class SearchService extends ApiBaseService
                 }
             }
 
-            $candidatesResponse = collect($candidatesResponse)->map(function ($candidate, $key) {
-
-                return collect($candidate)->map(function ($result) {
-                     $collection = collect($result);
-                $collection->forget('dob');
-                $collection->forget('per_email');
-                $collection->forget('mobile_number');
-                return $collection;
-                });
-            });
 
             if(!Auth::check()) {
                 $searchResult['data'] = $candidatesResponseUnAuth;
