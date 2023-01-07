@@ -326,7 +326,7 @@ class SearchService extends ApiBaseService
                 $teamConnectRecieved = $candidate->activeTeam->receivedRequest();
 
                 if ($teamAlreadysentRequest || $teamConnectRecieved) {
-                    Log::info($teamAlreadysentRequest, $teamConnectRecieved);
+                    Log::info([$teamAlreadysentRequest, $teamConnectRecieved]);
                     continue;
                 }
 
