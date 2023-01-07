@@ -83,7 +83,7 @@ class SearchService extends ApiBaseService
         CandidateRepository $candidateRepository,
         BlockListService $blockListService,
         CandidateTransformer $candidateTransformer,
-        RepresentativeInformationRepository $representativeInformationRepository
+        RepresentativeInformationRepository $representativeInformationRepository,
         CandidateSearchTranformer $searchTransformer
     )
     {
