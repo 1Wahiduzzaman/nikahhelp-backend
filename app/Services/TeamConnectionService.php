@@ -253,11 +253,11 @@ class TeamConnectionService extends ApiBaseService
 
     public function updateResponse($user_id, $team_id, $connection_row, $connection_status)
     {
-        // if($connection_status ==10) {
-        //     $connection_row = TeamConnection::where('id', $connection_row->id)->delete();
-        //     return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
-        // } else {
-            // If connection status is pending only "To Team" can update the connection status
+        if($connection_status ==10) {
+            $connection_row = TeamConnection::where('id', $connection_row->id)->delete();
+            return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
+        } else {
+          //  If connection status is pending only "To Team" can update the connection status
         $user_member_status = $this->teamMemberRepository->findOneByProperties(
             [
                 "user_id" => $user_id,
