@@ -657,7 +657,7 @@ class UserService extends ApiBaseService
         }
 
         $check = Hash::check($user->password, $hashPassword);
-        if ($check) {
+        if (!$check) {
             return $this->sendErrorResponse('Sorry you are not allowed to access', ['data' => false], HttpStatusCode::FORBIDDEN);
         }
 
