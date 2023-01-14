@@ -79,7 +79,7 @@ class TeamMembersController extends Controller
 
     public function teamInvitationInformation($link = null) {        
         $data = TeamMemberInvitation::with(['team'=> function($q){
-            $q->with('created_by')->with('team_members');
+            $q->with('created_by:id,full_name,status,is_verified,locked_end, locked_at,form_type,updated_at,created_at,account_type')->with('team_members');
         }])
         ->where('link', $link)->first();
         return $this->sendSuccessResponse($data, 'Success');
