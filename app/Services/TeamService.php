@@ -444,7 +444,7 @@ class TeamService extends ApiBaseService
         // Get Team info for response
         // In future we may need to send notification and messages regarding the team as well
         $team_infos = Team::select("*")
-            ->with("team_members", 'team_invited_members')
+            ->with("team_members", 'team_invited_members:id,team_id,role,is_read,created_at,updated_at,user_type,relationship')
             ->where('id', $team_id)
             ->where('status', 1)
             ->get();

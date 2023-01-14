@@ -73,7 +73,10 @@ class Team extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function team_members(){
-        return $this->hasMany( TeamMember::class, 'team_id', 'id')->with("user");
+        return $this->hasMany( TeamMember::class, 'team_id', 'id')->with(['user' => function($query) {
+                $query->select('full_name', 'id', 'is_verified', 'account_type')
+
+        }]);
     }
 
     /**

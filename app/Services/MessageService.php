@@ -1016,7 +1016,7 @@ class MessageService extends ApiBaseService
      */
     public function getTeamChatHistory($team_id = null) {
         try{
-            $messages = TeamMessage::with('sender')
+            $messages = TeamMessage::with('sender:id,full_name,is_verified,status,form_type,locked_at,locked_end,account_type,created_at,updated_at')
             ->where('team_id', $team_id)
             ->orderBy('created_at', 'asc')
             ->get();
