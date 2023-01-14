@@ -74,8 +74,7 @@ class Team extends Model
      */
     public function team_members(){
         return $this->hasMany( TeamMember::class, 'team_id', 'id')->with(['user' => function($query) {
-                $query->select('full_name', 'id', 'is_verified', 'account_type')
-
+                $query->select('full_name', 'id', 'is_verified', 'account_type');
         }]);
     }
 
