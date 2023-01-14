@@ -89,11 +89,11 @@ class MessageService extends ApiBaseService
                                 }
                         ])->with(['representative_info' => function($q2){
                             $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
-                        }]);
+                        }])
                         // ->with(['block_list' => function($q3){
                         //     $q3->where('user_id','<>', 'id');
                         // }]);
-                    }]);
+                    }])->select('id', 'team_id', 'name', 'description', 'member_count', 'status', 'logo', 'created_at', 'updated_at', 'created_by');
                 }]);
             }
             , 'to_team' => function($t2){
