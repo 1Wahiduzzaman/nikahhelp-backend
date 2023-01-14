@@ -267,7 +267,7 @@ class TeamService extends ApiBaseService
                         $q->with(['user' => function($u){
                             $u->with(['candidate_info' => function($c){
                                 $c->select(['id', 'user_id', 'per_avatar_url', 'per_main_image_url']);
-                            }]);
+                            }])->select('id', 'full_name', 'is_verified', 'status', 'form_type', 'account_type', 'created_at', 'updated_at');
                         }]);
                         $q->with(['plans']);
                     }])
