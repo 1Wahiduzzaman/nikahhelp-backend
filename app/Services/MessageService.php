@@ -93,7 +93,7 @@ class MessageService extends ApiBaseService
                         // ->with(['block_list' => function($q3){
                         //     $q3->where('user_id','<>', 'id');
                         // }]);
-                    }])
+                    }]);
                 }])->select('id', 'team_id', 'name', 'description', 'member_count', 'status', 'logo', 'created_at', 'updated_at', 'created_by');
             }
             , 'to_team' => function($t2){
