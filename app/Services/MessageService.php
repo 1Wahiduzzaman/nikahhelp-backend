@@ -457,7 +457,7 @@ class MessageService extends ApiBaseService
             with(["team_members" => function($query) {
                     $query->select('team_id', 'user_id')
                     ->with(['user' => function($q) {
-                        $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                        $q->select(['id','full_name', 'is_verified', 'status', 'stripe_id', 'account_type']);
                         $q->with(
                             [
                                 'candidate_info' => function($q1) {
