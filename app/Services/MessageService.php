@@ -76,12 +76,12 @@ class MessageService extends ApiBaseService
     }
 
     public function connectedTeamData($request){
-        $active_team_id = Generic::getActiveTeamId();
+        $active_team_id = (new Generic())->getActiveTeamId();
         $data = TeamConnection::with([
             'from_team' => function($t1){
                 $t1->with(['team_members' => function($qq) {
                     $qq->with(['user' => function($q) {
-                        $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                        $q->select(['id','full_name', 'is_verified', 'status', 'stripe_id', 'account_type']);
                         $q->with(
                             [
                                 'candidate_info' => function($q1) {
@@ -99,7 +99,7 @@ class MessageService extends ApiBaseService
             , 'to_team' => function($t2){
                 $t2->with(['team_members' => function($qq) {
                     $qq->with(['user' => function($q) {
-                        $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
+                        $q->select(['id','full_name', 'is_verified', 'status', 'stripe_id', 'account_type']);
                         $q->with(
                             [
                                 'candidate_info' => function($q1) {
@@ -119,7 +119,7 @@ class MessageService extends ApiBaseService
         ->where(['from_team_id'=> $active_team_id])
         ->where('connection_status', '1') //added by Raz
         ->orWhere(function($q){
-            $active_team_id = Generic::getActiveTeamId();
+            $active_team_id = (new Generic())->getActiveTeamId();
             $q->where([ 'to_team_id' => $active_team_id]);
         })
         ->get();
