@@ -3,6 +3,8 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+    ServerSignature Off
+    ServerTokens Prod
     Header add X-Content-Type-Options  "nosniff"
     Header add X-Frame-Options "sameorigin"
     Header add X-XSS-Protection  "1; mode=block"
