@@ -1,13 +1,16 @@
 <IfModule mod_rewrite.c>
+    ServerSignature Off
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
+    
+    
     Header add X-Content-Type-Options  "nosniff"
     Header add X-Frame-Options "sameorigin"
     Header add X-XSS-Protection  "1; mode=block"
     Header add Referrer-Policy "no-referrer"
-    Header add Content-Security-Policy "connect-src 'self' https://biya.arranzed.com https://biya.arranzed.com:4009/ https://chobi.arranzed.com wss://biya.arranzed.com:4009/"
+    Header add Content-Security-Policy "connect-src 'self' https://nikah.arranzed.com https://biya.arranzed.com https://biya.arranzed.com:4009/ https://chobi.arranzed.com wss://biya.arranzed.com:4009/"
     Header add Feature-Policy "microphone 'none'; camera 'none'; geolocation 'none';"
     Header add Strict-Transport-Security "max-age=31536000; includeSubDomains"
     # Handle Authorization Header
@@ -22,7 +25,6 @@
     Header set Access-Control-Allow-Origin "*"
     Header set Access-Control-Allow-Methods "GET,PUT,POST,DELETE"
     Header set Access-Control-Allow-Headers "Content-Type, Authorization"
-
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
