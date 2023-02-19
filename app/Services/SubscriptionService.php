@@ -64,8 +64,7 @@ class SubscriptionService extends ApiBaseService
             }
             $intent = $user->createSetupIntent();
             $data = [
-                'client_secret' => $intent->client_secret,
-                'stripe_key' => env('STRIPE_KEY'),
+                'client_secret' => $intent->client_secret
             ];
             return $this->sendSuccessResponse($data, self::INITIALIZATION_SUCCESSFULLY, [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
