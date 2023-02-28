@@ -142,7 +142,7 @@ class ApiBaseService implements ApiBaseServiceInterface
 
 
         $client = new \GuzzleHttp\Client();
-        $requestc = $client->post(env('IMAGE_SERVER').'/img',[
+        $requestc = $client->post(env('IMAGE_SERVER').'/api/img',[
             'multipart' => $output,
             'user_id' => $userId,
         ]);
@@ -156,7 +156,7 @@ class ApiBaseService implements ApiBaseServiceInterface
     {
         $userId = self::getUserId();
         try {
-            $response = Http::delete(config('chobi.chobi').'/img', [
+            $response = Http::delete(config('chobi.chobi').'/api/img', [
                 'path' => 'candidate/candidate_'.$userId.'/',
                 'file' => $filename,
             ]);
