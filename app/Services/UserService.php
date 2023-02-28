@@ -250,7 +250,8 @@ class UserService extends ApiBaseService
         }
     }
 
-    protected function sendAuthToImageServer (User $user) {
+    protected function sendAuthToImageServer (User $user): bool
+    {
         try {
             $client = new \GuzzleHttp\Client();
             $email = $user->email;
@@ -260,7 +261,7 @@ class UserService extends ApiBaseService
                 'password' => $password
             ]);
 
-           return  $respond->getStatusCode() == 200 ?? false;
+           return  $respond->getStatusCode() == 200;
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
