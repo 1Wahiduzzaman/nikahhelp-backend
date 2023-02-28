@@ -240,9 +240,9 @@ class UserService extends ApiBaseService
             } else {
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $userInfo;
-                if($this->sendAuthToimageServer($data['user'])) {
-                    return $this->sendErrorResponse('server Crashed');
-                }
+
+                $this->sendAuthToimageServer($data['user']);
+
                 return $this->sendSuccessResponse($data, 'Login successfully');
             }
         } catch (JWTException $exception) {
@@ -250,7 +250,7 @@ class UserService extends ApiBaseService
         }
     }
 
-    protected function sendAuthToImageServer (User $user): bool
+    protected function sendAuthToImageServer(User $user): bool
     {
         try {
             $client = new \GuzzleHttp\Client();
