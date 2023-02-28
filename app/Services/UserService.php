@@ -241,7 +241,7 @@ class UserService extends ApiBaseService
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $userInfo;
 
-                $this->sendAuthToimageServer($data['user']);
+                $this->sendAuthToimageServer($userInfo);
 
                 return $this->sendSuccessResponse($data, 'Login successfully');
             }
@@ -250,7 +250,7 @@ class UserService extends ApiBaseService
         }
     }
 
-    protected function sendAuthToImageServer(User $user): bool
+    public function sendAuthToImageServer(User $user): bool
     {
         try {
             $client = new \GuzzleHttp\Client();
