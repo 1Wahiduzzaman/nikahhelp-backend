@@ -255,7 +255,7 @@ class UserService extends ApiBaseService
             $client = new \GuzzleHttp\Client();
             $email = $user->email;
             $password = $user->password;
-            $respond = $client->post(env('IMAGE_SERVER').'/register', [
+            $respond = $client->post(env('IMAGE_SERVER').'/api/v1/register', [
                 'email' => $email,
                 'password' => $password
             ]);
