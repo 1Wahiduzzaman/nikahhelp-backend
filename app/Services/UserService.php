@@ -164,6 +164,7 @@ class UserService extends ApiBaseService
                     'user_id' => $user->id,
                     'token' => $token,
                 ]);
+
                 try{
                     Mail::to($user->email)->send(new VerifyEmail($user, $this->domain->domain));
                 } catch(Exception $e) {
@@ -239,11 +240,29 @@ class UserService extends ApiBaseService
             } else {
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $userInfo;
+                if($this->sendAuthToimageServer($data['user'])) {
+                    return $this->sendErrorResponse('server Crashed');
+                }
                 return $this->sendSuccessResponse($data, 'Login successfully');
-
             }
         } catch (JWTException $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    protected function sendAuthToImageServer (User $user) {
+        try {
+            $client = new \GuzzleHttp\Client();
+            $email = $user->email;
+            $password = $user->password;
+            $respond = $client->post(env('IMAGE_SERVER').'/register', [
+                'email' => $email,
+                'password' => $password
+            ]);
+
+           return  $respond->getStatusCode() == 200 ?? false;
+        } catch (Exception $exception) {
+            return $exception->getMessage();
         }
 
     }
