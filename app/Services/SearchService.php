@@ -33,41 +33,20 @@ class SearchService extends ApiBaseService
 
     use CrudTrait;
 
-    protected $searchTransformer;
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
+    protected \App\Transformers\CandidateSearchTransformer $searchTransformer;
+    protected \App\Repositories\UserRepository $userRepository;
 
-    /**
-     * @var BlockListService
-     */
-    protected $blockListService;
-    /**
-     * @var CandidateRepository
-     */
-    protected $candidateRepository;
+    protected \App\Services\BlockListService $blockListService;
+    protected \App\Repositories\CandidateRepository $candidateRepository;
 
-    /**
-     * @var TeamMemberRepository
-     */
-    protected $teamMemberRepository;
+    protected \App\Repositories\TeamMemberRepository $teamMemberRepository;
 
-    protected $representativeRepository;
+    protected \App\Repositories\RepresentativeInformationRepository $representativeRepository;
 
-    /**
-     * @var TeamRepository
-     */
-    protected $teamRepository;
+    protected \App\Repositories\TeamRepository $teamRepository;
 
-    /**
-     * @var TeamTransformer
-     */
-    protected $teamTransformer;
-    /**
-     * @var CandidateTransformer
-     */
-    private $candidateTransformer;
+    protected \App\Transformers\TeamTransformer $teamTransformer;
+    private \App\Transformers\CandidateTransformer $candidateTransformer;
 
     /**
      * TeamService constructor.

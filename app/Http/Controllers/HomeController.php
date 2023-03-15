@@ -20,15 +20,9 @@ class HomeController extends Controller
 
     use CrudTrait;
 
-    /**
-     * @var CandidateService
-     */
-    protected $candidateService;
+    protected \App\Services\CandidateService $candidateService;
 
-    /**
-     * @var  HomeSearchService
-     */
-    private $searchService;
+    private \App\Services\HomeSearchService $searchService;
 
     /**
      * PurchaseController constructor.

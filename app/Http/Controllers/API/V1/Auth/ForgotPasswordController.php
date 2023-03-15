@@ -22,15 +22,9 @@ class ForgotPasswordController extends Controller
 {
     use SendsPasswordResetEmails;
 
-    /**
-     * @var \App\Services\ApiBaseService
-     */
-    protected $apiBaseService;
+    protected \App\Services\ApiBaseService $apiBaseService;
 
-    /**
-     * @var \App\Repositories\UserRepository
-     */
-    protected $userRepository;
+    protected \App\Repositories\UserRepository $userRepository;
 
     /**
      * Create a new controller instance.

@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 
 class EnsureProfileCompleted
 {
+    /**
+     * @var \App\Repositories\CandidateRepository
+     */
     public $repository;
 
     public function __construct(CandidateRepository $repository)

@@ -40,11 +40,8 @@ class MatchmakerService extends ApiBaseService
     /**
      * @var RepresentativeRepository
      */
-    protected $representativeRepository;
-    /**
-     * @var MatchMakerRepository
-     */
-    protected $matchMakerRepository;
+    protected RepresentativeRepository $representativeRepository;
+    protected \App\Repositories\MatchMakerRepository $matchMakerRepository;
 
     public function __construct(RepresentativeRepository $representativeRepository, MatchMakerRepository $matchMakerRepository)
     {

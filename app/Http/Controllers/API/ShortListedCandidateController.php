@@ -36,28 +36,15 @@ class ShortListedCandidateController extends AppBaseController
 {
     use CrudTrait;
 
-    /**
-     * @var BlockListService
-     */
-    protected $blockListService;
+    protected \App\Services\BlockListService $blockListService;
 
-    /** @var  ShortListedCandidateRepository */
-    private $shortListedCandidateRepository;
+    private \App\Repositories\ShortListedCandidateRepository $shortListedCandidateRepository;
 
-    /**
-     * @var CandidateRepository
-     */
-    protected $candidateRepository;
+    protected \App\Repositories\CandidateRepository $candidateRepository;
 
 
-    /**
-     * @var CandidateTransformer
-     */
-    private $candidateTransformer;
-    /**
-     * @var TeamRepository
-     */
-    private $teamRepository;
+    private \App\Transformers\CandidateTransformer $candidateTransformer;
+    private \App\Repositories\TeamRepository $teamRepository;
 
     public function __construct(
         ShortListedCandidateRepository $shortListedCandidateRepository,

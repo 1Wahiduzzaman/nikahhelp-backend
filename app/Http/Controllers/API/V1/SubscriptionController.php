@@ -16,10 +16,7 @@ use Carbon\Carbon;
 
 class SubscriptionController extends AppBaseController
 {
-    /**
-     * @var  SubscriptionService
-     */
-    private $subscriptionService;
+    private \App\Services\SubscriptionService $subscriptionService;
 
     public function __construct(SubscriptionService $subscriptionService)
     {

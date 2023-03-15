@@ -48,45 +48,29 @@ class CandidateService extends ApiBaseService
     const INFORMATION_UPDATED_SUCCESSFULLY = 'Information updated Successfully!';
     const IMAGE_DELETED_SUCCESSFULLY = 'Image Deleted successfully!';
 
-    /**
-     * @var CandidateRepository
-     */
-    protected $candidateRepository;
+    protected \App\Repositories\CandidateRepository $candidateRepository;
 
     /**
      * @var CandidateRepository
      */
-    protected $imageRepository;
+    protected \App\Repositories\CandidateImageRepository $imageRepository;
 
-    /**
-     * @var CandidateTransformer
-     */
-    protected $candidateTransformer;
+    protected \App\Transformers\CandidateTransformer $candidateTransformer;
 
     /**
      * CandidateService constructor.
      *
      * @param CandidateRepository $candidateRepository
      */
-
-    /**
-     * @var BlockListService
-     */
-    protected $blockListService;
+    protected \App\Services\BlockListService $blockListService;
 
 
     /**
      * @var RepresentativeRepository
      */
-    protected $representativeRepository;
-    /**
-     * @var CountryRepository
-     */
-    private $countryRepository;
-    /**
-     * @var UserRepository
-     */
-    private $userRepository;
+    protected RepresentativeRepository $representativeRepository;
+    private \App\Repositories\CountryRepository $countryRepository;
+    private \App\Repositories\UserRepository $userRepository;
 
 
     public function __construct(

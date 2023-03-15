@@ -34,11 +34,8 @@ class SubscriptionService extends ApiBaseService
     const SUBSCRIPTION_SUCCESSFULLY = "Team Subscription Successfully complete";
     const INITIALIZATION_SUCCESSFULLY = "Payment Initialization Successfully complete";
 
-    /**
-     * @var TeamRepository
-     */
-    protected $teamRepository;
-    protected $domain;
+    protected \App\Repositories\TeamRepository $teamRepository;
+    protected \App\Domain $domain;
 
     /**
      * TeamService constructor.

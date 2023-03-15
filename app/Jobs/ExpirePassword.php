@@ -16,7 +16,7 @@ class ExpirePassword implements ShouldQueue, ShouldBeUnique
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 
-    protected $passwordReset;
+    protected \App\Models\PasswordReset $passwordReset;
     /**
      * Create a new job instance.
      *

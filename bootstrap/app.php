@@ -41,8 +41,6 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
-// register the Laravel phone Service Provider
-$app->register(Propaganistas\LaravelPhone\PhoneServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

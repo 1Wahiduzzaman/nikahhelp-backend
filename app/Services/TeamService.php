@@ -39,29 +39,14 @@ class TeamService extends ApiBaseService
 
     use CrudTrait;
 
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
+    protected \App\Repositories\UserRepository $userRepository;
 
-    /**
-     * @var TeamMemberRepository
-     */
-    protected $teamMemberRepository;
+    protected \App\Repositories\TeamMemberRepository $teamMemberRepository;
 
-    /**
-     * @var TeamRepository
-     */
-    protected $teamRepository;
+    protected \App\Repositories\TeamRepository $teamRepository;
 
-    /**
-     * @var TeamTransformer
-     */
-    protected $teamTransformer;
-    /**
-     * @var CandidateTransformer
-     */
-    private $candidateTransformer;
+    protected \App\Transformers\TeamTransformer $teamTransformer;
+    private \App\Transformers\CandidateTransformer $candidateTransformer;
 
     /**
      * TeamService constructor.

@@ -26,10 +26,7 @@ use Illuminate\Http\Response;
 
 class CandidateController extends Controller
 {
-    /**
-     * @var CandidateService
-     */
-    protected $candidateService;
+    protected \App\Services\CandidateService $candidateService;
 
     /**
      * PurchaseController constructor.

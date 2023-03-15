@@ -20,8 +20,7 @@ use Symfony\Component\Console\Input\Input;
  */
 class NotificationAPIController extends AppBaseController
 {
-    /** @var  NotificationRepository */
-    private $notificationRepository;
+    private \App\Repositories\NotificationRepository $notificationRepository;
 
     public function __construct(NotificationRepository $notificationRepo)
     {

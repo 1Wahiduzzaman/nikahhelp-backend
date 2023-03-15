@@ -10,8 +10,14 @@ use Illuminate\Support\Facades\Gate;
 
 class SupportTicketController extends AppBaseController
 {
+    /**
+     * @var \App\Services\UserService
+     */
     public $matrimonyUsers;
 
+    /**
+     * @var \App\Services\AdminService
+     */
     public  $adminService;
     public function __construct(UserService $matrimonyUsers, AdminService $adminService)
     {

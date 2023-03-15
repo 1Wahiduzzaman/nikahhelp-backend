@@ -30,24 +30,15 @@ class BlockListService extends ApiBaseService
     const INFORMATION_UPDATED_SUCCESSFULLY = 'Information updated Successfully!';
     const INFORMATION_SAVE_SUCCESSFULLY = 'Information save Successfully!';
 
-    /**
-     * @var BlockListRepository
-     */
-    protected $blockListRepository;
+    protected \App\Repositories\BlockListRepository $blockListRepository;
 
     /**
      * @var BlockListResource
      */
     protected $blockListResource;
 
-    /**
-     * @var  ShortListedCandidateRepository
-     */
-    private $shortListedCandidateRepository;
-    /**
-     * @var CandidateRepository
-     */
-    private $candidateRepository;
+    private \App\Repositories\ShortListedCandidateRepository $shortListedCandidateRepository;
+    private \App\Repositories\CandidateRepository $candidateRepository;
 
     /**
      * CandidateService constructor.

@@ -24,21 +24,12 @@ class DeleteReasonService extends ApiBaseService
 
     use CrudTrait;
 
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
+    protected \App\Repositories\UserRepository $userRepository;
 
 
-    /**
-     * @var TeamRepository
-     */
-    protected $teamRepository;
+    protected \App\Repositories\TeamRepository $teamRepository;
 
-    /**
-     * @var DeleteReasonRepository
-     */
-    protected $deleteReasonRepository;
+    protected \App\Repositories\DeleteReasonRepository $deleteReasonRepository;
 
 
     /**

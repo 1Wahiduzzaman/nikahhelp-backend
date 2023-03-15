@@ -38,28 +38,15 @@ class ShortListedRepresentativeController extends AppBaseController
 {
     use CrudTrait;
 
-    /**
-     * @var BlockListService
-     */
-    protected $blockListService;
+    protected \App\Services\BlockListService $blockListService;
 
-    /** @var  ShortListedRepresentativeRepository */
-    private $shortListedRepresentativeRepository;
+    private \App\Repositories\ShortListedRepresentativeRepository $shortListedRepresentativeRepository;
 
-    /**
-     * @var RepresentativeInformationRepository
-     */
-    protected $representativeRepository;
+    protected \App\Repositories\RepresentativeInformationRepository $representativeRepository;
 
 
-    /**
-     * @var RepresentativeTransformer
-     */
-    private $representativeTransformer;
-    /**
-     * @var TeamRepository
-     */
-    private $teamRepository;
+    private \App\Transformers\RepresentativeTransformer $representativeTransformer;
+    private \App\Repositories\TeamRepository $teamRepository;
 
     public function __construct(
         ShortListedRepresentativeRepository $shortListedRepresentativeRepository,

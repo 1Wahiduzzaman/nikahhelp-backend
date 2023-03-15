@@ -51,15 +51,12 @@ class RepresentativeService extends ApiBaseService
     /**
      * @var RepresentativeRepository
      */
-    protected $representativeRepository;
-    protected $countryRepository;
+    protected RepresentativeRepository $representativeRepository;
+    protected \App\Repositories\CountryRepository $countryRepository;
 
-    /**
-     * @var RepresentativeTransformer
-     */
-    private $representativeTransformer;
+    private \App\Transformers\RepresentativeTransformer $representativeTransformer;
 
-    private $candidateRepository;
+    private \App\Repositories\CandidateRepository $candidateRepository;
 
 
     public function __construct(

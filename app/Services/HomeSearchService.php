@@ -26,29 +26,14 @@ class HomeSearchService extends ApiBaseService
 
     use CrudTrait;
 
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
+    protected \App\Repositories\UserRepository $userRepository;
 
-    /**
-     * @var BlockListService
-     */
-    protected $blockListService;
-    /**
-     * @var CandidateRepository
-     */
-    protected $candidateRepository;
+    protected \App\Services\BlockListService $blockListService;
+    protected \App\Repositories\CandidateRepository $candidateRepository;
 
-    /**
-     * @var TeamMemberRepository
-     */
-    protected $teamMemberRepository;
+    protected \App\Repositories\TeamMemberRepository $teamMemberRepository;
 
-    /**
-     * @var TeamRepository
-     */
-    protected $teamRepository;
+    protected \App\Repositories\TeamRepository $teamRepository;
 
 
     /**

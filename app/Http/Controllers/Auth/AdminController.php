@@ -12,10 +12,7 @@ use App\Services\AdminService;
 class AdminController extends Controller
 {
 
-    /**
-     * @var AdminService
-     */
-    private $adminService;
+    private \App\Services\AdminService $adminService;
 
     public function __construct(AdminService $adminService)
     {

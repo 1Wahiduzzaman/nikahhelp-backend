@@ -42,25 +42,13 @@ use Illuminate\Support\Facades\Mail;
  */
 class AdminDashboardController extends AppBaseController
 {
-    /**
-     * @var  ShortListedCandidateRepository
-     */
-    private $shortListedCandidateRepository;
+    private \App\Repositories\ShortListedCandidateRepository $shortListedCandidateRepository;
 
-    /**
-     * @var  AdminService
-     */
-    private $adminService;
+    private \App\Services\AdminService $adminService;
 
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
+    protected \App\Repositories\UserRepository $userRepository;
 
-    /**
-     * @var SubscriptionService
-     */
-    protected $subscriptionService;
+    protected \App\Services\SubscriptionService $subscriptionService;
 
     public function __construct(
         ShortListedCandidateRepository $shortListedCandidateRepo,
