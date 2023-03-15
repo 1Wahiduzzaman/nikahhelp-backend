@@ -253,7 +253,7 @@ class UserService extends ApiBaseService
             }
 
 
-           return  $$firstLogin->getStatusCode() == 200;
+           return  $firstLogin->getStatusCode() == 200;
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
