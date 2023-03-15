@@ -34,25 +34,13 @@ class TeamConnectionService extends ApiBaseService
 
     use CrudTrait;
 
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
+    protected \App\Repositories\UserRepository $userRepository;
 
-    /**
-     * @var TeamMemberRepository
-     */
-    protected $teamMemberRepository;
+    protected \App\Repositories\TeamMemberRepository $teamMemberRepository;
 
-    /**
-     * @var TeamRepository
-     */
-    protected $teamRepository;
+    protected \App\Repositories\TeamRepository $teamRepository;
 
-    /**
-     * @var TeamConnectionRepository
-     */
-    protected $teamConnectionRepository;
+    protected \App\Repositories\TeamConnectionRepository $teamConnectionRepository;
 
 
     /**

@@ -53,43 +53,28 @@ class UserService extends ApiBaseService
 
     use CrudTrait;
 
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
+    protected \App\Repositories\UserRepository $userRepository;
 
     /**
      * @var EmailVerifyRepository
      */
-    protected $emailVerifyRepository;
+    protected EmailVerifyRepository $emailVerifyRepository;
 
     /**
      * @var RepresentativeRepository
      */
-    protected $representativeRepository;
+    protected RepresentativeRepository $representativeRepository;
 
-    /**
-     * @var CandidateTransformer
-     */
-    protected $candidateTransformer;
+    protected \App\Transformers\CandidateTransformer $candidateTransformer;
 
-    /**
-     * @var CandidateRepository
-     */
-    protected $candidateRepository;
-    /**
-     * @var ProfileLogRepository
-     */
-    protected $profileLogRepository;
+    protected \App\Repositories\CandidateRepository $candidateRepository;
+    protected \App\Repositories\ProfileLogRepository $profileLogRepository;
 
-    protected $repTransformer;
+    protected \App\Transformers\RepresentativeTransformer $repTransformer;
 
-    /**
-     * @var TicketRepository
-     */
-    protected $ticketRepository;
+    protected \App\Repositories\TicketRepository $ticketRepository;
 
-    protected $domain;
+    protected \App\Domain $domain;
 
     /**
      * UserService constructor.
@@ -256,12 +241,19 @@ class UserService extends ApiBaseService
             $client = new \GuzzleHttp\Client();
             $email = $user->email;
             $password = $user->password;
-            $respond = $client->post(env('IMAGE_SERVER').'/api/v1/register', [
+            $firstLogin = $client->post(env('IMAGE_SERVER').'/api/v1/login', [
                 'email' => $email,
                 'password' => $password
             ]);
+            if ($firstLogin->getStatusCode() !== 200) {
+                $firstLogin = $client->post(env('IMAGE_SERVER').'/api/v1/register', [
+                    'email' => $email,
+                    'password' => $password
+                ]);
+            }
 
-           return  $respond->getStatusCode() == 200;
+
+           return  $$firstLogin->getStatusCode() == 200;
         } catch (Exception $exception) {
             return $exception->getMessage();
         }

@@ -28,25 +28,16 @@ class AdminService extends ApiBaseService
 
     use CrudTrait;
 
-    /**
-     * @var UserRepository
-     */
-    protected $userRepository;
+    protected \App\Repositories\UserRepository $userRepository;
 
     /**
      * @var RepresentativeRepository
      */
-    protected $representativeRepository;
+    protected RepresentativeRepository $representativeRepository;
 
-    /**
-     * @var CandidateTransformer
-     */
-    protected $candidateTransformer;
+    protected \App\Transformers\CandidateTransformer $candidateTransformer;
 
-    /**
-     * @var CandidateRepository
-     */
-    protected $candidateRepository;
+    protected \App\Repositories\CandidateRepository $candidateRepository;
 
 
     public function __construct(

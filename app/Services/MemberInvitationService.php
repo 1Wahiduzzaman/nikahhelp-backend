@@ -22,20 +22,11 @@ class MemberInvitationService extends ApiBaseService
 {
     use CrudTrait;
 
-    /**
-     * @var MemberInvitationRepository
-     */
-    protected $memberInvitationRepository;
+    protected \App\Repositories\MemberInvitationRepository $memberInvitationRepository;
 
-    /**
-     * @var TeamRepository
-     */
-    protected $teamRepository;
+    protected \App\Repositories\TeamRepository $teamRepository;
 
-    /**
-     * @var TeamMemberRepository
-     */
-    protected $teamMemberRepository;
+    protected \App\Repositories\TeamMemberRepository $teamMemberRepository;
 
     /**
      * MemberInvitationService constructor.

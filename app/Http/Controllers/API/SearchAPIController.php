@@ -19,10 +19,8 @@ use App\Services\SearchService;
 
 class SearchAPIController extends AppBaseController
 {
-    /** @var  SearchRepository */
-    private $searchRepository;
-    /** @var  SearchService */
-    private $searchService;
+    private \App\Repositories\SearchRepository $searchRepository;
+    private \App\Services\SearchService $searchService;
 
     public function __construct(SearchRepository $searchRepository,SearchService $searchService)
     {

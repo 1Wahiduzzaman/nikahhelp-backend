@@ -16,7 +16,7 @@ class CountryController extends Controller
     /**
      * @var CandidateService
      */
-    protected $countryService;
+    protected \App\Services\CountryService $countryService;
 
     /**
      * PurchaseController constructor.

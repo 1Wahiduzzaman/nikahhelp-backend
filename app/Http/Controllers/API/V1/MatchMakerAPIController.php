@@ -24,14 +24,8 @@ use App\Services\MatchmakerService;
 class MatchMakerAPIController extends AppBaseController
 {
 
-    /**
-     * @var  MatchMakerRepository
-     */
-    private $matchMakerRepository;
-    /**
-     * @var  MatchmakerService
-     */
-    private $matchmakerService;
+    private \App\Repositories\MatchMakerRepository $matchMakerRepository;
+    private \App\Services\MatchmakerService $matchmakerService;
 
     public function __construct(MatchMakerRepository $matchMakerRepo, MatchmakerService $matchmakerService)
     {

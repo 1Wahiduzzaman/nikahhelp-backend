@@ -18,10 +18,7 @@ use DB;
  */
 class UserDashboardController extends AppBaseController
 {
-    /**
-     * @var  ShortListedCandidateRepository
-     */
-    private $shortListedCandidateRepository;
+    private \App\Repositories\ShortListedCandidateRepository $shortListedCandidateRepository;
 
     /**
      * PurchaseController constructor.

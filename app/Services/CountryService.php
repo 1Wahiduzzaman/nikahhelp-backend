@@ -14,10 +14,7 @@ class CountryService extends ApiBaseService
 {
 
 
-    /**
-     * @var CountryRepository
-     */
-    protected $countryRepository;
+    protected \App\Repositories\CountryRepository $countryRepository;
 
 
     /**

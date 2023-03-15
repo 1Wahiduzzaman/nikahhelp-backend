@@ -25,27 +25,12 @@ use Symfony\Component\HttpFoundation\Response as FResponse;
  */
 class BlockListAPIController extends AppBaseController
 {
-    /**
-     * @var  BlockListRepository
-     */
-    private $blockListRepository;
+    private \App\Repositories\BlockListRepository $blockListRepository;
 
-    /**
-     * @var  BlockListService
-     */
-    private $blockListService;
-    /**
-     * @var CandidateRepository
-     */
-    private $candidateRepository;
-    /**
-     * @var CandidateTransformer
-     */
-    private $candidateTransformer;
-    /**
-     * @var TeamRepository
-     */
-    private $teamRepository;
+    private \App\Services\BlockListService $blockListService;
+    private \App\Repositories\CandidateRepository $candidateRepository;
+    private \App\Transformers\CandidateTransformer $candidateTransformer;
+    private \App\Repositories\TeamRepository $teamRepository;
 
     public function __construct(
         BlockListRepository $blockListRepo,

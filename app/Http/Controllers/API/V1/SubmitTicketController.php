@@ -15,10 +15,19 @@ use Illuminate\Http\Request;
 
 class SubmitTicketController extends Controller
 {
+    /**
+     * @var \App\Services\RepresentativeService
+     */
     public $representative;
 
+    /**
+     * @var \App\Services\CandidateService
+     */
     public $candidate;
 
+    /**
+     * @var \App\Services\UserService
+     */
     public $matrimonyUsers;
 
     public function __construct(UserService $matrimonyUsers, CandidateService $candidate, RepresentativeService $representative)

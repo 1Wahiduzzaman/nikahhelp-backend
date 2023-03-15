@@ -24,15 +24,9 @@ use App\Services\RepresentativeService;
  */
 class RepresentativeInformationController extends Controller
 {
-    /**
-     * @var  RepresentativeInformationRepository
-     */
-    private $representativeInformationRepository;
+    private \App\Repositories\RepresentativeInformationRepository $representativeInformationRepository;
 
-    /**
-     * @var  RepresentativeService
-     */
-    private $representativeService;
+    private \App\Services\RepresentativeService $representativeService;
 
     public function __construct(
         RepresentativeInformationRepository $representativeInformationRepo,

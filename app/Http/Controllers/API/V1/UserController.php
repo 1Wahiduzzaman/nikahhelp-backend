@@ -20,10 +20,7 @@ use Mail;
 
 class UserController extends Controller
 {
-    /**
-     * @var UserService
-     */
-    protected $userService;
+    protected \App\Services\UserService $userService;
 
     /**
      * PurchaseController constructor.
