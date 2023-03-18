@@ -244,7 +244,7 @@ class UserService extends ApiBaseService
             $password = $user->password;
             $token = PictureServerToken::find($user->id);
 
-            $firstLogin = Http::withToken($token)->post(env('IMAGE_SERVER').'/api/v1/login', [
+            $firstLogin = Http::withToken($token->token)->post(env('IMAGE_SERVER').'/api/v1/login', [
                 'email' => $email,
                 'password' => $password
             ]);
@@ -258,7 +258,7 @@ class UserService extends ApiBaseService
                 if ($firstLogin->status() == 200) {
                     PictureServerToken::create([
                         'user_id' => $user->id,
-                        'token' => $firstLogin->json('token')
+                        'token' => $firstLogin->json('token.access_token')
                     ]);
                 }
             }
