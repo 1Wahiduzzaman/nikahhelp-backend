@@ -258,7 +258,7 @@ class UserService extends ApiBaseService
                 if ($firstLogin->status() == 200) {
                     PictureServerToken::create([
                         'user_id' => $user->id,
-                        'token' => $firstLogin->json('token.access_token')
+                        'token' => $firstLogin->json()
                     ]);
                 }
             }
