@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         //
-        Schema::table('picture_server_token', function (Blueprint $table) {
+        Schema::create('picture_server_token', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->nullable();
             $table->mediumText('token')->nullable();
