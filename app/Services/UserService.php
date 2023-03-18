@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Http\Requests\TicketSubmissionRequest;
+use App\Models\PictureServerToken;
 use App\Models\ProcessTicket;
 use App\Models\TicketSubmission;
 use App\Models\User;
@@ -18,6 +19,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\JsonResponse;
 use App\Traits\CrudTrait;
@@ -238,18 +240,27 @@ class UserService extends ApiBaseService
     public function sendAuthToImageServer(User $user): bool
     {
         try {
-            $client = new \GuzzleHttp\Client();
             $email = $user->email;
             $password = $user->password;
-            $firstLogin = $client->post(env('IMAGE_SERVER').'/api/v1/login', [
+            $token = PictureServerToken::findOrFail($user->id);
+
+            $firstLogin = Http::withToken($token)->post(env('IMAGE_SERVER').'/api/v1/login', [
                 'email' => $email,
                 'password' => $password
             ]);
+
             if ($firstLogin->getStatusCode() !== 200) {
                 $firstLogin = $client->post(env('IMAGE_SERVER').'/api/v1/register', [
                     'email' => $email,
                     'password' => $password
                 ]);
+
+                if ($firstLogin->getStatusCode() == 200) {
+                    PictureServerToken::create([
+                        'user_id' => $user->id,
+                        'token' => $firstLogin['token']
+                    ]);
+                }
             }
 
 
