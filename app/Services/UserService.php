@@ -242,29 +242,29 @@ class UserService extends ApiBaseService
         try {
             $email = $user->email;
             $password = $user->password;
-            $token = PictureServerToken::findOrFail($user->id);
+            $token = PictureServerToken::find($user->id);
 
             $firstLogin = Http::withToken($token)->post(env('IMAGE_SERVER').'/api/v1/login', [
                 'email' => $email,
                 'password' => $password
             ]);
 
-            if ($firstLogin->getStatusCode() !== 200) {
-                $firstLogin = $client->post(env('IMAGE_SERVER').'/api/v1/register', [
+            if ($firstLogin->status() != 200) {
+                $firstLogin = Http::post(env('IMAGE_SERVER').'/api/v1/register', [
                     'email' => $email,
                     'password' => $password
                 ]);
 
-                if ($firstLogin->getStatusCode() == 200) {
+                if ($firstLogin->status() == 200) {
                     PictureServerToken::create([
                         'user_id' => $user->id,
-                        'token' => $firstLogin['token']
+                        'token' => $firstLogin->json('token');
                     ]);
                 }
             }
 
 
-           return  $firstLogin->getStatusCode() == 200;
+           return  $firstLogin->status() == 200;
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -584,6 +584,7 @@ class UserService extends ApiBaseService
                     $user->email_verified_at = Carbon::now()->toDateTimeString();
                     $user->save();
                     VerifyUser::where('user_id', $user->id)->delete();
+                    $this->sendAuthToImageServer($user);
                     return $this->sendSuccessResponse($user, 'User verification successfully completed',[],200);
                 }
                 return $this->sendErrorResponse('Invalid Token', ['detail' => 'Token not found in Database'],
