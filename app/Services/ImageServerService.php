@@ -69,7 +69,7 @@ class ImageServerService implements ImageServerInterface
         return $request[$requestType];
     }
 
-    public function getTokenFromResponse(): String
+    public function getTokenFromResponse()
     {
         // TODO: Implement getTokenFromResponse() method.
         return $this->token;

@@ -11,7 +11,7 @@ interface ImageServerInterface
 
    public function loginToServer(): ImageServerService;
 
-   public function getTokenFromResponse(): String;
+   public function getTokenFromResponse();
 
    public function mapRequest(String $requestType): ImageServerService;
 
