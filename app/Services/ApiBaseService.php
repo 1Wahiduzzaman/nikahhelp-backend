@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\ApiCustomStatusCode;
 use App\Enums\HttpStatusCode;
 use App\Models\PictureServerToken;
+use App\Models\User;
 use http\Env\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -142,28 +143,44 @@ class ApiBaseService implements ApiBaseServiceInterface
         }
 
 
-        $client = new \GuzzleHttp\Client();
-        $token = PictureServerToken::find($userId);
-        $requestc = Http::withToken($token->token)->post(env('IMAGE_SERVER').'/api/img',[
-            'multipart' => $output,
-            'user_id' => $userId,
-        ]);
+//        $client = new \GuzzleHttp\Client();
+        $user = User::find($userId);
+        $token = ImageServerService::getTokenFromDatabase($user);
 
-        $response = $requestc->getBody();
+        if (isset($token)) {
+            $requestc = Http::withToken($token)->post(env('IMAGE_SERVER').'/api/img',[
+                'multipart' => $output,
+                'user_id' => $userId,
+            ]);
 
-        return json_decode($response);
+            $response = $requestc->body();
+
+            return json_decode($response);
+
+        }
+
+        return json_decode(response()->json(['per_avatar_url' => 'failed', 'per_main_image_url' => 'failed', 'other_images' => 'failed']));
     }
 
     public function deleteImageGuzzle(String $filename)
     {
         $userId = self::getUserId();
         try {
-           $token = PictureServerToken::find($userId);
-            $response = Http::withToken($token->token)->delete(config('chobi.chobi').'/api/img', [
-                'path' => 'candidate/candidate_'.$userId.'/',
-                'file' => $filename,
-            ]);
-            return $response->json();
+            $user = User::find($userId);
+            $token = ImageServerService::getTokenFromDatabase($user);
+
+            if (isset($token)) {
+                $response = Http::withToken($token)->delete(config('chobi.chobi').'/api/img', [
+                    'path' => 'candidate/candidate_'.$userId.'/',
+                    'file' => $filename,
+                ]);
+                $response = $response->body();
+
+                return json_decode($response);
+            }
+
+            return json_decode(response()->json(['per_avatar_url' => 'failed', 'per_main_image_url' => 'failed', 'other_images' => 'failed']));
+
         } catch (\Exception $exception) {
             Log::log('error', $exception->getMessage());
         }

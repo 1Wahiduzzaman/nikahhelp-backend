@@ -228,7 +228,7 @@ class UserService extends ApiBaseService
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $userInfo;
 
-                $this->sendAuthToimageServer($userInfo);
+               $data['image_is_connected'] = $this->authenticatedWithImageService($userInfo);
 
                 return $this->sendSuccessResponse($data, 'Login successfully');
             }
@@ -237,38 +237,23 @@ class UserService extends ApiBaseService
         }
     }
 
-    public function sendAuthToImageServer(User $user): bool
+    public function authenticatedWithImageService(User $user): bool
     {
         try {
-            $email = $user->email;
-            $password = $user->password;
-            $token = PictureServerToken::find($user->id);
+            new ImageServerService($user, 'login');
+           $token = ImageServerService::getTokenFromDatabase($user);
 
-            $firstLogin = Http::withToken($token->token)->post(env('IMAGE_SERVER').'/api/v1/login', [
-                'email' => $email,
-                'password' => $password
-            ]);
+           if (!isset($token)) {
+               new ImageServerService($user, 'register');
+               $token = ImageServerService::getTokenFromDatabase($user);
+           }
 
-            if ($firstLogin->status() != 200) {
-                $firstLogin = Http::post(env('IMAGE_SERVER').'/api/v1/register', [
-                    'email' => $email,
-                    'password' => $password
-                ]);
-
-                if ($firstLogin->status() == 200) {
-                    PictureServerToken::create([
-                        'user_id' => $user->id,
-                        'token' => $firstLogin->json()
-                    ]);
-                }
-            }
-
-
-           return  $firstLogin->status() == 200;
+            return isset($token);
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
 
+        return false;
     }
 
     public function logout($token)
@@ -957,5 +942,48 @@ class UserService extends ApiBaseService
         } catch (Exception $exception) {
             return $this->sendErrorResponse('failed', 'failed', HttpStatusCode::INTERNAL_ERROR);
         }
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function authenticateImageServer(User $user): array
+    {
+        $email = $user->email;
+        $password = $user->password;
+
+        $client = new \GuzzleHttp\Client();
+
+        $res = $client->request('POST', config('chobi.chobi') . '/api/v1/register', [
+            'form_params' => [
+                'email' => $email,
+                'password' => $password
+            ]
+        ]);
+        return array($email, $password, $client, $res);
+    }
+
+    /**
+     * @param $res
+     * @return bool
+     */
+    public function isSuccessFullRequest($res): bool
+    {
+        return json_decode($res->getBody()->getContents())->status == 'FAIL';
+    }
+
+    /**
+     * @param User $user
+     * @param $res
+     * @return void
+     */
+    public function savePictureServerToken(User $user, $res): void
+    {
+        PictureServerToken::create([
+            'user_id' => $user->id,
+            'token' => json_decode($res->getBody()->getContents())->data->token->access_token
+        ]);
     }
 }

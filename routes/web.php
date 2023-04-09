@@ -21,9 +21,9 @@ Route::get('/logo',  function () {
     return response()->make($image, 200)->header('Content-Type', 'image/png');
 })->name('logo');
 
-Route::get('/', function () {
-    return view('emails.subscription.new_subscription');
-});
+//Route::get('/', function () {
+//    return view('emails.subscription.new_subscription');
+//});
 
  // Raz - Cron Job Expire Subscription Sending Mail
  Route::get('/subscription-expiring/{days}', [SubscriptionController::class, 'subscriptionExpiring'])->name('subscription.expiring');

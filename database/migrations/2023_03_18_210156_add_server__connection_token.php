@@ -18,6 +18,8 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->nullable();
             $table->mediumText('token')->nullable();
+            $table->timestamp('updated_at')->nullable();
+            $table->timestamp('created_at')->nullable();
         });
     }
 
