@@ -55,7 +55,7 @@ class ImageServerService implements ImageServerInterface
     public function setTokenFromResponse(): ImageServerService
     {
         // TODO: Implement getTokenFromResponse() method.
-        $token = json_decode($this->res->getBody()->getContents())->data->token->access_token;
+        $this->token = json_decode($this->res->getBody()->getContents())->data->token->access_token;
         return $this;
     }
 
