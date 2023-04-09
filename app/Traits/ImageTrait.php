@@ -16,7 +16,7 @@ trait ImageTrait {
             $id,
         ];
 
-        $path = preg_replace($pattern, '', $value);
+        $path = preg_replace($pattern, '', $value) ?? '';
 
         $path = str_replace('/_', '', $path);
         $newPath = str_replace('image/', 'image/' . $this->user_id, $path);

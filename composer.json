@@ -17,7 +17,6 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^4.2.1",
         "league/fractal": "^0.19.2",
-        "nnjeim/world": "^1.0",
         "phan/phan": "^5.4",
         "tymon/jwt-auth": "^1.0"
     },
