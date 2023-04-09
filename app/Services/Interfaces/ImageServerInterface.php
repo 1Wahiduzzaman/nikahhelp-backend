@@ -13,7 +13,7 @@ interface ImageServerInterface
 
    public function getTokenFromResponse();
 
-   public function mapRequest(String $requestType): ImageServerService;
+   public function mapRequest(String $requestType);
 
    public function saveToken(): void;
 }

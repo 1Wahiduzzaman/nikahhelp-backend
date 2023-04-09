@@ -59,7 +59,7 @@ class ImageServerService implements ImageServerInterface
         return $this;
     }
 
-    public function mapRequest(string $requestType): ImageServerService
+    public function mapRequest(string $requestType)
     {
         // TODO: Implement mapRequest() method.
         $request = [
