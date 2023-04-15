@@ -230,15 +230,11 @@ class RepresentativeService extends ApiBaseService
 
         $requestData = $request->all();
         if (!empty($request['ver_document_frontside'])) {
-            $image = $this->uploadImageThrowGuzzle([
-                'ver_document_frontside'=>$request->file('ver_document_frontside'),
-            ]);
+            $image = $this->uploadImageThrowGuzzle('ver_document_frontside', $request->file('ver_document_frontside'));
             $requestData['ver_document_frontside'] = $image->ver_document_frontside;
         }
         if (!empty($request['ver_document_backside'])) {
-            $image = $this->uploadImageThrowGuzzle([
-                'ver_document_backside'=>$request->file('ver_document_backside'),
-            ]);
+            $image = $this->uploadImageThrowGuzzle('ver_document_backside', $request->file('ver_document_backside'));
             $requestData['ver_document_backside'] = $image->ver_document_backside;
         }
 
@@ -277,15 +273,11 @@ class RepresentativeService extends ApiBaseService
     public function imageUpload($request)
     {
         if (!empty($request['per_avatar_url'])) {
-            $image = $this->uploadImageThrowGuzzle([
-                'per_avatar_url'=>$request->file('per_avatar_url'),
-            ]);
+            $image = $this->uploadImageThrowGuzzle($request->file('per_avatar_url'));
             $representative['per_avatar_url'] = $image->per_avatar_url;
         }
         if (!empty($request['per_main_image_url'])) {
-            $image = $this->uploadImageThrowGuzzle([
-                'per_main_image_url'=>$request->file('per_main_image_url'),
-            ]);
+            $image = $this->uploadImageThrowGuzzle($request->file('per_main_image_url'));
             $representative['per_main_image_url'] = $image->per_main_image_url;
         }
         try {
