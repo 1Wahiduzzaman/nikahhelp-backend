@@ -533,9 +533,7 @@ class CandidateService extends ApiBaseService
             $input['per_improve_myself'] = json_encode($request->per_improve_myself);
 
             if($request->hasFile('per_additional_info_doc')){
-                $candidateFile = $this->uploadImageThrowGuzzle([
-                    'per_additional_info_doc'=>$request->file('per_additional_info_doc'),
-                ]);
+                $candidateFile = $this->uploadImageThrowGuzzle('per_additional_info_doc', $request->file('per_additional_info_doc'));
                 $input['per_additional_info_doc'] = $candidateFile->per_additional_info_doc;
             }
 
@@ -918,16 +916,14 @@ class CandidateService extends ApiBaseService
             $input = $request->only(CandidateInformation::PERSONAL_VERIFICATION_INFO);
 
             if($request->hasFile('ver_image_front')){
-                $image = $this->uploadImageThrowGuzzle([
-                    'ver_image_front'=>$request->file('ver_image_front'),
-                ]);
+                $image = $this->uploadImageThrowGuzzle(
+                    'ver_image_front',$request->file('ver_image_front'));
                 $input['ver_image_front'] = $image->ver_image_front;
             }
 
             if($request->hasFile('ver_image_back')){
-                $image = $this->uploadImageThrowGuzzle([
-                    'ver_image_back'=>$request->file('ver_image_back')
-                ]);
+                $image = $this->uploadImageThrowGuzzle(
+                    'ver_image_back', $request->file('ver_image_back'));
                 $input['ver_image_back'] = $image->ver_image_back ;
             }
 
@@ -1030,23 +1026,17 @@ class CandidateService extends ApiBaseService
             }
 
             if ($request->hasFile('per_avatar_url')) {
-                $image = $this->uploadImageThrowGuzzle([
-                    'per_avatar_url'=>$request->file('per_avatar_url'),
-                ]);
+                $image = $this->uploadImageThrowGuzzle('per_avatar_url', $request->file('per_avatar_url'));
                 $checkRepresentative->per_avatar_url = $image->per_avatar_url;
             }
 
             if ($request->hasFile('per_main_image_url')) {
-                $image = $this->uploadImageThrowGuzzle([
-                    'per_main_image_url'=>$request->file('per_main_image_url'),
-                ]);
+                $image = $this->uploadImageThrowGuzzle('per_main_image_url', $request->file('per_main_image_url'));
                 $checkRepresentative->per_main_image_url = $image->per_main_image_url;
             }
 
             if ($request->hasFile('other_images')) {
-                $image = $this->uploadImageThrowGuzzle([
-                    'other_images'=>$request->file('other_images'),
-                ]);
+                $image = $this->uploadImageThrowGuzzle('other_images', $request->file('other_images'));
 
                 $checkRepresentative->other_images = $image->other_images;
             }

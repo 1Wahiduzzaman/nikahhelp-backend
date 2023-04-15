@@ -113,7 +113,7 @@ class ApiBaseService implements ApiBaseServiceInterface
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadImageThrowGuzzle(UploadedFile $images)
+    public function uploadImageThrowGuzzle(String $imageName, UploadedFile $images)
     {
         $userId = self::getUserId();
         $userUUID = (string) Str::uuid();
@@ -167,7 +167,7 @@ class ApiBaseService implements ApiBaseServiceInterface
                 'multipart' => [
                     [
                         'Content-type' => 'multipart/form-data',
-                        'name' => 'image',
+                        'name' => $imageName,
                         'contents' => $images->getContent(),
                     ]
                 ],
