@@ -273,11 +273,11 @@ class RepresentativeService extends ApiBaseService
     public function imageUpload($request)
     {
         if (!empty($request['per_avatar_url'])) {
-            $image = $this->uploadImageThrowGuzzle($request->file('per_avatar_url'));
+            $image = $this->uploadImageThrowGuzzle('per_avatar_url', $request->file('per_avatar_url'));
             $representative['per_avatar_url'] = $image->per_avatar_url;
         }
         if (!empty($request['per_main_image_url'])) {
-            $image = $this->uploadImageThrowGuzzle($request->file('per_main_image_url'));
+            $image = $this->uploadImageThrowGuzzle('per_main_image_url',$request->file('per_main_image_url'));
             $representative['per_main_image_url'] = $image->per_main_image_url;
         }
         try {
