@@ -165,11 +165,11 @@ class ApiBaseService implements ApiBaseServiceInterface
             $requestc = $client->request('POST',env('IMAGE_SERVER').'/api/img',[
                 'image' => $images,
                 'user_id' => $userUUID,
-                ['headers' =>
+                'headers' =>
                     [
                         'Authorization' => "Bearer {$token}"
                     ]
-                ]
+                
             ]);
 
             $response = $requestc->getBody();
