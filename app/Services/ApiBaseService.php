@@ -163,7 +163,7 @@ class ApiBaseService implements ApiBaseServiceInterface
 
         if (isset($token)) {
             $requestc = Http::withToken($token)->post(config('chobi.chobi').'/api/img/'.$userUUID, [
-                'image' => $images->all()
+                'image' => $images
             ]);
 
             $response = $requestc->body();
