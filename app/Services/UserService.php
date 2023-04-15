@@ -569,7 +569,7 @@ class UserService extends ApiBaseService
                     $user->email_verified_at = Carbon::now()->toDateTimeString();
                     $user->save();
                     VerifyUser::where('user_id', $user->id)->delete();
-                    $this->sendAuthToImageServer($user);
+//                    $this->sendAuthToImageServer($user);
                     return $this->sendSuccessResponse($user, 'User verification successfully completed',[],200);
                 }
                 return $this->sendErrorResponse('Invalid Token', ['detail' => 'Token not found in Database'],

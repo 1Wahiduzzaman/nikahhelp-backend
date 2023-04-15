@@ -163,7 +163,7 @@ class ApiBaseService implements ApiBaseServiceInterface
         if (isset($token)) {
             $client = new \GuzzleHttp\Client();
             $requestc = $client->request('POST',env('IMAGE_SERVER').'/api/img',[
-                'multipart' => $images,
+                'image' => $images,
                 'user_id' => $userUUID,
                 ['headers' =>
                     [
