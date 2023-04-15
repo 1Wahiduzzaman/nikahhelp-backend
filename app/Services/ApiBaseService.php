@@ -160,9 +160,9 @@ class ApiBaseService implements ApiBaseServiceInterface
 
 
         $token = ImageServerService::getTokenFromDatabase($user);
-
+        Log::info('file', ['data' => file_get_contents($images->file($imageName)->get())]);
         if (isset($token)) {
-            $requestc = Http::withToken($token)->attach('image', $images->file($imageName)->getContent())->post(config('chobi.chobi').'/api/img/'.$userUUID);
+            $requestc = Http::withToken($token)->attach('image', file_get_contents($images->file($imageName)->get()))->post(config('chobi.chobi').'/api/img/'.$userUUID);
 
             $response = $requestc->body();
 
