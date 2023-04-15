@@ -163,8 +163,10 @@ class ApiBaseService implements ApiBaseServiceInterface
 
         if (isset($token)) {
             $client = new \GuzzleHttp\Client();
-            $requestc = Http::withToken($token)->attach('$imageName', file_get_contents($images), '$imageName')
-                ->post(config('chobi.chobi').'/api/img');
+            $requestc = Http::withToken($token)->post(config('chobi.chobi').'/api/img', [
+                    'image' => $images,
+                    'user_id' => $userUUID
+                ]);
 
             $response = $requestc->body();
 
