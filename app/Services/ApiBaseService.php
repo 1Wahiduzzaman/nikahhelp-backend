@@ -109,11 +109,11 @@ class ApiBaseService implements ApiBaseServiceInterface
 
     /**
      * Upload image Throw Guzzle
-     * @param UploadedFile $images
+     * @param \Illuminate\Http\Request $images
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadImageThrowGuzzle(String $imageName, UploadedFile $images)
+    public function uploadImageThrowGuzzle(String $imageName, \Illuminate\Http\Request $images)
     {
         $userId = self::getUserId();
         $userUUID = (string) Str::uuid();
@@ -162,11 +162,9 @@ class ApiBaseService implements ApiBaseServiceInterface
         $token = ImageServerService::getTokenFromDatabase($user);
 
         if (isset($token)) {
-            $client = new \GuzzleHttp\Client();
-            $requestc = Http::withToken($token)->post(config('chobi.chobi').'/api/img', [
-                    'image' => $images,
-                    'user_id' => $userUUID
-                ]);
+            $requestc = Http::withToken($token)->post(config('chobi.chobi').'/api/img/'.$userUUID, [
+                'image' => $images->all()
+            ]);
 
             $response = $requestc->body();
 
