@@ -10,6 +10,7 @@ use http\Env\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use App\Contracts\ApiBaseServiceInterface;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -114,46 +115,64 @@ class ApiBaseService implements ApiBaseServiceInterface
     public function uploadImageThrowGuzzle(array $images)
     {
         $userId = self::getUserId();
+        $userUUID = (string) Str::uuid();
 
-        $folderType = array_key_exists('screenshot', $images) ? 'candidate_support/screenshot_'.$userId. '/':
-            'candidate/candidate_'.$userId.'/';
+//        $folderType = array_key_exists('screenshot', $images) ? 'candidate_support/screenshot_'.$userUUID. '/':
+//            'candidate/candidate_'.$userUUID.'/';
 
-        $output = [];
-        $i = 0;
-        foreach ($images as $key=>$image){
-            $data[$i] = [
-                [
-                    'name'     => 'image['.$i.'][name]',
-                    'contents' => $key,
-                ],
-                [
-                    'name'     => 'image['.$i.'][file]',
-                    'contents' => file_get_contents($image),
-                    'filename' => $key.'.'.$image->getClientOriginalExtension(),
-                ],
-                [
-                    'name'     => 'image['.$i.'][path]',
-                    'contents' => $folderType,
-                ],
-            ];
+//        $output = [];
+//        $i = 0;
+//        foreach ($images as $key=>$image){
+//            $data[$i] = [
+//                [
+//                    'name'     => 'image['.$i.'][name]',
+//                    'contents' => $key,
+//                ],
+//                [
+//                    'name'     => 'image['.$i.'][file]',
+//                    'contents' => file_get_contents($image),
+//                    'filename' => $key.'.'.$image->getClientOriginalExtension(),
+//                ],
+//                [
+//                    'name'     => 'image['.$i.'][path]',
+//                    'contents' => $folderType,
+//                ],
+//            ];
+//
+//            $output = array_merge($output,$data[$i]);
+//
+//            $i++;
+//        }
 
-            $output = array_merge($output,$data[$i]);
 
-            $i++;
+        $user = User::find($userId);
+
+        DB::beginTransaction();
+        try {
+            $picture_db =  PictureServerToken::find($user);
+            $picture_db->user_uuid = $userUUID;
+            $picture_db->save();
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
         }
 
 
-//        $client = new \GuzzleHttp\Client();
-        $user = User::find($userId);
         $token = ImageServerService::getTokenFromDatabase($user);
 
         if (isset($token)) {
-            $requestc = Http::withToken($token)->post(env('IMAGE_SERVER').'/api/img',[
-                'multipart' => $output,
-                'user_id' => $userId,
+            $client = new \GuzzleHttp\Client();
+            $requestc = $client->request('POST',env('IMAGE_SERVER').'/api/img',[
+                'multipart' => $images,
+                'user_id' => $userUUID,
+                ['headers' =>
+                    [
+                        'Authorization' => "Bearer {$token}"
+                    ]
+                ]
             ]);
 
-            $response = $requestc->body();
+            $response = $requestc->getBody();
 
             return json_decode($response);
 
@@ -168,13 +187,21 @@ class ApiBaseService implements ApiBaseServiceInterface
         try {
             $user = User::find($userId);
             $token = ImageServerService::getTokenFromDatabase($user);
-
+            $picture_db = PictureServerToken::find($userId);
+            $user_UUID = $picture_db->user_uuid;
             if (isset($token)) {
-                $response = Http::withToken($token)->delete(config('chobi.chobi').'/api/img', [
-                    'path' => 'candidate/candidate_'.$userId.'/',
+                $client = new \GuzzleHttp\Client();
+
+                $response = $client->request('delete', config('chobi.chobi').'/api/img', [
+                    'path' => 'candidate/candidate_'.$user_UUID.'/',
                     'file' => $filename,
+                    ['headers' =>
+                        [
+                            'Authorization' => "Bearer {$token}"
+                        ]
+                    ]
                 ]);
-                $response = $response->body();
+                $response = $response->getBody();
 
                 return json_decode($response);
             }
