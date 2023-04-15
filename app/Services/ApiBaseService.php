@@ -10,6 +10,7 @@ use http\Env\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use App\Contracts\ApiBaseServiceInterface;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -108,11 +109,11 @@ class ApiBaseService implements ApiBaseServiceInterface
 
     /**
      * Upload image Throw Guzzle
-     * @param array $images
+     * @param UploadedFile $images
      * @return mixed
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function uploadImageThrowGuzzle(array $images)
+    public function uploadImageThrowGuzzle(UploadedFile $images)
     {
         $userId = self::getUserId();
         $userUUID = (string) Str::uuid();
@@ -163,13 +164,19 @@ class ApiBaseService implements ApiBaseServiceInterface
         if (isset($token)) {
             $client = new \GuzzleHttp\Client();
             $requestc = $client->request('POST',env('IMAGE_SERVER').'/api/img',[
-                'image' => $images,
+                'multipart' => [
+                    [
+                        'Content-type' => 'multipart/form-data',
+                        'name' => 'image',
+                        'contents' => $images->getContent(),
+                    ]
+                ],
                 'user_id' => $userUUID,
                 'headers' =>
                     [
                         'Authorization' => "Bearer {$token}"
                     ]
-                
+
             ]);
 
             $response = $requestc->getBody();
