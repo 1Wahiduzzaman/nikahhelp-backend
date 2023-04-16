@@ -79,7 +79,7 @@ class ImageServerService implements ImageServerInterface
     public function saveToken(): void
     {
         // TODO: Implement saveToken() method.
-        PictureServerToken::updateORCreate([
+        PictureServerToken::updateOrCreate([
             'user_id' => $this->user->id,
             'token' => $this->getTokenFromResponse()
         ]);

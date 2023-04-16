@@ -13,6 +13,7 @@ class PictureServerToken extends Model
 
     protected $fillable = [
         'user_id',
-        'token'
+        'token',
+        'user_uuid'
     ];
 }

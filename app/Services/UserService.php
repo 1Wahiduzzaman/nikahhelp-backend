@@ -160,6 +160,8 @@ class UserService extends ApiBaseService
                 self::authenticate($request);
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $user;
+                $data['image_is_connected'] = $this->authenticatedWithImageService($user);
+
                 return $this->sendSuccessResponse($data, 'User registration successfully completed', [], FResponse::HTTP_CREATED);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
