@@ -272,15 +272,16 @@ class RepresentativeService extends ApiBaseService
      */
     public function imageUpload($request)
     {
-        if (!empty($request['per_avatar_url'])) {
-            $image = $this->uploadImageThrowGuzzle('per_avatar_url', $request);
-            $representative['per_avatar_url'] = $image->per_avatar_url;
-        }
-        if (!empty($request['per_main_image_url'])) {
-            $image = $this->uploadImageThrowGuzzle('per_main_image_url',$request);
-            $representative['per_main_image_url'] = $image->per_main_image_url;
-        }
+
         try {
+            if (!empty($request['per_avatar_url'])) {
+                $image = $this->uploadImageThrowGuzzle('per_avatar_url', $request);
+                $representative['per_avatar_url'] = $image->per_avatar_url;
+            }
+            if (!empty($request['per_main_image_url'])) {
+                $image = $this->uploadImageThrowGuzzle('per_main_image_url',$request);
+                $representative['per_main_image_url'] = $image->per_main_image_url;
+            }
             $userId = self::getUserId();
             $representativeInformation = $this->representativeRepository->findOneByProperties([
                 'user_id' => $userId

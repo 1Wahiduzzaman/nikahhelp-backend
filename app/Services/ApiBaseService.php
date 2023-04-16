@@ -6,6 +6,7 @@ use App\Enums\ApiCustomStatusCode;
 use App\Enums\HttpStatusCode;
 use App\Models\PictureServerToken;
 use App\Models\User;
+use GuzzleHttp\Client;
 use http\Env\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -145,32 +146,44 @@ class ApiBaseService implements ApiBaseServiceInterface
 //            $i++;
 //        }
 
-
-        $user = User::find($userId);
-
-        DB::beginTransaction();
         try {
-            $picture_db =  PictureServerToken::find($user);
-            $picture_db->user_uuid = $userUUID;
-            $picture_db->save();
-            DB::commit();
+            $user = User::find($userId);
+                $picture_db = PictureServerToken::where('user_id', $user->id)->first();
+
+                $picture_db->user_uuid = $userUUID;
+
+                $picture_db->save();
+
+
+            $token = ImageServerService::getTokenFromDatabase($user);
+//            dd($token);
+//        Log::info('file', ['data' => file_get_contents($images->file($imageName)->openFile())]);
+            if (isset($token)) {
+//                $requestc = Http::asMultipart()->withToken($token)->post(config('chobi.chobi') . '/api/img/' . $userUUID, [
+//                    'image' => $images->file($imageName)->getContent()
+//                ]);
+             $client = new Client();
+            $requestc = $client->request('post', config('chobi.chobi').'/api/img/'. $userUUID, [
+                 'multipart' => [
+                     [   'name' => 'image',
+                         'contents' => $images->file($imageName)->getContent(),
+                         'filename' => $imageName.'.'.$images->file($imageName)->getClientOriginalExtension(),
+                     ],
+
+                 ],
+                'headers' => [
+                    'Authorization' => 'Bearer '.$token
+                ],
+             ]);
+                $response = $requestc->getBody();
+                return json_decode($response);
+            }
+
+            return json_decode(response()->json([$imageName => 'failed']));
+
         } catch (\Exception $exception) {
-            DB::rollBack();
+            return json_decode(response()->json([$imageName => 'error']));
         }
-
-
-        $token = ImageServerService::getTokenFromDatabase($user);
-        Log::info('file', ['data' => file_get_contents($images->file($imageName)->openFile())]);
-        if (isset($token)) {
-            $requestc = Http::withHeaders([ 'Content-Type' => 'multipart/form-data' ])->withToken($token)->attach('image', $images->file($imageName))->post(config('chobi.chobi').'/api/img/'.$userUUID);
-
-            $response = $requestc->body();
-
-            return json_decode($response);
-
-        }
-
-        return json_decode(response()->json(['per_avatar_url' => 'failed', 'per_main_image_url' => 'failed', 'other_images' => 'failed']));
     }
 
     public function deleteImageGuzzle(String $filename)
