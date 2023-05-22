@@ -27,8 +27,8 @@ class ImageUploadRequest extends APIRequest
     public function rules()
     {
         return [
-            'per_avatar_url' => 'sometimes|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'per_main_image_url' => 'sometimes|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'per_avatar_url' => 'sometimes|required|string',
+            'per_main_image_url' => 'sometimes|required|string'
         ];
     }
 
