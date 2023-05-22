@@ -26,9 +26,9 @@ class CandidateImageUploadRequest extends APIRequest
     public function rules()
     {
         $rules = [
-            CandidateImage::IMAGE_AVATAR => 'sometimes|sring',
-            CandidateImage::IMAGE_MAIN => 'sometimes|string',
-            CandidateImage::OTHER_IMAGE => 'sometimes|string'
+            'per_avatar_url' => 'string',
+            CandidateImage::IMAGE_MAIN => 'string',
+            CandidateImage::OTHER_IMAGE => 'string'
 //            CandidateImage::IMAGE  => 'required|image|mimes:jpeg,png,jpg|max:3072',
 //            CandidateImage::IMAGE_TYPE => [ 'required','numeric','between:1,8'],
 //            CandidateImage::IMAGE_VISIBILITY => [ 'sometimes','numeric','between:1,4'],
