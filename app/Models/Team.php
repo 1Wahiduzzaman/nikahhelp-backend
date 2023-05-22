@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model
 {
-    use HasFactory, ImageTrait;
+    use HasFactory;
 
     const TEAM_ID = 'team_id';
     const NAME ='name';
@@ -215,9 +215,6 @@ class Team extends Model
         return $this->belongsToMany(User::class,'team_members','team_id','user_id')->wherePivot('user_type','Representative');
     }
 
-    public function getLogoAttribute($value) {
-        return $this->getImagePath($value, self::CREATED_BY);
-    }
 
     public function last_subscription()
     {

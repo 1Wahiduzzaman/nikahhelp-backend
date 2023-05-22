@@ -19,7 +19,6 @@ class RepresentativeInformation extends Model
 
     use HasFactory;
 
-    use ImageTrait;
 
     public $table = 'representative_informations';
 
@@ -193,25 +192,11 @@ class RepresentativeInformation extends Model
 
     }
 
-    public function getPerAvatarUrlAttribute($value)
-    {
-        return $this->getImagePath($value, $this->user_id);
-    }
+   
 
-    public function getPerMainImageUrlAttribute($value)
-    {
-        return $this->getImagePath($value, $this->user_id);
-    }
+    
 
-    public function getVerDocumentFrontsideAttribute($value)
-    {
-        return $this->getImagePath($value, $this->user_id);
-    }
-
-    public function getVerDocumentBacksideAttribute($value)
-    {
-        return $this->getImagePath($value, $this->user_id);
-    }
+    
 
     public function ticketSubmission()
     {
