@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CandidateInformation extends Model
 {
-    use HasFactory, ImageTrait;
+    use HasFactory;
 
     /**
      * @var string
@@ -529,23 +529,12 @@ class CandidateInformation extends Model
         return $this->activeTeams()->first();
     }
 
-    public function getPerMainImageUrlAttribute($value)
-    {
+   
 
-        return $this->getImagePath($value, $this->user_id);
-    }
-
-    public function getPerAvatarUrlAttribute($value)
-    {
-        return $this->getImagePath($value, $this->user_id);
-    }
+    
 
 
-    public function getOtherImagesAttribute($value)
-    {
-        return $this->getImagePath($value, $this->user_id);
-    }
-
+    
     public function getDownloadableDocAttribute()
     {
 
