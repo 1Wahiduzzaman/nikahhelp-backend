@@ -29,7 +29,7 @@ class TeamFromRequest extends APIRequest
             Team::NAME => 'required|string|max:255',
             Team::DESCRIPTION => 'required|string|max:255',
             Team::PASSWORD => 'required|string|max:80',
-            Team::LOGO => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            Team::LOGO => 'required|string',
 
 //            Team::MEMBER_COUNT => 'sometimes|numeric',
 //            Team::SUBSCRIPTION_EXPIRE_AT => 'sometimes|date',

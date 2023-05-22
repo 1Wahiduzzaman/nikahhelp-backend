@@ -217,14 +217,7 @@ class MatchmakerService extends ApiBaseService
 
     public function imageUpload($request)
     {
-        if (!empty($request['per_avatar_url'])) {
-            $per_avatar_url = self::uploadFile($request, 'per_avatar_url');
-            $request['per_avatar_url'] = $per_avatar_url['image_path'];
-        }
-        if (!empty($request['per_main_image_url'])) {
-            $per_main_image_url = self::uploadFile($request, 'per_main_image_url');
-            $request['per_main_image_url'] = $per_main_image_url['image_path'];
-        }
+        
         try {
             $userId = self::getUserId();
             $matchMakerInformation = $this->matchMakerRepository->findOneByProperties([
@@ -238,8 +231,8 @@ class MatchmakerService extends ApiBaseService
             $matchmaker = $matchMakerInformation->update($request);
             Notificationhelpers::add('Picture update successfully complete', 'single', null, $userId);
             if ($matchmaker) {
-                $matchMakerInformation['per_avatar_url'] = url('storage/' . $matchMakerInformation->per_avatar_url) ?? null;
-                $matchMakerInformation['per_main_image_url'] = url('storage/' . $matchMakerInformation->per_main_image_url) ?? null;
+                $matchMakerInformation['per_avatar_url'] = $request->input('per_avatar_url') ?? null;
+                $matchMakerInformation['per_main_image_url'] = $request->input('per_main_image_url') ?? null;
                 return $this->sendSuccessResponse($matchMakerInformation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
