@@ -1019,7 +1019,7 @@ class CandidateService extends ApiBaseService
                 return $this->sendErrorResponse('Candidate information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
 
-                $checkRepresentative->per_avatar_url = $image->per_avatar_url;
+                $checkRepresentative->per_avatar_url = $request->input('per_avatar_url');
 
                 $checkRepresentative->per_main_image_url = $request->input('per_main_image_url');
 
