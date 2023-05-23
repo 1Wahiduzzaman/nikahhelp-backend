@@ -915,11 +915,20 @@ class CandidateService extends ApiBaseService
 
             $input = $request->only(CandidateInformation::PERSONAL_VERIFICATION_INFO);
 
-            
+                if (!empty($request->input('ver_image_front'))) {
+                    // code...
                 $input['ver_image_front'] = $request->input('ver_image_front');
 
-            
+                }
+
+                if (!empty($request->input('ver_image_back'))) {
+                    // code...
                 $input['ver_image_back'] = $request->input('ver_image_back');
+
+                }
+            
+
+            
 
             $input = $candidate->fill($input)->toArray();
 
@@ -1019,12 +1028,25 @@ class CandidateService extends ApiBaseService
                 return $this->sendErrorResponse('Candidate information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
 
-                $checkRepresentative->per_avatar_url = $request->input('per_avatar_url');
+                if (!empty($request->input('per_avatar_url'))) {
+                    // code...
+                    $checkRepresentative->per_avatar_url = $request->input('per_avatar_url');
+                }
+                
 
-                $checkRepresentative->per_main_image_url = $request->input('per_main_image_url');
+                if (!empty($request->input('per_main_image_url'))) {
+                    // code...
+                    $checkRepresentative->per_main_image_url = $request->input('per_main_image_url');
+                }
 
-
+                if (!empty($request->input('other_images'))) {
+                    // code...
                 $checkRepresentative->other_images = $request->input('other_images');
+                    
+                }
+                
+
+
 
             if (isset($request['anybody_can_see'])) {
                 $checkRepresentative->anybody_can_see = $request['anybody_can_see'];
