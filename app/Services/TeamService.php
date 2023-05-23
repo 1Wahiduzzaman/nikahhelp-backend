@@ -111,7 +111,6 @@ class TeamService extends ApiBaseService
 
                    
                     $team->logo = $request->input('logo');
-                }
 
                 // Update logo url
                 $input = (array)$team;
