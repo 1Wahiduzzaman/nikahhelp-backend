@@ -275,8 +275,19 @@ class RepresentativeService extends ApiBaseService
 
         try {
             $representative = [];
+
+                if (!empty($request->input('per_avatar_url'))) {
+                    // code...
                 $representative['per_avatar_url'] = $request->input('per_avatar_url');
+
+                }
+
+                if (!empty($request->input('per_main_image_url'))) {
+                    // code...
                 $representative['per_main_image_url'] = $request->input('per_main_image_url');
+
+                }
+                
             $userId = self::getUserId();
             $representativeInformation = $this->representativeRepository->findOneByProperties([
                 'user_id' => $userId
