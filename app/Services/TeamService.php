@@ -76,7 +76,7 @@ class TeamService extends ApiBaseService
      */
     public function save($request): JsonResponse
     {
-        $userInfo = self::getUserInfo();
+        $userInfo = self::getUsestrInfo();
         $countTeamList = $this->teamRepository->findByProperties(["created_by" => $userInfo->id, 'status' =>1]);
 
         //if ( $userInfo->status == 5) {
@@ -613,10 +613,7 @@ class TeamService extends ApiBaseService
 
     public function teamUpdate(Request $request, $id)
     {
-       $validate =  $request->validate( [
-            'old_password' => 'required|string|max:4',
-            'new_password' => 'required|string|max:4'
-        ]);
+       
 
 
         if (empty($id)) {
@@ -634,11 +631,13 @@ class TeamService extends ApiBaseService
                 if (!empty($request['name'])) {
                     $team->description = $request['description'];
                 }
-                if (!empty($request['old_password'])) {
+                if (!empty($request['old_password']) && !empty($request['new_password'])) {
                     if ($request['old_password'] == $hashedPassword) {
                         $team->password = $request['new_password'];
                     }
                 }
+
+               
                 // Process team logo image
                 if ($request->hasFile('logo')) {
                     // $logo_url = $this->singleImageUploadFile($team->id, $request->file('logo'));
