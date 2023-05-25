@@ -76,7 +76,7 @@ class TeamService extends ApiBaseService
      */
     public function save($request): JsonResponse
     {
-        $userInfo = self::getUsestrInfo();
+        $userInfo = self::getUserInfo();
         $countTeamList = $this->teamRepository->findByProperties(["created_by" => $userInfo->id, 'status' =>1]);
 
         //if ( $userInfo->status == 5) {
