@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             ReligionsTableSeeder::class,
             StudyLevelTableSeeder::class,
             OccupationSeeder::class,
-            // WorldSeeder::class,
+            WorldSeeder::class,
             PermissionSeeder::class,
             RoleSeeder::class,
             UserSeeder::class,
