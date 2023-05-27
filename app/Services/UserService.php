@@ -160,7 +160,7 @@ class UserService extends ApiBaseService
                 self::authenticate($request);
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $user;
-                $data['image_is_connected'] = $this->authenticatedWithImageService($user);
+                
 
                 return $this->sendSuccessResponse($data, 'User registration successfully completed', [], FResponse::HTTP_CREATED);
             } else {
@@ -244,7 +244,6 @@ class UserService extends ApiBaseService
         try {
             new ImageServerService($user, 'login');
            $token = ImageServerService::getTokenFromDatabase($user);
-
            if (!isset($token)) {
                new ImageServerService($user, 'register');
                $token = ImageServerService::getTokenFromDatabase($user);
