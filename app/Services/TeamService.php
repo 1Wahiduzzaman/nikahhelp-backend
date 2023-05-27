@@ -639,14 +639,11 @@ class TeamService extends ApiBaseService
 
                
                 // Process team logo image
-                if ($request->hasFile('logo')) {
+                if ($request->input('logo')) {
                     // $logo_url = $this->singleImageUploadFile($team->id, $request->file('logo'));
                     // $team->logo = $logo_url['image_path'];
 
-                    $image = $this->uploadImageThrowGuzzle([
-                        'logo'=>$request->file('logo')
-                    ]);
-                    $team->logo = $image->logo;
+                    $team->logo = $request->input('logo');
                 }
                $updated =  $team->update();
 
