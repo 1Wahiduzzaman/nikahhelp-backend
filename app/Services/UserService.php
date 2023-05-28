@@ -144,6 +144,7 @@ class UserService extends ApiBaseService
             }
 
             $user['data_input_status'] = $userInfoResponse->data_input_status;
+            $stripeCustomer = $user->createAsStripeCustomer();
 
             if ($user) {
                 $token = JWTAuth::fromUser($user);
