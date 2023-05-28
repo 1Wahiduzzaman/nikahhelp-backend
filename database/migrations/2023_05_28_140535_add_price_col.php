@@ -16,6 +16,7 @@ return new class extends Migration
         //
         Schema::table('subscriptions', function (Blueprint $table) {
             $table->string('stripe_price')->nullable();
+            $table->string('stripe_product')->nullable();
         });
     }
 
