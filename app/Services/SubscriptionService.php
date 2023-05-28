@@ -84,8 +84,9 @@ class SubscriptionService extends ApiBaseService
             $stripeToken = $request['stripeToken'];
             $packageID = Self::selectPlaneID(5);
             $packageName = Self::selectPlaneName(5).date('YmdHis');
+            $stripeCustomer = $user->createAsStripeCustomer();
           $paymentMethod = $user->paymentMethods()->first()->id;
-            $subscriptionInfo = $user->newSubscription("$packageName", "$packageID")->create($paymentMethod, [
+            $subscriptionInfo = $user->newSubscription("$packageName", "$packageID")->create($paymentMethod->id, [
                 'name' => $user->full_name,
                 'email' => $user->email
             ]);
