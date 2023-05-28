@@ -43,7 +43,8 @@ class User extends Authenticatable implements JWTSubject
         self::LOCKED_AT,
         self::LOCKED_END,
         self::ACCOUNT_TYPE,
-        self::FORM_TYPE
+        self::FORM_TYPE,
+        'stripe_id'
     ];
 
     /**
