@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('pm_type')->nullable();
-            $tables->bigInteger('pm_last_four')->nullable()
+            $tables->bigInteger('pm_last_four')->nullable();
             //
         });
     }
