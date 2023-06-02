@@ -59,6 +59,8 @@ class SubscriptionService extends ApiBaseService
             if (!$user) {
                 return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
             }
+            $user->createAsStripeCustomer();
+
             $intent = $user->createSetupIntent();
             $data = [
                 'client_secret' => $intent->client_secret
