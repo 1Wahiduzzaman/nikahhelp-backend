@@ -157,6 +157,7 @@ class UserService extends ApiBaseService
                 } catch(Exception $e) {
                     return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
                 }
+                
                 self::authenticate($request);
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $user;
@@ -230,7 +231,6 @@ class UserService extends ApiBaseService
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $userInfo;
 
-               $data['image_is_connected'] = $this->authenticatedWithImageService($userInfo);
 
                 return $this->sendSuccessResponse($data, 'Login successfully');
             }
