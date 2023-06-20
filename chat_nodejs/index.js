@@ -4,8 +4,8 @@ const _ = require("underscore");
 const http = require('https');
 const fs = require('fs');
 const options = {
-    key: fs.readFileSync('/home/biyashadi/public_html/backend/chat_nodejs/ssl/biyashadi.key'),
-    cert: fs.readFileSync('/home/biyashadi/public_html/backend/chat_nodejs/ssl/biyashadi.crt')
+    key: fs.readFileSync('/home/alhamdulillah/public_html/backend/chat_nodejs/ssl/alhamdulillah.key'),
+    cert: fs.readFileSync('/home/alhamdulillah/public_html/backend/chat_nodejs/ssl/alhamdulillah.crt')
 };
 
 
