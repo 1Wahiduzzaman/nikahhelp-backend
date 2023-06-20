@@ -32,8 +32,8 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-server.listen(4009, () => {
-    console.log('listening on *:4009');
+server.listen(4008, () => {
+    console.log('listening on *:4008');
 });
 
 io.on('connection', (socket) => {
