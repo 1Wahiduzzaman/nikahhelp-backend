@@ -12,9 +12,8 @@ jobs:
               -   name: Deploy to production
                   uses: appleboy/ssh-action@master
                   with:
-                      username: ${{ secrets.username }}
-                      host: ${{ secrets.host }}
+                      username: ${{ secrets.SSH_USERNAME }}
+                      host: ${{ secrets.SSH_HOST }}
                       password: ${{ secrets.SSH_PASSWORD }}
-                      passphrase: ${{ secrets.pass }}
-                      script: ${{ secrets.command }}
+                      script: ${{ secrets.SCRIPT_CMD }}
 
