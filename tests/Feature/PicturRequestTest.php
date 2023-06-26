@@ -18,7 +18,7 @@ class PicturRequestTest extends TestCase
     {
         $client = new \GuzzleHttp\Client();
 
-        $res = $client->request('POST', 'https://chobi.arranzed.com/api/v1/register', [
+        $res = $client->request('POST', 'https://chobi.nikahhelp.com/api/v1/register', [
             'form_params' => [
                 'email' => 'justtolet@test.com',
                 'password' => 'hellowrld!23'
