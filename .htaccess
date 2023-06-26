@@ -10,7 +10,7 @@
     Header add X-Frame-Options "sameorigin"
     Header add X-XSS-Protection  "1; mode=block"
     Header add Referrer-Policy "no-referrer"
-    Header add Content-Security-Policy "connect-src 'self' https://test.nikahhelp.com https://biya.nikahhelp.com https://biya.nikahhelp.com:4009/ https://chobi.arranzed.com wss://biya.nikahhelp.com:4008/"
+    Header add Content-Security-Policy "connect-src 'self' https://test.nikahhelp.com https://biya.nikahhelp.com https://biya.nikahhelp.com:4009/ https://chobi.nikahhelp.com wss://biya.nikahhelp.com:4008/"
     Header add Feature-Policy "microphone 'none'; camera 'none'; geolocation 'none';"
     Header add Strict-Transport-Security "max-age=31536000; includeSubDomains"
     # Handle Authorization Header
