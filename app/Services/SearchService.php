@@ -299,32 +299,34 @@ class SearchService extends ApiBaseService
                 $candidate->team_id = $teamId;
 
                 /* Set Auth Team related info */
-                $connectionRequestSendType = null;
-                $teamConnectStatus = null;
-                $teamAlreadysentRequest = TeamConnection::where('to_team_id', $candidate->activeTeam->id)->where('from_team_id', $activeTeam->id)->first();
-                $teamConnectRecieved = TeamConnection::where('to_team_id', $activeTeam->id)->where('from_team_id', $candidate->activeTeam->id)->first();
-
-                if ($teamAlreadysentRequest || $teamConnectRecieved) {
-                    Log::info([$teamAlreadysentRequest, $teamConnectRecieved]);
-                    continue;
-                }
-
-                if($activeTeam){
-                    $candidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;
-
-                    /* Find Team Connection Status (We Decline or They Decline )*/
-                    if(in_array($teamId,$connectFrom)){
-                        $connectionRequestSendType = 1;
-                        $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$candidate->active_team->id)->first();
-                        $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
-                    }elseif (in_array($teamId,$connectTo)){
-                        $connectionRequestSendType = 2;
-                        $teamConnectStatus = TeamConnection::where('from_team_id',$candidate->active_team->id)->where('to_team_id',$activeTeam->id)->first();
-                        $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
+                if(Auth::check()){
+                    $connectionRequestSendType = null;
+                    $teamConnectStatus = null;
+                    $teamAlreadysentRequest = TeamConnection::where('to_team_id', $candidate->activeTeam->id)->where('from_team_id', $activeTeam->id)->first();
+                    $teamConnectRecieved = TeamConnection::where('to_team_id', $activeTeam->id)->where('from_team_id', $candidate->activeTeam->id)->first();
+    
+                    if ($teamAlreadysentRequest || $teamConnectRecieved) {
+                        Log::info([$teamAlreadysentRequest, $teamConnectRecieved]);
+                        continue;
                     }
+                        
+                    if($activeTeam){
+                        $candidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;
+    
+                        /* Find Team Connection Status (We Decline or They Decline )*/
+                        if(in_array($teamId,$connectFrom)){
+                            $connectionRequestSendType = 1;
+                            $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$candidate->active_team->id)->first();
+                            $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
+                        }elseif (in_array($teamId,$connectTo)){
+                            $connectionRequestSendType = 2;
+                            $teamConnectStatus = TeamConnection::where('from_team_id',$candidate->active_team->id)->where('to_team_id',$activeTeam->id)->first();
+                            $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
+                        }
+                    }
+                    $candidate->connectionRequestSendType = $connectionRequestSendType;
+                    $candidate->teamConnectStatus = $teamConnectStatus;
                 }
-                $candidate->connectionRequestSendType = $connectionRequestSendType;
-                $candidate->teamConnectStatus = $teamConnectStatus;
 
                 $candidatesResponse[] = array_merge(
                     $this->candidateTransformer->transformSearchResult($candidate),
