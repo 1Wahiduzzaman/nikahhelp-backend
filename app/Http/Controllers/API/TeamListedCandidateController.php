@@ -93,7 +93,7 @@ class TeamListedCandidateController extends AppBaseController
     {
         $input = $request->all();
         $input['team_listed_date'] = Carbon::now();
-        $input['team_listed_for'] = Generic::getActiveTeamId();
+        $input['team_listed_for'] = (new Generic())->getActiveTeamId();
         if (!$input['team_listed_for']) {
             return $this->sendErrorResponse('Team Not found, Please make team first');
         }
@@ -173,7 +173,7 @@ class TeamListedCandidateController extends AppBaseController
             }
 
             /* Get Active Team instance */
-            $activeTeamId = Generic::getActiveTeamId();
+            $activeTeamId = (new Generic())->getActiveTeamId();
             if (!$activeTeamId) {
                 throw new Exception('Team not found, Please create team first');
             }

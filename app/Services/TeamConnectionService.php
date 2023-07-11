@@ -757,7 +757,7 @@ class TeamConnectionService extends ApiBaseService
 
     public function teamDisconnect(Request $request)
     {
-        $userActiveTeam = Generic::getActiveTeamId();
+        $userActiveTeam = (new Generic())->getActiveTeamId();
 
         $blockTeam = $this->teamRepository->findOneByProperties([
             "team_id" => $request->team_id
