@@ -679,7 +679,7 @@ class MessageService extends ApiBaseService
             $type = $request_data->type;
             if($type==0) {
                 $user_id = Auth::id();
-                $from_team_id = Generic::getActiveTeamId();
+                $from_team_id = (new Generic())->getActiveTeamId();
 
                 $this->from_team_id = $from_team_id;
                 $this->to_team_id = $to_team_id;
@@ -729,7 +729,7 @@ class MessageService extends ApiBaseService
     }
     public function getAllPrivateChatRequest() {
         try{
-            $active_team_id = Generic::getActiveTeamId();
+            $active_team_id = (new Generic())->getActiveTeamId();
             $data = TeamPrivateChat::with(['private_sender_data' => function($q) {
                 $q->select(['id','full_name', 'email', 'is_verified', 'status', 'stripe_id', 'account_type']);
                 $q->with(

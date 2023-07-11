@@ -68,7 +68,7 @@ class MessageController extends Controller
         if($type =='single') {
             $chat_id = $request->chat_id;    
             // Manage Seen            
-            Message::where('team_id', Generic::getActiveTeamId())
+            Message::where('team_id', (new Generic())->getActiveTeamId())
             ->where('chat_id', $chat_id)
             ->where('receiver', $user_id)
             ->update(['seen' =>1]);        
@@ -78,7 +78,7 @@ class MessageController extends Controller
             $team_id = $request->team_id;
 
             // Manage Seen            
-            TeamMessage::where('team_id', Generic::getActiveTeamId())                        
+            TeamMessage::where('team_id', (new Generic())->getActiveTeamId())                        
             ->update(['seen' =>1]);        
             // Manage Seen
 

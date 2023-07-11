@@ -240,7 +240,7 @@ class ShortListedCandidateController extends AppBaseController
     {
         $input = $request->all();
         $input['shortlisted_date'] = Carbon::now();
-        $input['shortlisted_for'] =  Generic::getActiveTeamId();
+        $input['shortlisted_for'] =  (new Generic())->getActiveTeamId();
         if(!$input['shortlisted_for']){
             return $this->sendErrorResponse('Team Not found, Please make team first');
         }
@@ -341,7 +341,7 @@ class ShortListedCandidateController extends AppBaseController
             }
 
             /* Get Active Team instance */
-            $activeTeamId = Generic::getActiveTeamId();
+            $activeTeamId = (new Generic())->getActiveTeamId();
             if (!$activeTeamId) {
                 throw new Exception('Team not found, Please create team first');
             }
