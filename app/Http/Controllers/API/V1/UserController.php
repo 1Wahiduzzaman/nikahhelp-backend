@@ -84,9 +84,9 @@ class UserController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function emailVerify(Request $request)
+    public function emailVerify(Request $request, $token)
     {
-        return $this->userService->emailVerify($request);
+        return $this->userService->emailVerify($request, $token);
     }
 
     /**
