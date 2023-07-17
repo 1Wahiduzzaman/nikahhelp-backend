@@ -49,6 +49,8 @@ use App\Models\Team;
 use App\Models\TeamConnection;
 use App\Transformers\RepresentativeTransformer;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class UserService extends ApiBaseService
 {
@@ -147,9 +149,10 @@ class UserService extends ApiBaseService
 
             if ($user) {
                 $token = JWTAuth::fromUser($user);
+                $encryptedToken = Crypt::encryptString($token);
                 VerifyUser::create([
                     'user_id' => $user->id,
-                    'token' => $token,
+                    'token' => $encryptedToken,
                 ]);
 
                 try{
@@ -561,16 +564,27 @@ class UserService extends ApiBaseService
      * @param $request
      * @return JsonResponse
      */
-    public function emailVerify(Request $request)
+    public function emailVerify(Request $request, $token)
     {
+        $decrypted = null;
         try {
-            return DB::transaction(function () {
-                if ($user = JWTAuth::parseToken()->authenticate()) {
+            $decrypted = Crypt::decryptString($token);
+
+        } catch (DecryptException $e) {
+            return $this->sendErrorResponse('Invalid Token', ['detail' => 'Token not found in Database'],
+                HttpStatusCode::BAD_REQUEST
+            );
+        }
+
+        try {
+            return DB::transaction(function () use($decrypted){
+                if ($user = JWTAuth::setToken($decrypted)->authenticate()) {
                     $user->is_verified = 1;
                     $user->email_verified_at = Carbon::now()->toDateTimeString();
                     $user->save();
                     VerifyUser::where('user_id', $user->id)->delete();
 //                    $this->sendAuthToImageServer($user);
+                    $user->token = $decrypted;
                     return $this->sendSuccessResponse($user, 'User verification successfully completed',[],200);
                 }
                 return $this->sendErrorResponse('Invalid Token', ['detail' => 'Token not found in Database'],
