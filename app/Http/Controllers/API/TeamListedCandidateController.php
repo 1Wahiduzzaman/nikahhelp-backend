@@ -15,6 +15,7 @@ use App\Models\Team;
 use App\Models\TeamListedCandidate;
 use App\Models\TeamMember;
 use App\Repositories\CandidateRepository;
+use App\Repositories\RepresentativeInformationRepository;
 use App\Repositories\ShortListedCandidateRepository;
 use App\Repositories\TeamListedCandidateRepository;
 use App\Repositories\TeamRepository;
@@ -50,6 +51,7 @@ class TeamListedCandidateController extends AppBaseController
         ShortListedCandidateRepository $shortListedCandidateRepository,
         TeamListedCandidateRepository $teamListedCandidateRepository,
         CandidateRepository $candidateRepository,
+        RepresentativeInformationRepository $representativeInformationRepository,
         BlockListService $blockListService,
         CandidateTransformer $candidateTransformer,
         TeamRepository $teamRepository
@@ -57,6 +59,7 @@ class TeamListedCandidateController extends AppBaseController
         $this->shortListedCandidateRepository = $shortListedCandidateRepository;
         $this->teamListedCandidateRepository = $teamListedCandidateRepository;
         $this->candidateRepository = $candidateRepository;
+        $this->representativeInformationRepository = $representativeInformationRepository;
         $this->blockListService = $blockListService;
         $this->setActionRepository($shortListedCandidateRepository);
         $this->candidateTransformer = $candidateTransformer;
@@ -164,6 +167,13 @@ class TeamListedCandidateController extends AppBaseController
                     'user_id' => $userId
                 ]
             );
+
+            if(!$candidate) {
+                // to remove candidate from team-listed-candidates listed by representative
+                $candidate = $this->representativeInformationRepository->findOneByProperties([
+                    'user_id' => $userId
+                ]);
+            }
 
             if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(
