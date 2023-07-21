@@ -182,6 +182,25 @@ class RepresentativeInformation extends Model
     {
         return $this->activeTeams->first();
     }
+
+    /**
+     * Return Candidate information short listed by user
+     * @return BelongsToMany
+     */
+    public function shortList()
+    {
+        return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id','user_id','user_id')->withTimestamps();
+    }
+
+    /**
+     * Return Candidate information team listed by user
+     * @return BelongsToMany
+     */
+    public function teamList()
+    {
+        return $this->belongsToMany(CandidateInformation::class, 'team_listed_candidates', 'team_listed_by', 'user_id','user_id','user_id')->withTimestamps();
+    }
+    
     /**
      * Return Representative block listed by user
      * @return BelongsToMany
