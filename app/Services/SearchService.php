@@ -142,10 +142,13 @@ class SearchService extends ApiBaseService
                 if (!$activeTeam) {
                     throw new Exception('Team not found, Please create team first');
                 }
-
-            $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
-            $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
-            $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
+                $shortListedUsers = $activeTeam->teamShortListedUser;
+                $shortListedUsers = $shortListedUsers->filter(function ($shortListedUser) use ($userId) {
+                    return $shortListedUser->pivot->shortlisted_by == $userId;
+                });
+                $userInfo['shortList'] = $shortListedUsers->pluck('id')->toArray();
+                $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
+                $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
 
                 //$userInfo['shortList'] = $loggedInCandidate->shortList->pluck('user_id')->toArray();
                 // $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
