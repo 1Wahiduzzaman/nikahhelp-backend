@@ -82,7 +82,16 @@ class AllNotificationController extends Controller
         return $this->sendSuccessResponse($data, 'Data fetched Successfully!');
     }
 
-    public function seenNotification(){
+    public function seenNotification(int $id){
+        if(!empty($id)){
+            AllNotification::where('id', $id)->update(['seen' =>1]);
+            return $this->sendSuccessResponse([], 'Notification Seen Successfully!');
+        } else {
+            return $this->sendErrorResponse('Notification ID is required!');
+        }
+    }
+
+    public function seenAllNotification() {
         $user_id = Auth::id();
         $active_team = TeamMember::where('user_id', $user_id)
         ->where('status', 1)
