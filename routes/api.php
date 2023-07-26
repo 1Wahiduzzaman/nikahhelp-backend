@@ -133,7 +133,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         //Send Notification | By Raz
         Route::POST('send-notification', [AllNotificationController::class, 'saveNotifications'])->name('all-notification.send-notification');
         Route::GET('list-notification', [AllNotificationController::class, 'listNotifications'])->name('all-notification.list-notification');
-        Route::GET('seen-notification', [AllNotificationController::class, 'seenNotification'])->name('all-notification.seen-notification');
+        Route::GET('seen-notification/{id}', [AllNotificationController::class, 'seenNotification'])->name('all-notification.seen-notification');
+        Route::GET('seen-all-notification', [AllNotificationController::class, 'seenAllNotification'])->name('all-notification.seen-all-notification');
         // End Notification
 
 
