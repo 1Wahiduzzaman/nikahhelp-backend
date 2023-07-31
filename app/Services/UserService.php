@@ -158,6 +158,10 @@ class UserService extends ApiBaseService
                 try{
                     Mail::to($user->email)->send(new VerifyEmail($user, $this->domain->domain));
                 } catch(Exception $e) {
+                    $deleteCandidate = $this->candidateRepository->findOneByProperties(['user_id' => $user->id]);
+                    $deleteCandidate->delete();
+                    $deleteUser = $this->userRepository->findOneByProperties(['id' => $user->id]);
+                    $deleteUser->delete();
                     return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
                 }
                 
