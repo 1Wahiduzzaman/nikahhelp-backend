@@ -290,13 +290,13 @@ class SearchService extends ApiBaseService
                 /* Set Candidate Team related info */
                 $teamId = null;
                 $teamTableId = '';
-                if($candidate->active_team){
-                    $teamId = $candidate->active_team->team_id;
-                    $teamTableId = $candidate->active_team->id;
+                if($candidate->candidate_team){
+                    $teamId = $candidate->candidate_team->team_id;
+                    $teamTableId = $candidate->candidate_team->id;
                     $candidate->team_info = [
-                        'team_id' => $candidate->active_team->id,
-                        'name' => $candidate->active_team->name,
-                        'members_id' => $candidate->active_team->team_members->pluck('user_id')->toArray(),
+                        'team_id' => $candidate->candidate_team->id,
+                        'name' => $candidate->candidate_team->name,
+                        'members_id' => $candidate->candidate_team->team_members->pluck('user_id')->toArray(),
                     ];
                 }
                 $candidate->team_id = $teamId;
@@ -305,8 +305,8 @@ class SearchService extends ApiBaseService
                 if(Auth::check()){
                     $connectionRequestSendType = null;
                     $teamConnectStatus = null;
-                    $teamAlreadysentRequest = TeamConnection::where('to_team_id', $candidate->activeTeam->id)->where('from_team_id', $activeTeam->id)->first();
-                    $teamConnectRecieved = TeamConnection::where('to_team_id', $activeTeam->id)->where('from_team_id', $candidate->activeTeam->id)->first();
+                    $teamAlreadysentRequest = TeamConnection::where('to_team_id', $candidate->candidate_team->id)->where('from_team_id', $activeTeam->id)->first();
+                    $teamConnectRecieved = TeamConnection::where('to_team_id', $activeTeam->id)->where('from_team_id', $candidate->candidate_team->id)->first();
     
                     if ($teamAlreadysentRequest || $teamConnectRecieved) {
                         Log::info([$teamAlreadysentRequest, $teamConnectRecieved]);
@@ -319,11 +319,11 @@ class SearchService extends ApiBaseService
                         /* Find Team Connection Status (We Decline or They Decline )*/
                         if(in_array($teamId,$connectFrom)){
                             $connectionRequestSendType = 1;
-                            $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$candidate->active_team->id)->first();
+                            $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$candidate->candidate_team->id)->first();
                             $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
                         }elseif (in_array($teamId,$connectTo)){
                             $connectionRequestSendType = 2;
-                            $teamConnectStatus = TeamConnection::where('from_team_id',$candidate->active_team->id)->where('to_team_id',$activeTeam->id)->first();
+                            $teamConnectStatus = TeamConnection::where('from_team_id',$candidate->candidate_team->id)->where('to_team_id',$activeTeam->id)->first();
                             $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
                         }
                     }
