@@ -383,23 +383,23 @@ class UserService extends ApiBaseService
                         $loggedInCandidate = $loggedInUser->getCandidate;
                         $status['is_short_listed'] = in_array($candidate->user_id,$loggedInCandidate->shortList->pluck('user_id')->toArray());
                         $status['is_block_listed'] = in_array($candidate->user_id,$loggedInCandidate->blockList->pluck('user_id')->toArray());
-                        $teamTableId = $candidate->active_team ? [
-                            'team_name' => $candidate->active_team->name,
-                            'member' => $candidate->active_team->member_count,
-                            'created_by' => User::find($candidate->active_team->created_by),
-                            'created_at' => $candidate->active_team->created_at
+                        $teamTableId = $candidate->candidate_team ? [
+                            'team_name' => $candidate->candidate_team->name,
+                            'member' => $candidate->candidate_team->member_count,
+                            'created_by' => User::find($candidate->candidate_team->created_by),
+                            'created_at' => $candidate->candidate_team->created_at
                         ] : '';
-                        $teamid = $candidate->active_team->team_id;
+                        $teamid = $candidate->candidate_team->team_id;
                         $status['is_teamListed'] = null;
                         $status['is_connect'] =  null;;
 
                         try {
                             $userActive = $this->getRightUser();
                             $fromTeamId =  $userActive->active_team->id;
-                            $connection = TeamConnection::where('from_team_id', $fromTeamId)->where('to_team_id', $candidate->active_team->id)->get();
+                            $connection = TeamConnection::where('from_team_id', $fromTeamId)->where('to_team_id', $candidate->candidate_team->id)->get();
 
                             if (count($connection) < 1) {
-                                $connection = TeamConnection::where('from_team_id', $candidate->active_team->id)->where('to_team_id', $fromTeamId)->get();
+                                $connection = TeamConnection::where('from_team_id', $candidate->candidate_team->id)->where('to_team_id', $fromTeamId)->get();
                             }
 
 
