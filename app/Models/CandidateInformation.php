@@ -529,6 +529,10 @@ class CandidateInformation extends Model
         return $this->activeTeams()->first();
     }
 
+    public function getCandidateTeamAttribute() {
+        return $this->belongsToMany(Team::class, 'team_members', 'user_id', 'team_id', 'user_id', 'id')->wherePivot('user_type', 'Candidate')->first();
+    }
+
    
 
     
