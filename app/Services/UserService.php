@@ -389,17 +389,17 @@ class UserService extends ApiBaseService
                             'created_by' => User::find($candidate->candidate_team->created_by),
                             'created_at' => $candidate->candidate_team->created_at
                         ] : '';
-                        $teamid = $candidate->candidate_team->team_id;
+                        $teamid = $candidate->candidate_team->team_id ?? null;
                         $status['is_teamListed'] = null;
                         $status['is_connect'] =  null;;
 
                         try {
                             $userActive = $this->getRightUser();
                             $fromTeamId =  $userActive->active_team->id;
-                            $connection = TeamConnection::where('from_team_id', $fromTeamId)->where('to_team_id', $candidate->candidate_team->id)->get();
+                            $connection = TeamConnection::where('from_team_id', $fromTeamId)->where('to_team_id', $candidate->candidate_team->id ?? null)->get();
 
                             if (count($connection) < 1) {
-                                $connection = TeamConnection::where('from_team_id', $candidate->candidate_team->id)->where('to_team_id', $fromTeamId)->get();
+                                $connection = TeamConnection::where('from_team_id', $candidate->candidate_team->id ?? null)->where('to_team_id', $fromTeamId)->get();
                             }
 
 
