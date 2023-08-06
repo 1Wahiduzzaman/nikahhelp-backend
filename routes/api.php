@@ -315,7 +315,13 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
         Route::post('/resolveTicket', [SubmitTicketController::class, 'resolveTicket']);
         Route::post('send-support-message', [SubmitTicketController::class, 'sendTicketMessage']);
+
     });
+
+    // image upload
+    Route::post('/img/{id}', [\App\Http\Controllers\ImgController::class, 'storeImage']);
+    Route::delete('/img/{id}/{path}',[\App\Http\Controllers\ImgController::class, 'deleteImg']);
+    Route::get('/img/{id}/{path}', [\App\Http\Controllers\ImgController::class, 'show'])->where(['path' => '.*']);
 /*
     Route::group(['prefix' => 'v1/admin'], function () {
 

@@ -17,3 +17,5 @@ phpunit.xml
 
 composer.lock
 config/cors.php
+
+resources/image/*
