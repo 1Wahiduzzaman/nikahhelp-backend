@@ -270,8 +270,13 @@ class SearchService extends ApiBaseService
 
             $parPage = $request->input('parpage',10);
 
-
-            $candidates = $candidates->whereHas('candidateTeam')->with('getNationality','getReligion','candidateTeam','activeTeams','activeTeams.team_members')->paginate($parPage);
+            if(Auth::check()) {
+                $loggedInCandidateIsBlockedBy = $loggedInCandidate->blockListedBy->pluck('user_id')->toArray();
+                $candidate = $candidates->whereNotIn('user_id', $loggedInCandidateIsBlockedBy);
+                $candidates = $candidates->whereHas('candidateTeam')->with('getNationality','getReligion','candidateTeam','activeTeams','activeTeams.team_members')->paginate($parPage);
+            } else {
+                $candidates = $candidates->with('getNationality','getReligion','candidateTeam','activeTeams','activeTeams.team_members')->paginate($parPage);
+            }
 
             // $caniddateInTeam = $candidates->whereHas('candidateTeam')->get();
 
