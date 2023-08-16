@@ -189,7 +189,7 @@ class SearchService extends ApiBaseService
             /* FILTER - Age  */
             if (isset($request->min_age) && isset($request->max_age)) {
                 $dateRange['max'] = Carbon::now()->subYears($request->max_age);
-                $dateRange['min'] = Carbon::now()->subYears($request->mim_age);
+                $dateRange['min'] = Carbon::now()->subYears($request->min_age);
 
                 $candidates = $candidates->whereBetween('dob', [$dateRange]);
             }
@@ -266,7 +266,7 @@ class SearchService extends ApiBaseService
                 $candidates = $candidates->where('per_hobbies_interests', $request->smoker);
             }
 
-
+            // return response()->json(['msg' => $candidates]);
 
             $parPage = $request->input('parpage',10);
 
