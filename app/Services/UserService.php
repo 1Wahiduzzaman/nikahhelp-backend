@@ -370,8 +370,14 @@ class UserService extends ApiBaseService
                     $status['is_block_listed'] = null;
                     $status['is_teamListed'] = null;
                     $status['is_connect'] = null;
-
+                    
+                    // handle blocked users
                     $loggedInUser = Auth::user();
+                    $blockedByThisCandidate = $candidate->blockList->pluck('user_id')->toArray();
+                    if(in_array($loggedInUser->id, $blockedByThisCandidate)) {
+                        return $this->sendErrorResponse('You are blocked by this user');
+                    }
+
 
                     if (empty($candidate)) {
                         $candidate = $this->representativeRepository->findOneByProperties([
