@@ -146,6 +146,13 @@ class CandidateService extends ApiBaseService
         if (!$candidate) {
             throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
         }
+        // handle blocked users
+        $loggedInUser = Auth::user();
+        $blockedByThisCandidate = $candidate->blockList->pluck('user_id')->toArray();
+        if(in_array($loggedInUser->id, $blockedByThisCandidate)) {
+            return $this->sendErrorResponse('You are blocked by this user');
+        }
+
         $images = $this->imageRepository->findBy(['user_id'=>$userId]);
         $candidate_info = $this->candidateTransformer->transform($candidate);
         $candidate_info['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
