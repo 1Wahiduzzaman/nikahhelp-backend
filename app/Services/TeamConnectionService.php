@@ -232,9 +232,13 @@ class TeamConnectionService extends ApiBaseService
             return $this->sendErrorResponse('Connection request not found.', [], HttpStatusCode::VALIDATION_ERROR);
         }
 
-        $to_team_id = $connection_request->to_team_id;
+        if($request->connection_status == 10){
+            $team_id = $connection_request->from_team_id;
+        } else {
+            $team_id = $connection_request->to_team_id;
+        }
 
-        $update_response = $this->updateResponse($user_id, $to_team_id, $connection_request, $request->connection_status);
+        $update_response = $this->updateResponse($user_id, $team_id, $connection_request, $request->connection_status);
         return $update_response;
     }
 
