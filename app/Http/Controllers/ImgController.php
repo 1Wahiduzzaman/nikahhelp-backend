@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Traits\DeleteTrait;
 use App\Traits\UploadTrait;
-use Illuminate\Contracts\Filesystem\Filesystem;
+// use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -36,15 +36,16 @@ class ImgController extends Controller
 
     }
 
-    public function show(Filesystem $filesystem, Request $request, String $id, $path)
+    public function show(Request $request, String $id, $path)
     {
             $server = ServerFactory::create([
                 'response' => new LaravelResponseFactory(
                     $request
                 ),
                 'source' => resource_path('image/'.$id),
-                'cache' => $filesystem->getDriver(),
-                'cache_path_prefix' => '.cache/'.$id,
+                // 'cache' => $filesystem->getDriver(),
+                'cache' => storage_path('app/public/.cache/'.$id.'/'),
+                'cache_path_prefix' => '',
                 'base_url' => 'image',
             ]);
             try {
@@ -83,12 +84,12 @@ class ImgController extends Controller
             }
 
             $storageDelete = false;
-            if (File::exists(storage_path('app/.cache/'.$id.$path))) {
+            if (File::exists(storage_path('app/public/.cache/'.$id.$path))) {
                 // code...
-                $storageDelete = Storage::deleteDirectory(storage_path('app/.cache/'.$id));
-                return $removeDir && $deleted && $storageDelete ? 'removed' : 'not-rmeoved';
+                $storageDelete = File::deleteDirectory(storage_path('app/public/.cache/'.$id.$path));
+                return $removeDir && $deleted && $storageDelete ? 'removed' : 'not-removed';
             }
-               return $removeDir && $deleted ? 'removed' : 'not-rmeoveds';
+               return $removeDir && $deleted ? 'removed' : 'not-removed';
 
             
         } catch (\Exception $exception) {
