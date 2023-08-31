@@ -393,7 +393,8 @@ class UserService extends ApiBaseService
                             'team_name' => $candidate->candidate_team->name,
                             'member' => $candidate->candidate_team->member_count,
                             'created_by' => User::find($candidate->candidate_team->created_by),
-                            'created_at' => $candidate->candidate_team->created_at
+                            'created_at' => $candidate->candidate_team->created_at,
+                            'logo' => $candidate->candidate_team->logo
                         ] : '';
                         $teamid = $candidate->candidate_team->team_id ?? null;
                         $status['is_teamListed'] = null;
