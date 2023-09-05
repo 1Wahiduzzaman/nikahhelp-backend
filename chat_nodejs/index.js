@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const _ = require("underscore");
-const http = require('https');
+const http = require('node:http');
 const fs = require('fs');
 const options = {
     key: fs.readFileSync('/home/alhamdulillah/public_html/backend/chat_nodejs/ssl/alhamdulillah.key'),
@@ -29,7 +29,8 @@ const users = {};
 var online_users = [];
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    // res.sendFile(__dirname + '/index.html');
+    res.send('Hello World!');
 });
 
 server.listen(4008, () => {
