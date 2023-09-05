@@ -449,11 +449,11 @@ class MessageService extends ApiBaseService
                         $q->with(
                             [
                                 'candidate_info' => function($q1) {
-                                    $q1->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                                    $q1->select(['id','user_id', 'per_avatar_url']);
                                 }
                             ]
                         )->with(['representative_info' => function($q2){
-                            $q2->select(['id','user_id', 'per_avatar_url', 'per_main_image_url']);
+                            $q2->select(['id','user_id', 'per_avatar_url']);
                         }]);
                     }])
                     ->with('last_message');  //last message from messages table
