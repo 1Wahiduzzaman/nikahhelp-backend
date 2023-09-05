@@ -244,6 +244,9 @@ class TeamService extends ApiBaseService
                             $u->with(['candidate_info' => function($c){
                                 $c->select(['id', 'user_id', 'per_avatar_url', 'per_main_image_url']);
                             }])->select('id', 'full_name', 'is_verified', 'status', 'form_type', 'account_type', 'created_at', 'updated_at');
+                            $u->with(['representative_info' => function($c) {
+                                $c->select(['id', 'user_id', 'per_avatar_url', 'per_main_image_url']);
+                            }])->select('id', 'full_name', 'is_verified', 'status', 'form_type', 'account_type', 'created_at', 'updated_at');
                         }]);
                     }])
                     ->with('team_invited_members', 'TeamlistedShortListed','teamRequestedConnectedList','teamRequestedAcceptedConnectedList','created_by')
