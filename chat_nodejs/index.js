@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const _ = require("underscore");
-const http = require('node:http');
+const http = require('https');
 const fs = require('fs');
 const options = {
     key: fs.readFileSync('/home/alhamdulillah/public_html/backend/chat_nodejs/ssl/alhamdulillah.key'),
