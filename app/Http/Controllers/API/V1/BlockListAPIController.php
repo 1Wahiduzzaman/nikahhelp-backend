@@ -11,6 +11,7 @@ use App\Models\CandidateInformation;
 use App\Models\Generic;
 use App\Repositories\BlockListRepository;
 use App\Repositories\CandidateRepository;
+use App\Repositories\RepresentativeInformationRepository;
 use App\Repositories\TeamRepository;
 use App\Services\BlockListService;
 use App\Transformers\CandidateTransformer;
@@ -36,12 +37,14 @@ class BlockListAPIController extends AppBaseController
         BlockListRepository $blockListRepo,
         BlockListService $blockListService,
         CandidateRepository $candidateRepository,
+        RepresentativeInformationRepository $representativeRepository,
         CandidateTransformer $candidateTransformer,
         TeamRepository $teamRepository
     ) {
         $this->blockListRepository = $blockListRepo;
         $this->blockListService = $blockListService;
         $this->candidateRepository = $candidateRepository;
+        $this->representativeRepository = $representativeRepository;
         $this->candidateTransformer = $candidateTransformer;
         $this->teamRepository = $teamRepository;
     }
@@ -58,12 +61,21 @@ class BlockListAPIController extends AppBaseController
         $userId = self::getUserId();
 
         $perPage = $request->input('parpage', 10);
+    
+        $isLoggedInuUserRepresentative = false;
 
         try {
 
             $candidate = $this->candidateRepository->findOneByProperties([
                 'user_id' => $userId
             ]);
+
+            if (!$candidate) {
+                $candidate = $this->representativeRepository->findOneByProperties([
+                    'user_id' => $userId
+                ]);
+                $isLoggedInuUserRepresentative = true;
+            }
 
             if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
@@ -82,9 +94,12 @@ class BlockListAPIController extends AppBaseController
             $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
             $userInfo['blockList'] = $candidate->blockList->pluck('user_id')->toArray();
             $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
-            $connectFrom = $candidate->teamConnection->pluck('from_team_id')->toArray();
-            $connectTo = $candidate->teamConnection->pluck('to_team_id')->toArray();
-            $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
+
+            if(!$isLoggedInuUserRepresentative){
+                $connectFrom = $candidate->teamConnection->pluck('from_team_id')->toArray();
+                $connectTo = $candidate->teamConnection->pluck('to_team_id')->toArray();
+                $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
+            }
 
             $blockListCandidates = $candidate->blockList()->paginate($perPage);
 
