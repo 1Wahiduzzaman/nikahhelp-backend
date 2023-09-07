@@ -275,6 +275,12 @@ class BlockListAPIController extends AppBaseController
             ]);
 
             if (!$candidate) {
+                $candidate = $this->representativeRepository->findOneByProperties([
+                    'user_id' => $userId
+                ]);
+            }
+
+            if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()),
                     $userId);
             }
