@@ -183,6 +183,10 @@ class RepresentativeInformation extends Model
         return $this->activeTeams->first();
     }
 
+    public function getCandidateTeamAttribute() {
+        return $this->belongsToMany(Team::class, 'team_members', 'user_id', 'team_id', 'user_id', 'id')->wherePivot('user_type', 'Candidate')->first();
+    }
+    
     /**
      * Return Candidate information short listed by user
      * @return BelongsToMany
@@ -207,7 +211,7 @@ class RepresentativeInformation extends Model
      */
     public function blockList()
     {
-        return $this->belongsToMany(RepresentativeInformation::class, 'block_lists', 'block_by', 'user_id','user_id','user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id','user_id','user_id')->withTimestamps();
 
     }
 

@@ -21,6 +21,7 @@ use App\Repositories\ShortListedCandidateRepository;
 use App\Helpers\Notificationhelpers;
 use App\Models\BlockList;
 use App\Models\TeamMember;
+use App\Repositories\RepresentativeInformationRepository;
 
 class BlockListService extends ApiBaseService
 {
@@ -48,12 +49,14 @@ class BlockListService extends ApiBaseService
     public function __construct(
         BlockListRepository $blockListRepository,
         ShortListedCandidateRepository $shortListedCandidateRepo,
-        CandidateRepository $candidateRepository
+        CandidateRepository $candidateRepository,
+        RepresentativeInformationRepository $representativeRepository
     )
     {
         $this->blockListRepository = $blockListRepository;
         $this->shortListedCandidateRepository = $shortListedCandidateRepo;
         $this->candidateRepository = $candidateRepository;
+        $this->representativeRepository = $representativeRepository;
     }
 
 
@@ -68,8 +71,14 @@ class BlockListService extends ApiBaseService
         try {
 
             $candidate = $this->candidateRepository->findOneByProperties([
-                                                                             'user_id' => $userId
-                                                                         ]);
+                'user_id' => $userId
+            ]);
+
+            if (!$candidate) {
+                $candidate = $this->representativeRepository->findOneByProperties([
+                    'user_id' => $userId
+                ]);
+            }
 
             if (!$candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
