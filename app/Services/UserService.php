@@ -385,10 +385,15 @@ class UserService extends ApiBaseService
                         ]);
                     }
 
-                    if($loggedInUser && $loggedInUser->getCandidate()->exists()){
-                        $loggedInCandidate = $loggedInUser->getCandidate;
-                        $status['is_short_listed'] = in_array($candidate->user_id,$loggedInCandidate->shortList->pluck('user_id')->toArray());
+                    if($loggedInUser){
+                        if($loggedInUser->getCandidate()->exists()){
+                            $loggedInCandidate = $loggedInUser->getCandidate;
+                        } else {
+                            $loggedInCandidate = $loggedInUser->getRepresentative;
+                        }
                         $status['is_block_listed'] = in_array($candidate->user_id,$loggedInCandidate->blockList->pluck('user_id')->toArray());
+                        $status['is_short_listed'] = in_array($candidate->user_id,$loggedInCandidate->shortList->pluck('user_id')->toArray());
+
                         $teamTableId = $candidate->candidate_team ? [
                             'team_name' => $candidate->candidate_team->name,
                             'member' => $candidate->candidate_team->member_count,
