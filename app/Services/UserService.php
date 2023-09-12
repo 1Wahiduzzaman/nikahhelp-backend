@@ -407,7 +407,7 @@ class UserService extends ApiBaseService
 
                         try {
                             $userActive = $this->getRightUser();
-                            $fromTeamId =  $userActive->active_team->id;
+                            $fromTeamId =  $userActive->active_team->id ?? null;
                             $connection = TeamConnection::where('from_team_id', $fromTeamId)->where('to_team_id', $candidate->candidate_team->id ?? null)->get();
 
                             if (count($connection) < 1) {
