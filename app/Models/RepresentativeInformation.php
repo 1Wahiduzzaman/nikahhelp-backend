@@ -215,7 +215,14 @@ class RepresentativeInformation extends Model
 
     }
 
-   
+   /**
+     * Return Candidate information user block listed by
+     * @return BelongsToMany
+     */
+    public function blockListedBy() 
+    {
+        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'user_id', 'block_by','user_id','user_id')->withTimestamps();
+    }
 
     
 
