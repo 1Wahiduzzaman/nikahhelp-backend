@@ -190,6 +190,8 @@ class RepresentativeService extends ApiBaseService
                 return $this->sendErrorResponse('Representative information  Not fund', [], HttpStatusCode::NOT_FOUND);
             }
             $request['user_id'] = $userId;
+            $request['per_gender'] = $representativeInfomation->per_gender && $representativeInfomation->data_input_status == 5 ? $representativeInfomation->per_gender : $request['per_gender'];
+            $request['dob'] = $representativeInfomation->dob && $representativeInfomation->data_input_status == 5 ? $representativeInfomation->dob : $request['dob'];
             $representative = $representativeInfomation->update($request);
             if ($representative) {
                 return $this->sendSuccessResponse($representativeInfomation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
