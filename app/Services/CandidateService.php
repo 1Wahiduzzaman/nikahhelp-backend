@@ -426,8 +426,8 @@ class CandidateService extends ApiBaseService
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
 
-            $candidate->dob = $request->input('dob');
-            $candidate->per_gender = $request->input('per_gender');
+            $candidate->dob = $candidate->dob && $candidate->data_input_status == 6  ? $candidate->dob : $request->input('dob');
+            $candidate->per_gender = $candidate->per_gender && $candidate->data_input_status == 6 ? $candidate->per_gender : $request->input('per_gender');
             $candidate->per_height = $request->input('per_height');
             $candidate->per_employment_status = $request->input('per_employment_status');
             $candidate->per_education_level_id = $request->input('per_education_level_id');
