@@ -28,6 +28,10 @@ class AccessRulesDefinitionService
       return [self::ROLES[0],self::ROLES[1]];
   }
 
+  public function hasSendConnectionRequestRights(){
+      return [self::ROLES[0],self::ROLES[1]];
+  }
+
   public function hasRespondConnectionRequestRights(){
       return [self::ROLES[0],self::ROLES[1]];
   }
