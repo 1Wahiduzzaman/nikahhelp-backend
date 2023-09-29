@@ -66,10 +66,27 @@ class TeamConnectionService extends ApiBaseService
      * @return JsonResponse
      */
     public function sendRequest($request)
-    {
+    {   
+        $user_id = self::getUserId();
         $from_team = $this->teamRepository->findOneByProperties([
             "team_id" => $request->from_team_id
         ]);
+
+        // Find user member status
+        $team_member_info = $this->teamMemberRepository->findOneByProperties(
+            [
+                "user_id" => $user_id,
+                "team_id" => $from_team->id
+            ]
+        );
+
+        $user_role = $team_member_info->role;
+        $access_rules = new AccessRulesDefinitionService();
+        $disconnection_rights = $access_rules->hasSendConnectionRequestRights();
+        if (!in_array($user_role, $disconnection_rights)) {
+            return $this->sendErrorResponse("You dont have rights to send request.", [], HttpStatusCode::VALIDATION_ERROR);
+        }
+
 
 
         if (!$from_team) {
@@ -244,12 +261,7 @@ class TeamConnectionService extends ApiBaseService
 
 
     public function updateResponse($user_id, $team_id, $connection_row, $connection_status)
-    {
-         if($connection_status == 10) {
-             $connection_row = TeamConnection::where('id', $connection_row->id)->delete();
-             return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
-         } else {
-           //  If connection status is pending only "To Team" can update the connection status
+    {   
         $user_member_status = $this->teamMemberRepository->findOneByProperties(
             [
                 "user_id" => $user_id,
@@ -266,30 +278,34 @@ class TeamConnectionService extends ApiBaseService
         if (!in_array($user_member_status->role, $respond_connection_rights)) {
             return $this->sendErrorResponse("You dont have rights to accept/reject connection request.", [], HttpStatusCode::VALIDATION_ERROR);
         }
+        
+        if($connection_status == 10) {
+             $connection_row = TeamConnection::where('id', $connection_row->id)->delete();
+             return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
+        } else {
+            //  If connection status is pending only "To Team" can update the connection status
 
-        if (!is_numeric($connection_status)) {
-            return $this->sendErrorResponse("Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]", [], HttpStatusCode::VALIDATION_ERROR);
+            if (!is_numeric($connection_status)) {
+                return $this->sendErrorResponse("Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]", [], HttpStatusCode::VALIDATION_ERROR);
+            }
+
+            if (!in_array($connection_status, ["0", "1", "2"])) {
+                return $this->sendErrorResponse("Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]", [], HttpStatusCode::VALIDATION_ERROR);
+            }
+
+            $connection_row->connection_status = $connection_status;
+            $connection_row->responded_by = $user_id;
+            $connection_row->responded_at = Carbon::now()->toDateTimeString();
+            $input = (array)$connection_row;
+            $input = $connection_row->fill($input)->toArray();
+
+            try {
+                $connection_row->save($input);
+                return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
+            } catch (QueryException $ex) {
+                return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR);
+            }
         }
-
-        if (!in_array($connection_status, ["0", "1", "2"])) {
-            return $this->sendErrorResponse("Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]", [], HttpStatusCode::VALIDATION_ERROR);
-        }
-
-        $connection_row->connection_status = $connection_status;
-        $connection_row->responded_by = $user_id;
-        $connection_row->responded_at = Carbon::now()->toDateTimeString();
-        $input = (array)$connection_row;
-        $input = $connection_row->fill($input)->toArray();
-
-        try {
-            $connection_row->save($input);
-            return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
-        } catch (QueryException $ex) {
-            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR);
-        }
-         }
-
-
     }
 
     public function reports($request)
