@@ -93,6 +93,15 @@ class UserController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+    public function tokenVerifyOrResend(LoginRequest $request)
+    {
+        return $this->userService->tokenVerifyOrResend($request);
+    }
+
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function switchAccount(Request $request)
     {
 

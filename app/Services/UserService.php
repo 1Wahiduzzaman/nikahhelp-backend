@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\ProfileLog;
 use App\Models\VerifyUser;
 use App\Mail\VerifyMail as VerifyEmail;
+use App\Mail\VerifyTwoFactorCode;
 use App\Repositories\RepresentativeInformationRepository;
 use App\Repositories\TicketRepository;
 use Carbon\Carbon;
@@ -216,17 +217,6 @@ class UserService extends ApiBaseService
                 );
             }
 
-            /* Load data input status */
-            if($userInfo->account_type == 1){
-                $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
-                $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
-                // $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
-            }elseif ($userInfo->account_type == 2){
-                $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
-                $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
-                // $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
-            }
-
             /* attempt login */
             if (!$token = JWTAuth::attempt($credentials)) {
                 return $this->sendErrorResponse(
@@ -235,9 +225,54 @@ class UserService extends ApiBaseService
                     403
                 );
             } else {
+                /*
+                     handle tow factor authentication
+                */
+
+                // increase logn count
+                $userInfo->incrementLoginCount();
+
+                // check if user has 10 login count
+                // if yes, generate new 2fa code
+                if($userInfo->login_count > 2 && $userInfo->two_factor_code == null) {
+                    // $user->login_count = 0;
+                    
+                    $userInfo->generateTwoFactorCode();
+                    // $user->notify(new TwoFactorCode());
+                    try{
+                        Mail::to($userInfo->email)->send(new VerifyTwoFactorCode($userInfo, $this->domain->domain));
+                        return $this->sendSuccessResponse('A verification code was sent to your email.', [], FResponse::HTTP_BAD_REQUEST);
+                    } catch(Exception $e) {
+                        return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
+                    }
+                } else if($userInfo->login_count > 2 && $userInfo->two_factor_code != null) {
+                    // $user->login_count = 0;
+                    // $user->notify(new TwoFactorCode());
+                    if($userInfo->two_factor_expires_at > now()) {
+                        return $this->sendSuccessResponse('A verification code was sent to your email.', [], FResponse::HTTP_BAD_REQUEST);
+                    } else {
+                        $userInfo->generateTwoFactorCode();
+                        try{
+                            Mail::to($userInfo->email)->send(new VerifyTwoFactorCode($userInfo, $this->domain->domain));
+                            return $this->sendSuccessResponse('A verification code was sent to your email.', [], FResponse::HTTP_BAD_REQUEST);
+                        } catch(Exception $e) {
+                            return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
+                        }
+                    }
+                }
+
+                /* Load data input status */
+                if($userInfo->account_type == 1){
+                    $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
+                    $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
+                    // $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
+                }elseif ($userInfo->account_type == 2){
+                    $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
+                    $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
+                    // $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
+                }
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $userInfo;
-
 
                 return $this->sendSuccessResponse($data, 'Login successfully');
             }
@@ -656,6 +691,100 @@ class UserService extends ApiBaseService
                 'message' => $e->getMessage(),
                 'error' => ['details' => $e->getMessage()]
             ], HttpStatusCode::NOT_FOUND);
+        }
+    }
+
+    /** 
+     * @param $request
+     * @return JsonResponse
+     */
+    public function tokenVerifyOrResend(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+        $twoFactorCode = $request->twoFACode;
+        $isResend = $request->isResend;
+
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return $this->sendErrorResponse(
+                'Invalid credentials',
+                ['detail' => 'Ensure that the email and password included in the request are correct'],
+                403
+            );
+        } else {
+            try {
+                $userInfo = User::where('email', $request->input('email'))->first();
+
+                /* Check the user is exist */
+                if (empty($userInfo)) {
+                    return $this->sendErrorResponse(
+                        'You are not a registered you should registration first ',
+                        [],
+                        403
+                    );
+                }
+                /* Check the user is not delete */
+                if ($userInfo->status == 0) {
+                    return $this->sendErrorResponse(
+                        'Your account has been deleted ( ' . $userInfo->email . ' ), please contact us so we can assist you.',
+                        [],
+                        403
+                    );
+                } elseif($userInfo->status == 9){
+                    return $this->sendErrorResponse(
+                        'Your account has been Suspended ( ' . $userInfo->email . ' ), please contact us so we can assist you.',
+                        [],
+                        403
+                    );
+                }
+
+                // handle if resend code 
+                if($isResend) {
+                    if($userInfo->two_factor_code == null || $userInfo->two_factor_expires_at < now()) {
+                        $userInfo->generateTwoFactorCode();
+                    }
+                    try{
+                        Mail::to($userInfo->email)->send(new VerifyTwoFactorCode($userInfo, $this->domain->domain));
+                        // Mail::to($userInfo->email)->send(new VerifyTwoFactorCode($userInfo, $this->domain->domain));
+
+                        return $this->sendSuccessResponse([], 'A verification code was sent to your email.');
+                    } catch(Exception $e) {
+                        return $this->sendErrorResponse($e);
+                    }
+                }
+
+                // handle if code is not match
+                if($userInfo->two_factor_code != $twoFactorCode) {
+                    return $this->sendErrorResponse('Token Invalid', [], FResponse::HTTP_BAD_REQUEST);
+                } else if($userInfo->two_factor_expires_at < now()) {
+                    return $this->sendErrorResponse('Token Expired.', [], FResponse::HTTP_BAD_REQUEST);
+                }
+
+                // handle if code is match
+                if($userInfo->two_factor_code == $twoFactorCode) {
+                    $userInfo->resetTwoFactorCode();
+                    $userInfo->login_count = 0;
+                    $userInfo->save();
+                    $data = array();
+
+                    /* Load data input status */
+                    if($userInfo->account_type == 1){
+                        $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
+                        $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
+                        // $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
+                    }elseif ($userInfo->account_type == 2){
+                        $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
+                        $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
+                        // $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
+                    }
+
+                    $data['token'] = self::TokenFormater($token);
+                    $data['user'] = $userInfo;
+
+                    return $this->sendSuccessResponse($data, 'Logged in successfully!');
+                }
+            } catch (JWTException $exception) {
+                return $this->sendErrorResponse($exception->getMessage(), [], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         }
     }
 
