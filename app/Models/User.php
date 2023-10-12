@@ -44,7 +44,10 @@ class User extends Authenticatable implements JWTSubject
         self::LOCKED_END,
         self::ACCOUNT_TYPE,
         self::FORM_TYPE,
-        'stripe_id'
+        'stripe_id',
+        'two_factor_code',
+        'two_factor_expires_at',
+
     ];
 
     /**
@@ -59,7 +62,7 @@ class User extends Authenticatable implements JWTSubject
         'card_brand',
         'card_last_four',
         'trial_ends_at',
-        'email_verified_at'
+        'login_count',
     ];
 
     /**
@@ -166,5 +169,36 @@ class User extends Authenticatable implements JWTSubject
     public function team_member()
     {
         return $this->hasOne(TeamMember::class, 'user_id', 'id');
+    }
+
+    /**
+     * Generate 6 digits MFA code for the User
+     */
+    public function generateTwoFactorCode()
+    {   
+        $this->timestamps = false; //Dont update the 'updated_at' field yet
+        
+        $this->two_factor_code = rand(100000, 999999);
+        $this->two_factor_expires_at = now()->addMinutes(10);
+        $this->save();
+    }
+
+    /**
+     * Reset the MFA code generated earlier
+     */
+    public function resetTwoFactorCode()
+    {        
+        $this->two_factor_code = null;
+        $this->two_factor_expires_at = null;
+        $this->save();
+    }
+
+    /**
+     * Increment the login count
+     */
+    public function incrementLoginCount() {
+        $this->timestamps = false; //Dont update the 'updated_at' field yet
+        $this->login_count++;
+        $this->save();
     }
 }
