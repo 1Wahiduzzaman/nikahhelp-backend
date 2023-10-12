@@ -234,8 +234,7 @@ class UserService extends ApiBaseService
 
                 // check if user has 10 login count
                 // if yes, generate new 2fa code
-                if($userInfo->login_count > 2 && $userInfo->two_factor_code == null) {
-                    // $user->login_count = 0;
+                if($userInfo->login_count > 10 && $userInfo->two_factor_code == null) {
                     
                     $userInfo->generateTwoFactorCode();
                     // $user->notify(new TwoFactorCode());
@@ -245,9 +244,7 @@ class UserService extends ApiBaseService
                     } catch(Exception $e) {
                         return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
                     }
-                } else if($userInfo->login_count > 2 && $userInfo->two_factor_code != null) {
-                    // $user->login_count = 0;
-                    // $user->notify(new TwoFactorCode());
+                } else if($userInfo->login_count > 10 && $userInfo->two_factor_code != null) {
                     if($userInfo->two_factor_expires_at > now()) {
                         return $this->sendSuccessResponse('A verification code was sent to your email.', [], FResponse::HTTP_BAD_REQUEST);
                     } else {
