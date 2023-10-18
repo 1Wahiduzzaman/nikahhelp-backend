@@ -146,8 +146,7 @@ class UserService extends ApiBaseService
                 $userInfoResponse = $this->representativeRepository->save($registerUser);
             }
 
-            $user['data_input_status'] = $userInfoResponse->data_input_status;
-
+            
             if ($user) {
                 $token = JWTAuth::fromUser($user);
                 $encryptedToken = Crypt::encryptString($token);
@@ -166,7 +165,14 @@ class UserService extends ApiBaseService
                     return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
                 }
                 
+                $user->resetLoginCount();
+
                 self::authenticate($request);
+
+                $user->resetLoginCount();
+
+
+                $user['data_input_status'] = $userInfoResponse->data_input_status;
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $user;
                 
@@ -759,8 +765,7 @@ class UserService extends ApiBaseService
                 // handle if code is match
                 if($userInfo->two_factor_code == $twoFactorCode) {
                     $userInfo->resetTwoFactorCode();
-                    $userInfo->login_count = 0;
-                    $userInfo->save();
+                    $userInfo->resetLoginCount();
                     $data = array();
 
                     /* Load data input status */
