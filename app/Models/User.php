@@ -201,4 +201,13 @@ class User extends Authenticatable implements JWTSubject
         $this->login_count++;
         $this->save();
     }
+
+    /**
+     * Reset the login count
+     */
+    public function resetLoginCount() {
+        $this->timestamps = false; //Dont update the 'updated_at' field yet
+        $this->login_count = 0;
+        $this->save();
+    }
 }
