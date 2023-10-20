@@ -860,7 +860,7 @@ class UserService extends ApiBaseService
             return $this->sendErrorResponse('Sorry you can not access', [], HttpStatusCode::FORBIDDEN);
         }
 
-        $hashPassword = Hash::make($request->password);
+        // $hashPassword = Hash::make($request->password);
 
         $user = JWTAuth::parseToken()->authenticate();
 
@@ -868,7 +868,7 @@ class UserService extends ApiBaseService
             return $this->sendErrorResponse('User Not Found', [], HttpStatusCode::NOT_FOUND);
         }
 
-        $check = Hash::check($user->password, $hashPassword);
+        $check = Hash::check($request->password, $user->password);
         if (!$check) {
             return $this->sendErrorResponse('Sorry you are not allowed to access', ['data' => false], HttpStatusCode::FORBIDDEN);
         }
