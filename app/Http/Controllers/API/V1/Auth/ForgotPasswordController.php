@@ -71,7 +71,7 @@ class ForgotPasswordController extends Controller
                         return $this->sendErrorResponse($exception->getMessage(), [], 'Failed reset password');
                     }
 
-                    return $this->apiBaseService->sendSuccessResponse('Reset link sent to your email');
+                    return $this->apiBaseService->sendSuccessResponse([], 'Reset link sent to your email');
                 } else {
                     return $this->apiBaseService->sendErrorResponse('Invalid Email', ['detail' => 'User Not found'],
                         HttpStatusCode::BAD_REQUEST

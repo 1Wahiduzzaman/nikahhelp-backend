@@ -406,6 +406,7 @@ class CandidateTransformer extends TransformerAbstract
             'per_ethnicity' => $item->per_ethnicity,
             'per_mother_tongue' => $item->per_mother_tongue,
             'per_nationality' => (int)$item->per_nationality,
+            'per_permanent_country_name' => $item->getPermanentCountry()->exists() ? $item->getPermanentCountry->name :null,
             'per_country_of_birth_id' => (int)$item->per_country_of_birth,
             'per_country_of_birth' => $item->getCountryOFBirth()->exists() ? $item->getCountryOFBirth->name : null,
             'per_current_residence_id' => (int)$item->per_current_residence_country,
