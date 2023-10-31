@@ -757,9 +757,9 @@ class UserService extends ApiBaseService
 
                 // handle if code is not match
                 if($userInfo->two_factor_code != $twoFactorCode) {
-                    return $this->sendErrorResponse('Token Invalid', [], FResponse::HTTP_BAD_REQUEST);
+                    return $this->sendErrorResponse('Your verification code is invalid, please check your email inbox, spam or junk folder for latest verification code.', [], FResponse::HTTP_BAD_REQUEST);
                 } else if($userInfo->two_factor_expires_at < now()) {
-                    return $this->sendErrorResponse('Token Expired.', [], FResponse::HTTP_BAD_REQUEST);
+                    return $this->sendErrorResponse('Your verification code is expired, please check your email inbox, spam or junk folder for latest verification code or request ', [], FResponse::HTTP_BAD_REQUEST);
                 }
 
                 // handle if code is match
