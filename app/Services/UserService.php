@@ -982,15 +982,25 @@ class UserService extends ApiBaseService
 
     public function passwordExpiryCheck($token)
     {
-        $rule = ['token' => 'required|string|max:60'];
-       $isValid = Validator::make(['token' => $token], $rule);
+        $rule = ['token' => 'required|string|max:255'];
+        $isValid = Validator::make(['token' => $token], $rule);
 
        if ($isValid->fails()) {
-            return $this->sendErrorResponse('Please reset password', ['Token not valid']);
+            return $this->sendErrorResponse('Please reset password', 'Token not valid');
        }
 
-        $tokenExistInDB = PasswordReset::where('token', $token)->exists();
-         return $this->sendSuccessResponse(['accepted' => $tokenExistInDB], 'Token accepted');
+        $tokenExistInDB = PasswordReset::where('token', $token)->first();
+        if($tokenExistInDB){
+            $time = now()->subMinute(15);
+
+            if($tokenExistInDB->created_at <= $time) {
+                $tokenExistInDB->delete();
+                return $this->sendSuccessResponse(['accepted' => false], 'Token expired');
+            }
+            return $this->sendSuccessResponse(['accepted' => true], 'Token accepted');
+        } else {
+            return $this->sendSuccessResponse(['accepted' => false], 'Token not valid');
+        }
     }
 
 
