@@ -126,10 +126,18 @@ class ForgotPasswordController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'email|required',
-            'password' => 'max:8|required|string',
+            'password' => 'min:8|max:64|required|string',
         ]);
 
         if ($validator->fails()) {
+            return $this->sendErrorResponse('validation error', $validator->errors(), HttpStatusCode::VALIDATION_ERROR);
+        }
+
+        $verified = PasswordReset::where('token', $request['token'])->first();
+
+        if($verified) {
+            $verified->delete();
+        } else {
             return $this->sendErrorResponse('validation error', $validator->errors(), HttpStatusCode::VALIDATION_ERROR);
         }
 
@@ -139,7 +147,7 @@ class ForgotPasswordController extends Controller
             if ($user) {
                 $user->password = Hash::make($input['password']);
                 $user->save();
-                PasswordReset::where('token', (string)$input['token'])->delete();
+                // PasswordReset::where('token', (string)$input['token'])->delete();
 
                 return $this->apiBaseService->sendSuccessResponse($user, 'Password updated successfully');
 
