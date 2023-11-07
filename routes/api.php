@@ -101,6 +101,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('candidate/family-info', [CandidateController::class, 'listCandidateFamilyInformation'])->name('list.candidate.family.information');
         Route::PATCH('candidate/family-info', [CandidateController::class, 'updateCandidateFamilyInformation'])->name('update.candidate.family.information');
 
+
+        // avatar Image upload
+        Route::POST('avatar/image-upload', [CandidateController::class, 'avatarImgUpload'])->name('avatarImg.upload');
+
         // Candidate Image upload.
         Route::get('candidate/image-gallery', [CandidateController::class, 'viewGallery'])->name('view.candidate.image.gallery');
         Route::get('candidate/image-upload', [CandidateController::class, 'viewImage'])->name('view.candidate.image.uploads');

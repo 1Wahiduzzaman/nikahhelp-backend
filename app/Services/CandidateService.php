@@ -21,6 +21,7 @@ use App\Repositories\CountryRepository;
 use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use App\Traits\CrudTrait;
@@ -1163,6 +1164,26 @@ class CandidateService extends ApiBaseService
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
+
+    public function avatarImgUpload(Request $request): JsonResponse
+    {
+        $userId = self::getUserId();
+
+        if($request->file('image')){
+            if (File::exists(storage_path('app/public/Image/'.$userId.'/'))) {
+                File::deleteDirectory(storage_path('app/public/Image/'.$userId.'/'));
+            }
+            $file= $request->file('image');
+            $filename= $file->getClientOriginalName();
+            // $file-> move(public_path('public/Image'), $filename);
+            $file-> move(storage_path('app/public/Image/'.$userId), $filename);
+
+            // use "php artisan storage:link" command to serve the files using 'storage/' url prefix
+            return response()->json('storage/Image/'.$userId.'/'.$filename);
+        }
+
+        return response()->json("no avater iamge in the post");
+    } 
 
     /**
      * @param CandidateImage $candidateImage
