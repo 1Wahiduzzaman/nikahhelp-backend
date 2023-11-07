@@ -235,6 +235,14 @@ class CandidateController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    public function avatarImgUpload(Request $request){
+        return $this->candidateService->avatarImgUpload($request);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function viewImage(Request $request): JsonResponse
     {
         return $this->candidateService->listImage();
