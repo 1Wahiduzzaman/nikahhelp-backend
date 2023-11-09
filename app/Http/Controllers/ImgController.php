@@ -18,12 +18,23 @@ class ImgController extends Controller
 
 
     public function storeImage(Request $request, String $id)
-    {
+    {       
         try {
             $file = [];
             $image = $request->file('image');
             $user_id = $id;
             $getImage =  $image;
+
+            // delete directory if exist from resource path
+            if (File::exists(resource_path('image/'.$user_id))) {
+                File::deleteDirectory(resource_path('image/'.$user_id));
+            }
+
+            // delete directory if exist from storage path
+            if (File::exists(storage_path('app/public/.cache/'.$user_id))) {
+                File::deleteDirectory(storage_path('app/public/.cache/'.$user_id));
+            }
+
             // return response()->json(['message' => $request->hasFile('image'), 'id' => $user_id, 'image'=> $image->getClientOriginalName()], 200);
             $imageName = $this->uploadOne($getImage, $user_id, $image->getClientOriginalName()); // params file, path, name
             $name = str_replace('.'.$image->getClientOriginalExtension(), '', $image->getClientOriginalName());
@@ -58,6 +69,7 @@ class ImgController extends Controller
 
     }
 
+    // no need to use this function because we are already handling it in the storeImage function
     public function deleteImg(Request $request, string $id, string $path)
     {
         try {
