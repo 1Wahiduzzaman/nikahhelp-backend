@@ -25,6 +25,12 @@ class ImgController extends Controller
             $user_id = $id;
             $getImage =  $image;
 
+            // validate file extention
+            $accepted_extentions = ['png', 'jpg', 'jpeg'];
+            if(!in_array($image->getClientOriginalExtension(), $accepted_extentions)){
+                return response()->json(['message' => 'File type not accepted'], 400);
+            }
+
             // delete directory if exist from resource path
             if (File::exists(resource_path('image/'.$user_id))) {
                 File::deleteDirectory(resource_path('image/'.$user_id));
@@ -35,7 +41,6 @@ class ImgController extends Controller
                 File::deleteDirectory(storage_path('app/public/.cache/'.$user_id));
             }
 
-            // return response()->json(['message' => $request->hasFile('image'), 'id' => $user_id, 'image'=> $image->getClientOriginalName()], 200);
             $imageName = $this->uploadOne($getImage, $user_id, $image->getClientOriginalName()); // params file, path, name
             $name = str_replace('.'.$image->getClientOriginalExtension(), '', $image->getClientOriginalName());
             $file[$name] = 'img/'.$user_id.'/'.$imageName;
