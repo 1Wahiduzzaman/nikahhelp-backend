@@ -353,7 +353,7 @@ class SearchService extends ApiBaseService
 
                 if(!Auth::check()) {
                     $candidatesResponseUnAuth[] = array_merge([
-                        'image' => CandidateImage::getCandidateMainImage($candidate->user_id),
+                        'image' => $candidate->per_avatar_url ? $candidate->per_avatar_url : null,
                         'screen_name' => $candidate->screen_name,
                         'per_gender' => $candidate->getGender($candidate->per_gender),
                         'per_age' => Carbon::now()->diffInYears($candidate->dob),
