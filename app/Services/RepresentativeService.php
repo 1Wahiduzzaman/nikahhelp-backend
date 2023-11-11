@@ -276,20 +276,20 @@ class RepresentativeService extends ApiBaseService
     {
 
         try {
-            $representative = [];
+            DB::beginTransaction();
+            $representative = $request->only(RepresentativeInformation::IMAGE_UPLOAD_INFO);
 
-                if (!empty($request->input('per_avatar_url'))) {
-                    // code...
-                $representative['per_avatar_url'] = $request->input('per_avatar_url');
+            if (!empty($request->input('per_avatar_url'))) {
+                // code...
+            $representative['per_avatar_url'] = $request->input('per_avatar_url');
 
-                }
+            }
 
-                if (!empty($request->input('per_main_image_url'))) {
-                    // code...
-                $representative['per_main_image_url'] = $request->input('per_main_image_url');
+            if (!empty($request->input('per_main_image_url'))) {
+                // code...
+            $representative['per_main_image_url'] = $request->input('per_main_image_url');
 
-                }
-                
+            }
             $userId = self::getUserId();
             $representativeInformation = $this->representativeRepository->findOneByProperties([
                 'user_id' => $userId
@@ -298,8 +298,18 @@ class RepresentativeService extends ApiBaseService
                 return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
 
+            $representative = $representativeInformation->fill($representative)->toArray();
+            
+
+            if ($representativeInformation->isDirty(['per_avatar_url', 'per_main_image_url'])) {
+                $representativeInformation->user->status = 2;
+                $representativeInformation->user->save();
+            }
+
             $representative = $representativeInformation->update($representative);
             $data = $this->representativeTransformer->transformGallery($representativeInformation);
+
+            DB::commit();
 
             Notificationhelpers::add('Picture update successfully complete', 'single', null, $userId);
             if ($representative) {
