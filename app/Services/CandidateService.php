@@ -940,6 +940,11 @@ class CandidateService extends ApiBaseService
 
             $input = $candidate->fill($input)->toArray();
 
+            if ($candidate->isDirty(['ver_image_front', 'ver_image_back'])) {
+                $candidate->user->status = 2;
+                $candidate->user->save();
+            }
+
             $candidate->save($input);
 
             $candidate_verification_info = $this->candidateTransformer->transformPersonalVerification($candidate);
