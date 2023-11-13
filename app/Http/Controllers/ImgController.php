@@ -27,7 +27,7 @@ class ImgController extends Controller
 
             // validate file extention
             $accepted_extentions = ['png', 'jpg', 'jpeg'];
-            if(!in_array($image->getClientOriginalExtension(), $accepted_extentions)){
+            if(!in_array(strtolower($image->getClientOriginalExtension()), $accepted_extentions)){
                 return response()->json(['message' => 'File type not accepted'], 400);
             }
 
