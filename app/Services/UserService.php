@@ -1021,7 +1021,7 @@ class UserService extends ApiBaseService
             ]);
 
             $ticket->save();
-            return $this->sendSuccessResponse(['ticket' => ''], 'successfully submittedTicket', HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse(['ticket' => $ticket], 'successfully submittedTicket', HttpStatusCode::SUCCESS);
 
         } catch (Exception $exception) {
            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
