@@ -67,6 +67,15 @@ class SupportTicketController extends AppBaseController
         return $this->matrimonyUsers->ticketMessages($request, $id);
     }
 
+    public function deleteTicketMessage(Request $request, int $id)
+    {
+        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+            return $this->sendUnauthorizedResponse();
+        }
+
+        return $this->matrimonyUsers->deleteTicketMessage($request, $id);
+    }
+
     public function ticketResolve(Request $request)
     {
         if (!Gate::allows('CAN_ACCESS_SUPPORT')) {

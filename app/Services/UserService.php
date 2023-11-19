@@ -1122,6 +1122,21 @@ class UserService extends ApiBaseService
         }
     }
 
+    public function deleteTicketMessage(Request $request, $id)
+    {
+        try {
+            $ticketProcessMessages = ProcessTicket::find($id);
+
+            $ticketProcessMessages->delete();
+
+            return $this->sendSuccessResponse($ticketProcessMessages, 'Success', HttpStatusCode::SUCCESS);
+
+        } catch (Exception $exception)
+        {
+            return $this->sendErrorResponse($exception, $exception->getMessage());
+        }
+    }
+
     public function resolveTicket(Request $request)
     {
         try {

@@ -59,6 +59,7 @@ Route::group(['prefix' => 'v1/admin','middleware'=>'admin'], function () {
     Route::get('get-users-with-tickets', [\App\Http\Controllers\API\SupportTicketController::class, 'getALlTicket'])->name('all-ticket');
     Route::get('getTickets/{id}', [App\Http\Controllers\API\SupportTicketController::class, 'getUserTickets'])->name('userTickets');
     Route::get('getAllTicketMessages/{id}', [\App\Http\Controllers\API\SupportTicketController::class, 'getTicketMessages'])->name('ticketMessages');
+    Route::delete('deleteTicketMessage/{id}', [\App\Http\Controllers\API\SupportTicketController::class, 'deleteTicketMessage'])->name('deleteTicket');
     Route::post('ticketResolve', [\App\Http\Controllers\API\SupportTicketController::class, 'ticketResolve']);
     // Send Global Notification
 
