@@ -266,14 +266,15 @@ class UserService extends ApiBaseService
 
                 /* Load data input status */
                 if($userInfo->account_type == 1){
+                    $userInfo['per_permanent_country_name'] = $userInfo->getCandidate->getPermanentCountry->name;
                     $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
                     $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
-                    // $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
                 }elseif ($userInfo->account_type == 2){
+                    $userInfo['per_permanent_country_name'] = $userInfo->getRepresentative->per_permanaent_country;
                     $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
                     $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
-                    // $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
                 }
+                $userInfo['last_login'] = now();
                 $data['token'] = self::TokenFormater($token);
                 $data['user'] = $userInfo;
 
@@ -433,6 +434,7 @@ class UserService extends ApiBaseService
                         $status['is_short_listed'] = in_array($candidate->user_id,$loggedInCandidate->shortList->pluck('user_id')->toArray());
 
                         $teamTableId = $candidate->candidate_team ? [
+                            'id' => $candidate->candidate_team->id,
                             'team_name' => $candidate->candidate_team->name,
                             'member' => $candidate->candidate_team->member_count,
                             'created_by' => User::find($candidate->candidate_team->created_by),
@@ -770,15 +772,18 @@ class UserService extends ApiBaseService
 
                     /* Load data input status */
                     if($userInfo->account_type == 1){
+                        $userInfo['per_permanent_country_name'] = $userInfo->getCandidate->getPermanentCountry->name;
                         $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
                         $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
                         // $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
                     }elseif ($userInfo->account_type == 2){
+                        $userInfo['per_permanent_country_name'] = $userInfo->getRepresentative->per_permanent_country;
                         $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
                         $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
                         // $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
                     }
 
+                    $userInfo['last_login'] = now();
                     $data['token'] = self::TokenFormater($token);
                     $data['user'] = $userInfo;
 
