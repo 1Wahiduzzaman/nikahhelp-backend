@@ -145,7 +145,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy; 2022 Matrimony Assist. All Rights Reserved Matrimony Assist.
+            &copy;{{ date("Y") }} Matrimony Assist. All Rights Reserved Matrimony Assist.
         </p>
     </div>
 </div>
