@@ -151,7 +151,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy; 2022 MatrimonyAssist. All Rights Reserved MatrimonyAssist.
+            &copy;{{ date("Y") }} MatrimonyAssist. All Rights Reserved MatrimonyAssist.
         </p>
     </div>
 </div>
