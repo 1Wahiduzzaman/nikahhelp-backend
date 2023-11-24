@@ -270,7 +270,7 @@ class UserService extends ApiBaseService
                     $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
                     $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
                 }elseif ($userInfo->account_type == 2){
-                    $userInfo['per_permanent_country_name'] = $userInfo->getCandidate->getPermanentCountry ? $userInfo->getCandidate->getPermanentCountry->name : "";
+                    $userInfo['per_permanent_country_name'] = $userInfo->getRepresentative ? $userInfo->getRepresentative->per_permanent_country : "";
                     $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
                     $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
                 }
@@ -772,12 +772,12 @@ class UserService extends ApiBaseService
 
                     /* Load data input status */
                     if($userInfo->account_type == 1){
-                        $userInfo['per_permanent_country_name'] = $userInfo->getCandidate->getPermanentCountry->name;
+                        $userInfo['per_permanent_country_name'] = $userInfo->getCandidate->getPermanentCountry ? $userInfo->getCandidate->getPermanentCountry->name : "";
                         $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
                         $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
                         // $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
                     }elseif ($userInfo->account_type == 2){
-                        $userInfo['per_permanent_country_name'] = $userInfo->getRepresentative->per_permanent_country;
+                        $userInfo['per_permanent_country_name'] = $userInfo->getRepresentative ? $userInfo->getRepresentative->per_permanent_country : "";
                         $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
                         $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
                         // $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
