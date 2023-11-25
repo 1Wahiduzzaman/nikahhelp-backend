@@ -134,11 +134,11 @@ class UserController extends Controller
 
     public function sendEmail()
     {
-        $to_name = 'Matrimonial assist';
+        $to_name = 'MatrimonyAssist';
         $to_email = 'ahabib@bs-23.net';
 
         $details = [
-            'title' => 'Mail from matrimonial-assist.com',
+            'title' => 'Mail from matrimonyAssist.com',
             'body' => 'This is for testing email using smtp'
         ];
 
