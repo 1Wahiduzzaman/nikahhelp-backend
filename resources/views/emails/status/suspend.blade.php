@@ -97,15 +97,14 @@
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
     @php
-        $chobi= config('chobi.chobi').'/logo/site/ma_logo_white.svg';
+        $main_domain=env('MAIN_DOMAIN');
+        $domain=env('WEB_DOMAIN');
+        $chobi= $main_domain.'/logo';
     @endphp
-    <a><img src="{{ $chobi }}" alt="logo" style="width: 170px; height: 110px;" /></a>
+    <a href="{{ $domain }}"><img src="{{ $chobi }}" alt="logo" style="text-align: center; margin: auto" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
-    @php
-        $domain=env('WEB_DOMAIN');
-    @endphp
     <div style="width: 100%; margin-top: 30px;">
         <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Account has been Suspended</h2>
 
@@ -136,12 +135,12 @@
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px">
             Thanks, <br>
             Regards <br>
-            Matrimony Assist Team
+            MatrimonyAssist Team
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px; text-align: center;">
             This email was sent to <span style="color: #522e8e;">{{ $user_email }}</span>, which is
-            associated with a Matrimony Assist account.
+            associated with a MatrimonyAssist account.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
