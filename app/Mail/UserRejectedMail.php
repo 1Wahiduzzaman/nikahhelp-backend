@@ -11,16 +11,18 @@ class UserRejectedMail extends Mailable
 {
     use Queueable, SerializesModels;
     public $user;
+    public $rejected_notes;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($user, $rejected_notes)
     {
         //
         $this->user = $user;
+        $this->rejected_notes = $rejected_notes;
     }
 
     /**
@@ -30,7 +32,7 @@ class UserRejectedMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Mail from Matrimonial-assist | Account Rejected!')
+        return $this->subject('Mail from MatrimonyAssist | Verification Rejected!')
             ->markdown('emails.status.reject')->with('user_name', $this->user->full_name);
     }
 }

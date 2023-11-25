@@ -97,17 +97,16 @@
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
     @php
-        $chobi= config('chobi.chobi').'/logo/site/ma_logo_white.svg';
+        $main_domain=env('MAIN_DOMAIN');
+        $domain=env('WEB_DOMAIN');
+        $chobi= $main_domain.'/logo';
     @endphp
-    <a><img src="{{ $chobi }}" alt="logo" style="width: 170px; height: 110px;" /></a>
+    <a href="{{ $domain }}"><img src="{{ $chobi }}" alt="logo" style="text-align: center; margin: auto" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
-    @php
-        $domain=env('WEB_DOMAIN');
-    @endphp
     <div style="width: 100%; margin-top: 30px;">
-        <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Account has been Rejected</h2>
+        <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Verification has been Rejected</h2>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user_name }},</p>
 
@@ -126,8 +125,24 @@
         </p> --}}
 
         <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            You account has been suspended. <a href="{{ $domain.'/help' }}">{{ $domain.'/help' }}</a>
+            <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+                Sorry! your profile information or Verification Document did not comply with MatrimonyAssist <a href="{{ $domain.'/terms_condition' }}">Terms and Conditions.</a>
+            </div>
+
+            <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+                Please update and resubmit your informations of <b>{{ $rejected_notes[sizeof($rejected_notes)-1]['note'] }}</b>
+            </div>
+
+            <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+                *you can quickly Update and resubmit your All informations from MatrimonyAssist <a href="{{ $domain."/profile"}}">Edit Profile</a>
+            </div>
+
+            <div style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
+                If you have any question please contact our <a href="{{ $domain.'/help' }}">Support team</a>
+            </div>
         </div>
+
+
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             Please note this is an automated email. Please do not reply as the email will not reach MatrimonyAssist Team
@@ -136,16 +151,16 @@
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px">
             Thanks, <br>
             Regards <br>
-            Matrimony Assist Team
+            MatrimonyAssist Team
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px; text-align: center;">
             This email was sent to <span style="color: #522e8e;">{{ $user->email }}</span>, which is
-            associated with a Matrimony Assist account.
+            associated with a MatrimonyAssist account.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy;{{ date("Y") }} Matrimony Assist. All Rights Reserved Matrimony Assist.
+            &copy;{{ date("Y") }} MatrimonyAssist. All Rights Reserved MatrimonyAssist.
         </p>
     </div>
 </div>

@@ -438,7 +438,12 @@ class AdminDashboardController extends AppBaseController
             if($ver_rej == '4') {
                 if($userInfo->email) {
                     try{
-                        Mail::to($userInfo->email)->send(new UserRejectedMail($userInfo));
+                        $rejected_notes = User::with(['rejected_notes'])->where('id', $userInfo->id)->first();
+                        if($rejected_notes->rejected_notes->count() > 0) {
+                            Mail::to($userInfo->email)->send(new UserRejectedMail($userInfo, $rejected_notes->rejected_notes));
+                        } else {
+                            Mail::to($userInfo->email)->send(new UserRejectedMail($userInfo, ["note"=>"verification"]));
+                        }
                     } catch(Exception $e) {
                         return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
                     }
