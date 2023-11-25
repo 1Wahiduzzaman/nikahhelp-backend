@@ -34,7 +34,7 @@ class SubscriptionExpiredMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Mail from Matrimonial-assist | Subscription has been expired!')
+        return $this->subject('Mail from MatrimonyAssist | Subscription has been expired!')
             ->markdown('emails.subscription.expired_subscription')->with('user_name', $this->user->full_name);
     }
 }

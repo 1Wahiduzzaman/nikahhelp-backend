@@ -34,7 +34,7 @@ class SubscriptionNewMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Mail from Matrimonial-assist | Subscription Payment!')
+        return $this->subject('Mail from MatrimoyAssist | Subscription Payment!')
             ->markdown('emails.subscription.new_subscription')->with([
                 'team' => $this->team,
                 'subscription' => $this->subscription,
