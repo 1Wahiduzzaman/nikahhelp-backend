@@ -96,7 +96,12 @@
 </head>
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
-    <a style="text-align: center; margin: auto"><img src="biya.arranzed.com/logo" /></a>
+    @php
+        $main_domain=env('MAIN_DOMAIN');
+        $domain=env('WEB_DOMAIN');
+        $chobi= $main_domain.'/logo';
+    @endphp
+    <a href="{{ $domain }}"><img src="{{ $chobi }}" alt="logo" style="text-align: center; margin: auto" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
@@ -119,11 +124,11 @@
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px; text-align: center;">
             This email was sent to <span style="color: #522e8e;">{{ $user['email'] }}</span>, which is
-            associated with a Matrimony Assist account.
+            associated with a MatrimonyAssist account.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy;{{date('Y')}} Matrimony Assist. All Rights Reserved Matrimony Assist.
+            &copy;{{date('Y')}} MatrimonyAssist. All Rights Reserved MatrimonyAssist.
         </p>
     </div>
 </div>
