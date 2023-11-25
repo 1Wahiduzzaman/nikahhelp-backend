@@ -96,7 +96,12 @@
 </head>
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
-    <a style="text-align: center; margin: auto"><img src="biya.arranzed.com/logo" /></a>
+    @php
+        $main_domain=env('MAIN_DOMAIN');
+        $domain=env('WEB_DOMAIN');
+        $chobi= $main_domain.'/logo';
+    @endphp
+    <a href="{{ $domain }}"><img src="{{ $chobi }}" alt="logo" style="text-align: center; margin: auto" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
@@ -133,8 +138,8 @@
 
         <!-- <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             If you do not verify your email address by sent link within <span style="font-style: italic; font-weight: bold; color: #000000; opacity: 0.75;">30 minutes</span> then the sent verification link & your signup
-            information will automatically unenrolled from Matrimony Assist platform, you can rejoin Matrimony Assist
-            at any time by once again completing the Matrimony Assist signup process.
+            information will automatically unenrolled from MatrimonyAssist platform, you can rejoin MatrimonyAssist
+            at any time by once again completing the MatrimonyAssist signup process.
         </p> -->
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
@@ -158,11 +163,11 @@
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px; text-align: center;">
             This email was sent to <span style="color: #522e8e;">{{ $user['email'] }}</span>, which is
-            associated with a Matrimony Assist account.
+            associated with a MatrimonyAssist account.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">
-            &copy;{{ date("Y") }} Matrimony Assist. All Rights Reserved Matrimony Assist.
+            &copy;{{ date("Y") }} MatrimonyAssist. All Rights Reserved MatrimonyAssist.
         </p>
     </div>
 </div>

@@ -236,7 +236,11 @@ class UserService extends ApiBaseService
                 */
 
                 // increase logn count
-                $userInfo->incrementLoginCount();
+                if($userInfo->is_verified == 1){
+                    $userInfo->incrementLoginCount();
+                } else {
+                    $userInfo->resetLoginCount();
+                }
 
                 // check if user has 10 login count
                 // if yes, generate new 2fa code

@@ -34,7 +34,7 @@ class SubscriptionExpiringMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Mail from Matrimonial-assist | Subscription expiring soon!')
+        return $this->subject('Mail from MatrimonyAssist | Subscription expiring soon!')
             ->markdown('emails.subscription.expiring_subscription');
     }
 }

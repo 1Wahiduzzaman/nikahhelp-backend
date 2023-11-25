@@ -97,19 +97,18 @@
 <body style="margin: 0;">
 <div style="background: #522e8e; display: flex; justify-content: center;">
     @php
-        $chobi= config('chobi.chobi').'/logo/site/ma_logo_white.svg';
+        $main_domain=env('MAIN_DOMAIN');
+        $domain=env('WEB_DOMAIN');
+        $chobi= $main_domain.'/logo';
     @endphp
-    <a><img src="{{ $chobi }}" alt="logo" style="width: 170px; height: 110px;" /></a>
+    <a href="{{ $domain }}"><img src="{{ $chobi }}" alt="logo" style="text-align: center; margin: auto" /></a>
 </div>
 
 <div style="color: rgb(96 84 84 / 85%); margin: 0 auto; width: 500px;">
-    @php
-        $domain=env('WEB_DOMAIN');
-    @endphp
     <div style="width: 100%; margin-top: 30px;">
         <h2 style="font-size: 28px; color: rgba(0,0,0,.5); text-align: center">Subscription expiring at {{ Carbon::parse($team->subscription_expire_at)->format('d M Y') }}</h2>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user_name }},</p>
+        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">Dear {{ $user->full_name }},</p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             Thank you for using MatrimonyAssist [{{ Carbon::parse($team->subscription_expire_at)->format('d M Y') }}]
@@ -135,7 +134,7 @@
         <div style="text-align: center; margin-top: 28px;">
             <a role="button" style="padding: 12px 30px;
             border-radius: 30px;
-            background: #5eee5e;
+            background: #3ab549;
             border: 3px solid #FFFFFF;
             cursor: pointer;
             color: #FFFFFF;
@@ -144,12 +143,9 @@
             display: inline-block;
             margin: 0 auto;
             text-decoration: none;
-            font-weight: bold;" href="">Renew Subscription</a>
+            font-weight: bold;" href="{{ $domain }}/subscription/{{ $team->team_id }}">Renew Subscription</a>
         </div>
 
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px; text-align: center">
-            <a style="color: #522e8e;" href="">Link</a>
-        </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             If you no longer wish to continue please ignore this email and your subscription will end on
@@ -179,12 +175,8 @@
             display: inline-block;
             margin: 0 auto;
             text-decoration: none;
-            font-weight: bold;" href="">Contact Us</a>
+            font-weight: bold;" href="{{ $domain }}/help">Contact Us</a>
         </div>
-
-        <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px; text-align: center">
-            <a style="color: #522e8e; text-align: center" href="{{ $domain }}/subscription/{{ $team->team_id }}">{{ $domain }}/subscription/{{ $team->team_id }}</a>
-        </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
             Feedback tips. If you can please include the following details: what is the issue specifically, what
@@ -196,12 +188,12 @@
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px">
             Thanks, <br>
             Regards <br>
-            Matrimony Assist Team
+            MatrimonyAssist Team
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px; text-align: center;">
-            This email was sent to <span style="color: #522e8e;">{{ $user_email }}</span>, which is
-            associated with a Matrimony Assist account.
+            This email was sent to <span style="color: #522e8e;">{{ $user->email }}</span>, which is
+            associated with a MatrimonyAssist account.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 20px; text-align: center;">

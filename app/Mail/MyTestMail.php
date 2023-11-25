@@ -30,7 +30,7 @@ class MyTestMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Mail from Matrimonial-assist')
+        return $this->subject('Mail from MatrimonyAssist')
             ->markdown('emails.myTestMail');
     }
 }
