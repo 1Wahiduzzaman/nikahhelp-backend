@@ -532,7 +532,12 @@ class UserService extends ApiBaseService
                 ]);
                 if (!$candidate) {
                     $candidateInformation = array();
+                    $candidate = $this->representativeRepository->findOneByProperties([
+                        'user_id' => $user->id
+                    ]);
+                    $representativeInformation = $this->repTransformer->transform($candidate);
                 } else {
+                    $representativeInformation = array();
                     $candidateInformation = $this->candidateTransformer->transform($candidate);
                 }
 
@@ -556,6 +561,7 @@ class UserService extends ApiBaseService
         $data = array();
         $data['user'] = $user;
         $data['candidate_information'] = $candidateInformation;
+        $data['representative_information'] = $representativeInformation;
         //$data['representative_information'] = $representativeInformation;
         $status = 0;
         if(!$invitation_data && !$joined_data) {
@@ -779,12 +785,10 @@ class UserService extends ApiBaseService
                         $userInfo['per_permanent_country_name'] = $userInfo->getCandidate->getPermanentCountry ? $userInfo->getCandidate->getPermanentCountry->name : "";
                         $userInfo['data_input_status'] = $userInfo->getCandidate->data_input_status;
                         $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
-                        // $userInfo['per_main_image_url'] = $userInfo->getCandidate->per_main_image_url;
                     }elseif ($userInfo->account_type == 2){
                         $userInfo['per_permanent_country_name'] = $userInfo->getRepresentative ? $userInfo->getRepresentative->per_permanent_country : "";
                         $userInfo['data_input_status'] = $userInfo->getRepresentative->data_input_status;
                         $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
-                        // $userInfo['per_main_image_url'] = $userInfo->getRepresentative->per_main_image_url;
                     }
 
                     $userInfo['last_login'] = now();
