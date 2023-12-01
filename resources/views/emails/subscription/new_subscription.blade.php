@@ -143,7 +143,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
-            The owner of this team is <span style="color: #522e8e;"> {{ @$team->created_by->full_name }} </span>.
+            The owner of this team is <span style="color: #522e8e;"> {{ $team->created_by()->first()->full_name }} </span>.
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 28px;">
