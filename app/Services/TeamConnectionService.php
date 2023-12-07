@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 use App\Repositories\TeamRepository;
 use App\Repositories\TeamMemberRepository;
+use App\Models\TeamChat;
 use Illuminate\Support\Facades\Auth;
 use \Illuminate\Support\Facades\DB;
 use App\Transformers\TeamTransformer;
@@ -726,6 +727,11 @@ class TeamConnectionService extends ApiBaseService
             'id' => $connection_id
         ]);
 
+        $team_chat = TeamChat::select("*")
+            ->where('team_connection_id', $connection_id)
+            ->get();
+
+            
         if (!$connection_row) {
             // send connection not found exception
             return $this->sendErrorResponse("Connection data not found.", [], HttpStatusCode::NOT_FOUND);
@@ -771,6 +777,10 @@ class TeamConnectionService extends ApiBaseService
         $input = $connection_row->fill($input)->toArray();
         // $connection_row->save($input);
         $connection_row->delete();
+
+        foreach ($team_chat as $chat) {
+            $chat->delete();
+        }
 
         return $this->sendSuccessResponse($connection_row, 'Connection disconnected!');
     }
