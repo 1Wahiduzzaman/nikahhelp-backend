@@ -104,12 +104,12 @@ class MessageService extends ApiBaseService
             $q->with('last_message');
        }])
        ->with('team_private_chat')
-        ->where(['from_team_id'=> $active_team_id])
         ->where('connection_status', '1') //added by Raz
-        ->orWhere(function($q){
+        ->where((function ($query) {
             $active_team_id = (new Generic())->getActiveTeamId();
-            $q->where([ 'to_team_id' => $active_team_id]);
-        })
+            $query->where(['from_team_id'=> $active_team_id])
+                  ->orWhere(['to_team_id' => $active_team_id]);
+        }))
         ->get();
         return $this->sendSuccessResponse($data, 'Data fetched Successfully!');
     }
@@ -554,9 +554,18 @@ class MessageService extends ApiBaseService
             ->first();
             $active_team_id = isset($active_team) ? $active_team->team_id : 0;
             $from_team_id = $active_team_id;
-            $is_friend = TeamChat::where('from_team_id', $active_team_id)
-            ->orWhere('to_team_id', $active_team_id)
-            ->first();
+            // $is_friend = TeamChat::where('from_team_id', $active_team_id)
+            // ->orWhere('to_team_id', $active_team_id)
+            // ->first();
+            $is_friend = TeamChat::where([
+                'from_team_id' => $active_team_id,
+                'to_team_id' => $to_team_id
+            ])->orWhere([
+                'from_team_id' => $to_team_id,
+                'to_team_id' => $active_team_id
+            ])->first();
+
+            
             if(!$is_friend) {
                 $cm = new TeamChat();
                 $cm->from_team_id = $from_team_id;
