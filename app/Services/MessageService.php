@@ -557,13 +557,13 @@ class MessageService extends ApiBaseService
             // $is_friend = TeamChat::where('from_team_id', $active_team_id)
             // ->orWhere('to_team_id', $active_team_id)
             // ->first();
-            $is_friend = TeamChat::where([
-                'from_team_id' => $active_team_id,
-                'to_team_id' => $to_team_id
-            ])->orWhere([
-                'from_team_id' => $to_team_id,
-                'to_team_id' => $active_team_id
-            ])->first();
+            $is_friend = TeamChat::where(function ($query) use ($active_team_id, $to_team_id) {
+                $query->where('from_team_id', $active_team_id)
+                      ->where('to_team_id', $to_team_id);
+            })->orWhere(function ($query) use ($active_team_id, $to_team_id) {
+                $query->where('from_team_id', $to_team_id)
+                      ->where('to_team_id', $active_team_id);
+            })->first();
 
             
             if(!$is_friend) {
