@@ -130,6 +130,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('connected-send-private-message', [MessageController::class, 'sendPrivateMessage'])->name('connected-team-chat.connected-send-private-message');
         Route::POST('connected-private-chat-history', [MessageController::class, 'privateChatHistory'])->name('connected-team-chat.connected-private-chat-history');
         Route::POST('connected-team-chat-seen', [MessageController::class, 'teamChatSeen'])->name('connected-team-chat.connected-team-chat-seen');
+        Route::POST('connected-team-last-seen', [MessageController::class, 'teamChatLastSeen'])->name('connected-team-chat.connected-team-last-seen');
+        Route::GET('connected-team-last-seen', [MessageController::class, 'getTeamChatLastSeen'])->name('connected-team-chat.get-connected-team-last-seen');
 
         //Seen Message (Managing from individual-chat-history so no needed)
         //Route::POST('seen-message', [MessageController::class, 'seenMessage'])->name('team-chat.seen-message');

@@ -124,7 +124,13 @@ class MessageController extends Controller
         return $this->messageService->updateTeamChatSeen($request->from_team_id, $request->to_team_id);        
     }      
 
+    public function teamChatLastSeen(Request $request) {                  
+        return $this->messageService->updateTeamChatLastSeen($request);        
+    }
 
+    public function getTeamChatLastSeen(Request $request) {                  
+        return $this->messageService->retrieveTeamChatLastSeen($request);        
+    }
 
     //Suppor Chat Start here
     public function sendMessageToSupport(Request $request) {       
