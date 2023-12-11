@@ -19,6 +19,7 @@ use App\Models\TeamMessage;
 use App\Models\TeamPrivateChat;
 use App\Models\TeamToTeamMessage;
 use App\Models\TeamToTeamPrivateMessage;
+use App\Models\ConnectedTeamLastSeen;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -593,7 +594,7 @@ class MessageService extends ApiBaseService
                 $md->to_team_id = $request_data->to_team_id;
                 $md->body = $request_data->message;
                 if($md->save()) {
-                    return $this->sendSuccessResponse([], 'Message Sent Successfully!');
+                    return $this->sendSuccessResponse($md, 'Message Sent Successfully!');
                 } else {
                     return $this->sendErrorResponse('Something went Wrong!Please try again.');
                 }
@@ -1072,6 +1073,45 @@ class MessageService extends ApiBaseService
             return $this->sendErrorResponse($e->getMessage());
         }
     }
+
+    public function updateTeamChatLastSeen($request) {
+        $last_seen_msg_id = $request->last_seen_msg_id;
+        $team_chat_id = $request->team_chat_id;
+        $user_id = Auth::id();
+        try {
+            $connected_team_last_seen = ConnectedTeamLastSeen::where(['team_chat_id' => $team_chat_id, 'user_id' => $user_id])->first();
+
+            if($connected_team_last_seen) {
+                $connected_team_last_seen->last_seen_msg_id = $last_seen_msg_id;
+                $connected_team_last_seen->save();
+            } else {
+                $connected_team_last_seen = new ConnectedTeamLastSeen();
+                $connected_team_last_seen->team_chat_id = $team_chat_id;
+                $connected_team_last_seen->user_id = $user_id;
+                $connected_team_last_seen->last_seen_msg_id = $last_seen_msg_id;
+                $connected_team_last_seen->save();
+            }
+            return $this->sendSuccessResponse([], 'Updated Successfully!');
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e->getMessage());
+        }
+    }
+
+    public function retrieveTeamChatLastSeen($request) {
+        // $team_chat_id = $request->team_chat_id;
+        $user_id = Auth::id();
+        try {
+            $connected_team_last_seen = ConnectedTeamLastSeen::where('user_id', $user_id)->get();
+            if($connected_team_last_seen) {
+                return $this->sendSuccessResponse($connected_team_last_seen, 'Data fetched Successfully!');
+            } else {
+                return $this->sendSuccessResponse([], 'Data fetched Successfully!');
+            }
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e->getMessage());
+        }
+    }
+
 
     //Support Chat start here
     /**
