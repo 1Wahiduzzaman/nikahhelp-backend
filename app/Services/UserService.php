@@ -336,10 +336,21 @@ class UserService extends ApiBaseService
                 ]);
                 if (!$candidate) {
                     $candidateInformation = array();
+                    $representativeInformation = $this->representativeRepository->findBy(['user_id' => $user["id"]]);
+                    $user['data_input_status'] = $representativeInformation[0]->data_input_status;
+                    $user['per_main_image_url'] = $representativeInformation[0]->per_main_image_url;
+                    $user['is_uplaoded_doc'] = $representativeInformation[0]->is_uplaoded_doc;
                 } else {
+                    $representativeInformation = array();
                     $candidateInformation = $this->candidateTransformer->transform($candidate);
+                    $user['data_input_status'] = $candidateInformation['data_input_status'];
+                    $user['per_main_image_url'] = $candidateInformation['personal']['per_main_image_url'];
+                    $user['is_uplaoded_doc'] = $candidateInformation['is_uplaoded_doc'];
+                    $candidateInformation['personal']['per_permanent_city'] = $candidate->per_permanent_city ? $candidate->per_permanent_city : "";
+                    $candidateInformation['personal']['address_1'] = $candidate->address_1 ? $candidate->address_1 : "";
+                    $candidateInformation['personal']['address_2'] = $candidate->address_2 ? $candidate->address_2 : "";
                 }
-                $representativeInformation = $this->representativeRepository->findBy(['user_id' => $user["id"]]);
+                
             }
         } catch (Exception $e) {
             return response()->json([
