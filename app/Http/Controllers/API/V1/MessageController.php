@@ -128,8 +128,16 @@ class MessageController extends Controller
         return $this->messageService->updateTeamChatLastSeen($request);        
     }
 
+    public function ownTeamChatLastSeen(Request $request) {                  
+        return $this->messageService->updateOwnTeamChatLastSeen($request);        
+    }
+
     public function getTeamChatLastSeen(Request $request) {                  
         return $this->messageService->retrieveTeamChatLastSeen($request);        
+    }
+
+    public function getOwnTeamChatLastSeen(Request $request) {
+        return $this->messageService->retrieveOwnTeamChatLastSeen($request);        
     }
 
     //Suppor Chat Start here

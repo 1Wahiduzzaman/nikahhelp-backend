@@ -20,6 +20,7 @@ use App\Models\TeamPrivateChat;
 use App\Models\TeamToTeamMessage;
 use App\Models\TeamToTeamPrivateMessage;
 use App\Models\ConnectedTeamLastSeen;
+use App\Models\OwnTeamLastSeen;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -779,7 +780,7 @@ class MessageService extends ApiBaseService
             $md->sender = $request_data->sender;
             $md->body = $request_data->message;
             if($md->save()) {
-                return $this->sendSuccessResponse([], 'Message Sent Successfully!');
+                return $this->sendSuccessResponse($md, 'Message Sent Successfully!');
             } else {
                 return $this->sendErrorResponse('Something went Wrong!Please try again.');
             }
@@ -1074,6 +1075,31 @@ class MessageService extends ApiBaseService
         }
     }
 
+    public function updateOwnTeamChatLastSeen($request) {
+        $last_seen_msg_id = $request->last_seen_msg_id;
+        $team_id = $request->team_id;
+        $user_id = Auth::id();
+
+        try {
+            $own_team_last_seen = OwnTeamLastSeen::where(['team_id' => $team_id, 'user_id' => $user_id])->first();
+
+            if($own_team_last_seen) {
+                $own_team_last_seen->last_seen_msg_id = $last_seen_msg_id;
+                $own_team_last_seen->save();
+            } else {
+                $own_team_last_seen = new OwnTeamLastSeen();
+                $own_team_last_seen->team_id = $team_id;
+                $own_team_last_seen->user_id = $user_id;
+                $own_team_last_seen->last_seen_msg_id = $last_seen_msg_id;
+                $own_team_last_seen->save();
+            }
+            return $this->sendSuccessResponse([], 'Updated Successfully!');
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e->getMessage());
+        }
+    }
+
     public function updateTeamChatLastSeen($request) {
         $last_seen_msg_id = $request->last_seen_msg_id;
         $team_chat_id = $request->team_chat_id;
@@ -1092,6 +1118,24 @@ class MessageService extends ApiBaseService
                 $connected_team_last_seen->save();
             }
             return $this->sendSuccessResponse([], 'Updated Successfully!');
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e->getMessage());
+        }
+    }
+
+    public function retrieveOwnTeamChatLastSeen() {
+        $user_id = Auth::id();
+        $team_id = (new Generic())->getActiveTeamId();
+        try {
+            $own_team_last_seen = OwnTeamLastSeen::where('user_id', $user_id)->first();
+            $own_team_last_seen = OwnTeamLastSeen::where('user_id', $user_id)
+            ->where('team_id', $team_id)
+            ->first();
+            if($own_team_last_seen) {
+                return $this->sendSuccessResponse($own_team_last_seen, 'Data fetched Successfully!');
+            } else {
+                return $this->sendSuccessResponse([], 'Data fetched Successfully!');
+            }
         } catch (Exception $e) {
             return $this->sendErrorResponse($e->getMessage());
         }
