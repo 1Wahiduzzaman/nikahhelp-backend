@@ -637,6 +637,8 @@ class TeamService extends ApiBaseService
                 if (!empty($request['old_password']) && !empty($request['new_password'])) {
                     if ($request['old_password'] == $hashedPassword) {
                         $team->password = $request['new_password'];
+                    } else {
+                        return $this->sendErrorResponse('Old password does not match', [], HttpStatusCode::BAD_REQUEST);
                     }
                 }
 

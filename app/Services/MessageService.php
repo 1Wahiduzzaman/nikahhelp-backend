@@ -582,7 +582,7 @@ class MessageService extends ApiBaseService
                     $md->to_team_id = $request_data->to_team_id;
                     $md->body = $request_data->message;
                     if($md->save()) {
-                        return $this->sendSuccessResponse([], 'Message Sent Successfully!');
+                        return $this->sendSuccessResponse($md, 'Message Sent Successfully!');
                     } else {
                         return $this->sendErrorResponse('Something went Wrong!Please try again.');
                     }
