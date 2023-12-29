@@ -139,7 +139,7 @@
         </p>
 
         <p style="font-size: 16px; color: rgba(0,0,0,.5); margin-top: 32px; text-align: center;">
-            This email was sent to <span style="color: #522e8e;">{{ $user_email }}</span>, which is
+            This email was sent to <span style="color: #522e8e;">{{ $user->email }}</span>, which is
             associated with a MatrimonyAssist account.
         </p>
 

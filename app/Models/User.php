@@ -63,6 +63,8 @@ class User extends Authenticatable implements JWTSubject
         'card_last_four',
         'trial_ends_at',
         'login_count',
+        'two_factor_code',
+        'two_factor_expires_at',
     ];
 
     /**

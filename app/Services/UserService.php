@@ -656,58 +656,86 @@ class UserService extends ApiBaseService
 
         try {
             return DB::transaction(function () use($request, $token, $decrypted){
-                if ($user = JWTAuth::parseToken()->authenticate()) {
-
-                    // check if user is already verified
-                    if ($user->is_verified == 1) {
-                        // do something and return
-                        return response()->json(['message' => 'User is already verified']);
-                    }
-
-                    // check if token is valid
-                    $verifyUser = VerifyUser::where('user_id', $user->id)->first();
-
-                    if ($verifyUser->exists()) {
-                        $dbTimeStamp = strtotime($verifyUser->created_at);
-                        // check if token is expired
-                        if (time() - $dbTimeStamp > 15 * 60) {
-                            
-                            if($user->account_type == 1) {
-                                $candidate = $this->candidateRepository->findOneByProperties([
-                                    'user_id' => $user->id
-                                ]);
-                                if($candidate) {
-                                    $candidate->delete();
-                                }
-                            } else if($user->account_type == 2) {
-                                
-                                $representative = $this->representativeRepository->findOneByProperties([
-                                    'user_id' => $user->id
-                                ]);
-                                if($representative) {
-                                    $representative->forceDelete();
-                                }
-                            }
-                            $verifyUser->delete();
-                            $user->delete();
-                            return $this->sendErrorResponse('Token expired', ['detail' => 'Token expired'],
-                                HttpStatusCode::BAD_REQUEST
-                            );
-                        } else {
-                            $user->is_verified = 1;
-                            $user->email_verified_at = Carbon::now()->toDateTimeString();
-                            $user->save();
-                            $verifyUser->delete();
-        //                    $this->sendAuthToImageServer($user);
-                            // $user->token = $decrypted;
-                            return $this->sendSuccessResponse($user, 'User verification successfully completed',[],200);
+                try{
+                    if ($user = JWTAuth::parseToken()->authenticate()) {
+    
+                        // check if user is already verified
+                        if ($user->is_verified == 1) {
+                            // do something and return
+                            return response()->json(['message' => 'User is already verified']);
                         }
+    
+                        // check if token is valid
+                        $verifyUser = VerifyUser::where('user_id', $user->id)->first();
+    
+                        if ($verifyUser->exists()) {
+                            $dbTimeStamp = strtotime($verifyUser->created_at);
+                            // check if token is expired
+                            if (time() - $dbTimeStamp > 15 * 60) {
+                                
+                                if($user->account_type == 1) {
+                                    $candidate = $this->candidateRepository->findOneByProperties([
+                                        'user_id' => $user->id
+                                    ]);
+                                    if($candidate) {
+                                        $candidate->delete();
+                                    }
+                                } else if($user->account_type == 2) {
+                                    
+                                    $representative = $this->representativeRepository->findOneByProperties([
+                                        'user_id' => $user->id
+                                    ]);
+                                    if($representative) {
+                                        $representative->forceDelete();
+                                    }
+                                }
+                                $verifyUser->delete();
+                                $user->delete();
+                                return $this->sendErrorResponse('Token expired', ['detail' => 'Token expired'],
+                                    HttpStatusCode::BAD_REQUEST
+                                );
+                            } else {
+                                $user->is_verified = 1;
+                                $user->email_verified_at = Carbon::now()->toDateTimeString();
+                                $user->save();
+                                $verifyUser->delete();
+            //                    $this->sendAuthToImageServer($user);
+                                // $user->token = $decrypted;
+                                return $this->sendSuccessResponse($user, 'User verification successfully completed',[],200);
+                            }
+                        }
+                        
                     }
-                    
+                    return $this->sendErrorResponse('Invalid Token', ['detail' => 'Token not found in Database'],
+                        HttpStatusCode::BAD_REQUEST
+                    );
+                } catch (Exception $e) {
+                    $verifyUser = VerifyUser::where('token', $token)->first();
+                    if($verifyUser) {
+                        $user = User::find($verifyUser->user_id);
+                        if($user->account_type == 1) {
+                            $candidate = $this->candidateRepository->findOneByProperties([
+                                'user_id' => $user->id
+                            ]);
+                            if($candidate) {
+                                $candidate->delete();
+                            }
+                        } else if($user->account_type == 2) {
+                            
+                            $representative = $this->representativeRepository->findOneByProperties([
+                                'user_id' => $user->id
+                            ]);
+                            if($representative) {
+                                $representative->forceDelete();
+                            }
+                        }
+                        $user->delete();
+                        $verifyUser->delete();
+                    }
+                    return $this->sendErrorResponse('Token expired', ['detail' => 'Token expired'],
+                        HttpStatusCode::BAD_REQUEST
+                    );
                 }
-                return $this->sendErrorResponse('Invalid Token', ['detail' => 'Token not found in Database'],
-                    HttpStatusCode::BAD_REQUEST
-                );
             });
         } catch (Exception $e) {
             throw $e;
