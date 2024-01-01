@@ -33,7 +33,8 @@ class AllNotificationController extends Controller
 
         $u_data = Auth::user();
         $role = $u_data->account_type;
-        if($role == 10 || $role == 11) {
+        $role = $u_data->roles[0]->pivot->role_id;
+        if($role == 1 || $role == 2 || $role == 3) {
             $users = User::select('id')->where('account_type', '<>', 10)->where('account_type', '<>', 11)->get();
             $user_id = Auth::id();
             foreach($users as $user) {
