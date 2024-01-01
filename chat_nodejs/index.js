@@ -42,8 +42,10 @@ io.on('connection', (socket) => {
     socket.on('ping', function (data) {
         //console.log(data)
         var userid = data.user_id;
-        users[userid] = socket;
-        online_users = Object.keys(users);
+        if(userid != 0) {
+            users[userid] = socket;
+            online_users = Object.keys(users);
+        }
         io.emit('ping_success', {
             'success': true,
             'online_users': online_users
