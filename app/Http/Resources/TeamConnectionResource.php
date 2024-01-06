@@ -33,7 +33,7 @@ class TeamConnectionResource extends JsonResource
             'to_team_table_id' => $this->to_team_id ?? null,
             'to_team_id' => $this->to_team->team_id ?? null,
             'to_team_name' => $this->to_team->name ?? null,
-
+            'team_logo' => $this->to_team->logo ?? null,
             'requested_by' => User::select('id', 'is_verified', 'full_name', 'status', 'form_type', 'locked_at', 'locked_end', 'created_at', 'updated_at', 'account_type')->find($this->requested_by) ?? null,
             'responded_by' => User::select('id', 'is_verified', 'full_name', 'status', 'form_type', 'locked_at', 'locked_end', 'created_at', 'updated_at', 'account_type')->find($this->responded_by) ?? null,
             'connection_status' => $this->connection_status ?? null,
