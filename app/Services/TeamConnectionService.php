@@ -277,7 +277,7 @@ class TeamConnectionService extends ApiBaseService
         $access_rules = new AccessRulesDefinitionService();
         $respond_connection_rights = $access_rules->hasRespondConnectionRequestRights();
         if (!in_array($user_member_status->role, $respond_connection_rights)) {
-            return $this->sendErrorResponse("You dont have rights to accept/reject connection request.", [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse("You dont have rights to accept or decline connection request.", [], HttpStatusCode::VALIDATION_ERROR);
         }
         
         if($connection_status == 10) {
@@ -764,7 +764,7 @@ class TeamConnectionService extends ApiBaseService
         $access_rules = new AccessRulesDefinitionService();
         $disconnection_rights = $access_rules->hasDisconnectionRights();
         if (!in_array($user_role, $disconnection_rights)) {
-            return $this->sendErrorResponse("You dont have rights to disconnect team.", [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse("You cannot disconnect or block.", [], HttpStatusCode::VALIDATION_ERROR);
         }
 
         // Proceed to disconnect
