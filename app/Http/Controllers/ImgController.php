@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Cache;
 
-use League\Glide\Responses\LaravelResponseFactory;
-use League\Glide\ServerFactory;
+
 class ImgController extends Controller
 {
     use UploadTrait, DeleteTrait;
@@ -27,6 +27,26 @@ class ImgController extends Controller
 
             // validate file extention
             $accepted_extentions = ['png', 'jpg', 'jpeg'];
+
+            // delete the old image from the cache
+            $path = resource_path('image/'.$user_id); // Replace with your actual path
+            if(is_dir($path)) {
+                $files = scandir($path);
+                // Skip "." and ".." entries
+                $firstFile = array_values($files)[2] ?? null;
+
+                if ($firstFile) {
+                    // Generate the cache key
+                    $full_path = $path . '/' . $firstFile;
+                    $cache_key = 'image_'.md5($full_path);
+    
+                    // Check and delete the old image from the cache
+                    if (Cache::has($cache_key)) {
+                        Cache::forget($cache_key);
+                    }
+                }
+            }
+
             if(!in_array(strtolower($image->getClientOriginalExtension()), $accepted_extentions)){
                 return response()->json(['message' => 'File type not accepted'], 400);
             }
@@ -54,24 +74,26 @@ class ImgController extends Controller
 
     public function show(Request $request, String $id, $path)
     {
-            $server = ServerFactory::create([
-                'response' => new LaravelResponseFactory(
-                    $request
-                ),
-                'source' => resource_path('image/'.$id),
-                // 'cache' => $filesystem->getDriver(),
-                'cache' => storage_path('app/public/.cache/'.$id.'/'),
-                'cache_path_prefix' => '',
-                'base_url' => 'image',
-            ]);
-            try {
-                //code...
-                return $server->getImageResponse($path, request()->all());
-            } catch (\Throwable $th) {
-                throw $th;
-                return response()->json(['message' => 'Service does not exist'], 404);
-            }
+        $full_path = resource_path('image/'.$id.'/'.$path);
+        $cache_key = 'image_'.md5($full_path);
 
+        if (!File::exists($full_path)) {
+            return response()->json(['message' => 'Service does not exist'], 404);
+        }
+
+        // Check if the image is already cached
+        if (Cache::has($cache_key)) {
+            $cachedImage = Cache::get($cache_key);
+            $type = File::mimeType($full_path);
+            return response($cachedImage, 200)->header('Content-Type', $type);
+        }
+
+        // If not cached, read the file from the disk, cache it, and return the response
+        $file = File::get($full_path);
+        $type = File::mimeType($full_path);
+        Cache::put($cache_key, $file, now()->addMinutes(60)); // Cache for 60 minutes
+
+        return response($file, 200)->header('Content-Type', $type);
     }
 
     // no need to use this function because we are already handling it in the storeImage function
