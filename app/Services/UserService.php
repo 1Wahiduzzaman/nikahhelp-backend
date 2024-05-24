@@ -142,7 +142,7 @@ class UserService extends ApiBaseService
 
             if($request->get('account_type') == 1){ // 1 for candidate
                 $userInfoResponse = $this->candidateRepository->save($registerUser);
-            }elseif ($request->get('account_type') == 2){ // 2 for representative
+            }else if ($request->get('account_type') == 2){ // 2 for representative
                 $userInfoResponse = $this->representativeRepository->save($registerUser);
             }
 
