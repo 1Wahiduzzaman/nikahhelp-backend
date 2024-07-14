@@ -7,8 +7,11 @@ use Closure;
 use Exception;
 use Illuminate\Auth\Middleware;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
-class JwtMiddleware extends Middleware
+class JwtMiddleware
 {
     /**
      * Handle an incoming request.
@@ -18,9 +21,9 @@ class JwtMiddleware extends Middleware
     public function handle(Request $request, Closure $next)
     {
         try {
-            $user = auth()->authenticate();
+            $user = JWTAuth::parseToken()->authenticate();
         } catch (Exception $e) {
-            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
+            if ($e instanceof TokenInvalidException) {
                 return response()->json([
                     'status' => 'FAIL',
                     'status_code' => HttpStatusCode::VALIDATION_ERROR,
@@ -28,7 +31,7 @@ class JwtMiddleware extends Middleware
                     'error' => ['details' => 'Token is Invalid'],
                 ], HttpStatusCode::VALIDATION_ERROR);
 
-            } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
+            } elseif ($e instanceof TokenExpiredException) {
                 return response()->json([
                     'status' => 'FAIL',
                     'status_code' => HttpStatusCode::VALIDATION_ERROR,

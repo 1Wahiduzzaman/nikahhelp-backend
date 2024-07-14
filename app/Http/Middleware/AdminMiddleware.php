@@ -6,6 +6,7 @@ use App\Enums\HttpStatusCode;
 use App\Models\Permission;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -19,10 +20,10 @@ class AdminMiddleware extends Middleware
      * @param  Request  $request
      * @param  string[]  $guards
      * @param \Closure
-     *
+     * @return JsonResponse
      * @throws AuthenticationException
      */
-    public function handle($request, \Closure $next, ...$guards): mixed
+    public function handle($request, \Closure $next, ...$guards): JsonResponse
     {
         if (! Auth::guard('admin')->check()) {
             return response()->json([

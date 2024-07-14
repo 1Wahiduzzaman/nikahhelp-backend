@@ -102,19 +102,20 @@ class UserService extends ApiBaseService
         try {
             $data = [];
             /* Data set for user table */
-            $inputData['email'] = $request->get('email');
+            $inputData['email'] = $request->input('email');
             $inputData['password'] = Hash::make($request->get('password'));
-            $inputData['full_name'] = $request->get('first_name').' '.$request->get('last_name');
-            $inputData['account_type'] = $request->get('account_type');
-            $inputData['form_type'] = $request->get('form_type') ?? 1;
+            $inputData['full_name'] = $request->input('first_name').' '.$request->input('last_name');
+            $inputData['account_type'] = $request->input('account_type');
+            $inputData['form_type'] = $request->input('form_type') ?? 1;
             $user = $this->userRepository->save($inputData);
 
+//            dd($user);
             /* Data set for user information table */
             $registerUser['user_id'] = $user->id;
-            $registerUser['email'] = $request->get('email');
-            $registerUser['first_name'] = $request->get('first_name');
-            $registerUser['last_name'] = $request->get('last_name');
-            $registerUser['screen_name'] = $request->get('screen_name');
+            $registerUser['email'] = $request->input('email');
+            $registerUser['first_name'] = $request->input('first_name');
+            $registerUser['last_name'] = $request->input('last_name');
+            $registerUser['screen_name'] = $request->input('screen_name');
             $registerUser['data_input_status'] = 0;
 
             if ($request->get('account_type') == 1) { // 1 for candidate
@@ -124,7 +125,7 @@ class UserService extends ApiBaseService
             }
 
             if ($user) {
-                $token = auth()->tokenByID($user->id);
+                $token = JWTAuth::fromUser($user);
                 $encryptedToken = Crypt::encryptString($token);
                 VerifyUser::create([
                     'user_id' => $user->id,

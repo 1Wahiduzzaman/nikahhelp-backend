@@ -21,6 +21,8 @@ class CandidateInformation extends Model
      */
     public $timestamps = false;
 
+    
+
     public const RATE_TO_STRING = [
         1 => 'Not Important',
         2 => 'Quite Important',

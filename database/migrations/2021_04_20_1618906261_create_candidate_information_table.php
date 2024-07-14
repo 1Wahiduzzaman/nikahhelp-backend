@@ -69,8 +69,8 @@ class CreateCandidateInformationTable extends Migration
             // Candidate Preference
             $table->tinyInteger('pre_partner_age_min')->nullable();
             $table->tinyInteger('pre_partner_age_max')->nullable();
-            $table->float('pre_height_min', 4, 2)->nullable();
-            $table->float('pre_height_max', 4, 2)->nullable();
+            $table->tinyInteger('pre_height_min')->nullable();
+            $table->tinyInteger('pre_height_max')->nullable();
             $table->boolean('pre_has_country_allow_preference')->default(0)->nullable();
             $table->boolean('pre_has_country_disallow_preference')->default(0)->nullable();
             //$table->string('pre_countries'); See candidate_country_user
@@ -141,4 +141,4 @@ class CreateCandidateInformationTable extends Migration
     {
         Schema::dropIfExists('candidate_information');
     }
-}
+};
