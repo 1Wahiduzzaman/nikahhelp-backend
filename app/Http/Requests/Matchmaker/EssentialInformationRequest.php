@@ -1,9 +1,7 @@
 <?php
 
-
 namespace App\Http\Requests\Matchmaker;
 
-use App\Models\RepresentativeInformation;
 use App\Http\Requests\APIRequest;
 
 class EssentialInformationRequest extends APIRequest
@@ -40,8 +38,7 @@ class EssentialInformationRequest extends APIRequest
         return [
             'per_gender.required' => 'Gender field is required',
             'per_occupation.required' => 'Occupation field is required',
-            'dob.required' => 'Date of birth field is required'
+            'dob.required' => 'Date of birth field is required',
         ];
     }
-
 }

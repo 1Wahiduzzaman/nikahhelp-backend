@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -12,7 +11,9 @@ class SubscriptionExpiredMail extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+
     public $domain;
+
     public $team;
 
     /**
@@ -20,7 +21,7 @@ class SubscriptionExpiredMail extends Mailable
      *
      * @return void
      */
-    public function __construct($team,$user, $domain)
+    public function __construct($team, $user, $domain)
     {
         $this->team = $team;
         $this->user = $user;

@@ -11,12 +11,12 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 
-class ExpirePassword implements ShouldQueue, ShouldBeUnique
+class ExpirePassword implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
     protected \App\Models\PasswordReset $passwordReset;
+
     /**
      * Create a new job instance.
      *

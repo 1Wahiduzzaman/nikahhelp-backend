@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model
 {
-
     use HasFactory;
 
-    protected $table = "countries";
+    protected $table = 'countries';
+
     /**
      * @var string
      */
@@ -30,6 +30,6 @@ class Country extends Model
      */
     public function getCity()
     {
-        return $this->hasMany(City::class, 'country_id', 'id')->where('status','=',1);
+        return $this->hasMany(City::class, 'country_id', 'id')->where('status', '=', 1);
     }
 }

@@ -13,8 +13,8 @@ class AddOtherImage extends Migration
      */
     public function up()
     {
-        Schema::table('candidate_information', function(Blueprint $table) {
-            $table->string('other_images', 65535)->nullable();
+        Schema::table('candidate_information', function (Blueprint $table) {
+            $table->text('other_images', 65535)->nullable();
         });
     }
 

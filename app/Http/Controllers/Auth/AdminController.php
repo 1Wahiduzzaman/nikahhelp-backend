@@ -11,7 +11,6 @@ use App\Services\AdminService;
 
 class AdminController extends Controller
 {
-
     private \App\Services\AdminService $adminService;
 
     public function __construct(AdminService $adminService)
@@ -24,6 +23,7 @@ class AdminController extends Controller
         return $this->adminService->authenticate($request);
 
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -47,7 +47,6 @@ class AdminController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreAdminRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreAdminRequest $request)
@@ -58,7 +57,6 @@ class AdminController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Admin  $admin
      * @return \Illuminate\Http\Response
      */
     public function show(Admin $admin)
@@ -69,7 +67,6 @@ class AdminController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Admin  $admin
      * @return \Illuminate\Http\Response
      */
     public function edit(Admin $admin)
@@ -80,8 +77,6 @@ class AdminController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateAdminRequest  $request
-     * @param  \App\Models\Admin  $admin
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateAdminRequest $request, Admin $admin)
@@ -92,7 +87,6 @@ class AdminController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Admin  $admin
      * @return \Illuminate\Http\Response
      */
     public function destroy(Admin $admin)

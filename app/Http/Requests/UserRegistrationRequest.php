@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
-
 class UserRegistrationRequest extends APIRequest
 {
     /**
@@ -25,26 +23,26 @@ class UserRegistrationRequest extends APIRequest
     {
         //use Illuminate\Validation\Rules\Password;
 
-/*$rules = [
-    'password' => [
-        'required',
-        'string',
-        Password::min(8)
-            ->mixedCase()
-            ->numbers()
-            ->symbols()
-            ->uncompromised(),
-        'confirmed'
-    ],
-]**/
+        /*$rules = [
+            'password' => [
+                'required',
+                'string',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
+                'confirmed'
+            ],
+        ]**/
         return [
             // "full_name" => 'required|max:800|min:3',
-            "email" => 'required|email|unique:users',
-            "password" => 'required|string|min:8',
-            "first_name" => 'required|string|max:255',
-            "last_name" => 'sometimes|required|string|max:255',
-            "screen_name" => 'required|max:255|unique:candidate_information',
-            "account_type" => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:8',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'sometimes|required|string|max:255',
+            'screen_name' => 'required|max:255|unique:candidate_information',
+            'account_type' => 'required',
         ];
     }
 }

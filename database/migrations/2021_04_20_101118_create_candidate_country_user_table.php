@@ -19,7 +19,7 @@ class CreateCandidateCountryUserTable extends Migration
             $table->bigInteger('candidate_pre_city_id')->nullable(true); // Countries id
             $table->boolean('allow')->default(1)->comment('1=allowed,0=disallowed');
 
-            $table->unique(['user_id','candidate_pre_country_id','candidate_pre_city_id','allow'],'candidate_country_user_unique');
+            $table->unique(['user_id', 'candidate_pre_country_id', 'candidate_pre_city_id', 'allow'], 'candidate_country_user_unique');
         });
     }
 

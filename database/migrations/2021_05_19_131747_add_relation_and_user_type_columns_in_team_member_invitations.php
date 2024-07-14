@@ -15,8 +15,8 @@ class AddRelationAndUserTypeColumnsInTeamMemberInvitations extends Migration
     {
         Schema::table('team_member_invitations', function (Blueprint $table) {
             //
-            $table->string('user_type',255)->nullable();
-            $table->string('relationship',100)->nullable();
+            $table->string('user_type', 255)->nullable();
+            $table->string('relationship', 100)->nullable();
         });
     }
 

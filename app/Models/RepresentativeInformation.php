@@ -2,23 +2,19 @@
 
 namespace App\Models;
 
-use App\Traits\ImageTrait;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class RepresentativeInformation
- * @package App\Models
- * @version May 3, 2021, 10:52 am UTC
  *
+ * @version May 3, 2021, 10:52 am UTC
  */
 class RepresentativeInformation extends Model
 {
-    use SoftDeletes;
-
     use HasFactory;
-
+    use SoftDeletes;
 
     public $table = 'representative_informations';
 
@@ -81,7 +77,6 @@ class RepresentativeInformation extends Model
         'is_agree',
     ];
 
-
     public $fillable = [
         'user_id',
         'first_name',
@@ -131,7 +126,7 @@ class RepresentativeInformation extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer'
+        'id' => 'integer',
     ];
 
     /**
@@ -180,7 +175,7 @@ class RepresentativeInformation extends Model
      */
     public function activeTeams()
     {
-        return $this->belongsToMany(Team::class,'team_members','user_id','team_id','user_id','id')->wherePivot('status',1);
+        return $this->belongsToMany(Team::class, 'team_members', 'user_id', 'team_id', 'user_id', 'id')->wherePivot('status', 1);
     }
 
     /**
@@ -191,66 +186,65 @@ class RepresentativeInformation extends Model
         return $this->activeTeams->first();
     }
 
-    public function getCandidateTeamAttribute() {
+    public function getCandidateTeamAttribute()
+    {
         return $this->belongsToMany(Team::class, 'team_members', 'user_id', 'team_id', 'user_id', 'id')->wherePivot('user_type', 'Candidate')->first();
     }
-    
+
     /**
      * Return Candidate information short listed by user
+     *
      * @return BelongsToMany
      */
     public function shortList()
     {
-        return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id','user_id','user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id', 'user_id', 'user_id')->withTimestamps();
     }
 
     /**
      * Return Candidate information team listed by user
+     *
      * @return BelongsToMany
      */
     public function teamList()
     {
-        return $this->belongsToMany(CandidateInformation::class, 'team_listed_candidates', 'team_listed_by', 'user_id','user_id','user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'team_listed_candidates', 'team_listed_by', 'user_id', 'user_id', 'user_id')->withTimestamps();
     }
-    
+
     /**
      * Return Representative block listed by user
+     *
      * @return BelongsToMany
      */
     public function blockList()
     {
-        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id','user_id','user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id', 'user_id', 'user_id')->withTimestamps();
 
     }
 
-   /**
+    /**
      * Return Candidate information user block listed by
+     *
      * @return BelongsToMany
      */
-    public function blockListedBy() 
+    public function blockListedBy()
     {
-        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'user_id', 'block_by','user_id','user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'user_id', 'block_by', 'user_id', 'user_id')->withTimestamps();
     }
-
-    
-
-    
 
     public function ticketSubmission()
     {
         return $this->hasMany(TicketSubmission::class, 'user_id', 'id');
     }
 
-      /**
+    /**
      * Convert gender id to sting
-     * @param $id
-     * @return string
      */
-    public static function getGender ($id) : string
+    public static function getGender($id): string
     {
         $gender = null;
 
-        switch ($id){
+        switch ($id) {
             case 1:
                 $gender = 'Male';
                 break;
@@ -258,10 +252,10 @@ class RepresentativeInformation extends Model
                 $gender = 'Female';
                 break;
             default:
-                $gender = "";
+                $gender = '';
         }
 
-        return $gender ;
+        return $gender;
 
     }
 }

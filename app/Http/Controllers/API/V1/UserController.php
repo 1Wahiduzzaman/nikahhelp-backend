@@ -3,19 +3,16 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\FormTypeRequest;
-use App\Models\Admin;
-use App\Models\Role;
-use Illuminate\Http\Request;
-use JWTAuth;
-use App\Services\UserService;
-use App\Http\Requests\UserRegistrationRequest;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\FormTypeRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UserRegistrationRequest;
 use App\Models\CandidateInformation;
 use App\Models\RepresentativeInformation;
+use App\Models\Role;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use App\Services\UserService;
+use Illuminate\Http\Request;
 use Mail;
 
 class UserController extends Controller
@@ -24,7 +21,6 @@ class UserController extends Controller
 
     /**
      * PurchaseController constructor.
-     * @param UserService $userService
      */
     public function __construct(UserService $userService)
     {
@@ -32,7 +28,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param LoginRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function authenticate(LoginRequest $request)
@@ -41,7 +36,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param \App\Http\Requests\UserRegistrationRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function register(UserRegistrationRequest $request)
@@ -81,7 +75,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function emailVerify(Request $request, $token)
@@ -90,7 +83,7 @@ class UserController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function tokenVerifyOrResend(LoginRequest $request)
@@ -99,7 +92,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function switchAccount(Request $request)
@@ -109,21 +101,18 @@ class UserController extends Controller
 
     }
 
-    /**
-     * @param ChangePasswordRequest $request
-     */
     public function changePassword(ChangePasswordRequest $request)
     {
         return $this->userService->changePassword($request->all());
     }
 
     /**
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout(Request $request)
     {
         $token = $request->header('Authorization');
+
         return $this->userService->logout($token);
     }
 
@@ -139,41 +128,47 @@ class UserController extends Controller
 
         $details = [
             'title' => 'Mail from matrimonyAssist.com',
-            'body' => 'This is for testing email using smtp'
+            'body' => 'This is for testing email using smtp',
         ];
 
         Mail::to($to_email)->send(new \App\Mail\MyTestMail($details));
 
-        dd("Email is Sent.");
+        dd('Email is Sent.');
     }
 
     //Raz
-    public function postDocUpload(Request $request) {
-        $is_exist = CandidateInformation::where('user_id', JWTAuth::parseToken()->authenticate()['id'])->first();
-        if($is_exist) {
-            $res = CandidateInformation::where('user_id', JWTAuth::parseToken()->authenticate()['id'])->update(['is_uplaoded_doc'=>$request->is_uplaoded_doc]);
+    public function postDocUpload(Request $request)
+    {
+        $is_exist = CandidateInformation::where('user_id', auth()->authenticate()['id'])->first();
+        if ($is_exist) {
+            $res = CandidateInformation::where('user_id', auth()->authenticate()['id'])->update(['is_uplaoded_doc' => $request->is_uplaoded_doc]);
+
             return $this->sendSuccessResponse([], 'Successfully Updated');
         } else {
             return $this->sendErrorResponse('Candidate not found');
         }
     }
 
-    public function postDocUploadRep(Request $request) {
-        $res = RepresentativeInformation::where('user_id', JWTAuth::parseToken()->authenticate()['id'])->update(['is_uplaoded_doc'=>$request->is_uplaoded_doc]);
-        if($res) {
+    public function postDocUploadRep(Request $request)
+    {
+        $res = RepresentativeInformation::where('user_id', auth()->authenticate()['id'])->update(['is_uplaoded_doc' => $request->is_uplaoded_doc]);
+        if ($res) {
             return $this->sendSuccessResponse([], 'Successfully Updated');
-        }  else {
+        } else {
             return $this->sendErrorResponse('Rep not found');
         }
     }
 
-    public function getSuportUserId() {
+    public function getSuportUserId()
+    {
         $data = Role::with('admins')->get();
+
         return $this->sendSuccessResponse($data, 'Support Admin Loaded Successfully');
     }
 
-    public function getRejectedNotes($id) {
-        if (!empty($id)) {
+    public function getRejectedNotes($id)
+    {
+        if (! empty($id)) {
             $userId = $id;
         } else {
             return $this->sendErrorResponse('User Id is required');
@@ -195,5 +190,4 @@ class UserController extends Controller
     {
         return $this->userService->passwordExpiryCheck($token);
     }
-
 }

@@ -18,9 +18,9 @@ class CreateAllNotificationsTable extends Migration
             $table->bigInteger('team_id')->nullable();
             $table->bigInteger('sender')->nullable();
             $table->bigInteger('receiver')->nullable();
-            $table->string('title')->nullable();   
-            $table->text('description')->nullable();   
-            $table->tinyInteger('seen')->default(0); 
+            $table->string('title')->nullable();
+            $table->text('description')->nullable();
+            $table->tinyInteger('seen')->default(0);
             $table->timestamps();
         });
     }

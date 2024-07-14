@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-
 use App\Models\Team;
 
 class TeamFromRequest extends APIRequest
@@ -25,16 +24,16 @@ class TeamFromRequest extends APIRequest
     public function rules()
     {
         return [
-//            Team::TEAM_ID => 'required|string|max:10',
+            //            Team::TEAM_ID => 'required|string|max:10',
             Team::NAME => 'required|string|max:255',
             Team::DESCRIPTION => 'required|string|max:255',
             Team::PASSWORD => 'required|string|max:80',
             Team::LOGO => 'required|string',
 
-//            Team::MEMBER_COUNT => 'sometimes|numeric',
-//            Team::SUBSCRIPTION_EXPIRE_AT => 'sometimes|date',
-//            Team::STATUS => 'sometimes|numeric|max:4',
-//            Team::CREATED_BY => 'required|numeric|exists:users',
+            //            Team::MEMBER_COUNT => 'sometimes|numeric',
+            //            Team::SUBSCRIPTION_EXPIRE_AT => 'sometimes|date',
+            //            Team::STATUS => 'sometimes|numeric|max:4',
+            //            Team::CREATED_BY => 'required|numeric|exists:users',
         ];
     }
 }

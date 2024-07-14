@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -12,7 +11,9 @@ class SubscriptionNewMail extends Mailable
     use Queueable, SerializesModels;
 
     public $subscription;
+
     public $domain;
+
     public $team;
 
     /**
@@ -20,7 +21,7 @@ class SubscriptionNewMail extends Mailable
      *
      * @return void
      */
-    public function __construct($team,$subscription, $domain)
+    public function __construct($team, $subscription, $domain)
     {
         $this->team = $team;
         $this->subscription = $subscription;
@@ -38,7 +39,7 @@ class SubscriptionNewMail extends Mailable
             ->markdown('emails.subscription.new_subscription')->with([
                 'team' => $this->team,
                 'subscription' => $this->subscription,
-                'domain' => $this->domain
+                'domain' => $this->domain,
             ]);
     }
 }

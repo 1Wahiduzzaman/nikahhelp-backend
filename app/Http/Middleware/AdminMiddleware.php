@@ -4,32 +4,32 @@ namespace App\Http\Middleware;
 
 use App\Enums\HttpStatusCode;
 use App\Models\Permission;
-use Closure;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
-use JWTAuth;
-use Exception;
-use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
-class AdminMiddleware extends BaseMiddleware
+class AdminMiddleware extends Middleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
-     * @return mixed
+     * @param  Request  $request
+     * @param  string[]  $guards
+     * @param \Closure
+     *
+     * @throws AuthenticationException
      */
-    public function handle($request, Closure $next)
+    public function handle($request, \Closure $next, ...$guards): mixed
     {
-        if(!Auth::guard('admin')->check()){
+        if (! Auth::guard('admin')->check()) {
             return response()->json([
                 'status' => 'FAIL',
                 'status_code' => HttpStatusCode::VALIDATION_ERROR,
                 'message' => 'Authorization Fail',
-                'error' => ['details' => 'Authorization Fail']
+                'error' => ['details' => 'Authorization Fail'],
             ], HttpStatusCode::VALIDATION_ERROR);
         }
 
@@ -41,6 +41,7 @@ class AdminMiddleware extends BaseMiddleware
 
             });
         }
+
         return $next($request);
     }
 

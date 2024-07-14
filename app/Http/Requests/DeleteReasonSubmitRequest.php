@@ -2,9 +2,6 @@
 
 namespace App\Http\Requests;
 
-
-use App\Models\DeleteReason;
-
 class DeleteReasonSubmitRequest extends APIRequest
 {
     /**
@@ -27,7 +24,7 @@ class DeleteReasonSubmitRequest extends APIRequest
         return [
             'team_id' => 'required|string|exists:teams,team_id',
             'reason_type' => 'required|string|max:255',
-            'reason_text' => 'required|string|max:255'
+            'reason_text' => 'required|string|max:255',
         ];
     }
 }

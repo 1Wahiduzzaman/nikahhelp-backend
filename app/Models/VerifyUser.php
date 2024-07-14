@@ -7,17 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class VerifyUser extends Model
 {
     protected $table = 'verify_users';
-    const V_USER_ID='user_id';
-    const V_TOKEN='token';
+
+    const V_USER_ID = 'user_id';
+
+    const V_TOKEN = 'token';
 
     /**
      * Table field name
-     * @var array
      *
+     * @var array
      */
     protected $fillable = [
-        Self::V_USER_ID,
-        Self::V_TOKEN
+        self::V_USER_ID,
+        self::V_TOKEN,
     ];
 
     /**
@@ -25,6 +27,6 @@ class VerifyUser extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\User', Self::V_USER_ID);
+        return $this->belongsTo('App\User', self::V_USER_ID);
     }
 }

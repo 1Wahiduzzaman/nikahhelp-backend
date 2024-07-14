@@ -2,10 +2,6 @@
 
 namespace App\Http\Requests;
 
-
-use App\Models\Religion;
-use Illuminate\Validation\Rule;
-
 class CandidatePreferenceInfoRequest extends APIRequest
 {
     /**
@@ -51,7 +47,7 @@ class CandidatePreferenceInfoRequest extends APIRequest
             'pre_preferred_divorcee_child' => 'sometimes|boolean',
             'pre_other_preference' => 'sometimes|string',
             'pre_description' => 'sometimes|string',
-            "pre_pros_part_status" => 'sometimes|digits_between:1,3',
+            'pre_pros_part_status' => 'sometimes|digits_between:1,3',
 
             'pre_strength_of_character_rate' => 'sometimes|digits_between:1,5',
             'pre_look_and_appearance_rate' => 'sometimes|digits_between:1,5',
@@ -106,5 +102,4 @@ class CandidatePreferenceInfoRequest extends APIRequest
             'pre_things_important_status.*' => 'Value required and must be between 1 to 3',
         ];
     }
-
 }

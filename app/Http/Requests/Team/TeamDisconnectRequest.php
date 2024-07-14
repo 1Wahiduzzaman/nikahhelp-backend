@@ -2,9 +2,6 @@
 
 namespace App\Http\Requests\Team;
 
-
-use App\Models\TeamMember;
-use Illuminate\Validation\Rule;
 use App\Http\Requests\APIRequest;
 
 class TeamDisconnectRequest extends APIRequest

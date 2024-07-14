@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateMatchMakersTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -54,8 +53,7 @@ class CreateMatchMakersTable extends Migration
             $table->string('ver_recommender_address')->nullable();
             $table->string('ver_recommender_mobile_no')->nullable();
 
-
-          // Business information
+            // Business information
             $table->string('capacity', 100)->nullable();
             $table->string('company_or_other', 255)->nullable();
             $table->string('occupation', 70)->nullable();
@@ -64,9 +62,9 @@ class CreateMatchMakersTable extends Migration
             $table->string('last_six_month_match_qt', 10)->nullable();
             $table->string('match_per_county')->nullable();
             $table->string('match_community')->nullable();
-            $table->string('have_previous_experience',10)->nullable();
-            $table->string('previous_experience',255)->nullable();
-            $table->string('can_share_last_three_match',10)->nullable();
+            $table->string('have_previous_experience', 10)->nullable();
+            $table->string('previous_experience', 255)->nullable();
+            $table->string('can_share_last_three_match', 10)->nullable();
             $table->string('match_one')->nullable();
             $table->string('match_two')->nullable();
             $table->string('match_three')->nullable();

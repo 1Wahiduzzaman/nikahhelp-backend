@@ -2,29 +2,33 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class block_list
- * @package App\Models
- * @version May 20, 2021, 12:35 pm UTC
  *
+ * @version May 20, 2021, 12:35 pm UTC
  */
 class BlockList extends Model
 {
-//    use SoftDeletes;
+    //    use SoftDeletes;
 
     use HasFactory;
 
     const BLOCK_ID = 'id';
+
     const BLOCK_USER_ID = 'user_id';
+
     const BLOCK_BY = 'block_by';
+
     const BLOCK_FOR = 'block_for';
+
     const BLOCK_TYPE = 'type';
+
     const BLOCK_DATE = 'block_date';
+
     /**
      * @var string
      */
@@ -34,7 +38,6 @@ class BlockList extends Model
      * @var string[]
      */
     protected $dates = ['deleted_at'];
-
 
     public $fillable = [
         self::BLOCK_ID,
@@ -52,7 +55,7 @@ class BlockList extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer'
+        'id' => 'integer',
     ];
 
     /**

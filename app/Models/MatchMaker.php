@@ -3,27 +3,23 @@
 namespace App\Models;
 
 use Eloquent as Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class MatchMaker
- * @package App\Models
- * @version June 30, 2021, 11:24 am UTC
  *
+ * @version June 30, 2021, 11:24 am UTC
  */
 class MatchMaker extends Model
 {
-//    use SoftDeletes;
+    //    use SoftDeletes;
 
     use HasFactory;
 
     public $table = 'match_makers';
 
-
-//    protected $dates = ['deleted_at'];
-
-
+    //    protected $dates = ['deleted_at'];
 
     public $fillable = [
         'user_id',
@@ -70,7 +66,7 @@ class MatchMaker extends Model
         'match_one',
         'match_two',
         'match_three',
-// end
+        // end
         'per_avatar_url',
         'per_main_image_url',
         'anybody_can_see',
@@ -86,7 +82,7 @@ class MatchMaker extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer'
+        'id' => 'integer',
     ];
 
     /**
@@ -97,6 +93,4 @@ class MatchMaker extends Model
     public static $rules = [
 
     ];
-
-
 }

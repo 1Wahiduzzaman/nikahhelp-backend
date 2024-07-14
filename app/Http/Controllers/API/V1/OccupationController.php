@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Response as FResponse;
 
 class OccupationController extends Controller
 {
-
     /**
      * @return \Illuminate\Http\JsonResponse
      */
@@ -17,7 +16,8 @@ class OccupationController extends Controller
     {
         try {
             $data['occupations'] = Occupation::pluck('name', 'id');
-//        $occupations = Occupation::latest()->get();
+
+            //        $occupations = Occupation::latest()->get();
             return $this->sendSuccessResponse($data, 'Occupation List', [], FResponse::HTTP_OK);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
@@ -25,7 +25,6 @@ class OccupationController extends Controller
     }
 
     /**
-     * @param \App\Http\Requests\OccupationRequest $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function store(OccupationRequest $request)
@@ -40,7 +39,6 @@ class OccupationController extends Controller
     }
 
     /**
-     * @param $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function show($id)
@@ -55,8 +53,6 @@ class OccupationController extends Controller
     }
 
     /**
-     * @param \App\Http\Requests\OccupationRequest $request
-     * @param $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function update(OccupationRequest $request, $id)
@@ -65,6 +61,7 @@ class OccupationController extends Controller
             $occupation = Occupation::findOrFail($id);
             $occupation->update($request->all());
             $data['occupation'] = $occupation;
+
             return $this->sendSuccessResponse($data, 'Occupation List', [], FResponse::HTTP_OK);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
@@ -72,7 +69,6 @@ class OccupationController extends Controller
     }
 
     /**
-     * @param $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function destroy($id)
@@ -84,6 +80,7 @@ class OccupationController extends Controller
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
         }
+
         return response(['data' => null], 204);
     }
 }

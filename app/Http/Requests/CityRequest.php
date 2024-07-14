@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class CityRequest  extends APIRequest
+class CityRequest extends APIRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,7 +31,7 @@ class CityRequest  extends APIRequest
     public function messages()
     {
         return [
-            'name.unique' => 'This city name already exists'
+            'name.unique' => 'This city name already exists',
         ];
     }
 }

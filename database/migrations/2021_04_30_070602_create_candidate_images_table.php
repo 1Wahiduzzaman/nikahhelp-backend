@@ -19,11 +19,11 @@ class CreateCandidateImagesTable extends Migration
             $table->string('image_type')->comment('[1=>avatar,2=>Main image, [3,8] => Additional Image[3,8]]');
             $table->string('image_path');
             $table->tinyInteger('image_visibility')->default(2)->comment('[1=>only me,2=>My team, 3=>connected team, 4 => everyone]');
-            $table->string('disk',50)->default('local');
+            $table->string('disk', 50)->default('local');
             $table->timestamps();
 
-            $table->foreign('user_id','candidate_images_user_id')->references('id')->on('users');
-//            $table->unique(['user_id','image_type'],'candidate_images_unique_image');
+            $table->foreign('user_id', 'candidate_images_user_id')->references('id')->on('users');
+            //            $table->unique(['user_id','image_type'],'candidate_images_unique_image');
         });
     }
 

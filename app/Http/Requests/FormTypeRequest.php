@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Requests;
-
 
 class FormTypeRequest extends APIRequest
 {
@@ -24,9 +22,7 @@ class FormTypeRequest extends APIRequest
     public function rules()
     {
         return [
-            "form_type" => 'required|numeric',
+            'form_type' => 'required|numeric',
         ];
     }
-
-
 }

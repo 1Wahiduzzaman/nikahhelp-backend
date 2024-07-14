@@ -17,44 +17,40 @@ class Controller extends BaseController
     /**
      * Success response method.
      *
-     * @param array $result
-     * @param $message
-     * @param array $pagination
-     * @param int $http_status
-     * @param int $status_code
-     * @return JsonResponse
+     * @param  array  $result
+     * @param  array  $pagination
+     * @param  int  $http_status
+     * @param  int  $status_code
      */
     public function sendSuccessResponse(
         $result,
         $message,
         $pagination = [],
-        $http_status = HttpStatusCode::SUCCESS,
-        $status_code = ApiCustomStatusCode::SUCCESS
-    ) {
+        $http_status = HttpStatusCode::SUCCESS->value,
+        $status_code = ApiCustomStatusCode::SUCCESS->value
+    ): JsonResponse {
         $response = [
             'status' => 'SUCCESS',
             'status_code' => $status_code,
             'message' => $message,
-            'data' => $result
+            'data' => $result,
         ];
 
-        if (!empty($pagination)) {
-            $response ['pagination'] = $pagination;
+        if (! empty($pagination)) {
+            $response['pagination'] = $pagination;
         }
 
         return response()->json($response, $http_status);
     }
 
-
     /**
      * Return error response.
      *
-     * @param $message
      * @param array $errorMessages
      * @param int $status_code
      * @return JsonResponse
      */
-    public function sendErrorResponse($message, $errorMessages = [], $status_code = HttpStatusCode::VALIDATION_ERROR)
+    public function sendErrorResponse($message, array $errorMessages = [], int $status_code = HttpStatusCode::VALIDATION_ERROR->value)
     {
         $response = [
             'status' => 'FAIL',
@@ -62,7 +58,7 @@ class Controller extends BaseController
             'message' => $message,
         ];
 
-        if (!empty($errorMessages)) {
+        if (! empty($errorMessages)) {
             $response['error'] = $errorMessages;
         }
 

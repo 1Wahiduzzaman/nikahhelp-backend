@@ -17,8 +17,8 @@ class CreateDeleteReasonsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('team_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('reason_type',100);
-            $table->string('reason_text',100);
+            $table->string('reason_type', 100);
+            $table->string('reason_text', 100);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('team_id')->references('id')->on('teams');
             $table->timestamps();

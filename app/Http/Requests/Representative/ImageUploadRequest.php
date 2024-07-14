@@ -1,11 +1,8 @@
 <?php
 
-
 namespace App\Http\Requests\Representative;
 
-use App\Models\RepresentativeInformation;
 use App\Http\Requests\APIRequest;
-use Validator;
 
 class ImageUploadRequest extends APIRequest
 {
@@ -28,19 +25,17 @@ class ImageUploadRequest extends APIRequest
     {
         return [
             'per_avatar_url' => 'sometimes|required|string',
-            'per_main_image_url' => 'sometimes|required|string'
+            'per_main_image_url' => 'sometimes|required|string',
         ];
     }
 
     /**
      * @return array|string[]
      */
-
     public function messages()
     {
         return [
-            'required' => 'The :attribute field is required.'
+            'required' => 'The :attribute field is required.',
         ];
     }
-
 }

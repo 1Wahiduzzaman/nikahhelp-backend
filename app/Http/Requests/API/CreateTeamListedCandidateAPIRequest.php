@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\API;
 
-use App\Models\ShortListedCandidate;
 //use InfyOm\Generator\Request\APIRequest;
 use App\Http\Requests\APIRequest;
 use App\Models\TeamListedCandidate;

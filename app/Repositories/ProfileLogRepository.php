@@ -2,15 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Http\Requests\UserNotificationRequest;
 use App\Models\ProfileLog;
-use App\Http\Requests\DeviceTokenRequest;
-use Illuminate\Http\Request;
 
 /**
  * Class UserRepository
- *
- * @package App\Repositories
  */
 class ProfileLogRepository extends BaseRepository
 {
@@ -23,11 +18,8 @@ class ProfileLogRepository extends BaseRepository
 
     ];
 
-
     /**
      * UserRepository constructor.
-     *
-     * @param ProfileLog $model
      */
     public function __construct(ProfileLog $model)
     {
@@ -43,5 +35,4 @@ class ProfileLogRepository extends BaseRepository
     {
         return $this->fieldSearchable;
     }
-
 }

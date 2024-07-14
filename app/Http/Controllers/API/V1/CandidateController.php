@@ -4,22 +4,22 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Candidate\CandidateInfoStatusUpdateRequest;
-use App\Http\Requests\Candidate\CandidatePersonalVerificationRequest;
-use App\Http\Requests\CandidateImageUploadRequest;
-use App\Http\Requests\CandidatePreferenceInfoRequest;
-use App\Http\Requests\Candidate\CandidatePreferenceAboutRequest;
-use App\Http\Requests\Candidate\CandidatePreferenceRatingRequest;
+use App\Http\Requests\Candidate\CandidatePersonalAboutMoreRequest;
+use App\Http\Requests\Candidate\CandidatePersonalContactInformationRequest;
 use App\Http\Requests\Candidate\CandidatePersonalEssentialInInformationRequest;
 use App\Http\Requests\Candidate\CandidatePersonalGeneralInInformationRequest;
-use App\Http\Requests\Candidate\CandidatePersonalContactInformationRequest;
-use App\Http\Requests\Candidate\CandidatePersonalAboutMoreRequest;
+use App\Http\Requests\Candidate\CandidatePersonalVerificationRequest;
+use App\Http\Requests\Candidate\CandidatePreferenceAboutRequest;
+use App\Http\Requests\Candidate\CandidatePreferenceRatingRequest;
+use App\Http\Requests\CandidateCreateRequest;
+use App\Http\Requests\CandidateFamilyInfoRequest;
+use App\Http\Requests\CandidateImageUploadRequest;
+use App\Http\Requests\CandidatePersonalInfoRequest;
+use App\Http\Requests\CandidatePreferenceInfoRequest;
 use App\Models\CandidateImage;
+use App\Services\CandidateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Services\CandidateService;
-use App\Http\Requests\CandidatePersonalInfoRequest;
-use App\Http\Requests\CandidateFamilyInfoRequest;
-use App\Http\Requests\CandidateCreateRequest;
 use Illuminate\Http\Response;
 
 //use Illuminate\Support\Facades\Request;
@@ -30,24 +30,19 @@ class CandidateController extends Controller
 
     /**
      * PurchaseController constructor.
-     * @param CandidateService $candidateService
      */
     public function __construct(CandidateService $candidateService)
     {
         $this->candidateService = $candidateService;
     }
 
-    /**
-     * @param int $userId
-     * @return JsonResponse
-     */
     public function index(int $userId): JsonResponse
     {
         return $this->candidateService->fetchCandidateInfo($userId);
     }
 
     /**
-     * @param \Illuminate\Http\CandidateCreateRequest $request
+     * @param  \Illuminate\Http\CandidateCreateRequest  $request
      * @return mixed
      */
     public function create(CandidateCreateRequest $request)
@@ -55,25 +50,18 @@ class CandidateController extends Controller
         return $this->candidateService->store($request->all());
     }
 
-    /**
-     * @return JsonResponse
-     */
     public function candidateProfileInitialInfo(): JsonResponse
     {
         return $this->candidateService->fetchProfileInitialInfo();
     }
 
-    /**
-     * @return JsonResponse
-     */
     public function candidateStatus(): JsonResponse
     {
         return $this->candidateService->candidateStatus();
     }
 
     /**
-     * @param int $userId
-     * @return JsonResponse
+     * @param  int  $userId
      */
     public function candidatePersonalInfo(): JsonResponse
     {
@@ -82,29 +70,19 @@ class CandidateController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
-    public function storeCandidateBasicInformation(Request $request,int $userId): JsonResponse
+    public function storeCandidateBasicInformation(Request $request, int $userId): JsonResponse
     {
         return $this->candidateService->candidateBasicInfoStore($request, $userId);
     }
 
-    /**
-     * @param CandidatePersonalInfoRequest $request
-     * @param int $userId
-     * @return JsonResponse
-     */
     public function updatePersonalInformation(CandidatePersonalInfoRequest $request, int $userId): JsonResponse
     {
         return $this->candidateService->candidatePersonalInfoUpdate($request, $userId);
     }
 
     /**
-     * @param CandidatePersonalEssentialInInformationRequest $request
-     * @param int $userId
-     * @return JsonResponse
+     * @param  int  $userId
      */
     public function updatePersonalEssentialInInformation(CandidatePersonalEssentialInInformationRequest $request): JsonResponse
     {
@@ -112,28 +90,18 @@ class CandidateController extends Controller
     }
 
     /**
-     * @param CandidatePersonalGeneralInInformationRequest $request
-     * @param int $userId
-     * @return JsonResponse
+     * @param  int  $userId
      */
     public function updatePersonalGeneralInInformation(CandidatePersonalGeneralInInformationRequest $request): JsonResponse
     {
         return $this->candidateService->candidatePersonalGeneralInfoUpdate($request);
     }
 
-    /**
-     * @param CandidatePersonalContactInformationRequest $request
-     * @return JsonResponse
-     */
     public function updatePersonalContactInformation(CandidatePersonalContactInformationRequest $request): JsonResponse
     {
         return $this->candidateService->candidatePersonalContactInfoUpdate($request);
     }
 
-    /**
-     * @param CandidatePersonalAboutMoreRequest $request
-     * @return JsonResponse
-     */
     public function updatePersonalInformationMoreAbout(CandidatePersonalAboutMoreRequest $request): JsonResponse
     {
         return $this->candidateService->candidatePersonalMoreAboutInfoUpdate($request);
@@ -151,8 +119,6 @@ class CandidateController extends Controller
 
     /**
      * Update a family info.
-     * @param CandidateFamilyInfoRequest $request
-     * @return JsonResponse
      */
     public function updateCandidateFamilyInformation(CandidateFamilyInfoRequest $request): JsonResponse
     {
@@ -161,8 +127,6 @@ class CandidateController extends Controller
 
     /**
      * Fetch Candidate Preference info
-     * @param int $userId
-     * @return JsonResponse
      */
     public function fetchCandidatePreference(int $userId): JsonResponse
     {
@@ -171,9 +135,8 @@ class CandidateController extends Controller
 
     /**
      * Update Candidate Preference info
-     * @param CandidatePreferenceInfoRequest $request
-     * @param int $userId
-     * @return JsonResponse
+     *
+     * @param  int  $userId
      */
     public function storeCandidatePreference(CandidatePreferenceInfoRequest $request): JsonResponse
     {
@@ -183,9 +146,8 @@ class CandidateController extends Controller
 
     /**
      * Update Candidate Preference info
-     * @param CandidatePreferenceAboutRequest $request
-     * @param int $userId
-     * @return JsonResponse
+     *
+     * @param  int  $userId
      */
     public function storeCandidatePreferenceAbout(CandidatePreferenceAboutRequest $request): JsonResponse
     {
@@ -194,8 +156,6 @@ class CandidateController extends Controller
 
     /**
      * Update Candidate Preference info
-     * @param CandidatePreferenceRatingRequest $request
-     * @return JsonResponse
      */
     public function storeCandidatePreferenceRating(CandidatePreferenceRatingRequest $request): JsonResponse
     {
@@ -204,7 +164,6 @@ class CandidateController extends Controller
 
     /**
      * Get Candidate Validation info
-     * @return JsonResponse
      */
     public function getCandidatePersonalVerification(): JsonResponse
     {
@@ -213,8 +172,6 @@ class CandidateController extends Controller
 
     /**
      * Store Candidate Validation info
-     * @param CandidatePersonalVerificationRequest $request
-     * @return JsonResponse
      */
     public function updateCandidatePersonalVerification(CandidatePersonalVerificationRequest $request): JsonResponse
     {
@@ -223,8 +180,6 @@ class CandidateController extends Controller
 
     /**
      * Update Candidate info status
-     * @param CandidateInfoStatusUpdateRequest $request
-     * @return JsonResponse
      */
     public function updateCandidateInfoStatus(CandidateInfoStatusUpdateRequest $request): JsonResponse
     {
@@ -232,73 +187,54 @@ class CandidateController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return JsonResponse
      */
-    public function avatarImgUpload(Request $request){
+    public function avatarImgUpload(Request $request)
+    {
         return $this->candidateService->avatarImgUpload($request);
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function viewImage(Request $request): JsonResponse
     {
         return $this->candidateService->listImage();
     }
 
-    /**
-     * @param CandidateImageUploadRequest $request
-     * @return JsonResponse
-     */
     public function storeImage(CandidateImageUploadRequest $request): JsonResponse
     {
         return $this->candidateService->uploadImage($request);
     }
 
     /**
-     * @param CandidateImageUploadRequest $request
-     * @param CandidateImage $candidateImage
-     * @return JsonResponse
+     * @param  CandidateImage  $candidateImage
      */
     public function updateImage(CandidateImageUploadRequest $request): JsonResponse
     {
         return $this->candidateService->updateImage($request);
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function deleteImage(Request $request): JsonResponse
     {
         return $this->candidateService->removeImage($request->name);
     }
-    /**
-     * @param int $imageType
-     * @return JsonResponse
-     */
+
     public function deleteImageByType(Request $request, int $imageType): JsonResponse
     {
         return $this->candidateService->deleteImageByType($request, $imageType);
     }
 
     /**
-     * @param Request $request
      * @return JsonResponse
      */
-    public function viewGallery(Request $request){
+    public function viewGallery(Request $request)
+    {
         return $this->candidateService->getCandidateGallery($request);
     }
 
     /**
-     * @param Request $request
      * @return JsonResponse
      */
-    public function profileSuggestions(Request $request){
+    public function profileSuggestions(Request $request)
+    {
         return $this->candidateService->suggestions();
     }
-
-
 }

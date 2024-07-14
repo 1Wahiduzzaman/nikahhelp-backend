@@ -27,6 +27,6 @@ class AddIsdocuploadedCandidateinfosTable extends Migration
     {
         Schema::table('candidate_information', function (Blueprint $table) {
             $table->dropColumn('is_uplaoded_doc');
-        });    
+        });
     }
 }

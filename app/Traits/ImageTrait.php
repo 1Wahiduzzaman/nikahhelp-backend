@@ -2,15 +2,15 @@
 
 namespace App\Traits;
 
-trait ImageTrait {
+trait ImageTrait
+{
     /**
-     * @param $value, $id
-     * @return string|null
+     * @param  $value,  $id
      */
     public function getImagePath($value, $id): ?string
     {
 
-        $id = '/'.(string)$id.'/';
+        $id = '/'.(string) $id.'/';
         $pattern = [
             '/candidate/',
             $id,
@@ -19,8 +19,8 @@ trait ImageTrait {
         $path = preg_replace($pattern, '', $value) ?? '';
 
         $path = str_replace('/_', '', $path);
-        $newPath = str_replace('image/', 'image/' . $this->user_id, $path);
+        $newPath = str_replace('image/', 'image/'.$this->user_id, $path);
 
-        return !empty($value) ? env('IMAGE_SERVER') . '/' . $newPath : null;
+        return ! empty($value) ? env('IMAGE_SERVER').'/'.$newPath : null;
     }
 }

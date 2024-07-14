@@ -3,24 +3,22 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Representative\ContactInformationRequest;
 use App\Http\Requests\Representative\CreateRepresentativeInformationAPIRequest;
+use App\Http\Requests\Representative\EssentialInformationRequest;
+use App\Http\Requests\Representative\ImageUploadRequest;
 use App\Http\Requests\Representative\RepresentativeInfoStatusUpdateRequest;
 use App\Http\Requests\Representative\UpdateRepresentativeInformationAPIRequest;
-use App\Http\Requests\Representative\EssentialInformationRequest;
-use App\Http\Requests\Representative\ContactInformationRequest;
 use App\Http\Requests\Representative\VerifyIdentityRequest;
-use App\Http\Requests\Representative\ImageUploadRequest;
 use App\Models\RepresentativeInformation;
 use App\Repositories\RepresentativeInformationRepository;
+use App\Services\RepresentativeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AppBaseController;
 use Response;
-use App\Services\RepresentativeService;
 
 /**
  * Class RepresentativeInformationController
- * @package App\Http\Controllers\API
  */
 class RepresentativeInformationController extends Controller
 {
@@ -31,8 +29,7 @@ class RepresentativeInformationController extends Controller
     public function __construct(
         RepresentativeInformationRepository $representativeInformationRepo,
         RepresentativeService $representativeService
-    )
-    {
+    ) {
         $this->representativeService = $representativeService;
         $this->representativeInformationRepository = $representativeInformationRepo;
     }
@@ -41,7 +38,6 @@ class RepresentativeInformationController extends Controller
      * Display a listing of the RepresentativeInformation.
      * GET|HEAD /representativeInformations
      *
-     * @param Request $request
      * @return Response
      */
     public function index(Request $request)
@@ -50,7 +46,6 @@ class RepresentativeInformationController extends Controller
     }
 
     /**
-     * @param int $userId
      * @return \App\Services\JsonResponse|\Illuminate\Http\Response
      */
     public function profileInfo(int $userId)
@@ -59,7 +54,7 @@ class RepresentativeInformationController extends Controller
     }
 
     /**
-     * @param int $userId
+     * @param  int  $userId
      * @return \App\Services\JsonResponse|\Illuminate\Http\Response
      */
     public function representativeInfo()
@@ -71,7 +66,6 @@ class RepresentativeInformationController extends Controller
      * Store a newly created RepresentativeInformation in storage.
      * POST /representativeInformations
      *
-     * @param CreateRepresentativeInformationAPIRequest $request
      *
      * @return Response
      */
@@ -85,7 +79,6 @@ class RepresentativeInformationController extends Controller
      * Store a newly created RepresentativeInformation in storage.
      * POST /representativeInformations
      *
-     * @param ContactInformationRequest $request
      *
      * @return Response
      */
@@ -99,7 +92,6 @@ class RepresentativeInformationController extends Controller
      * Store a newly created RepresentativeInformation in storage.
      * POST /representativeInformations
      *
-     * @param EssentialInformationRequest $request
      *
      * @return Response
      */
@@ -113,8 +105,7 @@ class RepresentativeInformationController extends Controller
      * Display the specified RepresentativeInformation.
      * GET|HEAD /representativeInformations/{id}
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
      */
     public function show($id)
@@ -133,9 +124,7 @@ class RepresentativeInformationController extends Controller
      * Update the specified RepresentativeInformation in storage.
      * PUT/PATCH /representativeInformations/{id}
      *
-     * @param int $id
-     * @param UpdateRepresentativeInformationAPIRequest $request
-     *
+     * @param  int  $id
      * @return Response
      */
     public function update($id, UpdateRepresentativeInformationAPIRequest $request)
@@ -158,11 +147,10 @@ class RepresentativeInformationController extends Controller
      * Remove the specified RepresentativeInformation from storage.
      * DELETE /representativeInformations/{id}
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
-     * @throws \Exception
      *
+     * @throws \Exception
      */
     public function destroy($id)
     {
@@ -178,28 +166,16 @@ class RepresentativeInformationController extends Controller
         return $this->sendSuccess('Representative Information deleted successfully');
     }
 
-    /**
-     * @param VerifyIdentityRequest $request
-     */
-
     public function verifyIdentity(VerifyIdentityRequest $request)
     {
 
         return $this->representativeService->storeVerifyIdentity($request);
     }
 
-    /**
-     * @param ImageUploadRequest $request
-     */
-
     public function imageUpload(ImageUploadRequest $request)
     {
         return $this->representativeService->imageUpload($request);
     }
-
-    /**
-     * @param Request $request
-     */
 
     public function finalSubmit(Request $request)
     {
@@ -208,19 +184,18 @@ class RepresentativeInformationController extends Controller
 
     /**
      * Update Representative info status
-     * @param RepresentativeInfoStatusUpdateRequest $request
-     * @return JsonResponse
      */
-    public function updateRepresentativeInfoStatus(RepresentativeInfoStatusUpdateRequest $request) : JsonResponse
+    public function updateRepresentativeInfoStatus(RepresentativeInfoStatusUpdateRequest $request): JsonResponse
     {
         return $this->representativeService->updateInfoStatus($request);
     }
+
     /**
      * Get Representative Status info
-     * @param RepresentativeInfoStatusUpdateRequest $request
-     * @return JsonResponse
+     *
+     * @param  RepresentativeInfoStatusUpdateRequest  $request
      */
-    public function representativeStatus() : JsonResponse
+    public function representativeStatus(): JsonResponse
     {
         return $this->representativeService->representativeStatus();
     }

@@ -1,9 +1,7 @@
 <?php
 
-
 namespace App\Http\Requests\Matchmaker;
 
-use App\Models\MatchMaker;
 use App\Http\Requests\APIRequest;
 
 class BusinessInformationRequest extends APIRequest
@@ -39,7 +37,7 @@ class BusinessInformationRequest extends APIRequest
             'can_share_last_three_match' => 'required|max:10',
             'match_one' => 'sometimes|required|max:255',
             'match_two' => 'sometimes|required|max:255',
-            'match_three' => 'sometimes|required|max:255'
+            'match_three' => 'sometimes|required|max:255',
         ];
     }
 
@@ -49,8 +47,7 @@ class BusinessInformationRequest extends APIRequest
     public function messages()
     {
         return [
-            'required' => 'The :attribute field is required.'
+            'required' => 'The :attribute field is required.',
         ];
     }
-
 }

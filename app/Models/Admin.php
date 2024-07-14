@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Admin extends Authenticatable implements JWTSubject
@@ -12,13 +11,18 @@ class Admin extends Authenticatable implements JWTSubject
     use HasFactory;
 
     const FULL_NAME = 'full_name';
+
     const EMAIL = 'email';
+
     const EMAIL_VERIFIED_AT = 'email_verified_at';
+
     const PASSWORD = 'password';
+
     const STATUS = 'status';
+
     const REMEMBER_TOKEN = 'remember_token';
 
-        /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -36,7 +40,6 @@ class Admin extends Authenticatable implements JWTSubject
         self::REMEMBER_TOKEN,
         self::EMAIL_VERIFIED_AT,
     ];
-
 
     public function getJWTIdentifier()
     {
@@ -64,7 +67,6 @@ class Admin extends Authenticatable implements JWTSubject
     /**
      * Assign Roles to users
      *
-     * @param $role
      * @return array
      */
     public function assignRole($role)
@@ -77,7 +79,6 @@ class Admin extends Authenticatable implements JWTSubject
     /**
      * Assign multiple Roles to users
      *
-     * @param $roles
      * @return $this
      */
     public function assignRoles($roles)
@@ -87,13 +88,14 @@ class Admin extends Authenticatable implements JWTSubject
                 Role::whereName($role)->firstOrFail()
             );
         }
+
         return $this;
     }
 
     /**
      * Check user has role
      *
-     * @param string $role
+     * @param  string  $role
      * @return string
      */
     public function hasRole($role)
@@ -101,6 +103,7 @@ class Admin extends Authenticatable implements JWTSubject
         if (is_string($role)) {
             return $this->roles->contains('name', strtolower($role));
         }
-        return !!$role->intersect($this->roles)->count();
+
+        return (bool) $role->intersect($this->roles)->count();
     }
 }

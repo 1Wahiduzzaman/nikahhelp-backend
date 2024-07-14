@@ -17,6 +17,7 @@ class StudyLevelController extends Controller
         try {
             $studylevels = StudyLevel::orderBy('name')->get();
             $data['studylevels'] = $studylevels;
+
             return $this->sendSuccessResponse($data, 'Successfully retrieved', [], FResponse::HTTP_OK);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
@@ -24,19 +25,18 @@ class StudyLevelController extends Controller
     }
 
     /**
-     * @param \App\Http\Requests\StudyLevelRequest $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function store(StudyLevelRequest $request)
     {
         try {
-            try{
+            try {
                 $studylevel = StudyLevel::create($request->all());
-            }
-            catch (\Illuminate\Database\QueryException $ex){
+            } catch (\Illuminate\Database\QueryException $ex) {
                 return $this->sendErrorResponse($ex->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
             }
             $data['studylevels'] = $studylevel;
+
             return $this->sendSuccessResponse($data, 'Successfully created', [], FResponse::HTTP_OK);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
@@ -46,13 +46,13 @@ class StudyLevelController extends Controller
     public function show($id)
     {
         try {
-            try{
+            try {
                 $studylevel = StudyLevel::findOrFail($id);
-            }
-            catch (\Illuminate\Database\QueryException $ex){
+            } catch (\Illuminate\Database\QueryException $ex) {
                 return $this->sendErrorResponse($ex->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
             }
             $data['studylevels'] = $studylevel;
+
             return $this->sendSuccessResponse($data, 'Successfully retrieved', [], FResponse::HTTP_OK);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
@@ -62,14 +62,14 @@ class StudyLevelController extends Controller
     public function update(StudyLevelRequest $request, $id)
     {
         try {
-            try{
+            try {
                 $studylevel = StudyLevel::findOrFail($id);
                 $studylevel->update($request->all());
-            }
-            catch (\Illuminate\Database\QueryException $ex){
+            } catch (\Illuminate\Database\QueryException $ex) {
                 return $this->sendErrorResponse($ex->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
             }
             $data['studylevels'] = $studylevel;
+
             return $this->sendSuccessResponse($data, 'Successfully updated', [], FResponse::HTTP_OK);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
@@ -79,13 +79,13 @@ class StudyLevelController extends Controller
     public function destroy($id)
     {
         try {
-            try{
+            try {
                 StudyLevel::destroy($id);
-            }
-            catch (\Illuminate\Database\QueryException $ex){
+            } catch (\Illuminate\Database\QueryException $ex) {
                 return $this->sendErrorResponse($ex->getMessage(), [], FResponse::HTTP_BAD_REQUEST);
             }
-            $data['studylevels'] = array();
+            $data['studylevels'] = [];
+
             return $this->sendSuccessResponse($data, 'Successfully deleted', [], FResponse::HTTP_OK);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], FResponse::HTTP_BAD_REQUEST);

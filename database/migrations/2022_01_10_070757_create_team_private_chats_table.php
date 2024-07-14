@@ -18,7 +18,7 @@ class CreateTeamPrivateChatsTable extends Migration
             $table->bigInteger('from_team_id')->nullable();
             $table->bigInteger('to_team_id')->nullable();
             $table->bigInteger('sender')->nullable();
-            $table->bigInteger('receiver')->nullable(); 
+            $table->bigInteger('receiver')->nullable();
             $table->tinyInteger('is_friend')->nullable()->default(0);
             $table->timestamps();
         });

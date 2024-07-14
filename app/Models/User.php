@@ -3,29 +3,36 @@
 namespace App\Models;
 
 //use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Cashier\Billable;
-use App\Models\CandidateInformation;
-use App\Models\RepresentativeInformation;
-use App\Models\MatchMaker;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, Billable;
+    use Billable, HasFactory, Notifiable;
 
     const FULL_NAME = 'full_name';
+
     const EMAIL = 'email';
+
     const EMAIL_VERIFIED_AT = 'email_verified_at';
+
     const IS_VERIFIED = 'is_verified';
+
     const PASSWORD = 'password';
+
     const STATUS = 'status';
+
     const LOCKED_AT = 'locked_at';
+
     const LOCKED_END = 'locked_end';
+
     const REMEMBER_TOKEN = 'remember_token';
+
     const ACCOUNT_TYPE = 'account_type';
+
     const FORM_TYPE = 'form_type';
 
     /**
@@ -122,6 +129,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(CandidateImage::class, 'user_id', 'id');
     }
+
     public function rejected_notes()
     {
         return $this->hasMany(RejectedNote::class, 'user_id', 'id');
@@ -177,9 +185,9 @@ class User extends Authenticatable implements JWTSubject
      * Generate 6 digits MFA code for the User
      */
     public function generateTwoFactorCode()
-    {   
+    {
         $this->timestamps = false; //Dont update the 'updated_at' field yet
-        
+
         $this->two_factor_code = rand(100000, 999999);
         $this->two_factor_expires_at = now()->addMinutes(10);
         $this->save();
@@ -189,7 +197,7 @@ class User extends Authenticatable implements JWTSubject
      * Reset the MFA code generated earlier
      */
     public function resetTwoFactorCode()
-    {        
+    {
         $this->two_factor_code = null;
         $this->two_factor_expires_at = null;
         $this->save();
@@ -198,7 +206,8 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Increment the login count
      */
-    public function incrementLoginCount() {
+    public function incrementLoginCount()
+    {
         $this->timestamps = false; //Dont update the 'updated_at' field yet
         $this->login_count++;
         $this->save();
@@ -207,7 +216,8 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Reset the login count
      */
-    public function resetLoginCount() {
+    public function resetLoginCount()
+    {
         $this->timestamps = false; //Dont update the 'updated_at' field yet
         $this->login_count = 0;
         $this->save();

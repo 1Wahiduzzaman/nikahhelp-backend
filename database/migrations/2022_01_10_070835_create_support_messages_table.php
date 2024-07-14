@@ -18,10 +18,10 @@ class CreateSupportMessagesTable extends Migration
             $table->bigInteger('team_id')->nullable();
             $table->bigInteger('chat_id')->nullable();
             $table->bigInteger('sender')->nullable();
-            $table->bigInteger('receiver')->nullable();             
-            $table->text('body')->nullable();   
-            $table->string('attachment')->nullable();  
-            $table->tinyInteger('seen')->default(0);  
+            $table->bigInteger('receiver')->nullable();
+            $table->text('body')->nullable();
+            $table->string('attachment')->nullable();
+            $table->tinyInteger('seen')->default(0);
             $table->timestamps();
         });
     }

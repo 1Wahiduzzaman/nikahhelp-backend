@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Transformers;
 
 use App\Models\CandidateInformation;
@@ -9,13 +8,10 @@ use League\Fractal\TransformerAbstract;
 
 /**
  * Class RepresentativeTransformer
- * @package App\Transformers
  */
 class RepresentativeTransformer extends TransformerAbstract
 {
-
     /**
-     * @param RepresentativeInformation $item
      * @return array|array[]
      */
     public function transform(RepresentativeInformation $item): array
@@ -23,19 +19,19 @@ class RepresentativeTransformer extends TransformerAbstract
         return array_merge(
             $this->basicInfo($item),
             [
-                'basic' => $this->basicInfo($item)
+                'basic' => $this->basicInfo($item),
             ],
             [
-                'essential' => $this->essentialInfo($item)
+                'essential' => $this->essentialInfo($item),
             ],
             [
-                'personal' => $this->personalInfo($item)
+                'personal' => $this->personalInfo($item),
             ],
             [
-                'verification' => $this->verificationInfo($item)
+                'verification' => $this->verificationInfo($item),
             ],
             [
-                'image_upload' => $this->imageUploadInfo($item)
+                'image_upload' => $this->imageUploadInfo($item),
             ]
         );
     }
@@ -45,36 +41,32 @@ class RepresentativeTransformer extends TransformerAbstract
         return array_merge(
             $this->basicInfo($item),
             [
-                'essential' => $this->essentialInfo($item)
+                'essential' => $this->essentialInfo($item),
             ],
             [
-                'personal' => $this->personalInfo($item)
+                'personal' => $this->personalInfo($item),
             ],
             [
-                'verification' => $this->verificationInfo($item)
+                'verification' => $this->verificationInfo($item),
             ],
             [
-                'image_upload' => $this->imageUploadInfo($item)
+                'image_upload' => $this->imageUploadInfo($item),
             ]
         );
     }
 
-    /**
-     * @param RepresentativeInformation $item
-     * @return array
-     */
     public function transformProfileInitialInfo(RepresentativeInformation $item): array
     {
         return array_merge(
             $this->basicInfo($item),
             [
-                'personal' => $this->personalInfo($item)
+                'personal' => $this->personalInfo($item),
             ],
             [
-                'preference' => $this->preferenceInfo($item)
+                'preference' => $this->preferenceInfo($item),
             ],
             [
-                'family' => $this->familyInfo($item)
+                'family' => $this->familyInfo($item),
             ]
         );
     }
@@ -84,15 +76,11 @@ class RepresentativeTransformer extends TransformerAbstract
         return array_merge(
             $this->basicInfo($item),
             [
-                'verification' => $this->verificationInfo($item)
+                'verification' => $this->verificationInfo($item),
             ]
         );
     }
 
-    /**
-     * @param RepresentativeInformation $item
-     * @return array
-     */
     public function transformPersonal(RepresentativeInformation $item): array
     {
         return array_merge(
@@ -102,15 +90,11 @@ class RepresentativeTransformer extends TransformerAbstract
                 'general' => $this->generellInfo($item),
 
                 'contact' => $this->contactInfo($item),
-                'more_about' => $this->moreabout($item)
+                'more_about' => $this->moreabout($item),
             ],
         );
     }
 
-    /**
-     * @param RepresentativeInformation $item
-     * @return array
-     */
     public function transformGallery(RepresentativeInformation $item): array
     {
         return array_merge(
@@ -121,128 +105,94 @@ class RepresentativeTransformer extends TransformerAbstract
         );
     }
 
-    /**
-     * @param RepresentativeInformation $item
-     * @return array
-     */
     public function transformPersonalBasic(RepresentativeInformation $item): array
     {
         return array_merge(
             $this->basicInfo($item),
             [
-                'basic' => $this->basicInfo($item)
+                'basic' => $this->basicInfo($item),
             ],
         );
     }
 
-    /**
-     * @param RepresentativeInformation $item
-     * @return array
-     */
     public function transformPersonalContact(RepresentativeInformation $item): array
     {
         return array_merge(
             $this->basicInfo($item),
             [
-                'contact' => $this->contactInfo($item)
+                'contact' => $this->contactInfo($item),
             ],
         );
     }
 
-    /**
-     * @param RepresentativeInformation $item
-     * @return array
-     */
     public function transformPersonalEssential(RepresentativeInformation $item): array
     {
         return array_merge(
             $this->basicInfo($item),
             [
-                'essential' => $this->essentialInfo($item)
+                'essential' => $this->essentialInfo($item),
             ],
         );
     }
 
-    /**
-     * @param RepresentativeInformation $item
-     * @return array
-     */
     public function transformPersonalGeneral(RepresentativeInformation $item): array
     {
         return array_merge(
             $this->basicInfo($item),
             [
-                'general' => $this->generellInfo($item)
+                'general' => $this->generellInfo($item),
             ],
         );
     }
 
-
-    /**
-     * @param RepresentativeInformation $item
-     * @return array
-     */
     public function transformPersonalMoreAbout(RepresentativeInformation $item): array
     {
         return array_merge(
             $this->basicInfo($item),
             [
-                'more_about' => $this->moreabout($item)
+                'more_about' => $this->moreabout($item),
             ],
         );
     }
 
-    /**
-     * @param RepresentativeInformation $item
-     * @return array
-     */
     public function transformPreference(RepresentativeInformation $item): array
     {
         return array_merge(
             $this->basicInfo($item),
             [
-                'preference' => $this->preferenceInfo($item)
+                'preference' => $this->preferenceInfo($item),
             ],
         );
     }
 
-    /**
-     * @param RepresentativeInformation $item
-     * @return array
-     */
     public function transformFamily(RepresentativeInformation $item): array
     {
         return array_merge(
             $this->basicInfo($item),
             [
-                'family' => $this->familyInfo($item)
+                'family' => $this->familyInfo($item),
             ],
         );
     }
 
-
     /**
      * Extract Basic info only
-     * @param RepresentativeInformation $item
-     * @return array
      */
     private function basicInfo(RepresentativeInformation $item): array
     {
         return [
             'id' => $item->id,
-            'user_id'=>$item->user_id,
-            'first_name'=>$item->first_name,
-            'last_name'=>$item->last_name,
-            'screen_name'=>$item->screen_name,
+            'user_id' => $item->user_id,
+            'first_name' => $item->first_name,
+            'last_name' => $item->last_name,
+            'screen_name' => $item->screen_name,
             'data_input_status' => $item->data_input_status,
-            'is_uplaoded_doc' => $item->is_uplaoded_doc
+            'is_uplaoded_doc' => $item->is_uplaoded_doc,
         ];
     }
 
     /**
      * Extract Essential info only
-     * @param RepresentativeInformation $item
-     * @return array
      */
     private function essentialInfo(RepresentativeInformation $item): array
     {
@@ -254,7 +204,6 @@ class RepresentativeTransformer extends TransformerAbstract
         ];
     }
 
-
     public function RepDetails(RepresentativeInformation $item)
     {
         return $this->personalInfo($item);
@@ -262,8 +211,6 @@ class RepresentativeTransformer extends TransformerAbstract
 
     /**
      * Extract Personal info only
-     * @param RepresentativeInformation $item
-     * @return array
      */
     private function personalInfo(RepresentativeInformation $item): array
     {
@@ -272,7 +219,7 @@ class RepresentativeTransformer extends TransformerAbstract
             'per_current_residence_country' => $item->per_current_residence_country,
             'per_current_residence_country_text' => $item->currentResidenceCountry ? $item->currentResidenceCountry->name : null,
             'per_current_residence_city' => $item->per_current_residence_city,
-            'per_permanent_country' => $item->per_permanent_country ,
+            'per_permanent_country' => $item->per_permanent_country,
             'per_permanent_country_text' => $item->permanentCountry ? $item->permanentCountry->name : null,
             'per_permanent_city' => $item->per_permanent_city,
             'per_county' => $item->per_county,
@@ -289,8 +236,6 @@ class RepresentativeTransformer extends TransformerAbstract
 
     /**
      * Extract Verification info only
-     * @param RepresentativeInformation $item
-     * @return array
      */
     private function verificationInfo(RepresentativeInformation $item): array
     {
@@ -307,14 +252,12 @@ class RepresentativeTransformer extends TransformerAbstract
             'ver_recommender_occupation' => $item->ver_recommender_occupation,
             'ver_recommender_address' => $item->ver_recommender_address,
             'ver_recommender_mobile_no' => $item->ver_recommender_mobile_no,
-            'ver_recommender_email' => $item->ver_recommender_email
+            'ver_recommender_email' => $item->ver_recommender_email,
         ];
     }
 
     /**
      * Extract Verification info only
-     * @param RepresentativeInformation $item
-     * @return array
      */
     private function imageUploadInfo(RepresentativeInformation $item): array
     {
@@ -338,20 +281,14 @@ class RepresentativeTransformer extends TransformerAbstract
         ];
     }
 
-
     /**
-     * @param CandidateInformation $item
-     * @return array
+     * @param  CandidateInformation  $item
      */
     public function transformSearchResult(RepresentativeInformation $item): array
     {
         return $this->candidateCartData($item);
     }
 
-     /**
-     * @param CandidateInformation $item
-     * @return array
-     */
     private function candidateCartData(CandidateInformation $item): array
     {
         return [

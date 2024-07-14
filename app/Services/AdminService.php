@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Enums\HttpStatusCode;
 use App\Models\Admin;
@@ -14,31 +12,23 @@ use App\Repositories\UserRepository;
 use App\Traits\CrudTrait;
 use App\Transformers\CandidateTransformer;
 use Carbon\Carbon;
-use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use JWTAuth;
-use Mail;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AdminService extends ApiBaseService
 {
-
     use CrudTrait;
 
     protected \App\Repositories\UserRepository $userRepository;
 
-    /**
-     * @var RepresentativeRepository
-     */
     protected RepresentativeRepository $representativeRepository;
 
     protected \App\Transformers\CandidateTransformer $candidateTransformer;
 
     protected \App\Repositories\CandidateRepository $candidateRepository;
-
 
     public function __construct(
         UserRepository $UserRepository,
@@ -53,11 +43,10 @@ class AdminService extends ApiBaseService
         $this->candidateRepository = $candidateRepository;
     }
 
-
     public function authenticate(Request $request)
     {
         $credentials = $request->only('email', 'password');
-        $data = array();
+        $data = [];
         try {
             $adminInfo = Admin::where('email', $request->input('email'))->first();
 
@@ -69,7 +58,7 @@ class AdminService extends ApiBaseService
                     403
                 );
             }
-            if (!$token = Auth::guard('admin')->attempt($credentials)) {
+            if (! $token = Auth::guard('admin')->attempt($credentials)) {
                 return $this->sendErrorResponse(
                     'Invalid credentials',
                     ['detail' => 'Ensure that the email and password included in the request are correct'],
@@ -91,7 +80,6 @@ class AdminService extends ApiBaseService
      * Get the token array structure.
      *
      * @param  string  $token
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     protected function TokenFormater($token)
@@ -100,16 +88,13 @@ class AdminService extends ApiBaseService
         $dateTime = Carbon::now()->addSeconds($expireTime);
         $data = [
             'access_token' => $token,
-            'token_type'   => 'bearer',
-            'expires_in'   => $dateTime,
+            'token_type' => 'bearer',
+            'expires_in' => $dateTime,
         ];
 
         return $data;
     }
 
-    /**
-     * @param $request
-     */
     public function userList($request)
     {
         $result = $this->userRepository->getModel()->newQuery();
@@ -122,7 +107,6 @@ class AdminService extends ApiBaseService
         return $this->sendSuccessResponse($data, 'Data retrieved successfully', [1], HttpStatusCode::SUCCESS);
     }
 
-
     /**
      * This function use for getting user information by user id
      *
@@ -132,16 +116,16 @@ class AdminService extends ApiBaseService
     {
         try {
             $user = $this->userRepository->findOneByProperties([
-                "id" => $request->user_id,
+                'id' => $request->user_id,
             ]);
-            if ( ! $user) {
+            if (! $user) {
                 return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND);
             } else {
                 $candidate = $this->candidateRepository->findOneByProperties([
                     'user_id' => $request->user_id,
                 ]);
-                if ( ! $candidate) {
-                    $candidateInformation = array();
+                if (! $candidate) {
+                    $candidateInformation = [];
                 } else {
                     $candidateInformation = $this->candidateTransformer->transform($candidate);
                 }
@@ -150,14 +134,14 @@ class AdminService extends ApiBaseService
             }
         } catch (Exception $e) {
             return response()->json([
-                'status'      => 'FAIL',
+                'status' => 'FAIL',
                 'status_code' => $e->getStatusCode(),
-                'message'     => $e->getMessage(),
-                'error'       => ['details' => $e->getMessage()],
+                'message' => $e->getMessage(),
+                'error' => ['details' => $e->getMessage()],
             ], $e->getStatusCode());
         }
 
-        $data = array();
+        $data = [];
         $data['user'] = $user;
         $data['candidate_information'] = $candidateInformation;
         $data['representative_information'] = $representativeInformation;
@@ -170,7 +154,7 @@ class AdminService extends ApiBaseService
         $permissionList = Permission::with('roles')->get();
         $adminPermissions = [];
         foreach ($permissionList as $permission) {
-           $adminPermissions[$permission->slug] = $admin->hasRole($permission->roles);
+            $adminPermissions[$permission->slug] = $admin->hasRole($permission->roles);
         }
 
         return $adminPermissions;
@@ -179,14 +163,12 @@ class AdminService extends ApiBaseService
     public function resolveTicket(Request $request)
     {
         try {
-          $ticket =  TicketSubmission::find($request->input('ticket_id'));
-          $ticket->delete();
+            $ticket = TicketSubmission::find($request->input('ticket_id'));
+            $ticket->delete();
 
-          return $this->sendSuccessResponse($ticket, 'Resolved', 0, HttpStatusCode::SUCCESS);
-        } catch(Exception $exception) {
+            return $this->sendSuccessResponse($ticket, 'Resolved', 0, HttpStatusCode::SUCCESS);
+        } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), 'failed to resolve');
         }
     }
-
-
 }

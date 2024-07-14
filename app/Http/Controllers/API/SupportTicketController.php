@@ -18,40 +18,44 @@ class SupportTicketController extends AppBaseController
     /**
      * @var \App\Services\AdminService
      */
-    public  $adminService;
+    public $adminService;
+
     public function __construct(UserService $matrimonyUsers, AdminService $adminService)
     {
         $this->matrimonyUsers = $matrimonyUsers;
         $this->adminService = $adminService;
     }
 
-    public  function getALlTicket(Request $request)
+    public function getALlTicket(Request $request)
     {
-        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+        if (! Gate::allows('CAN_ACCESS_SUPPORT')) {
             return $this->sendUnauthorizedResponse();
         }
+
         return $this->matrimonyUsers->allTickets($request);
     }
 
     public function getUserTickets(Request $request, $id)
     {
-        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+        if (! Gate::allows('CAN_ACCESS_SUPPORT')) {
             return $this->sendUnauthorizedResponse();
         }
+
         return $this->matrimonyUsers->userTickets($request, $id);
     }
 
     public function getTicket($id)
     {
-        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+        if (! Gate::allows('CAN_ACCESS_SUPPORT')) {
             return $this->sendUnauthorizedResponse();
         }
+
         return $this->matrimonyUsers->singleTicket($id);
     }
 
     public function saveRequest(Request $request)
     {
-        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+        if (! Gate::allows('CAN_ACCESS_SUPPORT')) {
             return $this->sendUnauthorizedResponse();
         }
 
@@ -60,7 +64,7 @@ class SupportTicketController extends AppBaseController
 
     public function getTicketMessages(Request $request, int $id)
     {
-        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+        if (! Gate::allows('CAN_ACCESS_SUPPORT')) {
             return $this->sendUnauthorizedResponse();
         }
 
@@ -69,7 +73,7 @@ class SupportTicketController extends AppBaseController
 
     public function deleteTicketMessage(Request $request, int $id)
     {
-        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+        if (! Gate::allows('CAN_ACCESS_SUPPORT')) {
             return $this->sendUnauthorizedResponse();
         }
 
@@ -78,7 +82,7 @@ class SupportTicketController extends AppBaseController
 
     public function ticketResolve(Request $request)
     {
-        if (!Gate::allows('CAN_ACCESS_SUPPORT')) {
+        if (! Gate::allows('CAN_ACCESS_SUPPORT')) {
             return $this->sendUnauthorizedResponse();
         }
 

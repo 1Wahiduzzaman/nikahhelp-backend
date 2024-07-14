@@ -15,11 +15,11 @@ class CreateTeamMessagesTable extends Migration
     {
         Schema::create('team_messages', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('team_id')->nullable();            
-            $table->bigInteger('sender')->nullable();                     
-            $table->text('body')->nullable();   
-            $table->string('attachment')->nullable();  
-            $table->tinyInteger('seen')->default(0);   
+            $table->bigInteger('team_id')->nullable();
+            $table->bigInteger('sender')->nullable();
+            $table->text('body')->nullable();
+            $table->string('attachment')->nullable();
+            $table->tinyInteger('seen')->default(0);
             $table->timestamps();
         });
     }

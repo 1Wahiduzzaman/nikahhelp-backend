@@ -1,11 +1,8 @@
 <?php
 
-
 namespace App\Http\Requests\Matchmaker;
 
-use App\Models\RepresentativeInformation;
 use App\Http\Requests\APIRequest;
-use Validator;
 
 class VerifyIdentityRequest extends APIRequest
 {
@@ -45,12 +42,10 @@ class VerifyIdentityRequest extends APIRequest
     /**
      * @return array|string[]
      */
-
     public function messages()
     {
         return [
-            'required' => 'The :attribute field is required.'
+            'required' => 'The :attribute field is required.',
         ];
     }
-
 }

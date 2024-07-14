@@ -14,9 +14,9 @@ class ChangePreHeightMinToCandidateInformationsTable extends Migration
     public function up()
     {
         Schema::table('candidate_information', function (Blueprint $table) {
-            $table->string('pre_height_min',20)->change();
-            $table->string('pre_height_max',20)->change();
-            $table->string('pre_partner_religions',255)->change();
+            $table->string('pre_height_min', 20)->change();
+            $table->string('pre_height_max', 20)->change();
+            $table->string('pre_partner_religions', 255)->change();
         });
     }
 
@@ -25,8 +25,5 @@ class ChangePreHeightMinToCandidateInformationsTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
-
-    }
+    public function down() {}
 }

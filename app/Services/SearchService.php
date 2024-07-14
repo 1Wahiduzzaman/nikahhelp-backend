@@ -1,42 +1,39 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
-use App\Models\CandidateImage;
-use App\Models\Generic;
 use App\Models\Team;
 use App\Models\TeamConnection;
+use App\Repositories\CandidateRepository;
+use App\Repositories\RepresentativeInformationRepository;
+use App\Repositories\TeamMemberRepository;
+use App\Repositories\TeamRepository;
+use App\Repositories\UserRepository;
+use App\Traits\CrudTrait;
+use App\Transformers\CandidateSearchTransformer;
 use App\Transformers\CandidateTransformer;
+use App\Transformers\TeamTransformer;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use App\Traits\CrudTrait;
 use Illuminate\Http\Request;
-use App\Repositories\UserRepository;
-use App\Repositories\CandidateRepository;
-use App\Repositories\TeamRepository;
-use App\Repositories\TeamMemberRepository;
-use Illuminate\Support\Facades\Auth;
-use App\Transformers\TeamTransformer;
-use Illuminate\Support\Str;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Repositories\RepresentativeInformationRepository;
+use Illuminate\Support\Facades\Auth;
 // use phpDocumentor\Reflection\Types\Null_;
-use App\Transformers\CandidateSearchTransformer;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class SearchService extends ApiBaseService
 {
-
     use CrudTrait;
 
     protected \App\Transformers\CandidateSearchTransformer $searchTransformer;
+
     protected \App\Repositories\UserRepository $userRepository;
 
     protected \App\Services\BlockListService $blockListService;
+
     protected \App\Repositories\CandidateRepository $candidateRepository;
 
     protected \App\Repositories\TeamMemberRepository $teamMemberRepository;
@@ -46,15 +43,12 @@ class SearchService extends ApiBaseService
     protected \App\Repositories\TeamRepository $teamRepository;
 
     protected \App\Transformers\TeamTransformer $teamTransformer;
+
     private \App\Transformers\CandidateTransformer $candidateTransformer;
 
     /**
      * TeamService constructor.
-     *
-     * @param TeamRepository $teamRepository
      */
-
-
     public function __construct(
         TeamRepository $teamRepository,
         TeamTransformer $teamTransformer,
@@ -65,8 +59,7 @@ class SearchService extends ApiBaseService
         CandidateTransformer $candidateTransformer,
         RepresentativeInformationRepository $representativeInformationRepository,
         CandidateSearchTransformer $searchTransformer
-    )
-    {
+    ) {
         $this->teamRepository = $teamRepository;
         $this->teamTransformer = $teamTransformer;
         $this->teamMemberRepository = $teamMemberRepository;
@@ -79,10 +72,10 @@ class SearchService extends ApiBaseService
         $this->searchTransformer = $searchTransformer;
     }
 
-
     /**
      * Update resource
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return Response
      */
     public function filter($request)
@@ -93,8 +86,8 @@ class SearchService extends ApiBaseService
 
             /*Attempt log in */
             try {
-                JWTAuth::parseToken()->authenticate();
-            }catch (\Exception $e){
+                auth()->authenticate();
+            } catch (\Exception $e) {
             }
 
             $userInfo['shortList'] = [];
@@ -107,31 +100,29 @@ class SearchService extends ApiBaseService
 
             $candidates = $this->candidateRepository->getModel();
 
-
             $representative = $this->representativeRepository->getModel();
             /* FILTER - Candidate Must be verified  */
-            $candidates = $candidates->whereHas('user',function ($q){
-                $q->where('status',3);
+            $candidates = $candidates->whereHas('user', function ($q) {
+                $q->where('status', 3);
             });
 
             // $candidates->whereHas('candidateTeam')
 
-            if(Auth::check()){
+            if (Auth::check()) {
 
                 $userId = self::getUserId();
                 $loggedInRepresentative = null;
                 $loggedInCandidate = $this->candidateRepository->findOneByProperties([
-                    'user_id' => $userId
+                    'user_id' => $userId,
                 ]);
 
                 if ($loggedInCandidate) {
                     $activeTeam = $loggedInCandidate->active_team;
                 }
 
-
-                if (!$loggedInCandidate) {
+                if (! $loggedInCandidate) {
                     $loggedInRepresentative = $this->representativeRepository->findOneByProperties([
-                        'user_id' => $userId
+                        'user_id' => $userId,
                     ]);
 
                     $activeTeam = $loggedInRepresentative->active_team;
@@ -139,7 +130,7 @@ class SearchService extends ApiBaseService
                     $loggedInCandidate = $loggedInRepresentative;
                 }
 
-                if (!$activeTeam) {
+                if (! $activeTeam) {
                     throw new Exception('Team not found, Please create team first');
                 }
                 $shortListedUsers = $activeTeam->teamShortListedUser;
@@ -155,7 +146,7 @@ class SearchService extends ApiBaseService
                 // $userInfo['blockList'] = $loggedInCandidate->blockList->pluck('user_id')->toArray();
                 $connectFrom = $activeTeam->sentRequest->pluck('team_id')->toArray();
                 $connectTo = $activeTeam->receivedRequest->pluck('team_id')->toArray();
-                $userInfo['connectList'] = array_unique(array_merge($connectFrom,$connectTo)) ;
+                $userInfo['connectList'] = array_unique(array_merge($connectFrom, $connectTo));
 
                 /* FILTER - Own along with team member and block list candidate  */
                 $activeTeamUserIds = $activeTeam->team_members->pluck('user_id')->toArray();
@@ -173,13 +164,11 @@ class SearchService extends ApiBaseService
                     $connectToMembersId
                 ));
 
-                $candidates = $candidates->whereNotIn('user_id',$exceptIds);
+                $candidates = $candidates->whereNotIn('user_id', $exceptIds);
 
                 /* FILTER - Country not preferred  */
-               // $candidates = $candidates->whereNot('per_current_residence_country'/**$loggedInCandidate->bloked_countries->pluck('id')->toArray()**/);
+                // $candidates = $candidates->whereNot('per_current_residence_country'/**$loggedInCandidate->bloked_countries->pluck('id')->toArray()**/);
             }
-
-
 
             /* FILTER - Gender  */
             if (isset($request->gender)) {
@@ -205,97 +194,97 @@ class SearchService extends ApiBaseService
             }
 
             /* FILTER - Height  */
-            if(isset($request->min_height) && isset($request->max_height)){
+            if (isset($request->min_height) && isset($request->max_height)) {
                 $heightRange['min'] = $request->min_height;
                 $heightRange['max'] = $request->max_height;
                 $candidates = $candidates->whereBetween('per_height', [$heightRange]);
             }
 
             /* FILTER - Ethnicity  */
-            if(isset($request->ethnicity)){
+            if (isset($request->ethnicity)) {
                 $candidates = $candidates->where('per_ethnicity', $request->ethnicity);
             }
 
             /* FILTER - Marital Status  */
-            if(isset($request->marital_status)){
+            if (isset($request->marital_status)) {
                 $candidates = $candidates->where('per_marital_status', $request->marital_status);
             }
 
             /* FILTER - Employment Status  */
-            if(isset($request->employment_status)){
+            if (isset($request->employment_status)) {
                 $candidates = $candidates->where('per_employment_status', $request->employment_status);
             }
 
             /* FILTER - Occupation */
-            if(isset($request->per_occupation)){
+            if (isset($request->per_occupation)) {
                 $candidates = $candidates->where('per_occupation', $request->per_occupation);
             }
 
             /* FILTER - Education Level */
-            if(isset($request->education_level_id)){
+            if (isset($request->education_level_id)) {
                 $candidates = $candidates->where('per_education_level_id', $request->education_level_id);
             }
 
             /* FILTER - Mother Tongue */
-            if(isset($request->mother_tongue)){
+            if (isset($request->mother_tongue)) {
                 $candidates = $candidates->where('per_mother_tongue', $request->mother_tongue);
             }
 
             /* FILTER - Nationality */
-            if(isset($request->nationality)){
+            if (isset($request->nationality)) {
                 $candidates = $candidates->where('per_nationality', $request->nationality);
             }
 
             /* FILTER - Current Residence */
-            if(isset($request->current_residence_country)){
+            if (isset($request->current_residence_country)) {
                 $candidates = $candidates->where('per_current_residence_country', $request->country);
             }
 
             /* FILTER - Currently Living With */
-            if(isset($request->currently_living_with)){
+            if (isset($request->currently_living_with)) {
                 $candidates = $candidates->where('per_currently_living_with', $request->currently_living_with);
             }
 
             /* FILTER - Smoker status */
-            if(isset($request->smoker)){
+            if (isset($request->smoker)) {
                 $candidates = $candidates->where('per_smoker ', $request->smoker);
             }
 
             /* FILTER - Hobbies Interests */
-            if(isset($request->hobbies_interests)){
+            if (isset($request->hobbies_interests)) {
                 $candidates = $candidates->where('per_hobbies_interests', $request->smoker);
             }
 
             // return response()->json(['msg' => $candidates]);
 
-            $parPage = $request->input('parpage',10);
+            $parPage = $request->input('parpage', 10);
 
-            if(Auth::check()) {
+            if (Auth::check()) {
                 $loggedInCandidateIsBlockedBy = $loggedInCandidate->blockListedBy->pluck('user_id')->toArray();
                 $candidate = $candidates->whereNotIn('user_id', $loggedInCandidateIsBlockedBy);
-                $candidates = $candidates->whereHas('candidateTeam')->with('getNationality','getReligion','candidateTeam','activeTeams','activeTeams.team_members')->paginate($parPage);
+                $candidates = $candidates->whereHas('candidateTeam')->with('getNationality', 'getReligion', 'candidateTeam', 'activeTeams', 'activeTeams.team_members')->paginate($parPage);
             } else {
-                $candidates = $candidates->with('getNationality','getReligion','candidateTeam','activeTeams','activeTeams.team_members')->paginate($parPage);
+                $candidates = $candidates->with('getNationality', 'getReligion', 'candidateTeam', 'activeTeams', 'activeTeams.team_members')->paginate($parPage);
             }
 
             // $caniddateInTeam = $candidates->whereHas('candidateTeam')->get();
 
-            if($candidates->total() < 1){
+            if ($candidates->total() < 1) {
                 return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND);
             }
 
             $candidatesResponse = [];
             $candidatesResponseUnAuth = [];
-            foreach ($candidates  as $key => $candidate) {
+            foreach ($candidates as $key => $candidate) {
                 /* Include additional info */
-                $candidate->is_short_listed = in_array($candidate->user_id,$userInfo['shortList']);
-                $candidate->is_block_listed = in_array($candidate->user_id,$userInfo['blockList']);
-                $candidate->is_teamListed = in_array($candidate->user_id,$userInfo['teamList']);
+                $candidate->is_short_listed = in_array($candidate->user_id, $userInfo['shortList']);
+                $candidate->is_block_listed = in_array($candidate->user_id, $userInfo['blockList']);
+                $candidate->is_teamListed = in_array($candidate->user_id, $userInfo['teamList']);
 
                 /* Set Candidate Team related info */
                 $teamId = null;
                 $teamTableId = '';
-                if($candidate->candidate_team){
+                if ($candidate->candidate_team) {
                     $teamId = $candidate->candidate_team->team_id;
                     $teamTableId = $candidate->candidate_team->id;
                     $candidate->team_info = [
@@ -307,28 +296,29 @@ class SearchService extends ApiBaseService
                 $candidate->team_id = $teamId;
 
                 /* Set Auth Team related info */
-                if(Auth::check()){
+                if (Auth::check()) {
                     $connectionRequestSendType = null;
                     $teamConnectStatus = null;
                     $teamAlreadysentRequest = TeamConnection::where('to_team_id', $candidate->candidate_team->id)->where('from_team_id', $activeTeam->id)->first();
                     $teamConnectRecieved = TeamConnection::where('to_team_id', $activeTeam->id)->where('from_team_id', $candidate->candidate_team->id)->first();
-    
+
                     if ($teamAlreadysentRequest || $teamConnectRecieved) {
                         Log::info([$teamAlreadysentRequest, $teamConnectRecieved]);
+
                         continue;
                     }
-                        
-                    if($activeTeam){
+
+                    if ($activeTeam) {
                         $candidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;
-    
+
                         /* Find Team Connection Status (We Decline or They Decline )*/
-                        if(in_array($teamId,$connectFrom)){
+                        if (in_array($teamId, $connectFrom)) {
                             $connectionRequestSendType = 1;
-                            $teamConnectStatus = TeamConnection::where('from_team_id',$activeTeam->id)->where('to_team_id',$candidate->candidate_team->id)->first();
+                            $teamConnectStatus = TeamConnection::where('from_team_id', $activeTeam->id)->where('to_team_id', $candidate->candidate_team->id)->first();
                             $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
-                        }elseif (in_array($teamId,$connectTo)){
+                        } elseif (in_array($teamId, $connectTo)) {
                             $connectionRequestSendType = 2;
-                            $teamConnectStatus = TeamConnection::where('from_team_id',$candidate->candidate_team->id)->where('to_team_id',$activeTeam->id)->first();
+                            $teamConnectStatus = TeamConnection::where('from_team_id', $candidate->candidate_team->id)->where('to_team_id', $activeTeam->id)->first();
                             $teamConnectStatus = $teamConnectStatus ? $teamConnectStatus->connection_status : null;
                         }
                     }
@@ -345,13 +335,11 @@ class SearchService extends ApiBaseService
                         'personal' => $this->searchTransformer->personal($candidate),
                     ],
                     [
-                        'preference' => $this->candidateTransformer->transform($candidate)['preference']
+                        'preference' => $this->candidateTransformer->transform($candidate)['preference'],
                     ],
                 );
 
-
-
-                if(!Auth::check()) {
+                if (! Auth::check()) {
                     $candidatesResponseUnAuth[] = array_merge([
                         'image' => $candidate->per_avatar_url ? $candidate->per_avatar_url : null,
                         'screen_name' => $candidate->screen_name,
@@ -364,26 +352,24 @@ class SearchService extends ApiBaseService
                         'per_ethnicity' => $candidate->per_ethnicity,
                         // 'per_hobbies_interests' => $candidate->per_hobbies_interests,
                         'per_occupation' => $candidate->per_occupation,
-                        'per_permanent_country_name' => $candidate->getPermanentCountry()->exists() ? $candidate->getPermanentCountry->name :null,
+                        'per_permanent_country_name' => $candidate->getPermanentCountry()->exists() ? $candidate->getPermanentCountry->name : null,
 
                     ]);
                 }
             }
 
-
-            if(!Auth::check()) {
+            if (! Auth::check()) {
                 $searchResult['data'] = $candidatesResponseUnAuth;
                 $searchResult['pagination'] = $this->paginationResponse($candidates);
 
-                return $this->sendSuccessResponse($searchResult, "Candidates fetched successfully");
+                return $this->sendSuccessResponse($searchResult, 'Candidates fetched successfully');
 
             }
 
             $searchResult['data'] = $candidatesResponse;
             $searchResult['pagination'] = $this->paginationResponse($candidates);
 
-            return $this->sendSuccessResponse($searchResult, "Candidates fetched successfully");
-
+            return $this->sendSuccessResponse($searchResult, 'Candidates fetched successfully');
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
@@ -391,7 +377,6 @@ class SearchService extends ApiBaseService
     }
 
     /**
-     * @param $queryData
      * @return array
      */
     protected function pagination($queryData)
@@ -405,13 +390,14 @@ class SearchService extends ApiBaseService
             'last_page' => $queryData->lastPage(),
             'has_more_pages' => $queryData->hasMorePages(),
         ];
+
         return $data;
     }
 
-
     /**
      * Team Login
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function login($request)
@@ -422,16 +408,16 @@ class SearchService extends ApiBaseService
         try {
             $team = $this->teamRepository->findOneByProperties(
                 [
-                    "team_id" => $team_id
+                    'team_id' => $team_id,
                 ]
             );
 
-            if (!$team) {
+            if (! $team) {
                 return $this->sendErrorResponse('Team is Not found.', [], HttpStatusCode::NOT_FOUND);
             }
 
             if ($team->password == $password) {
-                return $this->sendSuccessResponse($team, "Login successful.");
+                return $this->sendSuccessResponse($team, 'Login successful.');
             } else {
                 return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::NOT_FOUND);
             }
@@ -443,7 +429,7 @@ class SearchService extends ApiBaseService
 
     /**
      * Determine role for new team member
-     * @param int $user_id
+     *
      * @return Str
      */
     public function getRoleForNewTeamMember(int $user_id): string
@@ -451,52 +437,50 @@ class SearchService extends ApiBaseService
         // Check if the user is a candidate in any team
         $checkCandidate = $this->teamMemberRepository->findOneByProperties([
             'user_id' => $user_id,
-            'role' => 'Candidate'
+            'role' => 'Candidate',
         ]);
 
-        if (!$checkCandidate) {
+        if (! $checkCandidate) {
             // if No join as Candidate
-            return "Candidate";
+            return 'Candidate';
 
         }
 
         // Join as Representative
-        return "Representative";
+        return 'Representative';
     }
 
     /**
      * Get Team list
-     * @param array $data
-     * @return JsonResponse
      */
     public function getTeamList(array $data): JsonResponse
     {
         $user_id = Auth::id();
         try {
             $team_list = $this->teamMemberRepository->findByProperties([
-                "user_id" => $user_id
+                'user_id' => $user_id,
             ]);
 
             if (count($team_list) > 0) {
-                $team_ids = array();
+                $team_ids = [];
                 foreach ($team_list as $row) {
                     array_push($team_ids, $row->team_id);
                 }
 
-                $team_infos = Team::select("*")
-                    ->with("team_members")
+                $team_infos = Team::select('*')
+                    ->with('team_members')
                     ->whereIn('id', $team_ids)
                     ->where('status', 1)
                     ->get();
 
                 for ($i = 0; $i < count($team_infos); $i++) {
                     // logo storage code has a bug. need to solve it first. then will change the location
-                    $team_infos[$i]->logo = url('storage/' . $team_infos[$i]->logo);
+                    $team_infos[$i]->logo = url('storage/'.$team_infos[$i]->logo);
                 }
 
                 return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
             } else {
-                return $this->sendSuccessResponse(array(), 'Data fetched Successfully!');
+                return $this->sendSuccessResponse([], 'Data fetched Successfully!');
             }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());

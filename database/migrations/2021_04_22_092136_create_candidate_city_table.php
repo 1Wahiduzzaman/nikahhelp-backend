@@ -19,7 +19,7 @@ class CreateCandidateCityTable extends Migration
             $table->unsignedBigInteger('city_id'); // cities id
             $table->boolean('allow')->default(1)->comment('1=allowed,0=disallowed');
 
-            $table->unique(['user_id','country_id','city_id','allow'],'candidate_city_unique');
+            $table->unique(['user_id', 'country_id', 'city_id', 'allow'], 'candidate_city_unique');
         });
     }
 

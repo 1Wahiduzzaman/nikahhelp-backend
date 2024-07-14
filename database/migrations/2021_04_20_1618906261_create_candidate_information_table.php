@@ -19,7 +19,7 @@ class CreateCandidateInformationTable extends Migration
             $table->date('dob')->nullable();
             $table->string('mobile_number', 15)->nullable();
             $table->string('mobile_country_code', 15)->nullable();
-//            $table->string('per_telephone_no', 15)->nullable();
+            //            $table->string('per_telephone_no', 15)->nullable();
             $table->tinyInteger('per_gender')->comment('1=Male,2=Female,3=Others,4=Do not disclose')->nullable();
 
             //Personal information.
@@ -42,18 +42,18 @@ class CreateCandidateInformationTable extends Migration
             $table->string('per_permanent_city')->nullable();
             $table->string('per_county')->nullable();
             $table->string('per_telephone_no', 15)->nullable();
-//            $table->string('mobile_number', 15)->nullable();
-//            $table->string('mobile_country_code', 15)->nullable()->default('BD');
+            //            $table->string('mobile_number', 15)->nullable();
+            //            $table->string('mobile_country_code', 15)->nullable()->default('BD');
             $table->string('per_permanent_post_code')->nullable();
             $table->string('per_permanent_address')->nullable();
 
-//            $table->unsignedBigInteger('per_current_residence')->nullable();
-//            $table->string('per_address')->nullable();
-            $table->enum('per_marital_status',['single','married','divorced','divorced_with_children','separated','widowed','others'])->nullable();
+            //            $table->unsignedBigInteger('per_current_residence')->nullable();
+            //            $table->string('per_address')->nullable();
+            $table->enum('per_marital_status', ['single', 'married', 'divorced', 'divorced_with_children', 'separated', 'widowed', 'others'])->nullable();
             $table->boolean('per_have_children')->nullable()->comment('0=no,1=yes');
             $table->string('per_children')->nullable()->comment('Json value for children');
             $table->string('per_currently_living_with')->nullable();
-            $table->enum('per_willing_to_relocate',[1,2,3,4])->nullable();
+            $table->enum('per_willing_to_relocate', [1, 2, 3, 4])->nullable();
             $table->boolean('per_smoker')->nullable()->comment('0=No,1=Yes');
             $table->string('per_language_speak')->nullable();
             $table->string('per_hobbies_interests')->nullable();
@@ -66,7 +66,6 @@ class CreateCandidateInformationTable extends Migration
             $table->text('per_additional_info_doc')->nullable();
             $table->text('per_additional_info_doc_title')->nullable();
 
-
             // Candidate Preference
             $table->tinyInteger('pre_partner_age_min')->nullable();
             $table->tinyInteger('pre_partner_age_max')->nullable();
@@ -76,16 +75,16 @@ class CreateCandidateInformationTable extends Migration
             $table->boolean('pre_has_country_disallow_preference')->default(0)->nullable();
             //$table->string('pre_countries'); See candidate_country_user
             //$table->string('pre_cities'); See candidate_city
-            $table->string('pre_partner_religions',255)->nullable();
-            $table->string('pre_ethnicities',255)->nullable();
+            $table->string('pre_partner_religions', 255)->nullable();
+            $table->string('pre_ethnicities', 255)->nullable();
             //$table->string('pre_nationality',)->nullable(); See candidate_nationality_user
             $table->unsignedBigInteger('pre_study_level_id')->nullable();
             $table->string('pre_employment_status')->nullable();
             $table->string('pre_occupation')->nullable();
             $table->boolean('pre_preferred_divorcee')->default(false);
             $table->boolean('pre_preferred_divorcee_child')->default(false)->comment('divorcee with child');
-            $table->string('pre_other_preference',255)->nullable();
-            $table->string('pre_description',255)->nullable();
+            $table->string('pre_other_preference', 255)->nullable();
+            $table->string('pre_description', 255)->nullable();
             $table->tinyInteger('pre_pros_part_status')->nullable()->comment('1=Initial phase, 2= partially complicated, 3= completed');
 
             $table->tinyInteger('pre_strength_of_character_rate')->nullable();
@@ -112,7 +111,6 @@ class CreateCandidateInformationTable extends Migration
             $table->tinyInteger('only_team_can_see')->comment('0=No,1=Yes')->default(0);
             $table->tinyInteger('team_connection_can_see')->comment('0=No,1=Yes')->default(0);
 
-
             // Verification
             $table->unsignedBigInteger('ver_country_id')->nullable();
             $table->unsignedBigInteger('ver_city_id')->nullable();
@@ -127,14 +125,13 @@ class CreateCandidateInformationTable extends Migration
             $table->string('ver_recommences_mobile_no')->nullable();
             $table->tinyInteger('ver_status')->default(0)->comment('0 for not verified 1 for verified');
 
-
             // Image upload
             $table->string('per_avatar_url', 2083)->nullable();
             $table->string('per_main_image_url', 2083)->nullable();
             $table->tinyInteger('is_publish')->default(0);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('per_religion_id')->references('id')->on('religions');
-//            $table->foreign('pre_partner_religion_id')->references('id')->on('religions');
+            //            $table->foreign('pre_partner_religion_id')->references('id')->on('religions');
             $table->foreign('per_education_level_id')->references('id')->on('study_level');
             $table->foreign('pre_study_level_id')->references('id')->on('study_level');
         });

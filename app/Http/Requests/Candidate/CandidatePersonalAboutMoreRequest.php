@@ -1,12 +1,9 @@
 <?php
 
-
 namespace App\Http\Requests\Candidate;
 
 use App\Http\Requests\APIRequest;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\Rule;
-
 
 class CandidatePersonalAboutMoreRequest extends APIRequest
 {
@@ -34,19 +31,19 @@ class CandidatePersonalAboutMoreRequest extends APIRequest
                 'nullable',
                 'array',
                 function ($attribute, $values, $fail) {
-                    if (!empty($values)):
-                        foreach ($values as $key => $value):
-                            if (!Arr::exists($value, 'type')) {
-                                $fail('The ' . $attribute . ' is invalid.');
+                    if (! empty($values)) {
+                        foreach ($values as $key => $value) {
+                            if (! Arr::exists($value, 'type')) {
+                                $fail('The '.$attribute.' is invalid.');
                             }
-                            if (!Arr::exists($value, 'count')) {
-                                $fail('The ' . $attribute . ' is invalid.');
+                            if (! Arr::exists($value, 'count')) {
+                                $fail('The '.$attribute.' is invalid.');
                             }
-                            if (!Arr::exists($value, 'age')) {
-                                $fail('The ' . $attribute . ' is invalid.');
+                            if (! Arr::exists($value, 'age')) {
+                                $fail('The '.$attribute.' is invalid.');
                             }
-                        endforeach;
-                    endif;
+                        }
+                    }
 
                 }],
             'per_currently_living_with' => 'nullable|string',

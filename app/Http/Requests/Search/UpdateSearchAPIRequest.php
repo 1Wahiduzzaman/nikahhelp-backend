@@ -25,7 +25,7 @@ class UpdateSearchAPIRequest extends APIRequest
     public function rules()
     {
         $rules = Search::$rules;
-        
+
         return $rules;
     }
 }

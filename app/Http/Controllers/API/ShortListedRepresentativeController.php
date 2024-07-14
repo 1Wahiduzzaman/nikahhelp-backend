@@ -4,35 +4,29 @@ namespace App\Http\Controllers\API;
 
 use App\Enums\HttpStatusCode;
 use App\Helpers\Notificationhelpers;
+use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\API\CreateShortListedCandidateAPIRequest;
 use App\Http\Requests\API\UpdateShortListedCandidateAPIRequest;
-use App\Models\BlockList;
+use App\Http\Resources\ShortlistedCandidateResource;
 use App\Models\CandidateInformation;
 use App\Models\Generic;
 use App\Models\ShortListedCandidate;
 use App\Models\Team;
-use App\Models\TeamMember;
-use App\Repositories\CandidateRepository;
-use App\Repositories\ShortListedCandidateRepository;
+use App\Repositories\RepresentativeInformationRepository;
+use App\Repositories\ShortListedRepresentativeRepository;
 use App\Repositories\TeamRepository;
 use App\Services\BlockListService;
 use App\Traits\CrudTrait;
-use App\Transformers\CandidateTransformer;
+use App\Transformers\RepresentativeTransformer;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use App\Http\Controllers\AppBaseController;
 use Response;
-use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response as FResponse;
-use App\Http\Resources\ShortlistedCandidateResource;
-use App\Repositories\RepresentativeInformationRepository;
-use App\Repositories\ShortListedRepresentativeRepository;
-use App\Transformers\RepresentativeTransformer;
 
 /**
  * Class ShortListedCandidateController
- * @package App\Http\Controllers\API\V1
  */
 class ShortListedRepresentativeController extends AppBaseController
 {
@@ -44,8 +38,8 @@ class ShortListedRepresentativeController extends AppBaseController
 
     protected \App\Repositories\RepresentativeInformationRepository $representativeRepository;
 
-
     private \App\Transformers\RepresentativeTransformer $representativeTransformer;
+
     private \App\Repositories\TeamRepository $teamRepository;
 
     public function __construct(
@@ -54,8 +48,7 @@ class ShortListedRepresentativeController extends AppBaseController
         BlockListService $blockListService,
         RepresentativeTransformer $representativeTransformer,
         TeamRepository $teamRepository
-    )
-    {
+    ) {
         $this->shortListedRepresentativeRepository = $shortListedRepresentativeRepository;
         $this->representativeRepository = $representativeRepository;
         $this->blockListService = $blockListService;
@@ -66,32 +59,31 @@ class ShortListedRepresentativeController extends AppBaseController
     }
 
     /**
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
         $userId = self::getUserId();
 
-        $perPage = $request->input('parpage',10);
+        $perPage = $request->input('parpage', 10);
 
         try {
             $representative = $this->representativeRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
 
-            if (!$representative) {
+            if (! $representative) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->representativeRepository->getModel()), $userId);
             }
 
             $activeTeamId = (new Generic())->getActiveTeamId();
 
-            if (!$activeTeamId) {
+            if (! $activeTeamId) {
                 throw new Exception('Team not found, Please create team first');
             }
 
             $activeTeam = $this->teamRepository->findOneByProperties([
-                'id' => $activeTeamId
+                'id' => $activeTeamId,
             ]);
 
             $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
@@ -99,24 +91,22 @@ class ShortListedRepresentativeController extends AppBaseController
             $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
             $connectFrom = $representative->teamConnection->pluck('from_team_id')->toArray();
             $connectTo = $representative->teamConnection->pluck('to_team_id')->toArray();
-            $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
-
-
+            $userInfo['connectList'] = array_unique(array_merge($connectFrom, $connectTo));
 
             $singleBLockList = $this->blockListService->blockListByUser($userId)->toArray();
 
-            $shortListRepresentative = $representative->shortList()->wherePivot('shortlisted_for',$activeTeam->id)->whereNotIn('candidate_information.user_id',$singleBLockList)->paginate($perPage);
+            $shortListRepresentative = $representative->shortList()->wherePivot('shortlisted_for', $activeTeam->id)->whereNotIn('candidate_information.user_id', $singleBLockList)->paginate($perPage);
 
             $representativeResponse = [];
 
             foreach ($shortListRepresentative as $representative) {
-                $representative->is_short_listed = in_array($representative->user_id,$userInfo['shortList']);
-                $representative->is_block_listed = in_array($representative->user_id,$userInfo['blockList']);
-                $representative->is_teamListed = in_array($representative->user_id,$userInfo['teamList']);
+                $representative->is_short_listed = in_array($representative->user_id, $userInfo['shortList']);
+                $representative->is_block_listed = in_array($representative->user_id, $userInfo['blockList']);
+                $representative->is_teamListed = in_array($representative->user_id, $userInfo['teamList']);
 
                 /* Set Candidate Team related info */
                 $teamId = null;
-                if($representative->active_team){
+                if ($representative->active_team) {
                     $teamId = $representative->active_team->team_id;
                     $representative->team_info = [
                         'team_id' => $representative->active_team->id,
@@ -126,7 +116,7 @@ class ShortListedRepresentativeController extends AppBaseController
                 }
                 $representative->team_id = $teamId;
 
-                $representative->is_connect = in_array($teamId,$userInfo['connectList']);
+                $representative->is_connect = in_array($teamId, $userInfo['connectList']);
                 $representativeResponse[] = $this->representativeTransformer->transformSearchResult($representative);
             }
 
@@ -134,13 +124,12 @@ class ShortListedRepresentativeController extends AppBaseController
 
             return $this->sendSuccessResponse($representativeResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED);
 
-        }catch (Exception $exception) {
+        } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function teamShortListedCandidate(Request $request)
@@ -149,23 +138,23 @@ class ShortListedRepresentativeController extends AppBaseController
         $userId = self::getUserId();
 
         try {
-            $perPage = $request->input('perpage',10);
+            $perPage = $request->input('perpage', 10);
 
             $candidate = $this->candidateRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
 
-            if (!$candidate) {
+            if (! $candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
 
             /* Get Active Team instance */
             $activeTeamId = (new Generic())->getActiveTeamId();
-            if (!$activeTeamId) {
+            if (! $activeTeamId) {
                 throw new Exception('Team not found, Please create team first');
             }
             $activeTeam = $this->teamRepository->findOneByProperties([
-                'id' => $activeTeamId
+                'id' => $activeTeamId,
             ]);
 
             $userInfo['shortList'] = $activeTeam->teamShortListedUser->pluck('id')->toArray();
@@ -173,23 +162,22 @@ class ShortListedRepresentativeController extends AppBaseController
             $userInfo['teamList'] = $activeTeam->teamListedUser->pluck('id')->toArray();
             $connectFrom = $candidate->teamConnection->pluck('from_team_id')->toArray();
             $connectTo = $candidate->teamConnection->pluck('to_team_id')->toArray();
-            $userInfo['connectList'] = array_unique (array_merge($connectFrom,$connectTo)) ;
+            $userInfo['connectList'] = array_unique(array_merge($connectFrom, $connectTo));
 
-
-            $teamShortListUsers = $activeTeam->teamListedUser()->paginate($perPage) ;
-            $teamShortListUsers->load('getCandidate') ;
+            $teamShortListUsers = $activeTeam->teamListedUser()->paginate($perPage);
+            $teamShortListUsers->load('getCandidate');
 
             $candidatesResponse = [];
 
             foreach ($teamShortListUsers as $teamShortListUser) {
-                $teamShortListUser->getCandidate->is_short_listed = in_array($teamShortListUser->id,$userInfo['shortList']);
-                $teamShortListUser->getCandidate->is_block_listed = in_array($teamShortListUser->id,$userInfo['blockList']);
-                $teamShortListUser->getCandidate->is_teamListed = in_array($teamShortListUser->id,$userInfo['teamList']);
+                $teamShortListUser->getCandidate->is_short_listed = in_array($teamShortListUser->id, $userInfo['shortList']);
+                $teamShortListUser->getCandidate->is_block_listed = in_array($teamShortListUser->id, $userInfo['blockList']);
+                $teamShortListUser->getCandidate->is_teamListed = in_array($teamShortListUser->id, $userInfo['teamList']);
 
                 /* Set Candidate Team related info */
                 $teamId = null;
                 $teamTableId = '';
-                if($teamShortListUser->getCandidate->active_team){
+                if ($teamShortListUser->getCandidate->active_team) {
                     $teamId = $teamShortListUser->getCandidate->active_team->team_id;
                     $teamTableId = $candidate->active_team->id;
                     $teamShortListUser->getCandidate->team_info = [
@@ -199,27 +187,25 @@ class ShortListedRepresentativeController extends AppBaseController
                     ];
                 }
                 $teamShortListUser->getCandidate->team_id = $teamId;
-                $teamShortListUser->getCandidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;;
+                $teamShortListUser->getCandidate->is_connect = $activeTeam->connectedTeam($teamTableId) ? $activeTeam->connectedTeam($teamTableId)->id : null;
                 $shortListedBy = CandidateInformation::where('user_id', $teamShortListUser->pivot->team_listed_by)->first();
-                $teamShortListUser->pivot->shortlisted_by =$shortListedBy->first_name.' '. $shortListedBy->last_name;
+                $teamShortListUser->pivot->shortlisted_by = $shortListedBy->first_name.' '.$shortListedBy->last_name;
                 $candidatesResponse[] = $this->candidateTransformer->transformShortListUser($teamShortListUser);
             }
 
             $pagination = $this->paginationResponse($teamShortListUsers);
 
-            return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!',$pagination, HttpStatusCode::CREATED);
+            return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED);
 
-        }catch (Exception $exception) {
+        } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
-
 
     /**
      * Store a newly created ShortListedCandidate in storage.
      * POST /shortListedCandidates
      *
-     * @param CreateShortListedCandidateAPIRequest $request
      *
      * @return Response
      */
@@ -227,12 +213,13 @@ class ShortListedRepresentativeController extends AppBaseController
     {
         $input = $request->all();
         $input['shortlisted_date'] = Carbon::now();
-        $input['shortlisted_for'] =  (new Generic())->getActiveTeamId();
-        if(!$input['shortlisted_for']){
+        $input['shortlisted_for'] = (new Generic())->getActiveTeamId();
+        if (! $input['shortlisted_for']) {
             return $this->sendErrorResponse('Team Not found, Please make team first');
         }
         $shortListedRepresentative = $this->shortListedRepresentativeRepository->create($input);
-//        Notificationhelpers::add('Short Listed Candidate saved successfully', 'single', null, $input['shortlisted_by']);
+
+        //        Notificationhelpers::add('Short Listed Candidate saved successfully', 'single', null, $input['shortlisted_by']);
         return $this->sendResponse($shortListedRepresentative->toArray(), 'Short Listed Candidate saved successfully', FResponse::HTTP_CREATED);
     }
 
@@ -240,8 +227,7 @@ class ShortListedRepresentativeController extends AppBaseController
      * Display the specified ShortListedCandidate.
      * GET|HEAD /shortListedCandidates/{id}
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
      */
     public function show($id)
@@ -260,12 +246,9 @@ class ShortListedRepresentativeController extends AppBaseController
      * Update the specified ShortListedCandidate in storage.
      * PUT/PATCH /shortListedCandidates/{id}
      *
-     * @param int $id
-     * @param UpdateShortListedCandidateAPIRequest $request
-     *
+     * @param  int  $id
      * @return Response
      */
-
     public function update($id, UpdateShortListedCandidateAPIRequest $request)
     {
         $input = $request->all();
@@ -277,6 +260,7 @@ class ShortListedRepresentativeController extends AppBaseController
             }
 
             $shortListedCandidate->update($input);
+
             return $this->sendResponse($shortListedCandidate, 'ShortListedCandidate updated successfully');
         } catch (Exception $exception) {
             return $this->sendError($exception->getMessage());
@@ -287,11 +271,10 @@ class ShortListedRepresentativeController extends AppBaseController
      * Remove the specified ShortListedCandidate from storage.
      * DELETE /shortListedCandidates/{id}
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
-     * @throws \Exception
      *
+     * @throws \Exception
      */
     public function destroy($id)
     {
@@ -303,6 +286,7 @@ class ShortListedRepresentativeController extends AppBaseController
         }
 
         $shortListedRepresentative->delete();
+
         return $this->sendSuccess([], 'Short Listed Candidate deleted successfully', FResponse::HTTP_OK);
     }
 
@@ -310,9 +294,9 @@ class ShortListedRepresentativeController extends AppBaseController
     {
         $deletedCandidate = $this->shortListedCandidateRepository->deletedCandidate();
         $formatted_data = ShortlistedCandidateResource::collection($deletedCandidate);
+
         return $this->sendResponse($formatted_data, 'Deleted Candidate List');
     }
-
 
     public function destroyByCandidate(Request $request)
     {
@@ -320,16 +304,16 @@ class ShortListedRepresentativeController extends AppBaseController
 
         try {
             $representative = $this->representativeRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
 
-            if (!$representative) {
+            if (! $representative) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->representativeRepository->getModel()), $userId);
             }
 
             /* Get Active Team instance */
             $activeTeamId = (new Generic())->getActiveTeamId();
-            if (!$activeTeamId) {
+            if (! $activeTeamId) {
                 throw new Exception('Team not found, Please create team first');
             }
 
@@ -337,10 +321,8 @@ class ShortListedRepresentativeController extends AppBaseController
 
             return $this->sendSuccessResponse([], 'Candidate remove from shortlist successfully!', [], HttpStatusCode::CREATED);
 
-        }catch (Exception $exception) {
+        } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
-
-
 }

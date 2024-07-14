@@ -11,16 +11,18 @@ class TeamToTeamMessage extends Model
 
     protected $table = 'team_to_team_messages';
 
-    public function sender() {
+    public function sender()
+    {
         return $this->belongsTo(User::class, 'sender', 'id');
     }
+
     public function from_team()
     {
-        return $this->hasOne(Team::class,'id','from_team_id');
+        return $this->hasOne(Team::class, 'id', 'from_team_id');
     }
 
     public function to_team()
     {
-        return $this->hasOne(Team::class,'id','to_team_id');
+        return $this->hasOne(Team::class, 'id', 'to_team_id');
     }
 }

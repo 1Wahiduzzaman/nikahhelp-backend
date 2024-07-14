@@ -10,7 +10,6 @@ use Illuminate\Notifications\Notification;
 
 class EmailVerification extends Notification implements ShouldQueue
 {
-
     use Queueable;
 
     const NOTIFICATION_CHANNEL_EMAIL = 'mail'; // Email
@@ -53,9 +52,9 @@ class EmailVerification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     public function toNexmo($notifiable)
@@ -80,7 +79,6 @@ class EmailVerification extends Notification implements ShouldQueue
      * Get the broadcastable representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return BroadcastMessage
      */
     public function toBroadcast($notifiable): BroadcastMessage
     {

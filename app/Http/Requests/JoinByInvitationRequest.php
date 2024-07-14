@@ -17,10 +17,9 @@ class JoinByInvitationRequest extends APIRequest
     public function rules()
     {
 
-
         return [
             'invitation_link' => 'required|string',
-            'team_password' => 'required|string'
+            'team_password' => 'required|string',
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\ImageTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -46,7 +45,7 @@ class CandidateInformation extends Model
         'pre_preferred_divorcee_child',
         'pre_other_preference',
         'pre_description',
-        "pre_pros_part_status",
+        'pre_pros_part_status',
 
         'pre_strength_of_character_rate',
         'pre_look_and_appearance_rate',
@@ -61,6 +60,7 @@ class CandidateInformation extends Model
         'pre_education_rate',
         'pre_things_important_status',
     ];
+
     public const PERSONAL_INFO = [
         'dob',
         'mobile_number',
@@ -110,8 +110,9 @@ class CandidateInformation extends Model
         'per_employment_status',
         'per_occupation',
         'per_education_level_id',
-        'per_religion_id'
+        'per_religion_id',
     ];
+
     public const PERSONAL_GENERAL_INFO = [
         'per_ethnicity',
         'per_mother_tongue',
@@ -132,8 +133,9 @@ class CandidateInformation extends Model
         'per_permanent_post_code',
         'per_permanent_address',
         'mobile_number',
-        'mobile_country_code'
+        'mobile_country_code',
     ];
+
     public const PERSONAL_MOREABOUT_INFO = [
         'per_marital_status',
         'per_have_children',
@@ -233,7 +235,7 @@ class CandidateInformation extends Model
         'pre_other_preference',
         'pre_description',
 
-        "pre_pros_part_status",
+        'pre_pros_part_status',
         'pre_strength_of_character_rate',
         'pre_look_and_appearance_rate',
         'pre_religiosity_or_faith_rate',
@@ -247,13 +249,13 @@ class CandidateInformation extends Model
         'pre_education_rate',
         'pre_things_important_status',
 
-        "fi_father_name",
-        "fi_father_profession",
-        "fi_mother_name",
-        "fi_mother_profession",
-        "fi_siblings_desc",
-        "fi_country_of_origin",
-        "fi_family_info",
+        'fi_father_name',
+        'fi_father_profession',
+        'fi_mother_name',
+        'fi_mother_profession',
+        'fi_siblings_desc',
+        'fi_country_of_origin',
+        'fi_family_info',
 
         // Verification
         'ver_country',
@@ -269,23 +271,22 @@ class CandidateInformation extends Model
         'ver_recommences_mobile_no',
         'ver_status',
 
-        "is_publish",
-        "anybody_can_see",
-        "only_team_can_see",
-        "team_connection_can_see",
-        "per_avatar_url" .
-        "per_main_image_url",
+        'is_publish',
+        'anybody_can_see',
+        'only_team_can_see',
+        'team_connection_can_see',
+        'per_avatar_url'.
+        'per_main_image_url',
 
         'data_input_status',
-        "other_images",
+        'other_images',
         'address_1',
-        'address_2'
+        'address_2',
     ];
 
     /**
      * Get the user's children.
      *
-     * @param   $value
      * @return mixed
      */
     public function getPerChildrenAttribute($value)
@@ -296,7 +297,7 @@ class CandidateInformation extends Model
     /**
      * Get the user's children.
      *
-     * @param string $value
+     * @param  string  $value
      * @return void
      */
     public function setPerChildrenAttribute($value)
@@ -391,8 +392,8 @@ class CandidateInformation extends Model
      */
     public function candidateTeam()
     {
-        return $this->hasMany(TeamMember::class,'user_id','user_id')
-            ->where('user_type','Candidate');
+        return $this->hasMany(TeamMember::class, 'user_id', 'user_id')
+            ->where('user_type', 'Candidate');
     }
 
     /**
@@ -440,35 +441,38 @@ class CandidateInformation extends Model
      */
     public function shortList()
     {
-        return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id','user_id','user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'short_listed_candidates', 'shortlisted_by', 'user_id', 'user_id', 'user_id')->withTimestamps();
     }
 
     /**
      * Return Candidate information team listed by user
+     *
      * @return BelongsToMany
      */
     public function teamList()
     {
-        return $this->belongsToMany(CandidateInformation::class, 'team_listed_candidates', 'team_listed_by', 'user_id','user_id','user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'team_listed_candidates', 'team_listed_by', 'user_id', 'user_id', 'user_id')->withTimestamps();
     }
 
     /**
      * Return Candidate information block listed by user
+     *
      * @return BelongsToMany
      */
     public function blockList()
     {
-        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id','user_id','user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'block_by', 'user_id', 'user_id', 'user_id')->withTimestamps();
 
     }
 
     /**
      * Return Candidate information user block listed by
+     *
      * @return BelongsToMany
      */
-    public function blockListedBy() 
+    public function blockListedBy()
     {
-        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'user_id', 'block_by','user_id','user_id')->withTimestamps();
+        return $this->belongsToMany(CandidateInformation::class, 'block_lists', 'user_id', 'block_by', 'user_id', 'user_id')->withTimestamps();
     }
 
     /**
@@ -482,14 +486,12 @@ class CandidateInformation extends Model
 
     /**
      * Convert gender id to sting
-     * @param $id
-     * @return string
      */
-    public static function getGender ($id) : string
+    public static function getGender($id): string
     {
         $gender = null;
 
-        switch ($id){
+        switch ($id) {
             case 1:
                 $gender = 'Male';
                 break;
@@ -497,10 +499,10 @@ class CandidateInformation extends Model
                 $gender = 'Female';
                 break;
             default:
-                $gender = "";
+                $gender = '';
         }
 
-        return $gender ;
+        return $gender;
 
     }
 
@@ -509,7 +511,7 @@ class CandidateInformation extends Model
      */
     public function teamConnection()
     {
-        return $this->hasMany(TeamConnection::class,'requested_by','user_id')->where('connection_status',1);
+        return $this->hasMany(TeamConnection::class, 'requested_by', 'user_id')->where('connection_status', 1);
     }
 
     /**
@@ -525,12 +527,12 @@ class CandidateInformation extends Model
      */
     public function teamMember()
     {
-        return $this->hasMany(TeamMember::class,'user_id','user_id');
+        return $this->hasMany(TeamMember::class, 'user_id', 'user_id');
     }
 
     public function activeTeams()
     {
-        return $this->belongsToMany(Team::class,'team_members','user_id','team_id','user_id','id')->wherePivot('status',1);
+        return $this->belongsToMany(Team::class, 'team_members', 'user_id', 'team_id', 'user_id', 'id')->wherePivot('status', 1);
     }
 
     public function getActiveTeamAttribute()
@@ -538,45 +540,40 @@ class CandidateInformation extends Model
         return $this->activeTeams()->first();
     }
 
-    public function getCandidateTeamAttribute() {
+    public function getCandidateTeamAttribute()
+    {
         return $this->belongsToMany(Team::class, 'team_members', 'user_id', 'team_id', 'user_id', 'id')->wherePivot('user_type', 'Candidate')->first();
     }
 
-   
-
-    
-
-
-    
     public function getDownloadableDocAttribute()
     {
 
-        if(Auth::user()) {
-            return $this->per_additional_info_doc ? env('IMAGE_SERVER') . '/' . $this->per_additional_info_doc : '';
+        if (Auth::user()) {
+            return $this->per_additional_info_doc ? env('IMAGE_SERVER').'/'.$this->per_additional_info_doc : '';
         } else {
             $authUserActiveTeam = $this->active_team;
             $candidateActiveTeam = $this->active_team;
-            if(!$candidateActiveTeam){
+            if (! $candidateActiveTeam) {
                 return null;
             }
             $connectFrom = $authUserActiveTeam->sentRequest->pluck('team_id')->toArray();
             $connectTo = $authUserActiveTeam->receivedRequest->pluck('team_id')->toArray();
-            $userConnectList = array_unique(array_merge($connectFrom,$connectTo)) ;
-            if(in_array($candidateActiveTeam->team_id,$userConnectList)){
+            $userConnectList = array_unique(array_merge($connectFrom, $connectTo));
+            if (in_array($candidateActiveTeam->team_id, $userConnectList)) {
                 return $this->per_additional_info_doc;
             }
+
             return null;
         }
     }
 
     public function getRepresentativeStatusAttribute()
     {
-       return $this->active_team ? (bool)$this->active_team->representativeOfTeamFromUser->filter(function($user){
-         return $user ? $user->account_type > 2 : false;
-     })->count() : false ;
+        return $this->active_team ? (bool) $this->active_team->representativeOfTeamFromUser->filter(function ($user) {
+            return $user ? $user->account_type > 2 : false;
+        })->count() : false;
     }
 
-    
     public function ticketSubmission()
     {
         return $this->hasMany(TicketSubmission::class, 'user_id', 'id');

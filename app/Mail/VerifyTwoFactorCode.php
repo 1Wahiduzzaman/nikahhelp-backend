@@ -1,17 +1,17 @@
 <?php
 
 namespace App\Mail;
-use App\Enums\HttpStatusCode;
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class VerifyTwoFactorCode extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
+
     public $domain;
 
     /**
@@ -19,11 +19,12 @@ class VerifyTwoFactorCode extends Mailable
      *
      * @return void
      */
-    public function __construct($user,$domain)
+    public function __construct($user, $domain)
     {
         $this->user = $user;
         $this->domain = $domain;
     }
+
     /**
      * Build the message.
      *
@@ -31,6 +32,6 @@ class VerifyTwoFactorCode extends Mailable
      */
     public function build()
     {
-        return $this->subject("MatrimonyAssist Verfication Code")->view('emails.verify2faMail')->with('user_name', $this->user->full_name);
+        return $this->subject('MatrimonyAssist Verfication Code')->view('emails.verify2faMail')->with('user_name', $this->user->full_name);
     }
 }

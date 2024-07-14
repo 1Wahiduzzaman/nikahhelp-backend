@@ -1,11 +1,8 @@
 <?php
 
-
 namespace App\Http\Requests\Representative;
 
-use App\Models\RepresentativeInformation;
 use App\Http\Requests\APIRequest;
-use Validator;
 
 class VerifyIdentityRequest extends APIRequest
 {
@@ -24,7 +21,6 @@ class VerifyIdentityRequest extends APIRequest
      *
      * @return array
      */
-
     public function rules()
     {
         return [
@@ -39,19 +35,17 @@ class VerifyIdentityRequest extends APIRequest
             'ver_recommender_occupation' => 'nullable|max:255',
             'ver_recommender_address' => 'nullable|max:255',
             'ver_recommender_mobile_no' => 'nullable|max:255',
-            'ver_recommender_email' => 'nullable|string|email'
+            'ver_recommender_email' => 'nullable|string|email',
         ];
     }
 
     /**
      * @return array|string[]
      */
-
     public function messages()
     {
         return [
-            'required' => 'The :attribute field is required.'
+            'required' => 'The :attribute field is required.',
         ];
     }
-
 }

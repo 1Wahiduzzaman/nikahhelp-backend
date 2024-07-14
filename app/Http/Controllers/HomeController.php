@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CandidateInformation;
 use App\Models\Country;
 use App\Models\Occupation;
 use App\Models\Religion;
 use App\Models\StudyLevel;
 use App\Models\User;
-use App\Models\CandidateInformation;
 use App\Services\CandidateService;
-use Illuminate\Http\Request;
-use Laravel\Cashier\Cashier;
-use App\Traits\CrudTrait;
 use App\Services\HomeSearchService;
-
+use App\Traits\CrudTrait;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-
     use CrudTrait;
 
     protected \App\Services\CandidateService $candidateService;
@@ -26,7 +23,6 @@ class HomeController extends Controller
 
     /**
      * PurchaseController constructor.
-     * @param CandidateService $candidateService
      */
     public function __construct(CandidateService $candidateService, HomeSearchService $searchService)
     {
@@ -51,22 +47,21 @@ class HomeController extends Controller
     {
         $user = User::find(2);
         $intent = $user->createSetupIntent();
+
         return view('stripe', compact('intent'));
     }
 
     /**
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function recentJoinCandidate(Request $request)
     {
-        return $shortListedCandidates = $this->candidateService->reccentJoinCandidate();//CandidateInformation::where('data_input_status','=',1)->get();
+        return $shortListedCandidates = $this->candidateService->reccentJoinCandidate(); //CandidateInformation::where('data_input_status','=',1)->get();
 
     }
 
     /**
-     * @param Request $request
-     * @param User $user
+     * @param  User  $user
      */
     public function filter(Request $request)
     {
@@ -82,6 +77,7 @@ class HomeController extends Controller
         $data['religions'] = Religion::where('status', 1)->orderBy('name')->get();
         $data['occupations'] = Occupation::all();
         $data['studylevels'] = StudyLevel::orderBy('name')->get();
-        return $this->sendSuccessResponse($data, "Information fetched successfully");
+
+        return $this->sendSuccessResponse($data, 'Information fetched successfully');
     }
 }

@@ -2,13 +2,11 @@
 
 use App\Http\Controllers\API\AdminDashboardController;
 use App\Http\Controllers\API\V1\AllNotificationController;
-use App\Http\Controllers\API\V1\TeamController;
-use App\Http\Controllers\Auth\AdminController;
-use App\Http\Middleware\CorsHandler;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\MessageController;
+use App\Http\Controllers\API\V1\TeamController;
 use App\Http\Controllers\API\V1\UserController;
-
+use App\Http\Controllers\Auth\AdminController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +21,7 @@ use App\Http\Controllers\API\V1\UserController;
 
 Route::POST('v1/admin/login', [AdminController::class, 'login']);
 
-Route::group(['prefix' => 'v1/admin','middleware'=>'admin'], function () {
+Route::group(['prefix' => 'v1/admin', 'middleware' => 'admin'], function () {
 
     Route::POST('support-send-message', [MessageController::class, 'sendMessageToSupport'])->name('support.support-send-message');
     Route::POST('individual-support-user-chat-history', [MessageController::class, 'individualSupportChatHistory'])->name('support.individual-support-user-chat-history');
@@ -66,6 +64,5 @@ Route::group(['prefix' => 'v1/admin','middleware'=>'admin'], function () {
     Route::GET('all-user', [AllNotificationController::class, 'getAllUsers'])->name('all-notification.all-user');
     Route::POST('send-notification', [AllNotificationController::class, 'sendGlobalNotification'])->name('all-notification.send-notification');
 });
-
 
 //Route::resource('match_makers', App\Http\Controllers\API\MatchMakerAPIController::class);

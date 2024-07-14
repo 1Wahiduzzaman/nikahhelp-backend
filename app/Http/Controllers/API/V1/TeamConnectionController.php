@@ -10,7 +10,6 @@ use App\Services\TeamConnectionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 
 class TeamConnectionController extends Controller
 {
@@ -27,7 +26,6 @@ class TeamConnectionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function store(Request $request)
@@ -38,7 +36,6 @@ class TeamConnectionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function respond(Request $request)
@@ -49,7 +46,6 @@ class TeamConnectionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function report(Request $request)
@@ -60,7 +56,6 @@ class TeamConnectionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function reports(Request $request)
@@ -71,7 +66,6 @@ class TeamConnectionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function overview(Request $request)
@@ -82,7 +76,6 @@ class TeamConnectionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function disconnect(Request $request)
@@ -91,14 +84,10 @@ class TeamConnectionController extends Controller
     }
 
     /**
-     * @param TeamDisconnectRequest $request
      * @return \App\Services\JsonResponse|Response
      */
     public function teamDisconnect(TeamDisconnectRequest $request)
     {
         return $this->teamConnectionService->teamDisconnect($request);
     }
-
-
-
 }

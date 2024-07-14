@@ -1,9 +1,6 @@
 <?php
 
-
 namespace App\Http\Requests;
-
-use Illuminate\Foundation\Http\FormRequest;
 
 class CandidateFamilyInfoRequest extends APIRequest
 {
@@ -33,7 +30,7 @@ class CandidateFamilyInfoRequest extends APIRequest
             'siblings_desc' => 'nullable|string|max:255',
             'country_of_origin' => 'nullable|string',
             'family_info' => 'nullable|string|max:255',
-            'is_publish' => 'nullable|boolean'
+            'is_publish' => 'nullable|boolean',
         ];
     }
 
@@ -50,8 +47,7 @@ class CandidateFamilyInfoRequest extends APIRequest
             'siblings_desc.max' => 'Siblings Description length can not be more than 255 characters.',
             'country_of_origin.required' => 'Country of origin is required.',
             'family_info.max' => 'Family info length can not be more than 255 characters.',
-            'is_publish.boolean' => 'Is publish flag needs to have a boolean value.'
+            'is_publish.boolean' => 'Is publish flag needs to have a boolean value.',
         ];
     }
-
 }

@@ -2,15 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Http\Requests\UserNotificationRequest;
 use App\Models\User;
-use App\Http\Requests\DeviceTokenRequest;
-use Illuminate\Http\Request;
 
 /**
  * Class UserRepository
- *
- * @package App\Repositories
  */
 class UserRepository extends BaseRepository
 {
@@ -26,14 +21,11 @@ class UserRepository extends BaseRepository
         'status',
         'locked_at',
         'locked_end',
-        'account_type'
+        'account_type',
     ];
-
 
     /**
      * UserRepository constructor.
-     *
-     * @param User $model
      */
     public function __construct(User $model)
     {
@@ -49,5 +41,4 @@ class UserRepository extends BaseRepository
     {
         return $this->fieldSearchable;
     }
-
 }

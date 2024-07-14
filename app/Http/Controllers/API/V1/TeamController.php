@@ -17,7 +17,6 @@ class TeamController extends Controller
      */
     public $teamService;
 
-
     public function __construct(TeamService $teamService)
     {
         $this->teamService = $teamService;
@@ -25,9 +24,6 @@ class TeamController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param TeamFromRequest $request
-     * @return JsonResponse
      */
     public function store(TeamFromRequest $request): JsonResponse
     {
@@ -36,9 +32,6 @@ class TeamController extends Controller
 
     /**
      * List user teams.
-     *
-     * @param Request $request
-     *
      */
     public function teamList(Request $request)
     {
@@ -47,9 +40,6 @@ class TeamController extends Controller
 
     /**
      * Team Login.
-     *
-     * @param Request $request
-     *
      */
     public function login(Request $request)
     {
@@ -58,9 +48,6 @@ class TeamController extends Controller
 
     /**
      * Team Edit Mode Check.
-     *
-     * @param Request $request
-     *
      */
     public function teamEditCheck(Request $request)
     {
@@ -69,7 +56,6 @@ class TeamController extends Controller
 
     /**
      * Team Turn On.
-     * @param Request $request
      */
     public function teamTurnOn(Request $request)
     {
@@ -78,6 +64,7 @@ class TeamController extends Controller
 
     /**
      * Display the specified resource.
+     *
      * @return Response
      */
     public function teamActiveStatusCheck($teamId)
@@ -87,8 +74,8 @@ class TeamController extends Controller
 
     /**
      * Update a family info.
-     * @param CandidateFamilyInfoRequest $request
-     * @return JsonResponse
+     *
+     * @param  CandidateFamilyInfoRequest  $request
      */
     public function candidateOfTeam(): JsonResponse
     {
@@ -98,7 +85,6 @@ class TeamController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param \App\Models\Team $team
      * @return Response
      */
     public function edit(Team $team)
@@ -109,21 +95,18 @@ class TeamController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Team $team
+     * @param  \App\Models\Team  $team
      * @return Response
      */
     public function update(Request $request, $id)
     {
         return $this->teamService->teamUpdate($request, $id);
 
-
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param Request $request
      * @return Response
      */
     public function destroy(Request $request)
@@ -158,5 +141,4 @@ class TeamController extends Controller
         //
         return $this->teamService->adminTeamDelete($request);
     }
-
 }

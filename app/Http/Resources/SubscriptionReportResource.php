@@ -8,15 +8,15 @@ use Illuminate\Support\Facades\DB;
 class SubscriptionReportResource extends JsonResource
 {
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function toArray($request)
     {
 
-        $subscriptionhistory = array();
+        $subscriptionhistory = [];
 
-        if (!empty($this->subscription_expire_at)) {
+        if (! empty($this->subscription_expire_at)) {
             $subscriptionhistory = DB::table('subscriptions')->where('team_id', '=', $this->id)->get();
         }
 
@@ -34,12 +34,10 @@ class SubscriptionReportResource extends JsonResource
             'subscriptionhistory' => $subscriptionhistory ?? null,
             'created_by' => $this->user->full_name ?? null,
             'created_at' => $this->created_at ?? null,
-            'updated_at' => $this->updated_at ?? null
+            'updated_at' => $this->updated_at ?? null,
         ];
 
         return $result;
 
     }
-
-
 }

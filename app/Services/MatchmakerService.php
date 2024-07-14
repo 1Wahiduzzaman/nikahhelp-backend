@@ -1,28 +1,18 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
 use App\Helpers\Notificationhelpers;
 use App\Http\Resources\MatchmakerResource;
-use App\Models\RepresentativeInformation;
 use App\Models\CandidateImage;
-use Exception;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
-use App\Traits\CrudTrait;
-use Illuminate\Http\Request;
-use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
 use App\Repositories\MatchMakerRepository;
-use \Illuminate\Support\Facades\DB;
-use App\Transformers\CandidateTransformer;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
+use App\Traits\CrudTrait;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as FResponse;
-use App\Http\Resources\RepresentativeResource;
 
 class MatchmakerService extends ApiBaseService
 {
@@ -32,15 +22,13 @@ class MatchmakerService extends ApiBaseService
         '0' => 'Driving license',
         '1' => 'Passport',
         '2' => 'National id card',
-        '3' => 'Residence permit'
+        '3' => 'Residence permit',
     ];
 
     use CrudTrait;
 
-    /**
-     * @var RepresentativeRepository
-     */
     protected RepresentativeRepository $representativeRepository;
+
     protected \App\Repositories\MatchMakerRepository $matchMakerRepository;
 
     public function __construct(RepresentativeRepository $representativeRepository, MatchMakerRepository $matchMakerRepository)
@@ -51,7 +39,6 @@ class MatchmakerService extends ApiBaseService
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
     public function storeScreenName($request)
@@ -59,7 +46,7 @@ class MatchmakerService extends ApiBaseService
         try {
             $userId = self::getUserId();
             $checkRepresentative = $this->matchMakerRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
             if ($checkRepresentative) {
                 return $this->sendErrorResponse('Matchmaker Information Already Exists', [], FResponse::HTTP_CONFLICT);
@@ -78,7 +65,6 @@ class MatchmakerService extends ApiBaseService
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
     public function storeEssentialInformation($request)
@@ -86,9 +72,9 @@ class MatchmakerService extends ApiBaseService
         try {
             $userId = self::getUserId();
             $matchMakerInformation = $this->matchMakerRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
-            if (!$matchMakerInformation) {
+            if (! $matchMakerInformation) {
                 return $this->sendErrorResponse('Matchmaker information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
             $request['user_id'] = $userId;
@@ -105,7 +91,6 @@ class MatchmakerService extends ApiBaseService
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
     public function businessInformation($request)
@@ -113,9 +98,9 @@ class MatchmakerService extends ApiBaseService
         try {
             $userId = self::getUserId();
             $matchmakerInformation = $this->matchMakerRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
-            if (!$matchmakerInformation) {
+            if (! $matchmakerInformation) {
                 return $this->sendErrorResponse('Matchmaker information  Not fund', [], HttpStatusCode::NOT_FOUND);
             }
             $request['user_id'] = $userId;
@@ -132,7 +117,6 @@ class MatchmakerService extends ApiBaseService
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
     public function storeContactInformation($request)
@@ -140,9 +124,9 @@ class MatchmakerService extends ApiBaseService
         try {
             $userId = self::getUserId();
             $matchmakerInformation = $this->matchMakerRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
-            if (!$matchmakerInformation) {
+            if (! $matchmakerInformation) {
                 return $this->sendErrorResponse('Matchmaker information  Not fund', [], HttpStatusCode::NOT_FOUND);
             }
             $request['user_id'] = $userId;
@@ -158,9 +142,6 @@ class MatchmakerService extends ApiBaseService
 
     }
 
-    /**
-     * @return JsonResponse
-     */
     public function getMatchMakerInformation(): JsonResponse
     {
         $userId = self::getUserId();
@@ -168,6 +149,7 @@ class MatchmakerService extends ApiBaseService
 
         if ($matchMakerInformation) {
             $result = MatchmakerResource::collection($matchMakerInformation);
+
             return $this->sendSuccessResponse($result, 'Matchmaker Information', [], HttpStatusCode::SUCCESS);
         } else {
             return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_NOT_FOUND);
@@ -175,26 +157,24 @@ class MatchmakerService extends ApiBaseService
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
-
     public function storeVerifyIdentity($request)
     {
-        if ($request['is_document_upload'] == 1 && !empty($request['ver_document_frontside'])) {
+        if ($request['is_document_upload'] == 1 && ! empty($request['ver_document_frontside'])) {
             $ver_document_frontside = self::uploadFile($request, 'ver_document_frontside');
             $request['ver_document_frontside'] = $ver_document_frontside['image_path'];
         }
-        if ($request['is_document_upload'] == 1 && !empty($request['ver_document_backside'])) {
+        if ($request['is_document_upload'] == 1 && ! empty($request['ver_document_backside'])) {
             $ver_document_backside = self::uploadFile($request, 'ver_document_backside');
             $request['ver_document_backside'] = $ver_document_backside['image_path'];
         }
         try {
             $userId = self::getUserId();
             $matchMakerInformation = $this->matchMakerRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
-            if (!$matchMakerInformation) {
+            if (! $matchMakerInformation) {
                 return $this->sendErrorResponse('Match maker information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
             $request['user_id'] = $userId;
@@ -211,19 +191,17 @@ class MatchmakerService extends ApiBaseService
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
-
     public function imageUpload($request)
     {
-        
+
         try {
             $userId = self::getUserId();
             $matchMakerInformation = $this->matchMakerRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
-            if (!$matchMakerInformation) {
+            if (! $matchMakerInformation) {
                 return $this->sendErrorResponse('Match maker information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
             $request['data_input_status'] = 1;
@@ -233,6 +211,7 @@ class MatchmakerService extends ApiBaseService
             if ($matchmaker) {
                 $matchMakerInformation['per_avatar_url'] = $request->input('per_avatar_url') ?? null;
                 $matchMakerInformation['per_main_image_url'] = $request->input('per_main_image_url') ?? null;
+
                 return $this->sendSuccessResponse($matchMakerInformation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
@@ -243,25 +222,25 @@ class MatchmakerService extends ApiBaseService
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     private function uploadFile($request, $imageName = null)
     {
         $requestFile = $request[$imageName];
-        $file = 'Matchmaker-profile-' . self::getUserId();
+        $file = 'Matchmaker-profile-'.self::getUserId();
         $image_type = $imageName;
         $disk = config('filesystems.default', 'local');
-        $status = $requestFile->storeAs($file, $image_type . '-' . date('Ymd') . '-' . $requestFile->getClientOriginalName(), $disk);
+        $status = $requestFile->storeAs($file, $image_type.'-'.date('Ymd').'-'.$requestFile->getClientOriginalName(), $disk);
+
         return [
             CandidateImage::IMAGE_PATH => $status,
-            CandidateImage::IMAGE_DISK => $disk
+            CandidateImage::IMAGE_DISK => $disk,
         ];
 
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
     public function finalSubmit($request)
@@ -269,9 +248,9 @@ class MatchmakerService extends ApiBaseService
         try {
             $userId = self::getUserId();
             $matchMakerInformation = $this->matchMakerRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
-            if (!$matchMakerInformation) {
+            if (! $matchMakerInformation) {
                 return $this->sendErrorResponse('Match maker information is Not fund', [], HttpStatusCode::NOT_FOUND);
             }
             $request['user_id'] = $userId;
@@ -285,5 +264,4 @@ class MatchmakerService extends ApiBaseService
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
-
 }

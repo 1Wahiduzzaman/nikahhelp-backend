@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Permission extends Model
 {
     use SoftDeletes;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -15,7 +16,8 @@ class Permission extends Model
      */
     protected $guarded = [];
 
-    public function roles(){
+    public function roles()
+    {
         return $this->belongsToMany('App\Models\Role');
     }
 }

@@ -1,34 +1,29 @@
 <?php
 
-
 namespace App\Services;
 
+use App\Http\Resources\BlockListResource;
+use App\Models\BlockList;
 use App\Models\Generic;
+use App\Models\TeamMember;
+use App\Repositories\BlockListRepository;
 use App\Repositories\CandidateRepository;
+use App\Repositories\RepresentativeInformationRepository;
+use App\Repositories\ShortListedCandidateRepository;
+use App\Traits\CrudTrait;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use App\Traits\CrudTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use \Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use App\Repositories\BlockListRepository;
-use App\Http\Resources\BlockListResource;
-use Symfony\Component\HttpFoundation\Response as FResponse;
-use Carbon\Carbon;
-use App\Repositories\ShortListedCandidateRepository;
-use App\Helpers\Notificationhelpers;
-use App\Models\BlockList;
-use App\Models\TeamMember;
-use App\Repositories\RepresentativeInformationRepository;
 
 class BlockListService extends ApiBaseService
 {
     use CrudTrait;
 
     const INFORMATION_FETCHED_SUCCESSFULLY = 'Information fetched Successfully!';
+
     const INFORMATION_UPDATED_SUCCESSFULLY = 'Information updated Successfully!';
+
     const INFORMATION_SAVE_SUCCESSFULLY = 'Information save Successfully!';
 
     protected \App\Repositories\BlockListRepository $blockListRepository;
@@ -39,54 +34,51 @@ class BlockListService extends ApiBaseService
     protected $blockListResource;
 
     private \App\Repositories\ShortListedCandidateRepository $shortListedCandidateRepository;
+
     private \App\Repositories\CandidateRepository $candidateRepository;
 
     /**
      * CandidateService constructor.
-     *
-     * @param BlockListRepository $blockListRepository
      */
     public function __construct(
         BlockListRepository $blockListRepository,
         ShortListedCandidateRepository $shortListedCandidateRepo,
         CandidateRepository $candidateRepository,
         RepresentativeInformationRepository $representativeRepository
-    )
-    {
+    ) {
         $this->blockListRepository = $blockListRepository;
         $this->shortListedCandidateRepository = $shortListedCandidateRepo;
         $this->candidateRepository = $candidateRepository;
         $this->representativeRepository = $representativeRepository;
     }
 
-
     /**
      * Update resource
-     * @param Request $request
+     *
      * @return JsonResponse
      */
     public function store(Request $request)
-    {        
-        $userId = self::getUserId();        
+    {
+        $userId = self::getUserId();
         try {
 
             $candidate = $this->candidateRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
 
-            if (!$candidate) {
+            if (! $candidate) {
                 $candidate = $this->representativeRepository->findOneByProperties([
-                    'user_id' => $userId
+                    'user_id' => $userId,
                 ]);
             }
 
-            if (!$candidate) {
+            if (! $candidate) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
             }
-            
+
             $activeTeamId = (new Generic())->getActiveTeamId();
 
-            if (!$activeTeamId) {
+            if (! $activeTeamId) {
                 throw new Exception('Team not found, Please create team first');
             }
 
@@ -101,9 +93,9 @@ class BlockListService extends ApiBaseService
                 'block_by' => $candidate->user_id,
                 'block_for' => $activeTeamId,
                 'type' => 'single',
-                'block_date	' => now()
+                'block_date	' => now(),
             ]);
-            
+
             return $this->sendSuccessResponse($blockCandidate->toArray(), self::INFORMATION_SAVE_SUCCESSFULLY);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -111,13 +103,12 @@ class BlockListService extends ApiBaseService
     }
 
     /**
-     * @param $request
      * @return bool|JsonResponse
      */
     public function checkShortListCanddate($candidate, $request)
     {
 
-        if (!$candidate && $request['type'] == 'single') {
+        if (! $candidate && $request['type'] == 'single') {
             $checkShortlisted = $this->shortListedCandidateRepository->findOneBy([
                 'user_id' => $request['user_id'],
                 'shortlisted_by' => $request['block_by'],
@@ -128,25 +119,25 @@ class BlockListService extends ApiBaseService
             }
         }
 
-        if (!$candidate && $request['type'] == 'team') {
+        if (! $candidate && $request['type'] == 'team') {
             $checkShortlisted = $this->shortListedCandidateRepository->findOneBy([
                 'user_id' => $request['user_id'],
                 'shortlisted_by' => $request['block_by'],
-                'shortlisted_for' => !null,
+                'shortlisted_for' => ! null,
             ]);
             if ($checkShortlisted) {
                 $checkShortlisted->delete();
             }
 
         }
+
         return true;
     }
 
     /**
-     * @param $userId
      * @return mixed
-     * This function user for search candidate block for him
-     *  Function return user list or User id
+     *               This function user for search candidate block for him
+     *               Function return user list or User id
      */
     public function blockListByUser($userId)
     {
@@ -154,7 +145,6 @@ class BlockListService extends ApiBaseService
     }
 
     /**
-     * @param $userId
      * @return |null
      *  This function use in sear api for getting user team and block candidate by team
      */
@@ -162,15 +152,15 @@ class BlockListService extends ApiBaseService
     {
         $joinTeamList = TeamMember::where('user_id', '=', $userId)->groupBy('team_id')->pluck('team_id');
 
-        if (count($joinTeamList) >= 1):
+        if (count($joinTeamList) >= 1) {
             return $list = BlockList::whereIn('block_for', $joinTeamList)->pluck('user_id');
-        else:
+        } else {
             return null;
-        endif;
+        }
     }
 
     /**
-     * @param $userId
+     * @param  $userId
      * @return |null
      *  This function use in sear api for getting user team and block candidate by team
      */
@@ -178,11 +168,10 @@ class BlockListService extends ApiBaseService
     {
         $joinTeamList = BlockList::where('block_for', $activeTeamId)->pluck('user_id');
 
-        if (count($joinTeamList) >= 1):
+        if (count($joinTeamList) >= 1) {
             return $joinTeamList;
-        else:
+        } else {
             return null;
-        endif;
+        }
     }
-
 }

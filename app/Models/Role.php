@@ -26,12 +26,10 @@ class Role extends Model
         return 'slug';
     }
 
-
     public function admins()
     {
         return $this->belongsToMany('App\Models\Admin', 'admins', 'admin_id');
     }
-
 
     /**
      * Many-To-Many Relationship Method for accessing the Role->permissions
@@ -40,7 +38,6 @@ class Role extends Model
     {
         return $this->belongsToMany('App\Models\Permission');
     }
-
 
     /**
      * Assign permission to certain roles
