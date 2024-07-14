@@ -6,10 +6,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "doctrine/dbal": "*",
         "laravel/cashier": "^15.4",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "league/fractal": "^0.20.1",
+        "nnjeim/world": "*",
+        "s-ichikawa/laravel-sendgrid-driver": "^4.0",
         "tymon/jwt-auth": "^2.1"
     },
     "require-dev": {

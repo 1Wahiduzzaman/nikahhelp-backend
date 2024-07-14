@@ -46,8 +46,6 @@ class Controller extends BaseController
     /**
      * Return error response.
      *
-     * @param array $errorMessages
-     * @param int $status_code
      * @return JsonResponse
      */
     public function sendErrorResponse($message, array $errorMessages = [], int $status_code = HttpStatusCode::VALIDATION_ERROR->value)

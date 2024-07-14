@@ -52,8 +52,7 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-        });
+        $this->reportable(function (Throwable $e) {});
     }
 
     /**
@@ -94,8 +93,6 @@ class Handler extends ExceptionHandler
 
     /**
      * Return error response.
-     *
-     * @param int|HttpStatusCode $status_code
      */
     private function sendErrorResponse($message, int|HttpStatusCode $status_code = HttpStatusCode::VALIDATION_ERROR->value): JsonResponse
     {

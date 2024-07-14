@@ -141,4 +141,4 @@ class CreateCandidateInformationTable extends Migration
     {
         Schema::dropIfExists('candidate_information');
     }
-};
+}

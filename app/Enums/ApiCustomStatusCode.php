@@ -2,7 +2,6 @@
 
 namespace App\Enums;
 
-
 enum ApiCustomStatusCode: int
 {
     case SUCCESS = 200;

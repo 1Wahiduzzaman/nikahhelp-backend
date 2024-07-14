@@ -20,7 +20,7 @@ class AdminMiddleware extends Middleware
      * @param  Request  $request
      * @param  string[]  $guards
      * @param \Closure
-     * @return JsonResponse
+     *
      * @throws AuthenticationException
      */
     public function handle($request, \Closure $next, ...$guards): JsonResponse

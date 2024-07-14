@@ -5,10 +5,11 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 class SubscriptionExpiringMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable, SerializesModels, SendGrid;
 
     public $user;
 
@@ -36,6 +37,15 @@ class SubscriptionExpiringMail extends Mailable
     public function build()
     {
         return $this->subject('Mail from MatrimonyAssist | Subscription expiring soon!')
-            ->markdown('emails.subscription.expiring_subscription');
+            ->markdown('emails.subscription.expiring_subscription')->sendgrid([
+                'personalizations' => [
+                    [
+                        'to' => [
+                            ['email' => $this->user->email, 'name' => $this->user->full_name],
+                        ]
+                    ],
+                ],
+                'categories' => ['user_group1'],
+        ]);
     }
 }

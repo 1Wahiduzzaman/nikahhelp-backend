@@ -2,7 +2,6 @@
 
 namespace App\Enums;
 
-
 enum ApiErrorType
 {
     public const VALIDATION_FAILED_ERROR = 'validation_error';

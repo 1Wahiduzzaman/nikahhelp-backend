@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use App\Enums\HttpStatusCode;
 use Closure;
 use Exception;
-use Illuminate\Auth\Middleware;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;

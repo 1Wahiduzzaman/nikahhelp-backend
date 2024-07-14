@@ -5,10 +5,11 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 class VerifyMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable, SerializesModels, SendGrid;
 
     public $user;
 
@@ -32,6 +33,15 @@ class VerifyMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.verifyUser')->with('user_name', $this->user->full_name);
+        return $this->view('emails.verifyUser')->with('user_name', $this->user->full_name)->sendgrid([
+            'personalizations' => [
+                [
+                    'to' => [
+                        ['email' => $this->user->email, 'name' => $this->user->full_name],
+                    ]
+                ],
+            ],
+            'categories' => ['user_group1'],
+    ]);
     }
 }

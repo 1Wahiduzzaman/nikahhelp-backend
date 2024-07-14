@@ -109,7 +109,7 @@ class SubscriptionService extends ApiBaseService
             try {
                 if ($user->email) {
                     $subscription = $teamExpireDateUpdate->subscription;
-                    Mail::to($user->email)->send(new SubscriptionNewMail($teamExpireDateUpdate, $subscription, $this->domain->domain));
+                    Mail::to($user->email)->send(new SubscriptionNewMail($user, $teamExpireDateUpdate, $subscription, $this->domain->domain));
                 }
             } catch (IncompletePayment $exception) {
                 return $this->sendErrorResponse('Subscription mail has been filled');

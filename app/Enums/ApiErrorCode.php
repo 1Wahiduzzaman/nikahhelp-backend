@@ -2,8 +2,7 @@
 
 namespace App\Enums;
 
-
-enum ApiErrorCode 
+enum ApiErrorCode
 {
     public const VALIDATION_FAILED_ERROR = 'ERROR_1001';
 

@@ -29,7 +29,6 @@ use App\Traits\CrudTrait;
 use App\Transformers\CandidateTransformer;
 use App\Transformers\RepresentativeTransformer;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\JsonResponse;
@@ -37,6 +36,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -109,7 +109,7 @@ class UserService extends ApiBaseService
             $inputData['form_type'] = $request->input('form_type') ?? 1;
             $user = $this->userRepository->save($inputData);
 
-//            dd($user);
+            //            dd($user);
             /* Data set for user information table */
             $registerUser['user_id'] = $user->id;
             $registerUser['email'] = $request->input('email');

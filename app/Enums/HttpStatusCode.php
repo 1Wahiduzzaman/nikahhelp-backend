@@ -2,7 +2,6 @@
 
 namespace App\Enums;
 
-
 /**
  * Class HttpStatusCode
  */
@@ -23,6 +22,5 @@ enum HttpStatusCode: int
     case NOT_FOUND = 404;
 
     case INTERNAL_ERROR = 500;
-
 
 }
