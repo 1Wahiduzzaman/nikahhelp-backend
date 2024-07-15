@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response as FResponse;
@@ -139,7 +140,7 @@ class UserService extends ApiBaseService
                     $deleteCandidate->delete();
                     $deleteUser = $this->userRepository->findOneByProperties(['id' => $user->id]);
                     $deleteUser->delete();
-
+                   Log::error($e->getMessage());
                     return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
                 }
 
@@ -155,6 +156,7 @@ class UserService extends ApiBaseService
 
                 return $this->sendSuccessResponse($data, 'User registration successfully completed', [], FResponse::HTTP_CREATED);
             } else {
+                Log::error('something wrong');
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
 
