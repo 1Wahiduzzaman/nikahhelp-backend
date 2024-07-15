@@ -57,7 +57,7 @@ class AdminMiddleware extends Middleware
         if (Schema::hasTable('roles') && Schema::hasTable('permissions')) {
             return Permission::with('roles')->get();
         } else {
-            return [];
+            return collect([]);
         }
     }
 }
