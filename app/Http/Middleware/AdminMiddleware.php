@@ -6,6 +6,7 @@ use App\Enums\HttpStatusCode;
 use App\Models\Permission;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,10 +29,10 @@ class AdminMiddleware extends Middleware
         if (! Auth::guard('admin')->check()) {
             return response()->json([
                 'status' => 'FAIL',
-                'status_code' => HttpStatusCode::VALIDATION_ERROR,
+                'status_code' => HttpStatusCode::VALIDATION_ERROR->value,
                 'message' => 'Authorization Fail',
                 'error' => ['details' => 'Authorization Fail'],
-            ], HttpStatusCode::VALIDATION_ERROR);
+            ], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $user = Auth::guard('admin')->authenticate();
@@ -49,7 +50,7 @@ class AdminMiddleware extends Middleware
     /**
      * Get all permissions with role.
      *
-     * @return array
+     * @return Collection
      */
     protected function getPermissions()
     {
