@@ -25,25 +25,25 @@ class JwtMiddleware
             if ($e instanceof TokenInvalidException) {
                 return response()->json([
                     'status' => 'FAIL',
-                    'status_code' => HttpStatusCode::VALIDATION_ERROR,
+                    'status_code' => HttpStatusCode::VALIDATION_ERROR->value,
                     'message' => 'Token is Invalid',
                     'error' => ['details' => 'Token is Invalid'],
-                ], HttpStatusCode::VALIDATION_ERROR);
+                ], HttpStatusCode::VALIDATION_ERROR->value);
 
             } elseif ($e instanceof TokenExpiredException) {
                 return response()->json([
                     'status' => 'FAIL',
-                    'status_code' => HttpStatusCode::VALIDATION_ERROR,
+                    'status_code' => HttpStatusCode::VALIDATION_ERROR->value,
                     'message' => 'Token is Expired',
                     'error' => ['details' => 'Token is Expired'],
-                ], HttpStatusCode::VALIDATION_ERROR);
+                ], HttpStatusCode::VALIDATION_ERROR->value);
             } else {
                 return response()->json([
                     'status' => 'FAIL',
-                    'status_code' => HttpStatusCode::VALIDATION_ERROR,
+                    'status_code' => HttpStatusCode::VALIDATION_ERROR->value,
                     'message' => 'Authorization Token not found',
                     'error' => ['details' => 'Authorization Token not found'],
-                ], HttpStatusCode::VALIDATION_ERROR);
+                ], HttpStatusCode::VALIDATION_ERROR->value);
             }
         }
 
