@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\CandidateInformation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * Everything to do with Authentication of Users in matrimony

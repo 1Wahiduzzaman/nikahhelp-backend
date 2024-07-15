@@ -5,9 +5,9 @@ namespace Tests\Feature;
 use App\Models\CandidateInformation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\ApiTestTrait;
 use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class CandidatePreferenceAboutTest extends TestCase
 {
@@ -27,7 +27,7 @@ class CandidatePreferenceAboutTest extends TestCase
 
         $this->user['email'] = 'admin@mail.com';
         $this->user['password'] = '12345678';
-        $this->token = \JWTAuth::attempt($this->user);
+        $this->token = JWTAuth::attempt($this->user);
     }
 
     /**

@@ -3,6 +3,7 @@
 use App\Models\MatchMaker;
 use App\Repositories\MatchMakerRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 use Tests\ApiTestTrait;
 
@@ -18,7 +19,7 @@ class MatchMakerRepositoryTest extends TestCase
     public function setUp() : void
     {
         parent::setUp();
-        $this->matchMakerRepo = \App::make(MatchMakerRepository::class);
+        $this->matchMakerRepo = App::make(MatchMakerRepository::class);
     }
 
     /**
