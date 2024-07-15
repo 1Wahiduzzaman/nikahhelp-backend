@@ -1,0 +1,44 @@
+h4.menu-title{
+    font-weight: bold;
+}
+.table tr{
+    padding : 10px;
+}
+section .card {
+    /*background: rgba(235, 242, 255, 0.5);*/
+}
+.card .table th,.card .table td {
+    padding: 10px;
+    vertical-align: middle;
+}
+.card .table-bordered th,.card .table-bordered td{
+    border : 0px;
+}
+
+.card .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(206, 208, 212, 0.5);
+}
+
+td.action{
+    width: 20%;
+    text-align: right;
+}
+.table-striped tbody tr:nth-of-type(even) {
+    background-color : rgb(255, 255, 255);
+}
+
+span.inactive{
+    color: red;
+    font-size: small;
+}
+
+.breadcrumb-wrapper ol.breadcrumb{
+    margin-left : 20px;
+}
+
+.breadcrumb-wrapper li, .breadcrumb-wrapper a{
+    font-weight : bold;
+    font-size : 15px;
+}
+
+
