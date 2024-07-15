@@ -1,12 +1,10 @@
 <?php
 
-
 namespace App\Http\Requests\Candidate;
 
 use App\Http\Requests\APIRequest;
-use Illuminate\Validation\Rule;
 
-class CandidatePreferenceRatingRequest  extends APIRequest
+class CandidatePreferenceRatingRequest extends APIRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +24,7 @@ class CandidatePreferenceRatingRequest  extends APIRequest
     public function rules()
     {
         return [
-            "pre_pros_part_status" => 'nullable|numeric|between:0,3',
+            'pre_pros_part_status' => 'nullable|numeric|between:0,3',
             'pre_strength_of_character_rate' => 'nullable|numeric|between:0,5',
             'pre_look_and_appearance_rate' => 'nullable|numeric|between:0,5',
             'pre_religiosity_or_faith_rate' => 'nullable|numeric|between:0,5',

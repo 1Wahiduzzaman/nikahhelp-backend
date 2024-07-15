@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Matchmaker;
 
-use App\Models\RepresentativeInformation;
 use App\Http\Requests\APIRequest;
+
 //use InfyOm\Generator\Request\APIRequest;
 
 class CreateMatchMakerAPIRequest extends APIRequest
@@ -41,7 +41,7 @@ class CreateMatchMakerAPIRequest extends APIRequest
             'first_name.required' => 'First name field is required',
             'first_name.max' => 'First name maximum input size 255',
             'screen_name.max' => 'Screen name maximum input size 255',
-            'screen_name.required' => 'Screen name field is required'
+            'screen_name.required' => 'Screen name field is required',
         ];
     }
 }

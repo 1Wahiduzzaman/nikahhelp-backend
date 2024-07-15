@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateBlockListsTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -19,7 +18,7 @@ class CreateBlockListsTable extends Migration
             $table->bigInteger('user_id')->nullable(false); // user id
             $table->bigInteger('block_by')->nullable(false); // user id
             $table->bigInteger('block_for')->nullable(true); // team
-            $table->string('type',20)->default('single')->comment('single or team');
+            $table->string('type', 20)->default('single')->comment('single or team');
             $table->date('block_date')->nullable(true); // date
             $table->timestamps();
             $table->softDeletes();

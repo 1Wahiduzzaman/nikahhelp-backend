@@ -9,7 +9,8 @@ class Package extends Model
 {
     use HasFactory;
 
-    public function subscription(){
+    public function subscription()
+    {
         return $this->hasOne(Subscription::class, 'plan_id', 'id');
     }
 }

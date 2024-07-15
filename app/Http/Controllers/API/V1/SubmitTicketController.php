@@ -5,12 +5,9 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TicketSubmissionRequest;
 use App\Http\Requests\TicketSumbissionScreenshot;
-use App\Models\CandidateInformation;
-use App\Models\RepresentativeInformation;
 use App\Services\CandidateService;
 use App\Services\RepresentativeService;
 use App\Services\UserService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SubmitTicketController extends Controller
@@ -36,14 +33,13 @@ class SubmitTicketController extends Controller
         $this->representative = $representative;
         $this->matrimonyUsers = $matrimonyUsers;
     }
+
     /**
      * Handle the incoming request.
-     *
-     * @param  TicketSubmissionRequest  $request
      */
     public function submitTicket(TicketSubmissionRequest $request)
     {
-       return $this->matrimonyUsers->ticketSubmission($request);
+        return $this->matrimonyUsers->ticketSubmission($request);
     }
 
     public function screenShot(TicketSumbissionScreenshot $request)

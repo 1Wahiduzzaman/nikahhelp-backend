@@ -1,11 +1,10 @@
 <?php
 
-
 namespace App\Http\Requests\Candidate;
-use App\Http\Requests\APIRequest;
-use Illuminate\Validation\Rule;
 
-class CandidatePersonalContactInformationRequest  extends APIRequest
+use App\Http\Requests\APIRequest;
+
+class CandidatePersonalContactInformationRequest extends APIRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -46,7 +45,7 @@ class CandidatePersonalContactInformationRequest  extends APIRequest
     public function messages()
     {
         return [
-            'required' => 'The :attribute field is required.'
+            'required' => 'The :attribute field is required.',
         ];
     }
 }

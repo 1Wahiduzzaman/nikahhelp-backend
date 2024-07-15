@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('subscription', function (Blueprint $table) {
+        Schema::table('subscriptions', function (Blueprint $table) {
             $table->string('type', 255)->default('');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('subscription', function (Blueprint $table) {
+        Schema::table('subscriptions', function (Blueprint $table) {
             $table->dropColumn('type');
         });
     }

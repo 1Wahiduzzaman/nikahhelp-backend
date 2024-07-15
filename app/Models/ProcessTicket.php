@@ -16,7 +16,7 @@ class ProcessTicket extends Model
         'user_id',
         'message',
         'status',
-        'user'
+        'user',
     ];
 
     public function ticket()

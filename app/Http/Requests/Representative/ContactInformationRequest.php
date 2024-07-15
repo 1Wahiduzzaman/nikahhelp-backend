@@ -1,9 +1,7 @@
 <?php
 
-
 namespace App\Http\Requests\Representative;
 
-use App\Models\RepresentativeInformation;
 use App\Http\Requests\APIRequest;
 
 class ContactInformationRequest extends APIRequest
@@ -48,8 +46,7 @@ class ContactInformationRequest extends APIRequest
     public function messages()
     {
         return [
-            'required' => 'The :attribute field is required.'
+            'required' => 'The :attribute field is required.',
         ];
     }
-
 }

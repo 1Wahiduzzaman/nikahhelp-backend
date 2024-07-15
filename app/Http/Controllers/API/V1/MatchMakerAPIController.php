@@ -2,29 +2,26 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Matchmaker\CreateMatchMakerAPIRequest;
-use App\Http\Requests\Matchmaker\UpdateMatchMakerAPIRequest;
-use App\Http\Requests\Matchmaker\EssentialInformationRequest;
-use App\Http\Requests\Matchmaker\ContactInformationRequest;
+use App\Http\Controllers\AppBaseController;
 use App\Http\Requests\Matchmaker\BusinessInformationRequest;
-use App\Http\Requests\Matchmaker\VerifyIdentityRequest;
+use App\Http\Requests\Matchmaker\ContactInformationRequest;
+use App\Http\Requests\Matchmaker\CreateMatchMakerAPIRequest;
+use App\Http\Requests\Matchmaker\EssentialInformationRequest;
 use App\Http\Requests\Matchmaker\ImageUploadRequest;
+use App\Http\Requests\Matchmaker\VerifyIdentityRequest;
 use App\Models\MatchMaker;
 use App\Repositories\MatchMakerRepository;
-use Illuminate\Http\Request;
-use App\Http\Controllers\AppBaseController;
-use Response;
 use App\Services\MatchmakerService;
+use Illuminate\Http\Request;
+use Response;
 
 /**
  * Class MatchMakerController
- * @package App\Http\Controllers\API
  */
 class MatchMakerAPIController extends AppBaseController
 {
-
     private \App\Repositories\MatchMakerRepository $matchMakerRepository;
+
     private \App\Services\MatchmakerService $matchmakerService;
 
     public function __construct(MatchMakerRepository $matchMakerRepo, MatchmakerService $matchmakerService)
@@ -37,7 +34,6 @@ class MatchMakerAPIController extends AppBaseController
      * Display a listing of the MatchMaker.
      * GET|HEAD /matchMakers
      *
-     * @param Request $request
      * @return Response
      */
     public function index(Request $request)
@@ -49,7 +45,6 @@ class MatchMakerAPIController extends AppBaseController
      * Store a newly created MatchMakerInformation in storage.
      * POST /MatchMakerInformation
      *
-     * @param CreateMatchMakerAPIRequest $request
      *
      * @return Response
      */
@@ -62,7 +57,6 @@ class MatchMakerAPIController extends AppBaseController
      * Store a newly created MatchMaker business Information in storage.
      * POST /BusinessInformationRequest
      *
-     * @param BusinessInformationRequest $request
      *
      * @return Response
      */
@@ -75,7 +69,6 @@ class MatchMakerAPIController extends AppBaseController
      * Store a newly created MatchMaker in storage.
      * POST /representativeInformations
      *
-     * @param ContactInformationRequest $request
      *
      * @return Response
      */
@@ -84,12 +77,10 @@ class MatchMakerAPIController extends AppBaseController
         return $this->matchmakerService->storeContactInformation($request->all());
     }
 
-
     /**
      * Store a newly created MatchMakerEssentialInformationRequest in storage.
      * POST /representativeInformations
      *
-     * @param EssentialInformationRequest $request
      *
      * @return Response
      */
@@ -99,7 +90,6 @@ class MatchMakerAPIController extends AppBaseController
     }
 
     /**
-     * @param VerifyIdentityRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function verifyIdentity(VerifyIdentityRequest $request)
@@ -108,7 +98,6 @@ class MatchMakerAPIController extends AppBaseController
     }
 
     /**
-     * @param ImageUploadRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function imageUpload(ImageUploadRequest $request)
@@ -116,16 +105,14 @@ class MatchMakerAPIController extends AppBaseController
         return $this->matchmakerService->imageUpload($request->all());
     }
 
-
     /**
      * Remove the specified MatchMaker from storage.
      * DELETE /matchMakers/{id}
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return Response
-     * @throws \Exception
      *
+     * @throws \Exception
      */
     public function destroy($id)
     {
@@ -142,10 +129,8 @@ class MatchMakerAPIController extends AppBaseController
     }
 
     /**
-     * @param Request $request
      * @return mixed
      */
-
     public function finalSubmit(Request $request)
     {
         return $this->matchmakerService->finalSubmit($request->all());

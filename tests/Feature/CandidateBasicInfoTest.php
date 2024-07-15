@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\CandidateInformation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\ApiTestTrait;
 use Tests\TestCase;
 

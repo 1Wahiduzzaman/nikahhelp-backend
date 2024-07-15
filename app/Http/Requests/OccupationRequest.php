@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class OccupationRequest  extends APIRequest
+class OccupationRequest extends APIRequest
 {
     public function authorize()
     {
@@ -14,7 +12,7 @@ class OccupationRequest  extends APIRequest
     public function rules()
     {
         return [
-            "name" => 'required|unique:occupations',
+            'name' => 'required|unique:occupations',
         ];
     }
 }

@@ -3,6 +3,7 @@
 use App\Models\Notification;
 use App\Repositories\NotificationRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 use Tests\ApiTestTrait;
 
@@ -18,7 +19,7 @@ class NotificationRepositoryTest extends TestCase
     public function setUp() : void
     {
         parent::setUp();
-        $this->notificationRepo = \App::make(NotificationRepository::class);
+        $this->notificationRepo = App::make(NotificationRepository::class);
     }
 
     /**

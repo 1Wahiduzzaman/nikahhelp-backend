@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class BlockListTest extends TestCase
 {

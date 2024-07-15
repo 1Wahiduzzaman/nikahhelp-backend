@@ -9,7 +9,7 @@ class Religion extends Model
 {
     use HasFactory;
 
-    protected $table = "religions";
+    protected $table = 'religions';
 
     protected $fillable = [
         'name',

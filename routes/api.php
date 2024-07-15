@@ -1,37 +1,35 @@
 <?php
 
+use App\Http\Controllers\API\SearchAPIController;
+use App\Http\Controllers\API\ShortListedCandidateController;
+use App\Http\Controllers\API\ShortListedRepresentativeController;
 use App\Http\Controllers\API\TeamListedCandidateController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\UserDashboardController;
+use App\Http\Controllers\API\V1\AllNotificationController;
+use App\Http\Controllers\API\V1\Auth\ForgotPasswordController;
+use App\Http\Controllers\API\V1\BlockListAPIController;
+use App\Http\Controllers\API\V1\CandidateController;
+use App\Http\Controllers\API\V1\ChatInfoController;
 use App\Http\Controllers\API\V1\CountryController;
+use App\Http\Controllers\API\V1\DeleteReasonController;
+use App\Http\Controllers\API\V1\MatchMakerAPIController;
+use App\Http\Controllers\API\V1\MembersInvitationController;
+use App\Http\Controllers\API\V1\MessageController;
+use App\Http\Controllers\API\V1\OccupationController;
+use App\Http\Controllers\API\V1\PackageController;
+use App\Http\Controllers\API\V1\ReligionController;
+use App\Http\Controllers\API\V1\RepresentativeInformationController;
+use App\Http\Controllers\API\V1\StudyLevelController;
+use App\Http\Controllers\API\V1\SubmitTicketController;
+use App\Http\Controllers\API\V1\SubscriptionController;
+use App\Http\Controllers\API\V1\TeamConnectionController;
 use App\Http\Controllers\API\V1\TeamController;
 use App\Http\Controllers\API\V1\TeamMembersController;
 use App\Http\Controllers\API\V1\UserController;
-use App\Http\Controllers\API\V1\CandidateController;
-use App\Http\Controllers\API\V1\Auth\ForgotPasswordController;
-use App\Http\Controllers\API\V1\OccupationController;
-use App\Http\Controllers\API\V1\ReligionController;
-use App\Http\Controllers\API\V1\StudyLevelController;
-use App\Http\Controllers\API\ShortListedCandidateController;
-use App\Http\Controllers\API\V1\RepresentativeInformationController;
-use App\Http\Controllers\API\V1\MembersInvitationController;
-use App\Http\Controllers\API\V1\BlockListAPIController;
-use App\Http\Controllers\API\V1\SubscriptionController;
-use App\Http\Controllers\API\V1\DeleteReasonController;
-use App\Http\Controllers\API\V1\TeamConnectionController;
-use App\Http\Controllers\API\SearchAPIController;
-use App\Http\Controllers\API\UserDashboardController;
-use App\Http\Controllers\API\AdminDashboardController;
-use App\Http\Controllers\API\ShortListedRepresentativeController;
-use App\Http\Controllers\API\V1\AllNotificationController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\API\V1\SubmitTicketController;
-use App\Http\Controllers\API\V1\ChatInfoController;
-use App\Http\Controllers\API\V1\MatchMakerAPIController;
-use App\Http\Controllers\API\V1\MessageController;
-use App\Http\Controllers\API\V1\PackageController;
 use App\Http\Controllers\API\V1\VisitController;
-use App\Http\Controllers\LocationController;
-use App\Http\Middleware\CorsHandler;
+use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -43,26 +41,26 @@ use App\Http\Middleware\CorsHandler;
 |
 */
 Route::get('v1/home-searches', [SearchAPIController::class, 'filter']);
-Route::post('v1/register', [UserController::class, 'register']);//validation incomplete
+Route::post('v1/register', [UserController::class, 'register']); //validation incomplete
 Route::POST('v1/login', [UserController::class, 'authenticate']);
-Route::GET('v1/logout', [UserController::class, 'logout']);//will be used  in save and exit
+Route::GET('v1/logout', [UserController::class, 'logout']); //will be used  in save and exit
 //using ony get method
-Route::get('v1/emailVerify/{token}', [UserController::class, 'emailVerify']);//incomplete
-Route::POST('v1/verify-2fa', [UserController::class, 'tokenVerifyOrResend']);//incomplete
+Route::get('v1/emailVerify/{token}', [UserController::class, 'emailVerify']); //incomplete
+Route::POST('v1/verify-2fa', [UserController::class, 'tokenVerifyOrResend']); //incomplete
 Route::get('v1/password-reset/{token}', [UserController::class, 'passwordExpiryCheck']);
-Route::GET('v1/token-refresh', [UserController::class, 'getTokenRefresh']);//inspect
-Route::post('v1/forgot/password', ForgotPasswordController::class)->name('forgot.password');//inspect
-Route::post('v1/forgot/password/verify', [ForgotPasswordController::class, 'forgetPasswordTokenVerification'])->name('forgot.password.verify');//inspect
-Route::post('v1/forgot/password/update', [ForgotPasswordController::class, 'updatePassword'])->name('forgot.password.update');//inspect
+Route::GET('v1/token-refresh', [UserController::class, 'getTokenRefresh']); //inspect
+Route::post('v1/forgot/password', ForgotPasswordController::class)->name('forgot.password'); //inspect
+Route::post('v1/forgot/password/verify', [ForgotPasswordController::class, 'forgetPasswordTokenVerification'])->name('forgot.password.verify'); //inspect
+Route::post('v1/forgot/password/update', [ForgotPasswordController::class, 'updatePassword'])->name('forgot.password.update'); //inspect
 // Route::post('v1/recent-join-candidate', [ForgotPasswordController::class, 'recentJoinCandidate'])->name('recent.join.candidate');
 Route::get('v1/initial-dropdowns', [HomeController::class, 'initialDropdowns'])->name('initial.dropdowns');
-Route::GET('v1/recent-join-candidate', [HomeController::class, 'recentJoinCandidate']);//need to update if traffic changes
+Route::GET('v1/recent-join-candidate', [HomeController::class, 'recentJoinCandidate']); //need to update if traffic changes
 
-Route::get('v1/religions', [ReligionController::class, 'index'])->name('religion.list');//show all
+Route::get('v1/religions', [ReligionController::class, 'index'])->name('religion.list'); //show all
 // Countries API
-Route::get('v1/utilities/countries', [CountryController::class, 'index'])->name('utilities.countries.lists');//ok
-Route::get('v1/utilities/cities', [CountryController::class, 'getCityList'])->name('utilities.city.lists');//ok
-Route::get('v1/utilities/religions', [ReligionController::class, 'index'])->name('utilities.religions.lists');//ok
+Route::get('v1/utilities/countries', [CountryController::class, 'index'])->name('utilities.countries.lists'); //ok
+Route::get('v1/utilities/cities', [CountryController::class, 'getCityList'])->name('utilities.city.lists'); //ok
+Route::get('v1/utilities/religions', [ReligionController::class, 'index'])->name('utilities.religions.lists'); //ok
 Route::post('v1/feed-back', [\App\Http\Controllers\FeedBackController::class, 'feedBack'])->name('help.feedback');
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::group(['prefix' => 'v1'], function () {
@@ -95,12 +93,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('candidate/preference-about', [CandidateController::class, 'storeCandidatePreferenceAbout'])->name('candidate.preference.about');
         Route::POST('candidate/preference-rating', [CandidateController::class, 'storeCandidatePreferenceRating'])->name('candidate.preference.rating');
 
-
         Route::get('user', [UserController::class, 'getAuthenticatedUser']);
         Route::get('user-profile', [UserController::class, 'getUserProfile']);
         Route::get('candidate/family-info', [CandidateController::class, 'listCandidateFamilyInformation'])->name('list.candidate.family.information');
         Route::PATCH('candidate/family-info', [CandidateController::class, 'updateCandidateFamilyInformation'])->name('update.candidate.family.information');
-
 
         // avatar Image upload
         Route::POST('avatar/image-upload', [CandidateController::class, 'avatarImgUpload'])->name('avatarImg.upload');
@@ -145,7 +141,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::GET('seen-all-notification', [AllNotificationController::class, 'seenAllNotification'])->name('all-notification.seen-all-notification');
         // End Notification
 
-
         //User / Raz
         Route::get('individual-rejected-notes/{id}', [UserController::class, 'getRejectedNotes'])->name('user.rejected-notes');
         Route::post('candidate-upload-doc', [UserController::class, 'postDocUpload'])->name('user.candidate-upload-doc');
@@ -154,9 +149,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         //Package List |Raz
         Route::get('package-list', [PackageController::class, 'index'])->name('package-list');
 
-
         //Support Chat By Raz
-
 
         // Teams API
         Route::DELETE('member-invitation-delete', [MembersInvitationController::class, 'destroy'])->name('team.member-invitation-delete');
@@ -198,7 +191,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('chat-info', [ChatInfoController::class, 'getInfo'])->name('chat.info');
         Route::POST('chat-user-info', [ChatInfoController::class, 'getUserInfoList'])->name('chat.user.info');
         Route::POST('chat-user-info', [ChatInfoController::class, 'getUserInfoList'])->name('chat.user.info');
-
 
         // Occupations API
 
@@ -264,8 +256,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::delete('representative/remove-img/{imageType}', [RepresentativeInformationController::class, 'deleteImage'])->name('representative.image.delete');
         Route::patch('representative/personal-info-status', [RepresentativeInformationController::class, 'updateRepresentativeInfoStatus'])->name('update.candidate.info.status');
 
-
-
         // Matchmaker
         Route::get('matchmaker-information', [MatchMakerAPIController::class, 'index'])->name('matchmakerInformation');
         Route::POST('matchmaker-screen-name', [MatchMakerAPIController::class, 'matchMakerScreenName'])->name('match.maker.screen.name');
@@ -276,18 +266,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('matchmaker/image/upload', [MatchMakerAPIController::class, 'imageUpload'])->name('matchmaker.image.upload');
         Route::POST('matchmaker/final/submit', [MatchMakerAPIController::class, 'finalSubmit'])->name('matchmaker.final.submit');
 
-
-
         // Stripe subscription
 
         Route::POST('/subscription/oneday_subscription', [SubscriptionController::class, 'oneDaySubscription'])->name('subscription.oneday');
         Route::POST('/subscription/new_subscription', [SubscriptionController::class, 'createNewSubscription'])->name('subscription.create');
         Route::POST('/subscription/cancel_subscription', [SubscriptionController::class, 'cancelSubscription'])->name('subscription.cancel');
         Route::get('/subscription/payment_initialization', [SubscriptionController::class, 'initializationPayment'])->name('subscription.initialization.payment');
-
-
-
-
 
         // Notification
 
@@ -304,17 +288,15 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         // ProfileSuggestions
         Route::get('profile-suggestions', [CandidateController::class, 'profileSuggestions'])->name('profile.suggestions');
 
-
         // Email
         Route::get('email', [UserController::class, 'sendEmail'])->name('email');
-
 
         //Raz - Visitor count in site
         Route::post('site-visit', [VisitController::class, 'visit'])->name('user.site-visit');
         Route::get('site-visit-graph/{id}', [VisitController::class, 'visitGraph'])->name('user.site-visit-graph');
 
         //location requests
-       // Route::post('search/location', [LocationController::class, 'postcode']);
+        // Route::post('search/location', [LocationController::class, 'postcode']);
 
         Route::post('/ticket-submission', [SubmitTicketController::class, 'submitTicket']);
         Route::post('/issue-screen-shot', [SubmitTicketController::class, 'screenShot']);
@@ -328,39 +310,41 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // image upload
     Route::post('/img/{id}', [\App\Http\Controllers\ImgController::class, 'storeImage']);
-    Route::delete('/img/{id}/{path}',[\App\Http\Controllers\ImgController::class, 'deleteImg']);
+    Route::delete('/img/{id}/{path}', [\App\Http\Controllers\ImgController::class, 'deleteImg']);
     Route::get('/img/{id}/{path}', [\App\Http\Controllers\ImgController::class, 'show'])->where(['path' => '.*']);
-/*
-    Route::group(['prefix' => 'v1/admin'], function () {
+    /*
+        Route::group(['prefix' => 'v1/admin'], function () {
 
-        // User report
-        Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
-        Route::get('count-can-rep', [AdminDashboardController::class, 'count_can_rep'])->name('user.count-can-rep');
-        Route::get('users-report', [AdminDashboardController::class, 'userReport'])->name('user.report');
-        // Awating for approval list
-        Route::get('pending-user', [AdminDashboardController::class, 'pendingUserList'])->name('user.pending');
+            // User report
+            Route::get('dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
+            Route::get('count-can-rep', [AdminDashboardController::class, 'count_can_rep'])->name('user.count-can-rep');
+            Route::get('users-report', [AdminDashboardController::class, 'userReport'])->name('user.report');
+            // Awating for approval list
+            Route::get('pending-user', [AdminDashboardController::class, 'pendingUserList'])->name('user.pending');
 
-        Route::get('approved-user-list', [AdminDashboardController::class, 'approvedUserList'])->name('user.approved');
-        Route::get('verified-user-list', [AdminDashboardController::class, 'verifiedUserList'])->name('user.verified');
-        Route::get('rejected-user-list', [AdminDashboardController::class, 'rejectedUserList'])->name('user.rejected');
-        Route::get('user-info/{id}', [AdminDashboardController::class, 'UserInfo'])->name('user.user-info');
+            Route::get('approved-user-list', [AdminDashboardController::class, 'approvedUserList'])->name('user.approved');
+            Route::get('verified-user-list', [AdminDashboardController::class, 'verifiedUserList'])->name('user.verified');
+            Route::get('rejected-user-list', [AdminDashboardController::class, 'rejectedUserList'])->name('user.rejected');
+            Route::get('user-info/{id}', [AdminDashboardController::class, 'UserInfo'])->name('user.user-info');
 
-        // new API Raz
-        Route::get('candidate-user-info/{id}', [AdminDashboardController::class, 'CandidateUserInfo'])->name('user.candidate-user-info');
-        Route::get('representative-info/{id}', [AdminDashboardController::class, 'RepresentativeUserInfo'])->name('user.user-info');
+            // new API Raz
+            Route::get('candidate-user-info/{id}', [AdminDashboardController::class, 'CandidateUserInfo'])->name('user.candidate-user-info');
+            Route::get('representative-info/{id}', [AdminDashboardController::class, 'RepresentativeUserInfo'])->name('user.user-info');
 
-        Route::post('user-verify-reject', [AdminDashboardController::class, 'verifyRejectUser'])->name('user.verify_reject');
-        Route::get('subscription-report', [AdminDashboardController::class, 'subscription'])->name('team.subscription.report');
+            Route::post('user-verify-reject', [AdminDashboardController::class, 'verifyRejectUser'])->name('user.verify_reject');
+            Route::get('subscription-report', [AdminDashboardController::class, 'subscription'])->name('team.subscription.report');
 
-        //Team
-        Route::GET('team-list', [TeamController::class, 'adminTeamList'])->name('team.list');
-        Route::GET('deleetd-team-list', [TeamController::class, 'adminDeletedTeamList'])->name('team.deleted-team-list');
-        Route::GET('connected-team-list/{id}', [TeamController::class, 'adminConnectedTeamList'])->name('team.connected-list'); // param team pk
-        Route::DELETE('team-del', [TeamController::class, 'adminTeamDelete'])->name('team.team-del'); // param team pk
+            //Team
+            Route::GET('team-list', [TeamController::class, 'adminTeamList'])->name('team.list');
+            Route::GET('deleetd-team-list', [TeamController::class, 'adminDeletedTeamList'])->name('team.deleted-team-list');
+            Route::GET('connected-team-list/{id}', [TeamController::class, 'adminConnectedTeamList'])->name('team.connected-list'); // param team pk
+            Route::DELETE('team-del', [TeamController::class, 'adminTeamDelete'])->name('team.team-del'); // param team pk
 
-        // Send Global Notification
-        Route::GET('all-user', [AllNotificationController::class, 'getAllUsers'])->name('all-notification.all-user');
-        Route::POST('send-notification', [AllNotificationController::class, 'sendGlobalNotification'])->name('all-notification.send-notification');
-    });
-    */
+            // Send Global Notification
+            Route::GET('all-user', [AllNotificationController::class, 'getAllUsers'])->name('all-notification.all-user');
+            Route::POST('send-notification', [AllNotificationController::class, 'sendGlobalNotification'])->name('all-notification.send-notification');
+        });
+        */
 });
+
+require_once __DIR__.'/../routes/admin.php';

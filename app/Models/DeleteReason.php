@@ -8,23 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class DeleteReason extends Model
 {
     use HasFactory;
+
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'team_id',
         'user_id',
         'reason_type',
-        'reason_text'
+        'reason_text',
     ];
-
 
     public function user()
     {
-        return $this->hasOne(User::class,'id','user_id');
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 
     public function team()
     {
-        return $this->hasOne(Team::class,'id','team_id');
+        return $this->hasOne(Team::class, 'id', 'team_id');
     }
 }

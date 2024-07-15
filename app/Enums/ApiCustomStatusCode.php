@@ -2,10 +2,9 @@
 
 namespace App\Enums;
 
-use BenSampo\Enum\Enum;
-
-final class ApiCustomStatusCode extends Enum
+enum ApiCustomStatusCode: int
 {
-    const SUCCESS              =   200;
-    const INSUFFICIENT_BALANCE =   413;
+    case SUCCESS = 200;
+
+    case INSUFFICIENT_BALANCE = 413;
 }

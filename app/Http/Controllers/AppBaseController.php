@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\HttpStatusCode;
 use Illuminate\Http\JsonResponse;
-use InfyOm\Generator\Utils\ResponseUtil;
 use Response;
 use Symfony\Component\HttpFoundation\Response as FResponse;
-use JWTAuth;
 
 /**
  * @SWG\Swagger(
  *   basePath="/api/v1",
+ *
  *   @SWG\Info(
  *     title="Laravel Generator APIs",
  *     version="1.0.0",
@@ -22,7 +20,7 @@ use JWTAuth;
  */
 class AppBaseController extends Controller
 {
-    public function sendResponse($result, $message,$code=FResponse::HTTP_OK)
+    public function sendResponse($result, $message, $code = FResponse::HTTP_OK)
     {
         return $this->sendSuccessResponse($result, $message, [], $code);
     }
@@ -32,32 +30,33 @@ class AppBaseController extends Controller
         return $this->sendErrorResponse($message, $errorMessages = [], $code);
     }
 
-    public function sendSuccess($data,$message,$code)
+    public function sendSuccess($data, $message, $code)
     {
-       return $this->sendSuccessResponse($data,$message,$code);
+        return $this->sendSuccessResponse($data, $message, $code);
     }
-    public function sendUnauthorizedResponse($message='',$code = FResponse::HTTP_FORBIDDEN): JsonResponse
+
+    public function sendUnauthorizedResponse($message = '', $code = FResponse::HTTP_FORBIDDEN): JsonResponse
     {
-        $message = $message ? : "You don't have permission to access";
+        $message = $message ?: "You don't have permission to access";
+
         return $this->sendErrorResponse($message, $errorMessages = [], $code);
     }
 
+    public function getUserId()
+    {
+        $user = auth()->authenticate();
 
-    public function getUserId(){
-        $user = JWTAuth::parseToken()->authenticate();
         return $user['id'];
     }
-
 
     /**
      * Return Response with pagination
      *
-     * @param $items
      * @return array
      */
     public function paginationResponse($items)
     {
-        return array(
+        return [
             'total_items' => $items->total(),
             'current_items' => $items->count(),
             'first_item' => $items->firstItem(),
@@ -65,11 +64,11 @@ class AppBaseController extends Controller
             'current_page' => $items->currentPage(),
             'last_page' => $items->lastPage(),
             'has_more_pages' => $items->hasMorePages(),
-        );
+        ];
     }
 
     public function getBackHere()
     {
-        return response()->json(['message'=>'It is working']);
+        return response()->json(['message' => 'It is working']);
     }
 }

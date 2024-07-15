@@ -13,7 +13,7 @@ class AddAccountTypeToUsersTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasColumn('users','account_type')) {
+        if (! Schema::hasColumn('users', 'account_type')) {
             Schema::table('users', function (Blueprint $table) {
                 $table->integer('account_type')->nullable(false)->default(0)->comment('0=not selected, 1=candidate, 2=matchmaker , 3=admin');
             });

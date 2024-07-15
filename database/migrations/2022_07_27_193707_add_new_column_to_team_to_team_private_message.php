@@ -14,7 +14,7 @@ class AddNewColumnToTeamToTeamPrivateMessage extends Migration
     public function up()
     {
         Schema::table('team_to_team_private_messages', function (Blueprint $table) {
-                $table->bigInteger('team_private_chat_id')->nullable();
+            $table->bigInteger('team_private_chat_id')->nullable();
         });
     }
 

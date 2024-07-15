@@ -17,14 +17,14 @@ class CreateTeamMembersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('team_id');
             $table->unsignedBigInteger('user_id');
-            $table->string('user_type',255)->nullable();
-            $table->string('role',55)->nullable();
+            $table->string('user_type', 255)->nullable();
+            $table->string('role', 55)->nullable();
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('team_id')->references('id')->on('teams');
-            $table->unique(['team_id','user_id'],'team_member_unique');
+            $table->unique(['team_id', 'user_id'], 'team_member_unique');
 
         });
     }

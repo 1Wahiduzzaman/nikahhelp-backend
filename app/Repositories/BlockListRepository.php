@@ -3,14 +3,12 @@
 namespace App\Repositories;
 
 use App\Models\BlockList;
-use App\Repositories\BaseRepository;
 
 /**
  * Class block_listRepository
- * @package App\Repositories
+ *
  * @version May 20, 2021, 12:35 pm UTC
-*/
-
+ */
 class BlockListRepository extends BaseRepository
 {
     protected $modelName = BlockList::class;
@@ -35,11 +33,10 @@ class BlockListRepository extends BaseRepository
     /**
      * UserRepository constructor.
      *
-     * @param User $model
+     * @param  User  $model
      */
     public function __construct(BlockList $model)
     {
         $this->model = $model;
     }
-
 }

@@ -1,11 +1,8 @@
 <?php
 
-
 namespace App\Http\Requests\Candidate;
 
 use App\Http\Requests\APIRequest;
-use Illuminate\Validation\Rule;
-
 
 class CandidatePersonalGeneralInInformationRequest extends APIRequest
 {
@@ -27,11 +24,11 @@ class CandidatePersonalGeneralInInformationRequest extends APIRequest
     public function rules()
     {
         return [
-            'per_ethnicity'=> 'nullable',
-            'per_mother_tongue'=> 'nullable|string',
-            'per_nationality'=> 'nullable',
-            'per_country_of_birth'=> 'nullable',
-            'per_health_condition'=> 'nullable|string'
+            'per_ethnicity' => 'nullable',
+            'per_mother_tongue' => 'nullable|string',
+            'per_nationality' => 'nullable',
+            'per_country_of_birth' => 'nullable',
+            'per_health_condition' => 'nullable|string',
         ];
     }
 

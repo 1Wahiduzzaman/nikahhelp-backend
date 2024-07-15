@@ -24,8 +24,8 @@ class UpdateShortListedCandidateAPIRequest extends APIRequest
      */
     public function rules()
     {
-        $rules =[
-            "user_id" => 'required'
+        $rules = [
+            'user_id' => 'required',
         ]; //ShortListedCandidate::$rules;
 
         return $rules;

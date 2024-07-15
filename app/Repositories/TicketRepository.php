@@ -2,14 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Http\Requests\UserNotificationRequest;
 use App\Models\TicketSubmission;
-use App\Http\Requests\DeviceTokenRequest;
 
 /**
  * Class TicketRepository
- *
- * @package App\Repositories
  */
 class TicketRepository extends BaseRepository
 {
@@ -23,14 +19,11 @@ class TicketRepository extends BaseRepository
         'user_id',
         'issue',
         'issue_type',
-        'screen_shot_path'
+        'screen_shot_path',
     ];
-
 
     /**
      * UserRepository constructor.
-     *
-     * @param TicketSubmission $model
      */
     public function __construct(TicketSubmission $model)
     {
@@ -46,5 +39,4 @@ class TicketRepository extends BaseRepository
     {
         return $this->fieldSearchable;
     }
-
 }

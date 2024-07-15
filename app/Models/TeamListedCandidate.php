@@ -10,11 +10,11 @@ class TeamListedCandidate extends Model
     use HasFactory;
 
     public $fillable = [
-        "id",
-        "user_id",
-        "team_listed_by",
-        "team_listed_for",
-        "team_listed_date"
+        'id',
+        'user_id',
+        'team_listed_by',
+        'team_listed_for',
+        'team_listed_date',
     ];
 
     /**
@@ -23,7 +23,7 @@ class TeamListedCandidate extends Model
      * @var array
      */
     public static $rules = [
-        "user_id" => 'required',
-        "team_listed_by" => 'required'
+        'user_id' => 'required',
+        'team_listed_by' => 'required',
     ];
 }

@@ -14,12 +14,12 @@ class AddSubscriptionIdToTeamsTable extends Migration
     public function up()
     {
 
-        if (!Schema::hasColumn('teams','subscription_id')) {
+        if (! Schema::hasColumn('teams', 'subscription_id')) {
             Schema::table('teams', function (Blueprint $table) {
                 $table->unsignedBigInteger('subscription_id')->nullable()->after('member_count');
             });
         }
-        if (!Schema::hasColumn('teams','subscription_expire_at')) {
+        if (! Schema::hasColumn('teams', 'subscription_expire_at')) {
             Schema::table('teams', function (Blueprint $table) {
                 $table->date('subscription_expire_at')->nullable()->after('subscription_id');
             });

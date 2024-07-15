@@ -3,16 +3,14 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CityRequest;
 use App\Models\City;
 use App\Services\CandidateService;
 use App\Services\CountryService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use App\Http\Requests\CityRequest;
 
 class CountryController extends Controller
 {
-
     /**
      * @var CandidateService
      */
@@ -20,16 +18,12 @@ class CountryController extends Controller
 
     /**
      * PurchaseController constructor.
-     * @param CountryService $countryService
      */
     public function __construct(CountryService $countryService)
     {
         $this->countryService = $countryService;
     }
 
-    /**
-     * @return JsonResponse
-     */
     public function index(): JsonResponse
     {
         return $this->countryService->getCountries();
@@ -37,8 +31,8 @@ class CountryController extends Controller
 
     /**
      * Get cities of country
-     * @param int $countryIid
-     * @return JsonResponse
+     *
+     * @param  int  $countryIid
      */
     public function getCities(int $countryId): JsonResponse
     {
@@ -55,15 +49,13 @@ class CountryController extends Controller
 
     public function getCityList()
     {
-        try{
-            $cities =  City::all();
+        try {
+            $cities = City::all();
+
             return $this->sendSuccessResponse($cities, 'city name save successfully!');
-        }catch (Exception $exception){
+        } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
 
-
     }
-
-
 }

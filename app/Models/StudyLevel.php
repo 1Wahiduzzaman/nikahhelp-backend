@@ -10,9 +10,10 @@ class StudyLevel extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $table = "study_level";
+
+    protected $table = 'study_level';
 
     protected $fillable = [
-        'name'
+        'name',
     ];
 }

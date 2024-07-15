@@ -1,9 +1,7 @@
 <?php
 
-
 namespace App\Http\Requests\Matchmaker;
 
-use App\Models\RepresentativeInformation;
 use App\Http\Requests\APIRequest;
 
 class ContactInformationRequest extends APIRequest
@@ -36,7 +34,7 @@ class ContactInformationRequest extends APIRequest
             'mobile_number' => 'required|max:255',
             'mobile_country_code' => 'required|max:255',
             'per_permanent_post_code' => 'required|max:255',
-            'per_permanent_address' => 'required|max:255'
+            'per_permanent_address' => 'required|max:255',
         ];
     }
 
@@ -46,8 +44,7 @@ class ContactInformationRequest extends APIRequest
     public function messages()
     {
         return [
-            'required' => 'The :attribute field is required.'
+            'required' => 'The :attribute field is required.',
         ];
     }
-
 }

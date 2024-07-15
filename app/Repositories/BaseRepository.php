@@ -2,16 +2,15 @@
 
 namespace App\Repositories;
 
-use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Model;
 
-
 abstract class BaseRepository implements BaseRepositoryContract
-{/**
- * Name of the Model with absolute namespace
- *
- * @var string
- */
+{
+    /**
+     * Name of the Model with absolute namespace
+     *
+     * @var string
+     */
     protected $modelName;
 
     /**
@@ -38,7 +37,7 @@ abstract class BaseRepository implements BaseRepositoryContract
             $this->model = new $this->modelName();
 
             //check object is a instanceof Illuminate\Database\Eloquent\Model
-            if (!$this->model instanceof Model) {
+            if (! $this->model instanceof Model) {
                 throw new \Exception("{$this->modelName} must be an instance of Illuminate\Database\Eloquent\Model");
             }
         } else {
@@ -55,11 +54,12 @@ abstract class BaseRepository implements BaseRepositoryContract
     {
         return $this->model;
     }
+
     /**
      * Paginate records for scaffold.
      *
-     * @param int $perPage
-     * @param array $columns
+     * @param  int  $perPage
+     * @param  array  $columns
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage, $columns = ['*'])
@@ -72,9 +72,9 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Build a query for retrieving all records.
      *
-     * @param array $search
-     * @param int|null $skip
-     * @param int|null $limit
+     * @param  array  $search
+     * @param  int|null  $skip
+     * @param  int|null  $limit
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function allQuery($search = [], $skip = null, $limit = null)
@@ -89,11 +89,11 @@ abstract class BaseRepository implements BaseRepositoryContract
             }
         }
 
-        if (!is_null($skip)) {
+        if (! is_null($skip)) {
             $query->skip($skip);
         }
 
-        if (!is_null($limit)) {
+        if (! is_null($limit)) {
             $query->limit($limit);
         }
 
@@ -103,11 +103,10 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Retrieve all records with given filter criteria
      *
-     * @param array $search
-     * @param int|null $skip
-     * @param int|null $limit
-     * @param array $columns
-     *
+     * @param  array  $search
+     * @param  int|null  $skip
+     * @param  int|null  $limit
+     * @param  array  $columns
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
     public function all($search = [], $skip = null, $limit = null, $columns = ['*'])
@@ -120,8 +119,7 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Find a resource by id
      *
-     * @param $id
-     * @param null $relation
+     * @param  null  $relation
      * @return Model|null
      */
     public function findOne($id, $relation = null)
@@ -130,12 +128,10 @@ abstract class BaseRepository implements BaseRepositoryContract
     }
 
     /**
-     * @param $id
-     * @param null $relation
-     * @param array|null $orderBy
+     * @param  null  $relation
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|Collection|Model|Model[]|mixed
      */
-    public function findOrFail($id, $relation = null, array $orderBy = null)
+    public function findOrFail($id, $relation = null, ?array $orderBy = null)
     {
         return $this->prepareModelForRelationAndOrder($relation, $orderBy)->findOrFail($id);
     }
@@ -143,45 +139,43 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Find resource
      *
-     * @param $field
-     * @param $value
+     * @param  $field
+     * @param  $value
      * @return \Illuminate\Support\Collection|null|static
      */
-    public function findBy(array $searchCriteria = [], $relation = null, array $orderBy = null)
+    public function findBy(array $searchCriteria = [], $relation = null, ?array $orderBy = null)
     {
         $model = $this->prepareModelForRelationAndOrder($relation, $orderBy);
-        $limit = !empty($searchCriteria['per_page']) ? (int)$searchCriteria['per_page'] : 15; // it's needed for pagination
+        $limit = ! empty($searchCriteria['per_page']) ? (int) $searchCriteria['per_page'] : 15; // it's needed for pagination
 
         $queryBuilder = $model->where(function ($query) use ($searchCriteria) {
 
             $this->applySearchCriteriaInQueryBuilder($query, $searchCriteria);
         });
-        if (!empty($searchCriteria['per_page'])) {
+        if (! empty($searchCriteria['per_page'])) {
             return $queryBuilder->paginate($limit);
         }
+
         return $queryBuilder->get();
     }
 
     /**
      * Search All resources by any values of a key
      *
-     * @param string $key
-     * @param array $values
+     * @param  string  $key
      * @return Collection
      */
-    public function findIn($key, array $values, $relation = null, array $orderBy = null)
+    public function findIn($key, array $values, $relation = null, ?array $orderBy = null)
     {
         return $this->prepareModelForRelationAndOrder($relation, $orderBy)->whereIn($key, $values)->get();
     }
 
-
     /**
-     * @param null $perPage
-     * @param null $relation
-     * @param array|null $orderBy
+     * @param  null  $perPage
+     * @param  null  $relation
      * @return Contracts\Collection|\Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Builder[]|Collection|Model[]
      */
-    public function findAll($perPage = null, $relation = null, array $orderBy = null)
+    public function findAll($perPage = null, $relation = null, ?array $orderBy = null)
     {
         $model = $this->prepareModelForRelationAndOrder($relation, $orderBy);
         if ($perPage) {
@@ -190,11 +184,11 @@ abstract class BaseRepository implements BaseRepositoryContract
 
         return $model->get();
     }
+
     /**
      * Find resource
      *
-     * @param array $params
-     * @param array $fields Which fields to select
+     * @param  array  $fields  Which fields to select
      * @return \Illuminate\Support\Collection|null|static
      */
     public function findByProperties(array $params, array $fields = ['*'])
@@ -211,8 +205,7 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Find resource
      *
-     * @param array $params
-     * @param array $fields Which fields to select
+     * @param  array  $fields  Which fields to select
      * @return Model|null|static
      */
     public function findOneByProperties(array $params, array $fields = ['*'])
@@ -229,8 +222,7 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Find a resource by criteria
      *
-     * @param array $criteria
-     * @param null $relation
+     * @param  null  $relation
      * @return Model|null
      */
     public function findOneBy(array $criteria, $relation = null)
@@ -241,7 +233,7 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Find resources by ids
      *
-     * @param array $ids
+     * @param  array  $ids
      * @return \Illuminate\Support\Collection|null|static
      */
     public function findByIds($ids)
@@ -262,7 +254,6 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Save a resource
      *
-     * @param array $data
      * @return Model
      */
     public function save(array $data)
@@ -273,7 +264,7 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Save resources
      *
-     * @param array|Collection $resources
+     * @param  array|Collection  $resources
      * @return mixed
      */
     public function saveMany($resources)
@@ -288,8 +279,6 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Update resource
      *
-     * @param $resource
-     * @param $data
      * @return \Illuminate\Support\Collection|null|static
      */
     public function update($resource, $data = [])
@@ -306,7 +295,6 @@ abstract class BaseRepository implements BaseRepositoryContract
     /**
      * Delete resource
      *
-     * @param $resource
      * @return \Illuminate\Support\Collection|null|static
      */
     public function delete($resource)
@@ -316,12 +304,9 @@ abstract class BaseRepository implements BaseRepositoryContract
         return $resource;
     }
 
-
-
     /**
      * Creates a new model from properties
      *
-     * @param array $properties
      * @return mixed
      */
     public function create(array $properties)
@@ -334,11 +319,10 @@ abstract class BaseRepository implements BaseRepositoryContract
     }
 
     /**
-     * @param $relation
-     * @param array|null $orderBy [[Column], [Direction]]
+     * @param  array|null  $orderBy  [[Column], [Direction]]
      * @return \Illuminate\Database\Eloquent\Builder|Model
      */
-    private function prepareModelForRelationAndOrder($relation, array $orderBy = null)
+    private function prepareModelForRelationAndOrder($relation, ?array $orderBy = null)
     {
         $model = $this->model;
         if ($relation) {
@@ -347,14 +331,14 @@ abstract class BaseRepository implements BaseRepositoryContract
         if ($orderBy) {
             $model = $model->orderBy($orderBy['column'], $orderBy['direction']);
         }
+
         return $model;
     }
 
     /**
      * Apply condition on query builder based on search criteria
      *
-     * @param Object $queryBuilder
-     * @param array $searchCriteria
+     * @param  object  $queryBuilder
      * @return mixed
      */
     protected function applySearchCriteriaInQueryBuilder($queryBuilder, array $searchCriteria = [])

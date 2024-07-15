@@ -6,22 +6,20 @@ use App\Models\CandidateImage;
 use App\Models\ShortListedCandidate;
 use App\Models\TeamMember;
 use App\Models\User;
-use Illuminate\Http\Resources\Json\JsonResource;
 use DB;
-use JWTAuth;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class TeamConnectionResource extends JsonResource
 {
-
     /**
      * Transform the resource collection into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function toArray($request)
     {
-        if (isset($this->active_teams) && !empty($this->active_teams)) {
+        if (isset($this->active_teams) && ! empty($this->active_teams)) {
             $aactiveTeam = $this->active_teams;
         }
         $userId = self::getUserId();
@@ -44,38 +42,38 @@ class TeamConnectionResource extends JsonResource
         ];
 
         $result['candidateInfo'] = null;
-//        Request send
-        if ($this->connection_status == 0 && !empty($aactiveTeam) && $this->from_team_id == $aactiveTeam) {
+        //        Request send
+        if ($this->connection_status == 0 && ! empty($aactiveTeam) && $this->from_team_id == $aactiveTeam) {
             $result['team_table_id'] = $this->to_team->id;
             $result['team_name'] = $this->to_team->name;
             $result['team_created_date'] = $this->to_team->created_at;
-            $result['team_created_by'] = Self::getTeamCreatedBy($this->to_team->created_by);;
+            $result['team_created_by'] = self::getTeamCreatedBy($this->to_team->created_by);
             $candidateInfo = self::candidateInfomation($this->to_team->id);
-            if (!empty($candidateInfo)) {
+            if (! empty($candidateInfo)) {
                 $result['candidateInfo'] = $candidateInfo;
             }
             $countTeamMember = self::totalTeamMember($this->to_team->id);
-            if (!empty($countTeamMember)) {
+            if (! empty($countTeamMember)) {
                 $result['total_teamMember'] = $countTeamMember;
             }
             $result['connection'] = 'pending';
             $result['connection_type'] = 'Request sent';
         }
 
-//        Request received
-        if ($this->connection_status == 0 && !empty($aactiveTeam) && $this->to_team_id == $aactiveTeam) {
+        //        Request received
+        if ($this->connection_status == 0 && ! empty($aactiveTeam) && $this->to_team_id == $aactiveTeam) {
 
             $result['team_table_id'] = $this->from_team->id;
             $result['team_name'] = $this->from_team->name;
             $result['team_created_date'] = $this->from_team->created_at;
-            $result['team_created_by'] = Self::getTeamCreatedBy($this->from_team->created_by);
+            $result['team_created_by'] = self::getTeamCreatedBy($this->from_team->created_by);
             $candidateInfo = self::candidateInfomation($this->from_team->id);
 
-            if (!empty($candidateInfo)) {
+            if (! empty($candidateInfo)) {
                 $result['candidateInfo'] = $candidateInfo;
             }
             $countTeamMember = self::totalTeamMember($this->from_team->id);
-            if (!empty($countTeamMember)) {
+            if (! empty($countTeamMember)) {
                 $result['total_teamMember'] = $countTeamMember;
             }
             $result['connection'] = 'pending';
@@ -83,16 +81,15 @@ class TeamConnectionResource extends JsonResource
 
         }
 
-//        Connected
-        if ($this->connection_status == 1 && !empty($aactiveTeam) && ($this->to_team_id == $aactiveTeam or $this->from_team_id == $aactiveTeam)) {
-
+        //        Connected
+        if ($this->connection_status == 1 && ! empty($aactiveTeam) && ($this->to_team_id == $aactiveTeam or $this->from_team_id == $aactiveTeam)) {
 
             if ($this->from_team_id == $aactiveTeam) {
                 $result['team_table_id'] = $this->to_team->id;
                 $result['team_name'] = $this->to_team->name;
 
                 $result['team_created_date'] = $this->to_team->created_at;
-                $result['team_created_by'] = Self::getTeamCreatedBy($this->to_team->created_by);
+                $result['team_created_by'] = self::getTeamCreatedBy($this->to_team->created_by);
 
                 $candidateInfo = self::candidateInfomation($this->to_team->id);
                 $countTeamMember = self::totalTeamMember($this->to_team->id);
@@ -102,15 +99,15 @@ class TeamConnectionResource extends JsonResource
                 $result['team_name'] = $this->from_team->name;
 
                 $result['team_created_date'] = $this->from_team->created_at;
-                $result['team_created_by'] = Self::getTeamCreatedBy($this->to_team->created_by);
+                $result['team_created_by'] = self::getTeamCreatedBy($this->to_team->created_by);
                 $candidateInfo = self::candidateInfomation($this->from_team->id);
                 $countTeamMember = self::totalTeamMember($this->from_team->id);
             }
-            if (!empty($candidateInfo)) {
+            if (! empty($candidateInfo)) {
                 $result['candidateInfo'] = $candidateInfo;
             }
 
-            if (!empty($countTeamMember)) {
+            if (! empty($countTeamMember)) {
                 $result['total_teamMember'] = $countTeamMember;
             }
             $result['connection'] = 'connected';
@@ -118,18 +115,18 @@ class TeamConnectionResource extends JsonResource
 
         }
 
-//        we declined
-        if ($this->connection_status == 2 && !empty($aactiveTeam) && $this->to_team_id == $aactiveTeam) {
+        //        we declined
+        if ($this->connection_status == 2 && ! empty($aactiveTeam) && $this->to_team_id == $aactiveTeam) {
             $result['team_table_id'] = $this->from_team->id;
             $result['team_name'] = $this->from_team->name;
             $result['team_created_date'] = $this->from_team->created_at;
-            $result['team_created_by'] = Self::getTeamCreatedBy($this->from_team->created_by);
+            $result['team_created_by'] = self::getTeamCreatedBy($this->from_team->created_by);
             $candidateInfo = self::candidateInfomation($this->from_team->id);
-            if (!empty($candidateInfo)) {
+            if (! empty($candidateInfo)) {
                 $result['candidateInfo'] = $candidateInfo;
             }
             $countTeamMember = self::totalTeamMember($this->from_team->id);
-            if (!empty($countTeamMember)) {
+            if (! empty($countTeamMember)) {
                 $result['total_teamMember'] = $countTeamMember;
             }
             $result['connection'] = 'we declined';
@@ -137,18 +134,18 @@ class TeamConnectionResource extends JsonResource
 
         }
 
-//        They declined
-        if ($this->connection_status == 2 && !empty($aactiveTeam) && $this->from_team_id == $aactiveTeam) {
+        //        They declined
+        if ($this->connection_status == 2 && ! empty($aactiveTeam) && $this->from_team_id == $aactiveTeam) {
             $result['team_table_id'] = $this->to_team->id;
             $result['team_name'] = $this->to_team->name;
             $result['team_created_date'] = $this->to_team->created_at;
-            $result['team_created_by'] = Self::getTeamCreatedBy($this->to_team->created_by);
+            $result['team_created_by'] = self::getTeamCreatedBy($this->to_team->created_by);
             $candidateInfo = self::candidateInfomation($this->to_team->id);
-            if (!empty($candidateInfo)) {
+            if (! empty($candidateInfo)) {
                 $result['candidateInfo'] = $candidateInfo;
             }
             $countTeamMember = self::totalTeamMember($this->to_team->id);
-            if (!empty($countTeamMember)) {
+            if (! empty($countTeamMember)) {
                 $result['total_teamMember'] = $countTeamMember;
             }
             $result['connection'] = 'They declined';
@@ -161,7 +158,6 @@ class TeamConnectionResource extends JsonResource
     }
 
     /**
-     * @param $id
      * @return |null
      */
     public function partnerReligions($id)
@@ -183,7 +179,7 @@ class TeamConnectionResource extends JsonResource
     {
         $teamInfo = TeamMember::where('team_id', '=', $teamId)->where('user_type', '=', 'Candidate')->first();
 
-        if (!empty($teamInfo->getCandidateInfo) && isset($teamInfo->getCandidateInfo->first_name)) {
+        if (! empty($teamInfo->getCandidateInfo) && isset($teamInfo->getCandidateInfo->first_name)) {
             // if ($teamInfo->getCandidateInfo->anybody_can_see == 1 or $teamInfo->getCandidateInfo->team_connection_can_see == 1) {
             //     // $image = url('storage/' . $teamInfo->getCandidateInfo->per_main_image_url);
             //     // $image = isset($teamInfo->getCandidateInfo->per_main_image_url) ? env('IMAGE_SERVER') .'/'. $teamInfo->getCandidateInfo->per_main_image_url : '';
@@ -207,11 +203,11 @@ class TeamConnectionResource extends JsonResource
         } else {
             $result = '';
         }
+
         return $result;
     }
 
     /**
-     * @param $userId
      * @return |null
      */
     public function getCandidateTeamId($userId)
@@ -222,7 +218,7 @@ class TeamConnectionResource extends JsonResource
         $candidateID = TeamMember::select('teams.team_id')
             ->join('teams', 'teams.id', '=', 'team_members.team_id')
             ->where('team_members.user_id', '=', $userId)->where('team_members.user_type', '=', 'Candidate')->first();
-        if (!empty($candidateID)) {
+        if (! empty($candidateID)) {
             return $candidateID->team_id;
         } else {
             return null;
@@ -230,7 +226,6 @@ class TeamConnectionResource extends JsonResource
     }
 
     /**
-     * @param $userId
      * @return mixed
      */
     public function shortListed($userId)
@@ -241,7 +236,6 @@ class TeamConnectionResource extends JsonResource
     }
 
     /**
-     * @param $userId
      * @return mixed
      */
     public function shortListedTeam($userId)
@@ -256,13 +250,14 @@ class TeamConnectionResource extends JsonResource
      */
     public function getUserId()
     {
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = auth()->authenticate();
+
         return $user['id'];
     }
 
     public function totalTeamMember($teamId)
     {
-        if (!empty($teamId)) {
+        if (! empty($teamId)) {
             return TeamMember::where('team_id', $teamId)->count();
         } else {
             return 0;
@@ -282,7 +277,7 @@ class TeamConnectionResource extends JsonResource
 
     public function getTeamMembers($teamId)
     {
-        if (!empty($teamId)) {
+        if (! empty($teamId)) {
             return TeamMember::select('id', 'user_id')->where('team_id', $teamId)->pluck('user_id')->toArray();
         } else {
             return 0;

@@ -25,7 +25,7 @@ class UpdateNotificationAPIRequest extends APIRequest
     public function rules()
     {
         $rules = Notification::$rules;
-        
+
         return $rules;
     }
 }

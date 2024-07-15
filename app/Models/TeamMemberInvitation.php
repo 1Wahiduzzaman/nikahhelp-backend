@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TeamMemberInvitation extends Model
 {
@@ -20,10 +19,11 @@ class TeamMemberInvitation extends Model
         'updated_at',
         'user_type',
         'relationship',
-        'link'
+        'link',
     ];
 
-    public function team() {
+    public function team()
+    {
         return $this->BelongsTo(Team::class, 'team_id', 'id');
     }
 }

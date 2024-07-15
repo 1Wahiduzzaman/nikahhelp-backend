@@ -1,46 +1,38 @@
 <?php
 
-
 namespace App\Services;
 
+use App\Domain;
 use App\Enums\HttpStatusCode;
 use App\Helpers\Notificationhelpers;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
-use App\Models\User;
-use App\Models\Subscription;
-use App\Models\Plans;
-use App\Models\Team;
-use App\Repositories\TeamRepository;
-use Stripe;
-use Session;
-use Laravel\Cashier\Cashier;
-use Laravel\Cashier\Exceptions\IncompletePayment;
 use App\Http\Resources\SubscriptionReportResource;
-use App\Mail\SubscriptionMail;
-use Illuminate\Support\Facades\Mail;
-use \App\Domain;
 use App\Mail\SubscriptionExpiredMail;
 use App\Mail\SubscriptionExpiringMail;
 use App\Mail\SubscriptionNewMail;
+use App\Models\Subscription;
+use App\Models\Team;
+use App\Models\User;
+use App\Repositories\TeamRepository;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
+use Laravel\Cashier\Exceptions\IncompletePayment;
 
 class SubscriptionService extends ApiBaseService
 {
-    const SUBSCRIPTION_SUCCESSFULLY = "Team Subscription Successfully complete";
-    const INITIALIZATION_SUCCESSFULLY = "Payment Initialization Successfully complete";
+    const SUBSCRIPTION_SUCCESSFULLY = 'Team Subscription Successfully complete';
+
+    const INITIALIZATION_SUCCESSFULLY = 'Payment Initialization Successfully complete';
 
     protected \App\Repositories\TeamRepository $teamRepository;
+
     protected \App\Domain $domain;
 
     /**
      * TeamService constructor.
-     *
-     * @param TeamRepository $teamRepository
      */
     public function __construct(TeamRepository $teamRepository, Domain $domain)
     {
@@ -56,19 +48,19 @@ class SubscriptionService extends ApiBaseService
         try {
             $userId = self::getUserId();
             $user = User::find($userId);
-            if (!$user) {
+            if (! $user) {
                 return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
             }
-           
-           if($user->stripe_id == null)
-        {
-            $user->createAsStripeCustomer();
-        } 
+
+            if ($user->stripe_id == null) {
+                $user->createAsStripeCustomer();
+            }
 
             $intent = $user->createSetupIntent();
             $data = [
-                'client_secret' => $intent->client_secret
+                'client_secret' => $intent->client_secret,
             ];
+
             return $this->sendSuccessResponse($data, self::INITIALIZATION_SUCCESSFULLY, [], HttpStatusCode::SUCCESS);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -76,7 +68,6 @@ class SubscriptionService extends ApiBaseService
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
     public function newSubscription($request)
@@ -84,18 +75,18 @@ class SubscriptionService extends ApiBaseService
         try {
             $userId = self::getUserId();
             $user = User::find($userId);
-            if (!$user) {
+            if (! $user) {
                 return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
             }
             $stripeToken = $request['stripeToken'];
-            $packageID = Self::selectPlaneID(5);
-            $packageName = Self::selectPlaneName(5).date('YmdHis');
+            $packageID = self::selectPlaneID(5);
+            $packageName = self::selectPlaneName(5).date('YmdHis');
             $user->addPaymentMethod($stripeToken);
 
             $paymentMethod = $user->findPaymentMethod($stripeToken);
             $subscriptionInfo = $user->newSubscription("$packageName", "$packageID")->create($paymentMethod->id, [
                 'name' => $user->full_name,
-                'email' => $user->email
+                'email' => $user->email,
             ]);
             $expireDate = Carbon::parse(self::expireDateCalculation(4))->format('Y-m-d');
             $suBInfo = Subscription::find($subscriptionInfo->id);
@@ -104,8 +95,8 @@ class SubscriptionService extends ApiBaseService
             $suBInfo->subscription_expire_at = $expireDate;
             $suBInfo->save();
             $teamExpireDateUpdate = Team::with(['created_by'])->find($request['team_id']);   //pk team_id
-            $current_expire_date  = $teamExpireDateUpdate->subscription_expire_at;
-            if($current_expire_date) {
+            $current_expire_date = $teamExpireDateUpdate->subscription_expire_at;
+            if ($current_expire_date) {
                 $exp_date = Carbon::parse($this->reNewExpiryDate(4, $current_expire_date))->format('Y-m-d');
             } else {
                 $exp_date = $expireDate;
@@ -115,10 +106,10 @@ class SubscriptionService extends ApiBaseService
             $teamExpireDateUpdate->save();
 
             // Send Mail to subscribed user
-            try{
-                if($user->email) {
+            try {
+                if ($user->email) {
                     $subscription = $teamExpireDateUpdate->subscription;
-                    Mail::to($user->email)->send(new SubscriptionNewMail($teamExpireDateUpdate, $subscription, $this->domain->domain));
+                    Mail::to($user->email)->send(new SubscriptionNewMail($user, $teamExpireDateUpdate, $subscription, $this->domain->domain));
                 }
             } catch (IncompletePayment $exception) {
                 return $this->sendErrorResponse('Subscription mail has been filled');
@@ -135,7 +126,8 @@ class SubscriptionService extends ApiBaseService
 
     }
 
-    private function reNewExpiryDate($plan = null, $date = null) {
+    private function reNewExpiryDate($plan = null, $date = null)
+    {
         $date = Carbon::createFromFormat('Y-m-d', $date);
         switch ($plan) {
             case 0:
@@ -161,7 +153,6 @@ class SubscriptionService extends ApiBaseService
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
     public function oneDaySubscription($request)
@@ -169,35 +160,34 @@ class SubscriptionService extends ApiBaseService
         $userId = self::getUserId();
         try {
             $teamExpireDateUpdate = Team::find($request['team_id']);
-            if (!$teamExpireDateUpdate) {
+            if (! $teamExpireDateUpdate) {
                 return $this->sendErrorResponse('Team not found', [], HttpStatusCode::BAD_REQUEST);
             }
 
-//            $userId = self::getUserId();
-//            $user = User::find($userId);
-//            $stripeToken = $request['stripeToken'];
-//            $packageID = Self::selectPlaneID($request['plane']);
-//            $packageName = Self::selectPlaneName($request['plane']);
-//            $user->createOrGetStripeCustomer();
-//            $user->updateDefaultPaymentMethod($stripeToken);
-//            $subscriptionInfo = $user->charge(1 * 100, $stripeToken);
+            //            $userId = self::getUserId();
+            //            $user = User::find($userId);
+            //            $stripeToken = $request['stripeToken'];
+            //            $packageID = Self::selectPlaneID($request['plane']);
+            //            $packageName = Self::selectPlaneName($request['plane']);
+            //            $user->createOrGetStripeCustomer();
+            //            $user->updateDefaultPaymentMethod($stripeToken);
+            //            $subscriptionInfo = $user->charge(1 * 100, $stripeToken);
 
-
-            $teamExpireDateUpdate->subscription_expire_at = Carbon::parse(self::expireDateCalculation($request['plane']))->format('Y-m-d');;
+            $teamExpireDateUpdate->subscription_expire_at = Carbon::parse(self::expireDateCalculation($request['plane']))->format('Y-m-d');
             $teamExpireDateUpdate->save();
             Notificationhelpers::add(self::SUBSCRIPTION_SUCCESSFULLY, 'team', $request['team_id'], $userId);
-//            if ($subscriptionInfo->status == "succeeded"):
+
+            //            if ($subscriptionInfo->status == "succeeded"):
             return $this->sendSuccessResponse($teamExpireDateUpdate->toArray(), self::SUBSCRIPTION_SUCCESSFULLY);
-//            else:
-//                return $this->sendErrorResponse('something went wrong please try again', [], HttpStatusCode::BAD_REQUEST);
-//            endif;
+            //            else:
+            //                return $this->sendErrorResponse('something went wrong please try again', [], HttpStatusCode::BAD_REQUEST);
+            //            endif;
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
 
     /**
-     * @param $type
      * @return mixed
      */
     public function selectPlaneID($type)
@@ -230,7 +220,6 @@ class SubscriptionService extends ApiBaseService
     }
 
     /**
-     * @param $type
      * @return string
      */
     public function selectPlaneName($type)
@@ -263,7 +252,6 @@ class SubscriptionService extends ApiBaseService
     }
 
     /**
-     * @param $type
      * @return Carbon
      */
     public function expireDateCalculation($type)
@@ -293,46 +281,45 @@ class SubscriptionService extends ApiBaseService
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
     public function cancelSubscription($request)
     {
         try {
             $findSubscription = Subscription::find($request['subscription_id']);
-            if (!$findSubscription) {
+            if (! $findSubscription) {
                 return $this->sendErrorResponse('Team subscription not found', [], HttpStatusCode::BAD_REQUEST);
             }
             $userId = self::getUserId();
             $user = User::find($userId);
-            if (!$user) {
+            if (! $user) {
                 return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
             }
             $subscriptionCancelInfo = $user->subscription($findSubscription->name)->cancelNowAndInvoice();
-//            $subscriptionCancelInfo = $user->subscription($findSubscription->name)->cancelNow();
-//            $subscriptionCancelInfo = $user->subscription($findSubscription->name)->cancel();
+            //            $subscriptionCancelInfo = $user->subscription($findSubscription->name)->cancelNow();
+            //            $subscriptionCancelInfo = $user->subscription($findSubscription->name)->cancel();
             $teamExpireDateUpdate = Team::find($findSubscription->team_id);
-            $teamExpireDateUpdate->subscription_expire_at = Carbon::now()->format('Y-m-d');;
+            $teamExpireDateUpdate->subscription_expire_at = Carbon::now()->format('Y-m-d');
             $teamExpireDateUpdate->status = 2;
             $teamExpireDateUpdate->save();
-            if ($subscriptionCancelInfo):
-                Notificationhelpers::add("Subscription has been canceled", 'team', $findSubscription->team_id, $userId);
+            if ($subscriptionCancelInfo) {
+                Notificationhelpers::add('Subscription has been canceled', 'team', $findSubscription->team_id, $userId);
+
                 return $this->sendSuccessResponse($subscriptionCancelInfo->toArray(), self::SUBSCRIPTION_SUCCESSFULLY);
-            else:
+            } else {
                 return $this->sendErrorResponse('Something went wrong please try again', [], HttpStatusCode::BAD_REQUEST);
-            endif;
+            }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
 
     /**
-     * @param $request
      * @return JsonResponse
      */
     public function subscriptionReport($request)
     {
-        if(!Gate::allows('GET_TEAM_SUBSCRIPTION_DATA')){
+        if (! Gate::allows('GET_TEAM_SUBSCRIPTION_DATA')) {
             return $this->sendUnauthorizedResponse();
         }
 
@@ -350,13 +337,12 @@ class SubscriptionService extends ApiBaseService
         $team_info = SubscriptionReportResource::collection($queryData);
         $result['result'] = $team_info;
         $result['pagination'] = self::pagination($PaginationCalculation);
+
         return $this->sendSuccessResponse($result, 'Team subscription information fetched Successfully');
 
     }
 
-
     /**
-     * @param $queryData
      * @return array
      */
     protected function pagination($queryData)
@@ -370,17 +356,18 @@ class SubscriptionService extends ApiBaseService
             'last_page' => $queryData->lastPage(),
             'has_more_pages' => $queryData->hasMorePages(),
         ];
+
         return $data;
     }
 
-
     //Subscription Cron Job
-    public function subscriptionExpiring($teams) {
-        foreach($teams as $team){
-            if(!$team->team_members->isEmpty()) {
-                foreach($team->team_members as $member) {
+    public function subscriptionExpiring($teams)
+    {
+        foreach ($teams as $team) {
+            if (! $team->team_members->isEmpty()) {
+                foreach ($team->team_members as $member) {
                     $user = $member->user;
-                    if($user->email) {
+                    if ($user->email) {
                         Mail::to($user->email)->send(new SubscriptionExpiringMail($team, $user, $this->domain->domain));
                     }
                 }
@@ -389,12 +376,13 @@ class SubscriptionService extends ApiBaseService
         echo 'Mail Sent';
     }
 
-    public function subscriptionExpired($teams) {
-        foreach($teams as $team){
-            if(!$team->team_members->isEmpty()) {
-                foreach($team->team_members as $member) {
+    public function subscriptionExpired($teams)
+    {
+        foreach ($teams as $team) {
+            if (! $team->team_members->isEmpty()) {
+                foreach ($team->team_members as $member) {
                     //$user = $member->user;
-                    if($member->user->email) {
+                    if ($member->user->email) {
                         Mail::to($member->user->email)->send(new SubscriptionExpiredMail($team, $member, $this->domain->domain));
                     }
                 }
@@ -402,5 +390,4 @@ class SubscriptionService extends ApiBaseService
         }
         echo 'Mail Sent';
     }
-
 }

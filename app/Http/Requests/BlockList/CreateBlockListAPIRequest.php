@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\BlockList;
 
-use App\Models\BlockList;
 use App\Http\Requests\APIRequest;
 
 class CreateBlockListAPIRequest extends APIRequest

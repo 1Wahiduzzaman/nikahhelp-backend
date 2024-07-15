@@ -18,8 +18,8 @@ class CreateProfileLogsTable extends Migration
             $table->unsignedBigInteger('user_id')->nullable(false); // user id
             $table->unsignedBigInteger('visitor_id')->nullable(false); // user id
             $table->unsignedBigInteger('team_id')->nullable(); // team id
-            $table->string('country',100)->nullable();
-            $table->string('city',100)->nullable();
+            $table->string('country', 100)->nullable();
+            $table->string('city', 100)->nullable();
             $table->date('date')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');

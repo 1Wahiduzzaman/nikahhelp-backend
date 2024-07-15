@@ -9,26 +9,27 @@ class BlockListResource extends JsonResource
     /**
      * Transform the resource collection into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function toArray($request)
     {
-        $firstName = $this->userinfo['first_name'] ?? "";
-        $lastName = $this->userinfo['last_name'] ?? "";
+        $firstName = $this->userinfo['first_name'] ?? '';
+        $lastName = $this->userinfo['last_name'] ?? '';
         $candidateInfo = [
-            'name' => $firstName . ' ' . $lastName,
-            'location' => $this->userinfo['per_nationality'] ?? "",
-            'location_name' => $this->userinfo->getNationality['name'] ?? "",
-            'age' => $this->userinfo['dob'] ?? "",
-            'religion' => $this->userinfo->getReligion['name'] ?? "",
-            'ethnicity' => $this->userinfo['per_ethnicity'] ?? "",
+            'name' => $firstName.' '.$lastName,
+            'location' => $this->userinfo['per_nationality'] ?? '',
+            'location_name' => $this->userinfo->getNationality['name'] ?? '',
+            'age' => $this->userinfo['dob'] ?? '',
+            'religion' => $this->userinfo->getReligion['name'] ?? '',
+            'ethnicity' => $this->userinfo['per_ethnicity'] ?? '',
         ];
-        if(!empty($this->userInfo['per_main_image_url'])):
-        $image = url('storage/' . $this->userInfo['per_main_image_url']);
-        else:
-            $image=null;
-        endif;
+        if (! empty($this->userInfo['per_main_image_url'])) {
+            $image = url('storage/'.$this->userInfo['per_main_image_url']);
+        } else {
+            $image = null;
+        }
+
         return [
             'id' => $this->id ?? null,
             'user_id' => $this->user_id ?? null,
@@ -43,5 +44,4 @@ class BlockListResource extends JsonResource
         ];
 
     }
-
 }

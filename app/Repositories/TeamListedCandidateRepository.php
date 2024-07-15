@@ -2,25 +2,19 @@
 
 namespace App\Repositories;
 
-use App\Models\ShortListedCandidate;
 use App\Models\TeamListedCandidate;
-use App\Repositories\BaseRepository;
 
 /**
  * Class ShortListedCandidateRepository
- * @package App\Repositories
+ *
  * @version April 29, 2021, 7:36 am UTC
  */
 class TeamListedCandidateRepository extends BaseRepository
 {
-
     protected $modelName = TeamListedCandidate::class;
-
 
     /**
      * UserRepository constructor.
-     *
-     * @param TeamListedCandidate $model
      */
     public function __construct(TeamListedCandidate $model)
     {
@@ -61,5 +55,4 @@ class TeamListedCandidateRepository extends BaseRepository
     {
         return $result = TeamListedCandidate::where('user_id', '=', $userId)->first();
     }
-
 }

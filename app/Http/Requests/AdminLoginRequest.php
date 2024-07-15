@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Requests;
-
 
 class AdminLoginRequest extends APIRequest
 {
@@ -24,10 +22,8 @@ class AdminLoginRequest extends APIRequest
     public function rules()
     {
         return [
-            "email" => 'required',
-            "password" => 'required',
+            'email' => 'required',
+            'password' => 'required',
         ];
     }
-
-
 }

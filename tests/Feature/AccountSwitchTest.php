@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * Everything to with Account Switch endpoints

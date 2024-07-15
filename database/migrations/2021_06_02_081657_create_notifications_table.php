@@ -16,7 +16,7 @@ class CreateNotificationsTable extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->text('data');
-            $table->enum('type',['single', 'team', 'other'])->default('team');
+            $table->enum('type', ['single', 'team', 'other'])->default('team');
             $table->bigInteger('team_id')->nullable(); // team id
             $table->bigInteger('user_id')->nullable(); // user id
             $table->timestamp('read_at')->nullable();

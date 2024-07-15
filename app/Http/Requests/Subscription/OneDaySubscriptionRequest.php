@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests\Subscription;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use App\Http\Requests\APIRequest;
 
 class OneDaySubscriptionRequest extends APIRequest
@@ -43,5 +41,4 @@ class OneDaySubscriptionRequest extends APIRequest
             'team_id.required' => 'Team ID field is required',
         ];
     }
-
 }

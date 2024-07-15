@@ -1,12 +1,10 @@
 <?php
 
-
 namespace App\Http\Requests\Candidate;
 
 use App\Http\Requests\APIRequest;
-use Illuminate\Validation\Rule;
 
-class CandidatePersonalEssentialInInformationRequest  extends APIRequest
+class CandidatePersonalEssentialInInformationRequest extends APIRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,12 +25,12 @@ class CandidatePersonalEssentialInInformationRequest  extends APIRequest
     {
         return [
             'dob' => 'nullable|date|before:'.date('Y-m-d'),
-            'per_gender'=> 'nullable',
-            'per_height'=> 'nullable',
-            'per_employment_status'=> 'nullable',
-            'per_education_level_id'=> 'nullable',
-            'per_religion_id'=> 'nullable',
-            'per_occupation'=> 'nullable',
+            'per_gender' => 'nullable',
+            'per_height' => 'nullable',
+            'per_employment_status' => 'nullable',
+            'per_education_level_id' => 'nullable',
+            'per_religion_id' => 'nullable',
+            'per_occupation' => 'nullable',
         ];
     }
 

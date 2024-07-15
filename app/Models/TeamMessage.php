@@ -9,11 +9,13 @@ class TeamMessage extends Model
 {
     use HasFactory;
 
-    public function team() {
+    public function team()
+    {
         return $this->belongsTo(Team::class, 'team_id', 'id');
     }
 
-    public function sender() {
+    public function sender()
+    {
         return $this->belongsTo(User::class, 'sender', 'id');
     }
 }

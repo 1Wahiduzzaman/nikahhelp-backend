@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
-use JWTAuth;
-use Validator;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Validator;
 
 class JwtAuthController extends Controller
 {
@@ -30,7 +29,6 @@ class JwtAuthController extends Controller
 
         }
 
-
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
@@ -43,7 +41,7 @@ class JwtAuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $user
+            'data' => $user,
         ], Response::HTTP_OK);
     }
 
@@ -52,7 +50,7 @@ class JwtAuthController extends Controller
         $input = $request->only('email', 'password');
         $jwt_token = null;
 
-        if (!$jwt_token = JWTAuth::attempt($input)) {
+        if (! $jwt_token = auth()->attempt($input)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid Email or Password',
@@ -68,20 +66,20 @@ class JwtAuthController extends Controller
     public function logout(Request $request)
     {
         $this->validate($request, [
-            'token' => 'required'
+            'token' => 'required',
         ]);
 
         try {
-            JWTAuth::invalidate($request->token);
+            auth()->invalidate($request->token);
 
             return response()->json([
                 'success' => true,
-                'message' => 'User logged out successfully'
+                'message' => 'User logged out successfully',
             ]);
         } catch (JWTException $exception) {
             return response()->json([
                 'success' => false,
-                'message' => 'Sorry, the user cannot be logged out'
+                'message' => 'Sorry, the user cannot be logged out',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -89,10 +87,10 @@ class JwtAuthController extends Controller
     public function getUser(Request $request)
     {
         $this->validate($request, [
-            'token' => 'required'
+            'token' => 'required',
         ]);
 
-        $user = JWTAuth::authenticate($request->token);
+        $user = auth()->authenticate($request->token);
 
         return response()->json(['user' => $user]);
     }

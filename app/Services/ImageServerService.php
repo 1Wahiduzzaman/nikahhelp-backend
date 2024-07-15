@@ -2,21 +2,19 @@
 
 namespace App\Services;
 
-
 use App\Models\PictureServerToken;
 use App\Models\User;
 use App\Services\Interfaces\ImageServerInterface;
 
 class ImageServerService implements ImageServerInterface
 {
-
     protected $token;
 
     protected $res;
 
     protected $user;
 
-    public function __construct(User $user, String $requestPath)
+    public function __construct(User $user, string $requestPath)
     {
         $this->user = $user;
         $this->mapRequest($requestPath);
@@ -27,11 +25,11 @@ class ImageServerService implements ImageServerInterface
         // TODO: Implement registerWithServer() method.
         $client = new \GuzzleHttp\Client();
 
-        $this->res = $client->request('POST', config('chobi.chobi') . '/api/v1/register', [
+        $this->res = $client->request('POST', config('chobi.chobi').'/api/v1/register', [
             'form_params' => [
                 'email' => $this->user->email,
-                'password' => $this->user->password
-            ]
+                'password' => $this->user->password,
+            ],
         ]);
 
         return $this;
@@ -42,11 +40,11 @@ class ImageServerService implements ImageServerInterface
         // TODO: Implement loginToServer() method.
         $client = new \GuzzleHttp\Client();
 
-        $this->res = $client->request('POST', config('chobi.chobi') . '/api/v1/login', [
+        $this->res = $client->request('POST', config('chobi.chobi').'/api/v1/login', [
             'form_params' => [
                 'email' => $this->user->email,
-                'password' => $this->user->password
-            ]
+                'password' => $this->user->password,
+            ],
         ]);
 
         return $this;
@@ -56,6 +54,7 @@ class ImageServerService implements ImageServerInterface
     {
         // TODO: Implement getTokenFromResponse() method.
         $this->token = json_decode($this->res->getBody()->getContents())->data->token->access_token;
+
         return $this;
     }
 
@@ -66,6 +65,7 @@ class ImageServerService implements ImageServerInterface
             'register' => $this->registerWithServer()->setTokenFromResponse()->saveToken(),
             'login' => $this->loginToServer()->setTokenFromResponse()->saveToken(),
         ];
+
         return $request[$requestType];
     }
 
@@ -75,13 +75,12 @@ class ImageServerService implements ImageServerInterface
         return $this->token;
     }
 
-
     public function saveToken(): void
     {
         // TODO: Implement saveToken() method.
         PictureServerToken::updateOrCreate([
             'user_id' => $this->user->id,
-            'token' => $this->getTokenFromResponse()
+            'token' => $this->getTokenFromResponse(),
         ]);
     }
 

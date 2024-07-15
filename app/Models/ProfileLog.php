@@ -2,36 +2,39 @@
 
 namespace App\Models;
 
-
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class block_list
- * @package App\Models
- * @version May 20, 2021, 12:35 pm UTC
  *
+ * @version May 20, 2021, 12:35 pm UTC
  */
 class ProfileLog extends Model
 {
-//    use SoftDeletes;
+    //    use SoftDeletes;
 
     use HasFactory;
 
-    const PROFILE_LOG_ID         = 'id';
-    const PROFILE_LOG_USER_ID    = 'user_id';
+    const PROFILE_LOG_ID = 'id';
+
+    const PROFILE_LOG_USER_ID = 'user_id';
+
     const PROFILE_LOG_VISITOR_ID = 'visitor_id';
-    const PROFILE_LOG_TEAM_ID    = 'team_id';
-    const PROFILE_LOG_COUNTRY    = 'country';
-    const PROFILE_LOG_CITY       = 'city';
-    const PROFILE_LOG_DATE       = 'date';
+
+    const PROFILE_LOG_TEAM_ID = 'team_id';
+
+    const PROFILE_LOG_COUNTRY = 'country';
+
+    const PROFILE_LOG_CITY = 'city';
+
+    const PROFILE_LOG_DATE = 'date';
 
     /**
      * @var string[]
      */
     protected $dates = ['deleted_at'];
-
 
     public $fillable = [
         self::PROFILE_LOG_ID,
@@ -41,7 +44,7 @@ class ProfileLog extends Model
         self::PROFILE_LOG_TEAM_ID,
         self::PROFILE_LOG_COUNTRY,
         self::PROFILE_LOG_CITY,
-        self::PROFILE_LOG_DATE
+        self::PROFILE_LOG_DATE,
 
     ];
 
@@ -51,7 +54,7 @@ class ProfileLog extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer'
+        'id' => 'integer',
     ];
 
     /**

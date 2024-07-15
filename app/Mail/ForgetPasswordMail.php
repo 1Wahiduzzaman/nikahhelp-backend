@@ -6,20 +6,19 @@ use App\Enums\HttpStatusCode;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 class ForgetPasswordMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable, SerializesModels, SendGrid;
 
     public $user;
+
     public $token;
     //public $domain = HttpStatusCode::WEB_DOMAIN;
 
     /**
      * ForgetPasswordMail constructor.
-     * @param $user
-     * @param $token
      */
     public function __construct($user, $token)
     {
@@ -34,6 +33,15 @@ class ForgetPasswordMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.forgetPassword')->with('user_name', $this->user->full_name);
+        return $this->view('emails.forgetPassword')->with('user_name', $this->user->full_name)->sendgrid([
+            'personalizations' => [
+                [
+                    'to' => [
+                        ['email' => $this->user->email, 'name' => $this->user->full_name],
+                    ]
+                ],
+            ],
+            'categories' => ['user_group1'],
+    ]);
     }
 }

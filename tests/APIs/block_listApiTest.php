@@ -4,7 +4,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Tests\ApiTestTrait;
-use App\Models\block_list;
+use App\Models\BlockList;
 
 class block_listApiTest extends TestCase
 {
@@ -15,7 +15,7 @@ class block_listApiTest extends TestCase
      */
     public function test_create_block_list()
     {
-        $blockList = block_list::factory()->make()->toArray();
+        $blockList = BlockList::factory()->make()->toArray();
 
         $this->response = $this->json(
             'POST',
@@ -30,7 +30,7 @@ class block_listApiTest extends TestCase
      */
     public function test_read_block_list()
     {
-        $blockList = block_list::factory()->create();
+        $blockList = BLockList::factory()->create();
 
         $this->response = $this->json(
             'GET',
@@ -45,8 +45,8 @@ class block_listApiTest extends TestCase
      */
     public function test_update_block_list()
     {
-        $blockList = block_list::factory()->create();
-        $editedblock_list = block_list::factory()->make()->toArray();
+        $blockList = BLockList::factory()->create();
+        $editedblock_list = BLockList::factory()->make()->toArray();
 
         $this->response = $this->json(
             'PUT',
@@ -62,7 +62,7 @@ class block_listApiTest extends TestCase
      */
     public function test_delete_block_list()
     {
-        $blockList = block_list::factory()->create();
+        $blockList = BLockList::factory()->create();
 
         $this->response = $this->json(
             'DELETE',

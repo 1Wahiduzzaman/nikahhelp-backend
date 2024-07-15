@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,8 +15,9 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/logo',  function () {
-   $image = File::get(resource_path('/images/email/logo.png'));
+Route::get('/logo', function () {
+    $image = File::get(resource_path('/images/email/logo.png'));
+
     return response()->make($image, 200)->header('Content-Type', 'image/png');
 })->name('logo');
 
@@ -25,16 +25,16 @@ Route::get('/logo',  function () {
 //    return view('emails.subscription.new_subscription');
 //});
 
- // Raz - Cron Job Expire Subscription Sending Mail
- Route::get('/subscription-expiring/{days}', [SubscriptionController::class, 'subscriptionExpiring'])->name('subscription.expiring');
- Route::get('/subscription-expired/{days}', [SubscriptionController::class, 'subscriptionExpired'])->name('subscription.expired');
+// Raz - Cron Job Expire Subscription Sending Mail
+Route::get('/subscription-expiring/{days}', [SubscriptionController::class, 'subscriptionExpiring'])->name('subscription.expiring');
+Route::get('/subscription-expired/{days}', [SubscriptionController::class, 'subscriptionExpired'])->name('subscription.expired');
 
 Route::get('/migration', function () {
-    if(env('APP_ENV') === 'local'){
-        Artisan::call('migrate:fresh', ['--seed'=>true]);
-        echo "Migration and seed done successfully";
-    }else {
-        echo "Production Mode, Unable to Fresh database";
+    if (env('APP_ENV') === 'local') {
+        Artisan::call('migrate:fresh', ['--seed' => true]);
+        echo 'Migration and seed done successfully';
+    } else {
+        echo 'Production Mode, Unable to Fresh database';
     }
 
 });

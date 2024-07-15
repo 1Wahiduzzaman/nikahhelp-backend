@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 class TicketSubmissionRequest extends APIRequest
 {
     /**
@@ -26,7 +24,7 @@ class TicketSubmissionRequest extends APIRequest
         return [
             'issue_type' => 'required|string',
             'issue' => 'required|string',
-            'user' => 'json|required'
+            'user' => 'json|required',
         ];
     }
 }

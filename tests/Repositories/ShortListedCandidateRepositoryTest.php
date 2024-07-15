@@ -3,6 +3,7 @@
 use App\Models\ShortListedCandidate;
 use App\Repositories\ShortListedCandidateRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 use Tests\ApiTestTrait;
 
@@ -13,12 +14,12 @@ class ShortListedCandidateRepositoryTest extends TestCase
     /**
      * @var ShortListedCandidateRepository
      */
-    protected $shortListedCandidateRepo;
+    protected mixed $shortListedCandidateRepo;
 
     public function setUp() : void
     {
         parent::setUp();
-        $this->shortListedCandidateRepo = \App::make(ShortListedCandidateRepository::class);
+        $this->shortListedCandidateRepo = App::make(ShortListedCandidateRepository::class);
     }
 
     /**

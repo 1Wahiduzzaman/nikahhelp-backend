@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 class ChangePasswordRequest extends APIRequest
 {
     /**
@@ -25,7 +23,7 @@ class ChangePasswordRequest extends APIRequest
     {
         return [
             'oldpassword' => 'required',
-            'newpassword' => 'required'
+            'newpassword' => 'required',
         ];
     }
 
@@ -33,9 +31,8 @@ class ChangePasswordRequest extends APIRequest
     {
         return [
             'oldpassword.required' => 'Old Password field is required',
-            'newpassword.required' => 'New Password field is required'
+            'newpassword.required' => 'New Password field is required',
 
         ];
     }
-
 }

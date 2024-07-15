@@ -3,13 +3,13 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 class MyTestMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable, SerializesModels, SendGrid;
 
     public $details;
 
@@ -31,6 +31,15 @@ class MyTestMail extends Mailable
     public function build()
     {
         return $this->subject('Mail from MatrimonyAssist')
-            ->markdown('emails.myTestMail');
+            ->markdown('emails.myTestMail')->sendgrid([
+                'personalizations' => [
+                    [
+                        'to' => [
+                            ['email' => $this->user->email, 'name' => $this->user->full_name],
+                        ]
+                    ],
+                ],
+                'categories' => ['user_group1'],
+        ]);
     }
 }

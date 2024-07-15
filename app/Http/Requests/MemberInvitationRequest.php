@@ -2,9 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Team;
-use App\Models\TeamMemberInvitation;
-
 class MemberInvitationRequest extends APIRequest
 {
     public function authorize()
@@ -19,7 +16,6 @@ class MemberInvitationRequest extends APIRequest
      */
     public function rules()
     {
-
 
         return [
             'team_id' => 'required|string|exists:teams,team_id',

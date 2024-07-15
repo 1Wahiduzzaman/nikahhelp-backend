@@ -2,25 +2,19 @@
 
 namespace App\Repositories;
 
-use App\Models\ShortListedCandidate;
 use App\Models\ShortListedRepresentative;
-use App\Repositories\BaseRepository;
 
 /**
  * Class ShortListedRepresentativeRepository
- * @package App\Repositories
+ *
  * @version April 29, 2021, 7:36 am UTC
  */
 class ShortListedRepresentativeRepository extends BaseRepository
 {
-
     protected $modelName = ShortListedRepresentative::class;
-
 
     /**
      * UserRepository constructor.
-     *
-     * @param ShortListedRepresentative $model
      */
     public function __construct(ShortListedRepresentative $model)
     {
@@ -61,5 +55,4 @@ class ShortListedRepresentativeRepository extends BaseRepository
     {
         return $result = ShortListedRepresentative::where('user_id', '=', $userId)->first();
     }
-
 }

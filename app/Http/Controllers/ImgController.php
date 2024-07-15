@@ -6,40 +6,37 @@ use App\Traits\DeleteTrait;
 use App\Traits\UploadTrait;
 // use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class ImgController extends Controller
 {
-    use UploadTrait, DeleteTrait;
+    use DeleteTrait, UploadTrait;
 
-
-    public function storeImage(Request $request, String $id)
-    {       
+    public function storeImage(Request $request, string $id)
+    {
         try {
             $file = [];
             $image = $request->file('image');
             $user_id = $id;
-            $getImage =  $image;
+            $getImage = $image;
 
             // validate file extention
             $accepted_extentions = ['png', 'jpg', 'jpeg'];
 
             // delete the old image from the cache
             $path = resource_path('image/'.$user_id); // Replace with your actual path
-            if(is_dir($path)) {
+            if (is_dir($path)) {
                 $files = scandir($path);
                 // Skip "." and ".." entries
                 $firstFile = array_values($files)[2] ?? null;
 
                 if ($firstFile) {
                     // Generate the cache key
-                    $full_path = $path . '/' . $firstFile;
+                    $full_path = $path.'/'.$firstFile;
                     $cache_key = 'image_'.md5($full_path);
-    
+
                     // Check and delete the old image from the cache
                     if (Cache::has($cache_key)) {
                         Cache::forget($cache_key);
@@ -47,7 +44,7 @@ class ImgController extends Controller
                 }
             }
 
-            if(!in_array(strtolower($image->getClientOriginalExtension()), $accepted_extentions)){
+            if (! in_array(strtolower($image->getClientOriginalExtension()), $accepted_extentions)) {
                 return response()->json(['message' => 'File type not accepted'], 400);
             }
 
@@ -66,18 +63,18 @@ class ImgController extends Controller
             $file[$name] = 'img/'.$user_id.'/'.$imageName;
 
             return json_encode($file);
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return json_encode($e->getMessage());
         }
 
     }
 
-    public function show(Request $request, String $id, $path)
+    public function show(Request $request, string $id, $path)
     {
         $full_path = resource_path('image/'.$id.'/'.$path);
         $cache_key = 'image_'.md5($full_path);
 
-        if (!File::exists($full_path)) {
+        if (! File::exists($full_path)) {
             return response()->json(['message' => 'Service does not exist'], 404);
         }
 
@@ -85,6 +82,7 @@ class ImgController extends Controller
         if (Cache::has($cache_key)) {
             $cachedImage = Cache::get($cache_key);
             $type = File::mimeType($full_path);
+
             return response($cachedImage, 200)->header('Content-Type', $type);
         }
 
@@ -102,23 +100,23 @@ class ImgController extends Controller
         try {
             $removeDir = false;
             $deleted = false;
-            if (File::exists(resource_path('image/'. $id . $path))){
+            if (File::exists(resource_path('image/'.$id.$path))) {
                 // code...
                 $deleted = false;
                 // return var_dump(scandir(resource_path('image/1')));
                 // return var_dump(scandir(resource_path('image/'. $id . $path)));
                 $arr = [];
-                foreach (scandir(resource_path('image/'. $id . $path)) as $key => $file) {
+                foreach (scandir(resource_path('image/'.$id.$path)) as $key => $file) {
                     // code...
-                    array_push($arr , 'image/'. $id . $path . '/' . $key . $file);
+                    array_push($arr, 'image/'.$id.$path.'/'.$key.$file);
 
                     if (is_dir($file)) {
                         continue;
                     }
-                   $deleted = unlink(resource_path('image/'.$id . $path . '/' . $file));
+                    $deleted = unlink(resource_path('image/'.$id.$path.'/'.$file));
                 }
-                
-                $removeDir = rmdir(resource_path('image/'.$id . $path));
+
+                $removeDir = rmdir(resource_path('image/'.$id.$path));
 
             }
 
@@ -126,17 +124,14 @@ class ImgController extends Controller
             if (File::exists(storage_path('app/public/.cache/'.$id.$path))) {
                 // code...
                 $storageDelete = File::deleteDirectory(storage_path('app/public/.cache/'.$id.$path));
+
                 return $removeDir && $deleted && $storageDelete ? 'removed' : 'not-removed';
             }
-               return $removeDir && $deleted ? 'removed' : 'not-removed';
 
-            
+            return $removeDir && $deleted ? 'removed' : 'not-removed';
+
         } catch (\Exception $exception) {
             return json_encode($exception->getMessage());
         }
     }
-
 }
-
-
-

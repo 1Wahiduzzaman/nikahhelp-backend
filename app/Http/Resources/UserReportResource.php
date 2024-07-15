@@ -6,13 +6,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserReportResource extends JsonResource
 {
-
     const ACCOUNT_TYPE = [
         0 => 'In-active',
         1 => 'Candidate',
         2 => 'Representative',
         3 => 'Matchmaker',
-        4 => 'Admin'
+        4 => 'Admin',
     ];
 
     const ACCOUNT_STATUS = [
@@ -20,70 +19,76 @@ class UserReportResource extends JsonResource
         1 => 'Active',
         2 => 'Delete Account',
         3 => 'Suspend',
-        4 => 'Temporary Block'
+        4 => 'Temporary Block',
     ];
 
     /**
      * Transform the resource collection into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function toArray($request)
     {
-        $candidateInfo = array();
-        $representative = array();
-        $matchmaker = array();
+        $candidateInfo = [];
+        $representative = [];
+        $matchmaker = [];
         if ($this->account_type == 1) {
-            $firstName = $this->getCandidate['first_name'] ?? "";
-            $lastName = $this->getCandidate['last_name'] ?? "";
+            $firstName = $this->getCandidate['first_name'] ?? '';
+            $lastName = $this->getCandidate['last_name'] ?? '';
             $candidateInfo = [
-                'name' => $firstName . ' ' . $lastName,
-                'location' => $this->getCandidate['per_nationality'] ?? "",
-                'location_name' => $this->getCandidate->getNationality['name'] ?? "",
-                'age' => $this->getCandidate['dob'] ?? "",
-                'gender' => $this->getCandidate['per_gender'] ?? "",
-                'religion' => $this->getCandidate->getReligion['name'] ?? "",
-                'study_level' => $this->getCandidate->candidateEducationLevel['name'] ?? "",
-                'ethnicity' => $this->getCandidate['per_ethnicity'] ?? "",
+                'name' => $firstName.' '.$lastName,
+                'location' => $this->getCandidate['per_nationality'] ?? '',
+                'location_name' => $this->getCandidate->getNationality['name'] ?? '',
+                'age' => $this->getCandidate['dob'] ?? '',
+                'gender' => $this->getCandidate['per_gender'] ?? '',
+                'religion' => $this->getCandidate->getReligion['name'] ?? '',
+                'study_level' => $this->getCandidate->candidateEducationLevel['name'] ?? '',
+                'ethnicity' => $this->getCandidate['per_ethnicity'] ?? '',
             ];
-            if (!empty($this->getCandidate['per_main_image_url'])):
-                $image = url('storage/' . $this->getCandidate['per_main_image_url']);
-            else: $image = null; endif;
+            if (! empty($this->getCandidate['per_main_image_url'])) {
+                $image = url('storage/'.$this->getCandidate['per_main_image_url']);
+            } else {
+                $image = null;
+            }
             $candidateInfo['image'] = $image;
-        }elseif ($this->account_type==2){
-            $repFirstName = $this->getRepresentative['first_name'] ?? "";
-            $repLastName = $this->getRepresentative['last_name'] ?? "";
+        } elseif ($this->account_type == 2) {
+            $repFirstName = $this->getRepresentative['first_name'] ?? '';
+            $repLastName = $this->getRepresentative['last_name'] ?? '';
             $representative = [
-                'name' => $repFirstName . ' ' . $repLastName,
-                'location' => $this->getRepresentative['per_county'] ?? "",
-                'location_name' => $this->getRepresentative['per_county'] ?? "",
-                'age' => $this->getRepresentative['dob'] ?? "",
-                'gender' => $this->getRepresentative['per_gender'] ?? "",
-                'occupation' => $this->getRepresentative['per_occupation'] ?? "",
-                'study_level' => "",
-                'ethnicity' =>  "",
+                'name' => $repFirstName.' '.$repLastName,
+                'location' => $this->getRepresentative['per_county'] ?? '',
+                'location_name' => $this->getRepresentative['per_county'] ?? '',
+                'age' => $this->getRepresentative['dob'] ?? '',
+                'gender' => $this->getRepresentative['per_gender'] ?? '',
+                'occupation' => $this->getRepresentative['per_occupation'] ?? '',
+                'study_level' => '',
+                'ethnicity' => '',
             ];
-            if (!empty($this->getRepresentative['per_main_image_url'])):
-                $repImage = url('storage/' . $this->getRepresentative['per_main_image_url']);
-            else: $repImage = null; endif;
+            if (! empty($this->getRepresentative['per_main_image_url'])) {
+                $repImage = url('storage/'.$this->getRepresentative['per_main_image_url']);
+            } else {
+                $repImage = null;
+            }
             $representative['image'] = $repImage;
-        }elseif ($this->account_type==3){
-            $matchMakerFirstName = $this->getMatchmaker['first_name'] ?? "";
-            $matchMakerLastName = $this->getMatchmaker['last_name'] ?? "";
+        } elseif ($this->account_type == 3) {
+            $matchMakerFirstName = $this->getMatchmaker['first_name'] ?? '';
+            $matchMakerLastName = $this->getMatchmaker['last_name'] ?? '';
             $matchmaker = [
-                'name' => $matchMakerFirstName . ' ' . $matchMakerLastName,
-                'location' => $this->getMatchmaker['per_county'] ?? "",
-                'location_name' => $this->getMatchmaker['per_county'] ?? "",
-                'age' => $this->getMatchmaker['dob'] ?? "",
-                'gender' => $this->getMatchmaker['per_gender'] ?? "",
-                'occupation' => $this->getMatchmaker['per_occupation'] ?? "",
-                'study_level' => "",
-                'ethnicity' =>  "",
+                'name' => $matchMakerFirstName.' '.$matchMakerLastName,
+                'location' => $this->getMatchmaker['per_county'] ?? '',
+                'location_name' => $this->getMatchmaker['per_county'] ?? '',
+                'age' => $this->getMatchmaker['dob'] ?? '',
+                'gender' => $this->getMatchmaker['per_gender'] ?? '',
+                'occupation' => $this->getMatchmaker['per_occupation'] ?? '',
+                'study_level' => '',
+                'ethnicity' => '',
             ];
-            if (!empty($this->getMatchmaker['per_main_image_url'])):
-                $repImage = url('storage/' . $this->getMatchmaker['per_main_image_url']);
-            else: $repImage = null; endif;
+            if (! empty($this->getMatchmaker['per_main_image_url'])) {
+                $repImage = url('storage/'.$this->getMatchmaker['per_main_image_url']);
+            } else {
+                $repImage = null;
+            }
             $matchmaker['image'] = $repImage;
         }
         $result = [
@@ -100,12 +105,10 @@ class UserReportResource extends JsonResource
             'account_type_meaning' => self::ACCOUNT_TYPE[$this->account_type] ?? null,
             'candidateInfo' => $candidateInfo,
             'representative' => $representative,
-            'matchmaker' => $matchmaker
+            'matchmaker' => $matchmaker,
         ];
 
         return $result;
 
     }
-
-
 }

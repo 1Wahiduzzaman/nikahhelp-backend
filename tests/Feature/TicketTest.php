@@ -8,7 +8,7 @@ use App\Models\RepresentativeInformation;
 use App\Models\TicketSubmission;
 use App\Models\User;
 use Tests\TestCase;
-use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class TicketTest extends TestCase
 {

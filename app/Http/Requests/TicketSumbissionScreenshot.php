@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 class TicketSumbissionScreenshot extends APIRequest
 {
     /**
@@ -24,7 +22,7 @@ class TicketSumbissionScreenshot extends APIRequest
     public function rules()
     {
         return [
-            'screen_shot' => 'sometimes|image|mimes:jpeg,png,jpg,webp,avf|max:2048'
+            'screen_shot' => 'sometimes|image|mimes:jpeg,png,jpg,webp,avf|max:2048',
         ];
     }
 }

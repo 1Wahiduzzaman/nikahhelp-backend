@@ -13,8 +13,8 @@ use App\Models\TeamMember;
 use App\Models\TicketSubmission;
 use App\Models\User;
 use Tests\TestCase;
-use JWTAuth;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 class SearchTest extends TestCase
 {
     // use RefreshDatabase;

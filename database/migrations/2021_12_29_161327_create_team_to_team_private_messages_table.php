@@ -18,10 +18,10 @@ class CreateTeamToTeamPrivateMessagesTable extends Migration
             $table->bigInteger('from_team_id')->nullable();
             $table->bigInteger('to_team_id')->nullable();
             $table->bigInteger('team_chat_id')->nullable();
-            $table->bigInteger('sender')->nullable();                     
-            $table->bigInteger('receiver')->nullable();                     
-            $table->longText('body')->nullable();   
-            $table->string('attachment')->nullable();  
+            $table->bigInteger('sender')->nullable();
+            $table->bigInteger('receiver')->nullable();
+            $table->longText('body')->nullable();
+            $table->string('attachment')->nullable();
             $table->tinyInteger('seen')->default(0);
             $table->timestamps();
         });

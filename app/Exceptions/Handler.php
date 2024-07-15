@@ -3,19 +3,19 @@
 namespace App\Exceptions;
 
 use App\Enums\HttpStatusCode;
+use App\Enums\ServerMessage;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Handler extends ExceptionHandler
 {
-
     /**
      * A list of exception types with their corresponding custom log levels.
      *
@@ -24,6 +24,7 @@ class Handler extends ExceptionHandler
     protected $levels = [
         //
     ];
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -51,16 +52,13 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            dd($e);
-        });
+        $this->reportable(function (Throwable $e) {});
     }
 
     /**
      * Render an exception into an HTTP response.
      *
      * @param  Request  $request
-     * @param Throwable $e
      * @return Response
      *
      * @throws Throwable
@@ -68,45 +66,42 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $e)
     {
         if ($e instanceof AuthenticationException) {
-            return $this->sendErrorResponse($e->getMessage(), HttpStatusCode::UNAUTHORIZED);
+            return $this->sendErrorResponse($e->getMessage(), HttpStatusCode::UNAUTHORIZED->value);
         }
         if ($e instanceof AuthorizationException) {
-            return $this->sendErrorResponse(HttpStatusCode::FORBIDDEN_MESSAGE, HttpStatusCode::FORBIDDEN);
+            return $this->sendErrorResponse(ServerMessage::FORBIDDEN_MESSAGE->value, HttpStatusCode::FORBIDDEN->value);
         }
 
         if ($e instanceof NotFoundHttpException) {
-            return $this->sendErrorResponse(HttpStatusCode::BAD_REQUEST_MESSAGE, HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse(ServerMessage::BAD_REQUEST_MESSAGE->value, HttpStatusCode::NOT_FOUND->value);
         }
 
         if ($e instanceof ModelNotFoundException) {
-            return $this->sendErrorResponse(HttpStatusCode::VALIDATION_ERROR_MESSAGE, HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse(ServerMessage::VALIDATION_ERROR_MESSAGE->value, HttpStatusCode::NOT_FOUND->value);
         }
 
         if (env('APP_ENV') !== 'local') {
             if ($e instanceof \PDOException) {
-                return $this->sendErrorResponse(HttpStatusCode::INTERNAL_ERROR_PDO_MESSAGE, HttpStatusCode::INTERNAL_ERROR);
+                return $this->sendErrorResponse(ServerMessage::INTERNAL_ERROR_PDO_MESSAGE->value, HttpStatusCode::INTERNAL_ERROR->value);
             }
 
             if ($e instanceof \Error) {
-                return $this->sendErrorResponse(HttpStatusCode::INTERNAL_ERROR_FETAL_MESSAGE, HttpStatusCode::INTERNAL_ERROR);
+                return $this->sendErrorResponse(ServerMessage::INTERNAL_ERROR_FETAL_MESSAGE->value, HttpStatusCode::INTERNAL_ERROR->value);
             }
         }
     }
 
     /**
      * Return error response.
-     *
-     * @param $message
-     * @param int $status_code
-     * @return JsonResponse
      */
-    private function sendErrorResponse($message, $status_code = HttpStatusCode::VALIDATION_ERROR): JsonResponse
+    private function sendErrorResponse($message, int|HttpStatusCode $status_code = HttpStatusCode::VALIDATION_ERROR->value): JsonResponse
     {
         $response = [
             'status' => 'FAIL',
             'status_code' => $status_code,
             'message' => $message,
         ];
+
         return response()->json($response, $status_code);
     }
 }

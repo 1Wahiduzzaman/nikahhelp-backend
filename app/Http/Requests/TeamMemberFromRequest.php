@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-
 use App\Models\TeamMember;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -29,17 +28,17 @@ class TeamMemberFromRequest extends APIRequest
         $request = $this->request->all();
 
         switch (Str::upper($this->method())) {
-            case 'POST' :
+            case 'POST':
                 return [
                     TeamMember::TEAM_ID => [
                         'required',
                         'numeric',
                         'exists:teams,id',
                         Rule::unique('team_members')
-                            ->where(function ($query) use($request) {
+                            ->where(function ($query) use ($request) {
                                 return $query->where('team_id', $request['team_id'])
                                     ->where('user_id', $request['user_id']);
-                            })
+                            }),
                     ],
                     TeamMember::USER_ID => 'required|numeric|exists:users,id',
                     TeamMember::USER_TYPE => 'required|string|max:255',
@@ -53,7 +52,7 @@ class TeamMemberFromRequest extends APIRequest
     public function messages()
     {
         return [
-            TeamMember::TEAM_ID.'.unique' => 'This user is already part of the Team'
+            TeamMember::TEAM_ID.'.unique' => 'This user is already part of the Team',
         ];
 
     }

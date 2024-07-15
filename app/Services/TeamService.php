@@ -1,11 +1,8 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
-use App\Http\Requests\TeamFromRequest;
-use App\Models\CandidateInformation;
 use App\Models\Generic;
 use App\Models\Team;
 use App\Models\TeamChat;
@@ -16,27 +13,23 @@ use App\Models\TeamMemberInvitation;
 use App\Models\TeamPrivateChat;
 use App\Models\TeamToTeamMessage;
 use App\Models\TeamToTeamPrivateMessage;
-use App\Transformers\CandidateTransformer;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
-use App\Traits\CrudTrait;
-use Illuminate\Http\Request;
-use App\Repositories\UserRepository;
-use App\Repositories\TeamRepository;
 use App\Repositories\TeamMemberRepository;
-use Illuminate\Support\Facades\Auth;
-use \Illuminate\Support\Facades\DB;
+use App\Repositories\TeamRepository;
+use App\Repositories\UserRepository;
+use App\Traits\CrudTrait;
+use App\Transformers\CandidateTransformer;
 use App\Transformers\TeamTransformer;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use App\Services\AccessRulesDefinitionService;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 class TeamService extends ApiBaseService
 {
-
     use CrudTrait;
 
     protected \App\Repositories\UserRepository $userRepository;
@@ -46,12 +39,11 @@ class TeamService extends ApiBaseService
     protected \App\Repositories\TeamRepository $teamRepository;
 
     protected \App\Transformers\TeamTransformer $teamTransformer;
+
     private \App\Transformers\CandidateTransformer $candidateTransformer;
 
     /**
      * TeamService constructor.
-     *
-     * @param TeamRepository $teamRepository
      */
     public function __construct(
         TeamRepository $teamRepository,
@@ -59,8 +51,7 @@ class TeamService extends ApiBaseService
         TeamMemberRepository $teamMemberRepository,
         UserRepository $userRepository,
         CandidateTransformer $candidateTransformer
-    )
-    {
+    ) {
         $this->teamRepository = $teamRepository;
         $this->teamTransformer = $teamTransformer;
         $this->teamMemberRepository = $teamMemberRepository;
@@ -68,81 +59,82 @@ class TeamService extends ApiBaseService
         $this->candidateTransformer = $candidateTransformer;
     }
 
-
     /**
      * Update resource
-     * @param Request $request
-     * @return JsonResponse
+     *
+     * @param  Request  $request
      */
     public function save($request): JsonResponse
     {
         $userInfo = self::getUserInfo();
-        $countTeamList = $this->teamRepository->findByProperties(["created_by" => $userInfo->id, 'status' =>1]);
+        $countTeamList = $this->teamRepository->findByProperties(['created_by' => $userInfo->id, 'status' => 1]);
 
         //if ( $userInfo->status == 5) {
-            if (count($countTeamList) >= env('CANDIDATE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 1) {
-                $createLimit = env('CANDIDATE_TEAM_CREATE_LIMIT');
-                return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
+        if (count($countTeamList) >= env('CANDIDATE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 1) {
+            $createLimit = env('CANDIDATE_TEAM_CREATE_LIMIT');
+
+            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
+        }
+
+        if (count($countTeamList) >= env('REPRESENTATIVE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 2) {
+            $createLimit = env('REPRESENTATIVE_TEAM_CREATE_LIMIT');
+
+            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
+        }
+        if (count($countTeamList) >= env('MATCHMAKER_TEAM_CREATE_LIMIT') && $userInfo->account_type == 4) {
+            $createLimit = env('MATCHMAKER_TEAM_CREATE_LIMIT');
+
+            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
+        }
+        try {
+            $data = $request->all();
+            $data[Team::TEAM_ID] = Str::uuid();
+            $data[Team::CREATED_BY] = Auth::id();
+            $data['member_count'] = 1;
+
+            $team = $this->teamRepository->save($data);
+            $data = $this->teamTransformer->transform($team);
+            $team_id = $data['id'];
+
+            // Process team logo image
+            // if ($request->hasFile('logo')) {
+            //     $logo_url = $this->singleImageUploadFile($team_id, $request->file('logo'));
+            //     $team->logo = $logo_url['image_path'];
+            // }
+
+            if (! empty($request->input('logo'))) {
+                // code...
+                $team->logo = $request->input('logo');
+
             }
 
-            if (count($countTeamList) >= env('REPRESENTATIVE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 2) {
-                $createLimit = env('REPRESENTATIVE_TEAM_CREATE_LIMIT');
-                return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
-            }
-            if (count($countTeamList) >= env('MATCHMAKER_TEAM_CREATE_LIMIT') && $userInfo->account_type == 4) {
-                $createLimit = env('MATCHMAKER_TEAM_CREATE_LIMIT');
-                return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
-            }
-            try {
-                $data = $request->all();
-                $data[Team::TEAM_ID] = Str::uuid();
-                $data[Team::CREATED_BY] = Auth::id();
-                $data['member_count'] = 1;
+            // Update logo url
+            $input = (array) $team;
+            // As BaseRepository update method has bug that's why we have to fallback to model default methods.
+            $input = $team->fill($input)->toArray();
+            $team->save($input);
 
-                $team = $this->teamRepository->save($data);
-                $data = $this->teamTransformer->transform($team);
-                $team_id = $data['id'];
+            // Automatically add the user in team as member
+            // $role = get role
 
-                // Process team logo image
-                // if ($request->hasFile('logo')) {
-                //     $logo_url = $this->singleImageUploadFile($team_id, $request->file('logo'));
-                //     $team->logo = $logo_url['image_path'];
-                // }
+            $user_id = $data['created_by']['id'];
 
-                   if (!empty($request->input('logo'))) {
-                       // code...
-                    $team->logo = $request->input('logo');
+            $user_type = $this->getRoleForNewTeamMember($user_id);
+            $team_member = [];
+            $team_member['team_id'] = $team_id;
+            $team_member['user_id'] = $user_id;
+            $team_member['user_type'] = $request->user_type;
+            $team_member['role'] = 'Owner+Admin';
+            $team_member['status'] = 1;
+            // $team_member['relationship'] ='Own';
+            $team_member['relationship'] = $request->relationship;
 
-                   }
+            $newmember = $this->teamMemberRepository->save($team_member);
 
-                // Update logo url
-                $input = (array)$team;
-                // As BaseRepository update method has bug that's why we have to fallback to model default methods.
-                $input = $team->fill($input)->toArray();
-                $team->save($input);
-
-
-                // Automatically add the user in team as member
-                // $role = get role
-
-                $user_id = $data['created_by']['id'];
-
-                $user_type = $this->getRoleForNewTeamMember($user_id);
-                $team_member = array();
-                $team_member['team_id'] = $team_id;
-                $team_member['user_id'] = $user_id;
-                $team_member['user_type'] = $request->user_type;
-                $team_member['role'] = "Owner+Admin";
-                $team_member['status'] =1;
-                // $team_member['relationship'] ='Own';
-                $team_member['relationship'] = $request->relationship;
-
-                $newmember = $this->teamMemberRepository->save($team_member);
-
-                return $this->sendSuccessResponse($data, 'Team created Successfully!');
-            } catch (Exception $exception) {
-                return $this->sendErrorResponse($exception->getMessage());
-            }
+            return $this->sendSuccessResponse($data, 'Team created Successfully!');
+        } catch (Exception $exception) {
+            return $this->sendErrorResponse($exception->getMessage());
+        }
         // } else {
         //     return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST);
         // }
@@ -150,7 +142,8 @@ class TeamService extends ApiBaseService
 
     /**
      * Team Login
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function login($request)
@@ -161,16 +154,16 @@ class TeamService extends ApiBaseService
         try {
             $team = $this->teamRepository->findOneByProperties(
                 [
-                    "team_id" => $team_id
+                    'team_id' => $team_id,
                 ]
             );
 
-            if (!$team) {
+            if (! $team) {
                 return $this->sendErrorResponse('Team is Not found.', [], HttpStatusCode::NOT_FOUND);
             }
 
             if ($team->password == $password) {
-                return $this->sendSuccessResponse($team, "Login successful.");
+                return $this->sendSuccessResponse($team, 'Login successful.');
             } else {
                 return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::NOT_FOUND);
             }
@@ -182,83 +175,81 @@ class TeamService extends ApiBaseService
 
     /**
      * Determine role for new team member
-     * @param int $user_id
+     *
      * @return Str
      */
     public function getRoleForNewTeamMember(int $user_id): string
     {
 
-        $getUserType=$this->userRepository->findOneByProperties(
-            ['id'=>$user_id]
+        $getUserType = $this->userRepository->findOneByProperties(
+            ['id' => $user_id]
         );
 
-        if($getUserType->account_type==1) {
+        if ($getUserType->account_type == 1) {
             // Check if the user is a candidate in any team
             $checkCandidate = $this->teamMemberRepository->findOneByProperties([
                 'user_id' => $user_id,
-                'user_type' => 'Candidate'
+                'user_type' => 'Candidate',
             ]);
 
-            if (!$checkCandidate) {
+            if (! $checkCandidate) {
                 // if No join as Candidate
-                return "Candidate";
+                return 'Candidate';
 
             }
 
             // Join as Representative
-            return "Representative";
-        } else if($getUserType->account_type==3) {
+            return 'Representative';
+        } elseif ($getUserType->account_type == 3) {
             // Join as Matchmaker
-            return  "Matchmaker";
-        }else{
+            return 'Matchmaker';
+        } else {
             // Join as Representative
-            return "Representative";
-    }
+            return 'Representative';
+        }
 
         // Join as Representative
-        return "Representative";
+        return 'Representative';
     }
 
     /**
      * Get Team list
-     * @param array $data
-     * @return JsonResponse
      */
     public function getTeamList(array $data): JsonResponse
     {
         $user_id = self::getUserId();
         try {
             $team_list = $this->teamMemberRepository->findByProperties([
-                "user_id" => $user_id
+                'user_id' => $user_id,
             ]);
 
             if (count($team_list) > 0) {
-                $team_ids = array();
+                $team_ids = [];
                 foreach ($team_list as $row) {
                     array_push($team_ids, $row->team_id);
                 }
                 //get team list and created by information add
-                $team_infos = Team::select("*")
-                    ->with(["team_members" => function($q){
-                        $q->with(['user' => function($u){
-                            $u->with(['candidate_info' => function($c){
+                $team_infos = Team::select('*')
+                    ->with(['team_members' => function ($q) {
+                        $q->with(['user' => function ($u) {
+                            $u->with(['candidate_info' => function ($c) {
                                 $c->select(['id', 'user_id', 'per_avatar_url', 'per_main_image_url']);
                             }])->select('id', 'full_name', 'is_verified', 'status', 'form_type', 'account_type', 'created_at', 'updated_at');
-                            $u->with(['representative_info' => function($c) {
+                            $u->with(['representative_info' => function ($c) {
                                 $c->select(['id', 'user_id', 'per_avatar_url', 'per_main_image_url']);
                             }])->select('id', 'full_name', 'is_verified', 'status', 'form_type', 'account_type', 'created_at', 'updated_at');
                         }]);
                     }])
-                    ->with('team_invited_members', 'TeamlistedShortListed','teamRequestedConnectedList','teamRequestedAcceptedConnectedList','created_by')
-                    ->with(["last_subscription"=> function($q){
-                        $q->with(['user' => function($u){
-                            $u->with(['candidate_info' => function($c){
+                    ->with('team_invited_members', 'TeamlistedShortListed', 'teamRequestedConnectedList', 'teamRequestedAcceptedConnectedList', 'created_by')
+                    ->with(['last_subscription' => function ($q) {
+                        $q->with(['user' => function ($u) {
+                            $u->with(['candidate_info' => function ($c) {
                                 $c->select(['id', 'user_id', 'per_avatar_url', 'per_main_image_url']);
                             }])->select('id', 'full_name', 'is_verified', 'status', 'form_type', 'account_type', 'created_at', 'updated_at');
                         }]);
                         $q->with(['plans']);
                     }])
-                    ->with(['created_by' => function($query) {
+                    ->with(['created_by' => function ($query) {
                         $query->select('id', 'is_verified', 'account_type', 'updated_at', 'created_at', 'status', 'full_name', 'locked_at', 'locked_end', 'form_type');
                     }])
                     ->whereIn('id', $team_ids)
@@ -272,13 +263,12 @@ class TeamService extends ApiBaseService
                 // }
                 return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
             } else {
-                return $this->sendSuccessResponse(array(), 'Data fetched Successfully!');
+                return $this->sendSuccessResponse([], 'Data fetched Successfully!');
             }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
-
 
     public function getTeamInformation($teamId)
     {
@@ -288,21 +278,22 @@ class TeamService extends ApiBaseService
         try {
             // Get Team Data
             $team = $this->teamRepository->findOneByProperties([
-                "team_id" => $teamId
+                'team_id' => $teamId,
             ]);
 
             /// Team not found exception throw
-            if (!$team) {
+            if (! $team) {
                 return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
             }
 
-            $team_infos = Team::select("*")
-                ->with(["team_members" => function($q){
+            $team_infos = Team::select('*')
+                ->with(['team_members' => function ($q) {
                     $q->with('candidate_info');
                 }])
-                ->with('team_invited_members','created_by')
+                ->with('team_invited_members', 'created_by')
                 ->where('team_id', '=', $teamId)
                 ->get();
+
             //$team_infos[0]->logo = isset($team_infos[0]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[0]->logo : '';
             //$team_infos[0]['logo'] = url('storage/' . $team_infos[0]['logo']);
             return $this->sendSuccessResponse($team_infos, 'Data fetched Successfully!');
@@ -313,7 +304,7 @@ class TeamService extends ApiBaseService
 
     /**
      * Get Team list
-     * @param Request $request
+     *
      * @return JsonResponse
      */
     public function teamEditCheck(Request $request)
@@ -323,18 +314,18 @@ class TeamService extends ApiBaseService
 
         // Get Team Data
         $team = $this->teamRepository->findOneByProperties([
-            "team_id" => $team_id,
-            "status" => 1
+            'team_id' => $team_id,
+            'status' => 1,
         ]);
 
         /// Team not found exception throw
-        if (!$team) {
+        if (! $team) {
             return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
         }
 
         $team_row_id = $team->id;
         $team_members = $this->teamMemberRepository->findByProperties(
-            ["team_id" => $team_row_id]
+            ['team_id' => $team_row_id]
         );
 
         // Check team member count != 0
@@ -347,11 +338,11 @@ class TeamService extends ApiBaseService
         $representative_id = 0;
 
         foreach ($team_members as $row) {
-            if ($row->user_type == "Candidate") {
+            if ($row->user_type == 'Candidate') {
                 $candidate_id = $row->user_id;
             }
 
-            if ($row->user_type == "Representative") {
+            if ($row->user_type == 'Representative') {
                 $representative_id = $row->user_id;
             }
         }
@@ -365,7 +356,7 @@ class TeamService extends ApiBaseService
         }
 
         $candidate_user_info = $this->userRepository->findOneByProperties([
-            "id" => $candidate_id
+            'id' => $candidate_id,
         ]);
 
         if ($candidate_user_info->status == 0) {
@@ -373,22 +364,23 @@ class TeamService extends ApiBaseService
         }
 
         $representative_user_info = $this->userRepository->findOneByProperties([
-            "id" => $representative_id
+            'id' => $representative_id,
         ]);
 
         if ($representative_user_info->status == 0) {
             return $this->sendErrorResponse('Representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
         }
 
-        $data = array();
-        $data["team_info"] = $team;
-        $data["team_members"] = $team_members;
+        $data = [];
+        $data['team_info'] = $team;
+        $data['team_members'] = $team_members;
+
         return $this->sendSuccessResponse($data, 'Team is ready for edit!');
     }
 
     /**
      * Team turn on
-     * @param Request $request
+     *
      * @return JsonResponse
      */
     public function teamTurnOn(Request $request)
@@ -397,16 +389,16 @@ class TeamService extends ApiBaseService
 
         // Get Team Data
         $team = $this->teamRepository->findOneByProperties([
-            "id" => $team_id,
-           // "status" => 1
+            'id' => $team_id,
+            // "status" => 1
         ]);
         /// Team not found exception throw
-        if (!$team) {
+        if (! $team) {
             return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
         }
 
         $subscription_expire_at = $team->subscription_expire_at;
-        if ($subscription_expire_at == "") {
+        if ($subscription_expire_at == '') {
             return $this->sendErrorResponse('You have not choosen any subscription plan for this team.', [], HttpStatusCode::VALIDATION_ERROR);
         }
 
@@ -422,27 +414,27 @@ class TeamService extends ApiBaseService
 
         //Update Active Team Info
 
-        TeamMember::where('team_id','<>', $team->id)
-        ->where('user_id', Auth::id())
-        ->update(['status' => 0]);
+        TeamMember::where('team_id', '<>', $team->id)
+            ->where('user_id', Auth::id())
+            ->update(['status' => 0]);
 
         //update by 1
         TeamMember::where('team_id', $team->id)
-        ->where('user_id', Auth::id())
-        ->update(['status' => 1]);
+            ->where('user_id', Auth::id())
+            ->update(['status' => 1]);
 
         // Get Team info for response
         // In future we may need to send notification and messages regarding the team as well
-        $team_infos = Team::select("*")
-            ->with("team_members", 'team_invited_members:id,team_id,role,is_read,created_at,updated_at,user_type,relationship')
+        $team_infos = Team::select('*')
+            ->with('team_members', 'team_invited_members:id,team_id,role,is_read,created_at,updated_at,user_type,relationship')
             ->where('id', $team_id)
             ->where('status', 1)
             ->get();
+
         return $this->sendSuccessResponse($team_infos, 'Team is ready to turn on!');
     }
 
     /**
-     * @param $teamId
      * @return JsonResponse
      */
     public function checkTeamActiveStatus($teamId)
@@ -453,18 +445,17 @@ class TeamService extends ApiBaseService
         try {
             // Get Team Data
             $team = $this->teamRepository->findOneByProperties([
-                "id" => $teamId
+                'id' => $teamId,
             ]);
 
             /// Team not found exception throw
-            if (!$team) {
+            if (! $team) {
                 return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
             }
 
-
             $team_row_id = $team->id;
             $team_members = $this->teamMemberRepository->findByProperties(
-                ["team_id" => $team_row_id]
+                ['team_id' => $team_row_id]
             );
 
             // Check team member count != 0
@@ -477,11 +468,11 @@ class TeamService extends ApiBaseService
             $representative_id = 0;
 
             foreach ($team_members as $row) {
-                if ($row->user_type == "Candidate") {
+                if ($row->user_type == 'Candidate') {
                     $candidate_id = $row->user_id;
                 }
 
-                if ($row->user_type == "Representative") {
+                if ($row->user_type == 'Representative') {
                     $representative_id = $row->user_id;
                 }
             }
@@ -495,7 +486,7 @@ class TeamService extends ApiBaseService
             }
 
             $candidate_user_info = $this->userRepository->findOneByProperties([
-                "id" => $candidate_id
+                'id' => $candidate_id,
             ]);
 
             if ($candidate_user_info->status == 0) {
@@ -503,16 +494,17 @@ class TeamService extends ApiBaseService
             }
 
             $representative_user_info = $this->userRepository->findOneByProperties([
-                "id" => $representative_id
+                'id' => $representative_id,
             ]);
 
-        if ($representative_user_info->status == 0) {
-            return $this->sendErrorResponse('Representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
-        }
+            if ($representative_user_info->status == 0) {
+                return $this->sendErrorResponse('Representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+            }
 
-            $data = array();
-            $data["team_info"] = $team;
-            $data["team_members"] = $team_members;
+            $data = [];
+            $data['team_info'] = $team;
+            $data['team_members'] = $team_members;
+
             return $this->sendSuccessResponse($data, 'Team is ready to active ');
 
         } catch (Exception $exception) {
@@ -523,9 +515,9 @@ class TeamService extends ApiBaseService
 
     /**
      * Delete Team
-     * @param Request $request
+     *
      * @return JsonResponse
-     * receivng string team_id not PK
+     *                      receivng string team_id not PK
      */
     public function deleteTeam(Request $request)
     {
@@ -536,9 +528,9 @@ class TeamService extends ApiBaseService
 
         // Get Team
         $team = $this->teamRepository->findOneByProperties([
-            "team_id" => "$team_id"
+            'team_id' => "$team_id",
         ]);
-        if (!$team) {
+        if (! $team) {
             return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
         }
 
@@ -548,24 +540,24 @@ class TeamService extends ApiBaseService
 
         // Get User status
         $team_member = $this->teamMemberRepository->findOneByProperties([
-            "team_id" => $team->id,
-            "user_id" => $user_id
+            'team_id' => $team->id,
+            'user_id' => $user_id,
         ]);
 
-        if (!$team_member) {
+        if (! $team_member) {
             return $this->sendErrorResponse('You are not a member of this team.', [], HttpStatusCode::NOT_FOUND);
         }
 
         // Access rule check
         $access_rules = new AccessRulesDefinitionService();
         $delete_team_rights = $access_rules->hasDeleteTeamRights();
-        if (!in_array($team_member->role, $delete_team_rights)) {
-            return $this->sendErrorResponse("You dont have rights to delete this team.", [], HttpStatusCode::VALIDATION_ERROR);
+        if (! in_array($team_member->role, $delete_team_rights)) {
+            return $this->sendErrorResponse('You dont have rights to delete this team.', [], HttpStatusCode::VALIDATION_ERROR);
         }
 
         // Delete Team
         $team->status = 0;
-        $input = (array)$team;
+        $input = (array) $team;
         $input = $team->fill($input)->toArray();
         $team->save($input);
 
@@ -593,48 +585,46 @@ class TeamService extends ApiBaseService
         TeamToTeamPrivateMessage::where('from_team_id', $team->id)->orWhere('to_team_id', $team->id)->delete();
         TeamListedCandidate::where('team_listed_for', $team->id)->delete();
 
-
         // Send response
-        return $this->sendSuccessResponse([], "Team successfully deleted.");
+        return $this->sendSuccessResponse([], 'Team successfully deleted.');
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     private function singleImageUploadFile($team_id, $requestFile, $imageType = null)
     {
         $image_type = 'gallery';
-        $file = 'team-logo-' . $team_id;
+        $file = 'team-logo-'.$team_id;
         $disk = config('filesystems.default', 'local');
-        $status = $requestFile->storeAs($file, $image_type . '-' . $requestFile->getClientOriginalName(), $disk);
+        $status = $requestFile->storeAs($file, $image_type.'-'.$requestFile->getClientOriginalName(), $disk);
+
         return [
-            "image_path" => $status,
-            "image_disk" => $disk
+            'image_path' => $status,
+            'image_disk' => $disk,
         ];
     }
 
     public function teamUpdate(Request $request, $id)
     {
-       
-
 
         if (empty($id)) {
             return $this->sendErrorResponse('Please select what you want to edit', [], FResponse::HTTP_BAD_REQUEST);
         }
         try {
             $team = $this->teamRepository->findOrFail($id);
-            if (!empty($team->id)) {
+            if (! empty($team->id)) {
                 $hashedPassword = $team->password;
 
-                if (!empty($request['name'])) {
+                if (! empty($request['name'])) {
                     $team->name = $request['name'];
                 }
 
-                if (!empty($request['name'])) {
+                if (! empty($request['name'])) {
                     $team->description = $request['description'];
                 }
-                if (!empty($request['old_password']) && !empty($request['new_password'])) {
+                if (! empty($request['old_password']) && ! empty($request['new_password'])) {
                     if ($request['old_password'] == $hashedPassword) {
                         $team->password = $request['new_password'];
                     } else {
@@ -642,7 +632,6 @@ class TeamService extends ApiBaseService
                     }
                 }
 
-               
                 // Process team logo image
                 if ($request->input('logo')) {
                     // $logo_url = $this->singleImageUploadFile($team->id, $request->file('logo'));
@@ -650,7 +639,7 @@ class TeamService extends ApiBaseService
 
                     $team->logo = $request->input('logo');
                 }
-               $updated =  $team->update();
+                $updated = $team->update();
 
             }
             // if (!empty($team->logo)) {
@@ -679,16 +668,15 @@ class TeamService extends ApiBaseService
 
     }
 
-
     //Admin
     public function getTeamListForBackend(array $data): JsonResponse
     {
-        if(!Gate::allows('GET_TEAM_DATA')){
+        if (! Gate::allows('GET_TEAM_DATA')) {
             return $this->sendUnauthorizedResponse();
         }
 
         try {
-            $team_infos = Team::with('created_by')->where('status',1)->paginate();
+            $team_infos = Team::with('created_by')->where('status', 1)->paginate();
 
             // for ($i = 0; $i < count($team_infos); $i++) {
             //     $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
@@ -701,11 +689,11 @@ class TeamService extends ApiBaseService
 
     public function getDeletedTeamListForBackend(array $data): JsonResponse
     {
-        if(!Gate::allows('GET_DELETED_TEAM_LIST')){
+        if (! Gate::allows('GET_DELETED_TEAM_LIST')) {
             return $this->sendUnauthorizedResponse();
         }
         try {
-            $team_infos = Team::with('created_by')->where('status',0)->paginate();
+            $team_infos = Team::with('created_by')->where('status', 0)->paginate();
 
             // for ($i = 0; $i < count($team_infos); $i++) {
             //     $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
@@ -718,12 +706,12 @@ class TeamService extends ApiBaseService
 
     public function getConnectedTeamListForBackend($team_id = null): JsonResponse
     {
-        if(!Gate::allows('GET_CONNECTED_TEAM')){
+        if (! Gate::allows('GET_CONNECTED_TEAM')) {
             return $this->sendUnauthorizedResponse();
         }
         try {
             $team_infos = TeamConnection::where('from_team_id', $team_id)->orWhere('to_team_id', $team_id)
-            ->with(['requested_by_user', 'responded_by_user'])->paginate();
+                ->with(['requested_by_user', 'responded_by_user'])->paginate();
 
             // for ($i = 0; $i < count($team_infos); $i++) {
             //     $team_infos[$i]->logo = isset($team_infos[$i]->logo) ? env('IMAGE_SERVER') .'/'. $team_infos[$i]->logo : '';
@@ -734,12 +722,14 @@ class TeamService extends ApiBaseService
         }
     }
 
-    public function adminTeamDelete($data) {
-        if(!Gate::allows('DELETE_TEAM')){
+    public function adminTeamDelete($data)
+    {
+        if (! Gate::allows('DELETE_TEAM')) {
             return $this->sendUnauthorizedResponse();
         }
-        try{
-            Team::where('id', $data->id)->update(['status'=> 0]);
+        try {
+            Team::where('id', $data->id)->update(['status' => 0]);
+
             return $this->sendSuccessResponse([], 'Team deleted Successfully!');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -751,26 +741,26 @@ class TeamService extends ApiBaseService
         try {
             $activeTeamId = (new Generic())->getActiveTeamId();
 
-            if (!$activeTeamId) {
+            if (! $activeTeamId) {
                 throw new Exception('Team not found, Please create team first');
             }
 
             $activeTeam = $this->teamRepository->findOneByProperties([
-                'id' => $activeTeamId
+                'id' => $activeTeamId,
             ]);
 
-            $candidateOfTeam = $activeTeam->candidateOfTeam() ;
+            $candidateOfTeam = $activeTeam->candidateOfTeam();
 
-            if(!$candidateOfTeam){
+            if (! $candidateOfTeam) {
                 throw new Exception('Team has no candidate, please join candidate first');
             }
 
             $personal_info = $this->candidateTransformer->transformPreference($candidateOfTeam);
             $personal_info['personal']['per_gender_id'] = $candidateOfTeam->per_gender;
+
             return $this->sendSuccessResponse($personal_info, 'Get Candidate of team successfully');
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
-
 }

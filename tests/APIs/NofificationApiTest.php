@@ -4,7 +4,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Tests\ApiTestTrait;
-use App\Models\Nofification;
+use App\Models\Notification;
 
 class NofificationApiTest extends TestCase
 {
@@ -15,7 +15,7 @@ class NofificationApiTest extends TestCase
      */
     public function test_create_nofification()
     {
-        $nofification = Nofification::factory()->make()->toArray();
+        $nofification = Notification::factory()->make()->toArray();
 
         $this->response = $this->json(
             'POST',
@@ -30,7 +30,7 @@ class NofificationApiTest extends TestCase
      */
     public function test_read_nofification()
     {
-        $nofification = Nofification::factory()->create();
+        $nofification = Notification::factory()->create();
 
         $this->response = $this->json(
             'GET',
@@ -45,8 +45,8 @@ class NofificationApiTest extends TestCase
      */
     public function test_update_nofification()
     {
-        $nofification = Nofification::factory()->create();
-        $editedNofification = Nofification::factory()->make()->toArray();
+        $nofification = Notification::factory()->create();
+        $editedNofification = Notification::factory()->make()->toArray();
 
         $this->response = $this->json(
             'PUT',
@@ -62,7 +62,7 @@ class NofificationApiTest extends TestCase
      */
     public function test_delete_nofification()
     {
-        $nofification = Nofification::factory()->create();
+        $nofification = Notification::factory()->create();
 
         $this->response = $this->json(
             'DELETE',

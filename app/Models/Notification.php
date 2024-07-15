@@ -3,34 +3,37 @@
 namespace App\Models;
 
 use Eloquent as Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Notification
- * @package App\Models
- * @version June 2, 2021, 1:05 pm UTC
  *
+ * @version June 2, 2021, 1:05 pm UTC
  */
 class Notification extends Model
 {
-//    use SoftDeletes;
+    //    use SoftDeletes;
 
     use HasFactory;
 
     public $table = 'notifications';
 
-
-//    protected $dates = ['deleted_at'];
+    //    protected $dates = ['deleted_at'];
 
     const ID = 'id';
-    const DATA = 'data';
-    const TYPE = 'type';
-    const TEAM_ID = 'team_id';
-    const USER_ID = 'user_id';
-    const CREATED_AT = 'created_at';
-    const READ_AT = 'read_at';
 
+    const DATA = 'data';
+
+    const TYPE = 'type';
+
+    const TEAM_ID = 'team_id';
+
+    const USER_ID = 'user_id';
+
+    const CREATED_AT = 'created_at';
+
+    const READ_AT = 'read_at';
 
     protected $primaryKey = 'id';
 
@@ -40,7 +43,7 @@ class Notification extends Model
         self::TEAM_ID,
         self::USER_ID,
         self::CREATED_AT,
-        self::READ_AT
+        self::READ_AT,
 
     ];
 
@@ -50,7 +53,7 @@ class Notification extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer'
+        'id' => 'integer',
     ];
 
     /**
@@ -64,12 +67,12 @@ class Notification extends Model
 
     public function team()
     {
-        return $this->hasOne(Team::class, self::ID, Self::TEAM_ID);
+        return $this->hasOne(Team::class, self::ID, self::TEAM_ID);
     }
 
     public function user()
     {
-        return $this->hasOne(User::class,self::ID,self::USER_ID);
+        return $this->hasOne(User::class, self::ID, self::USER_ID);
     }
 
     public function candidateUser()

@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\ChatInfoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use App\Services\ChatInfoService;
 
 class ChatInfoController extends Controller
 {
@@ -23,7 +22,6 @@ class ChatInfoController extends Controller
     /**
      * Return information for chat integration.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function getInfo(Request $request)
@@ -31,18 +29,13 @@ class ChatInfoController extends Controller
         return $this->chatInfoService->getInfo($request);
     }
 
-
     /**
      * Return information for chat integration.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function getUserInfoList(Request $request)
     {
         return $this->chatInfoService->getUserInfoList($request);
     }
-
-
-
 }

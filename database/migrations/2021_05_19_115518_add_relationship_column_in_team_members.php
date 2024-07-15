@@ -15,7 +15,7 @@ class AddRelationshipColumnInTeamMembers extends Migration
     {
         Schema::table('team_members', function (Blueprint $table) {
             //
-            $table->string('relationship',100)->default('');
+            $table->string('relationship', 100)->default('');
         });
     }
 

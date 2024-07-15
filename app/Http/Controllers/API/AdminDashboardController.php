@@ -2,14 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\ShortListedCandidate;
-use App\Repositories\ShortListedCandidateRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
-use Illuminate\Support\Facades\Gate;
-use Response;
-use Symfony\Component\HttpFoundation\Response as FResponse;
 use App\Http\Resources\UserReportResource;
 use App\Mail\UserDeletedMail;
 use App\Mail\UserRejectedMail;
@@ -17,28 +10,29 @@ use App\Mail\UserSuspendedMail;
 use App\Models\CandidateImage;
 use App\Models\CandidateInformation;
 use App\Models\RejectedNote;
-use App\Models\TeamConnection;
-use App\Services\AdminService;
-use App\Services\SubscriptionService;
-use App\Repositories\UserRepository;
+use App\Models\ShortListedCandidate;
 use App\Models\User;
-use App\Repositories\CandidateRepository;
-use App\Transformers\CandidateTransformer;
-
-use Illuminate\Support\Facades\Auth;
-
 use App\Repositories\CandidateImageRepository;
+use App\Repositories\CandidateRepository;
 use App\Repositories\CountryRepository;
 use App\Repositories\RepresentativeInformationRepository as RepresentativeRepository;
+use App\Repositories\ShortListedCandidateRepository;
+use App\Repositories\UserRepository;
+use App\Services\AdminService;
+use App\Services\SubscriptionService;
+use App\Transformers\CandidateTransformer;
 use App\Transformers\RepresentativeTransformer;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpFoundation\Response as FResponse;
 
 /**
  * Class ShortListedCandidateController
- * @package App\Http\Controllers\API\V1
  */
 class AdminDashboardController extends AppBaseController
 {
@@ -64,8 +58,7 @@ class AdminDashboardController extends AppBaseController
         RepresentativeRepository $representativeRepository,
         CountryRepository $countryRepository,
         RepresentativeTransformer $representativeTransformer
-    )
-    {
+    ) {
         $this->shortListedCandidateRepository = $shortListedCandidateRepo;
         $this->adminService = $adminService;
         $this->userRepository = $UserRepository;
@@ -84,12 +77,11 @@ class AdminDashboardController extends AppBaseController
      * Display a listing of the ShortListedCandidate.
      * GET|HEAD /shortListedCandidates
      *
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function dashboard(Request $request)
     {
-        if(!Gate::allows('DASHBOARD_ASSESS')){
+        if (! Gate::allows('DASHBOARD_ASSESS')) {
             return $this->sendUnauthorizedResponse();
         }
 
@@ -99,11 +91,12 @@ class AdminDashboardController extends AppBaseController
         $result['short_list']['personal'] = $personalList;
         $result['short_list']['team'] = $personalListTeam;
         $result['profile_view'] = 0;
+
         return $this->sendResponse($result, 'Dashboard information patch successfully');
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     // public function userReport(Request $request)
@@ -136,28 +129,31 @@ class AdminDashboardController extends AppBaseController
 
     // }
 
-    public function count_can_rep() {
+    public function count_can_rep()
+    {
         $candidate_count = User::where('status', 1)
-        ->where('account_type', 1)
-        ->count();
+            ->where('account_type', 1)
+            ->count();
         $rep_count = User::where('status', 1)
-        ->where('account_type', 2)
-        ->count();
+            ->where('account_type', 2)
+            ->count();
 
-        $data =  [
+        $data = [
             'no_of_candidate' => $candidate_count,
             'no_of_rep' => $rep_count,
         ];
+
         return $this->sendResponse($data, 'Data retrieved successfully');
     }
 
     public function userReport(Request $request)
     {
-        if(!Gate::allows('GET_ACTIVE_USER')){
+        if (! Gate::allows('GET_ACTIVE_USER')) {
             return $this->sendUnauthorizedResponse();
         }
 
         $data = $this->getActiveUserData($request);
+
         return $this->sendResponse($data, 'Data retrieved successfully');
     }
 
@@ -165,57 +161,56 @@ class AdminDashboardController extends AppBaseController
     {
         $keyword = @$request->input('keyword');
         $account_type = @$request->input('account_type');
-        if (!empty($request->keyword) && !empty($request->account_type)) {
+        if (! empty($request->keyword) && ! empty($request->account_type)) {
             $data = User::where('account_type', $account_type)
-            ->where(function($q)use ($keyword){
-                $q->orWhere('full_name', 'LIKE','%'.$keyword.'%');
-                $q->orWhere('email', 'LIKE','%'.$keyword.'%');
+                ->where(function ($q) use ($keyword) {
+                    $q->orWhere('full_name', 'LIKE', '%'.$keyword.'%');
+                    $q->orWhere('email', 'LIKE', '%'.$keyword.'%');
+                    $q->orWhere('id', $keyword);
+                })
+                ->with(['candidate_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->with(['representative_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+        } elseif (! empty($request->account_type) && empty($request->keyword)) {
+            $data = User::where('account_type', $account_type)
+                ->with(['candidate_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->with(['representative_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+        } elseif (! empty($request->keyword) && empty($request->account_type)) {
+            $data = User::where(function ($q) use ($keyword) {
+                $q->orWhere('full_name', 'LIKE', '%'.$keyword.'%');
+                $q->orWhere('email', 'LIKE', '%'.$keyword.'%');
                 $q->orWhere('id', $keyword);
             })
-            ->with(['candidate_info' => function($q){
+                ->with(['candidate_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->with(['representative_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+        } else {
+            $data = User::with(['candidate_info' => function ($q) {
                 $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
             }])
-            ->with(['representative_info' => function($q){
-                 $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->orderBy('id', 'DESC')
-            ->paginate(10);
+                ->with(['representative_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
         }
-        elseif (!empty($request->account_type) && empty($request->keyword)) {
-            $data = User::where('account_type', $account_type)
-            ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->with(['representative_info' => function($q){
-                 $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->orderBy('id', 'DESC')
-            ->paginate(10);
-        } elseif(!empty($request->keyword) && empty($request->account_type)) {
-            $data = User::where(function($q)use ($keyword){
-                $q->orWhere('full_name', 'LIKE','%'.$keyword.'%');
-                $q->orWhere('email', 'LIKE','%'.$keyword.'%');
-                $q->orWhere('id', $keyword);
-            })
-            ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->with(['representative_info' => function($q){
-                 $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->orderBy('id', 'DESC')
-            ->paginate(10);
-        }
-        else {
-            $data = User::with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->with(['representative_info' => function($q){
-                 $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->orderBy('id', 'DESC')
-            ->paginate(10);
-        }
+
         return $data;
 
     }
@@ -225,176 +220,177 @@ class AdminDashboardController extends AppBaseController
         $keyword = @$request->input('keyword');
         $account_type = @$request->input('account_type');
         $status = $status;
-        if (!empty($request->keyword) && !empty($request->account_type)) {
+        if (! empty($request->keyword) && ! empty($request->account_type)) {
             $data = User::where('status', $status)
-            ->where('account_type', $account_type)
-            ->where(function($q)use ($keyword){
-                $q->orWhere('full_name', 'LIKE','%'.$keyword.'%');
-                $q->orWhere('email', 'LIKE','%'.$keyword.'%');
-                $q->orWhere('id', $keyword);
-            })
-            ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->with(['representative_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->orderBy('id', 'DESC')
-            ->paginate(10);
+                ->where('account_type', $account_type)
+                ->where(function ($q) use ($keyword) {
+                    $q->orWhere('full_name', 'LIKE', '%'.$keyword.'%');
+                    $q->orWhere('email', 'LIKE', '%'.$keyword.'%');
+                    $q->orWhere('id', $keyword);
+                })
+                ->with(['candidate_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->with(['representative_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+        } elseif (! empty($request->account_type) && empty($request->keyword)) {
+            $data = User::where('status', $status)
+                ->where('account_type', $account_type)
+                ->with(['candidate_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->with(['representative_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+        } elseif (! empty($request->keyword) && empty($request->account_type)) {
+            $data = User::where('status', $status)
+                ->where(function ($q) use ($keyword) {
+                    $q->orWhere('full_name', 'LIKE', '%'.$keyword.'%');
+                    $q->orWhere('email', 'LIKE', '%'.$keyword.'%');
+                    $q->orWhere('id', $keyword);
+                })
+                ->with(['candidate_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->with(['representative_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
+        } else {
+            $data = User::where('status', $status)
+                ->with(['candidate_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->with(['representative_info' => function ($q) {
+                    $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
+                }])
+                ->orderBy('id', 'DESC')
+                ->paginate(10);
         }
-        elseif (!empty($request->account_type) && empty($request->keyword)) {
-            $data = User::where('status', $status)
-            ->where('account_type', $account_type)
-            ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->with(['representative_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->orderBy('id', 'DESC')
-            ->paginate(10);
-        } elseif(!empty($request->keyword) && empty($request->account_type)) {
-            $data = User::where('status', $status)
-            ->where(function($q)use ($keyword){
-                $q->orWhere('full_name', 'LIKE','%'.$keyword.'%');
-                $q->orWhere('email', 'LIKE','%'.$keyword.'%');
-                $q->orWhere('id', $keyword);
-            })
-            ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->with(['representative_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->orderBy('id', 'DESC')
-            ->paginate(10);
-        }
-        else {
-            $data = User::where('status', $status)
-            ->with(['candidate_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->with(['representative_info' => function($q){
-                $q->select(['data_input_status', 'user_id', 'is_uplaoded_doc']);
-            }])
-            ->orderBy('id', 'DESC')
-            ->paginate(10);
-        }
+
         return $data;
 
     }
 
     /**
-     * @param Request $request
      * @return string
      */
     public function pendingUserList(Request $request)
     {
-        if(!Gate::allows('GET_PENDING_USER')){
+        if (! Gate::allows('GET_PENDING_USER')) {
             return $this->sendUnauthorizedResponse();
         }
         $data = $this->getUserData($request, 2);
+
         return $this->sendResponse($data, 'Data retrieved successfully');
     }
 
-//     public function pendingUserList(Request $request)
-//     {
-//         $parpage = 10;
-//         $page = 1;
-//         if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
-//         if ($request->has('page')): $page = $request->input('page'); endif;
+    //     public function pendingUserList(Request $request)
+    //     {
+    //         $parpage = 10;
+    //         $page = 1;
+    //         if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
+    //         if ($request->has('page')): $page = $request->input('page'); endif;
 
-//         $search = $this->userRepository->getModel()->newQuery();
-//         if ($page) {
-//             $skip = $parpage * ($page - 1);
-//             $userList = $search->where('status','=','2')->limit($parpage)->offset($skip)->get();
-//         } else {
-//             $userList = $search->where('status','=','2')->limit($parpage)->offset(0)->get();
-//         }
-// //        $userList=User::where('status','=',0)->paginate($parpage);
-//         $formatted_data = UserReportResource::collection($userList);
-//         return $this->sendResponse($formatted_data, 'Data retrieved successfully');
+    //         $search = $this->userRepository->getModel()->newQuery();
+    //         if ($page) {
+    //             $skip = $parpage * ($page - 1);
+    //             $userList = $search->where('status','=','2')->limit($parpage)->offset($skip)->get();
+    //         } else {
+    //             $userList = $search->where('status','=','2')->limit($parpage)->offset(0)->get();
+    //         }
+    // //        $userList=User::where('status','=',0)->paginate($parpage);
+    //         $formatted_data = UserReportResource::collection($userList);
+    //         return $this->sendResponse($formatted_data, 'Data retrieved successfully');
 
-//     }
+    //     }
     public function approvedUserList(Request $request)
     {
-        if(!Gate::allows('GET_APPROVED_USER')){
+        if (! Gate::allows('GET_APPROVED_USER')) {
             return $this->sendUnauthorizedResponse();
         }
 
-       $data =  $this->getUserData($request, 5);
-       return $this->sendResponse($data, 'Data retrieved successfully');
+        $data = $this->getUserData($request, 5);
+
+        return $this->sendResponse($data, 'Data retrieved successfully');
     }
 
     public function verifiedUserList(Request $request)
     {
-        if(!Gate::allows('GET_VERIFIED_USER')){
+        if (! Gate::allows('GET_VERIFIED_USER')) {
             return $this->sendUnauthorizedResponse();
         }
 
-       $data =  $this->getUserData($request, 3);
-       return $this->sendResponse($data, 'Data retrieved successfully');
+        $data = $this->getUserData($request, 3);
+
+        return $this->sendResponse($data, 'Data retrieved successfully');
     }
 
     public function rejectedUserList(Request $request)
     {
-        if(!Gate::allows('GET_REJECTED_USER')){
+        if (! Gate::allows('GET_REJECTED_USER')) {
             return $this->sendUnauthorizedResponse();
         }
 
-       $data =  $this->getUserData($request, 4);
-       return $this->sendResponse($data, 'Data retrieved successfully');
+        $data = $this->getUserData($request, 4);
+
+        return $this->sendResponse($data, 'Data retrieved successfully');
     }
 
-//     public function verifiedUserList(Request $request)
-//     {
-//         $parpage = 10;
-//         $page = 1;
-//         if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
-//         if ($request->has('page')): $page = $request->input('page'); endif;
+    //     public function verifiedUserList(Request $request)
+    //     {
+    //         $parpage = 10;
+    //         $page = 1;
+    //         if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
+    //         if ($request->has('page')): $page = $request->input('page'); endif;
 
-//         $search = $this->userRepository->getModel()->newQuery();
-//         if ($page) {
-//             $skip = $parpage * ($page - 1);
-//             $userList = $search->where('status','=','3')->limit($parpage)->offset($skip)->get();
-//         } else {
-//             $userList = $search->where('status','=','3')->limit($parpage)->offset(0)->get();
-//         }
-// //        $userList=User::where('status','=',0)->paginate($parpage);
-//         $formatted_data = UserReportResource::collection($userList);
-//         return $this->sendResponse($formatted_data, 'Data retrieved successfully');
+    //         $search = $this->userRepository->getModel()->newQuery();
+    //         if ($page) {
+    //             $skip = $parpage * ($page - 1);
+    //             $userList = $search->where('status','=','3')->limit($parpage)->offset($skip)->get();
+    //         } else {
+    //             $userList = $search->where('status','=','3')->limit($parpage)->offset(0)->get();
+    //         }
+    // //        $userList=User::where('status','=',0)->paginate($parpage);
+    //         $formatted_data = UserReportResource::collection($userList);
+    //         return $this->sendResponse($formatted_data, 'Data retrieved successfully');
 
-//     }
+    //     }
 
-//     public function rejectedUserList(Request $request)
-//     {
-//         $parpage = 10;
-//         $page = 1;
-//         if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
-//         if ($request->has('page')): $page = $request->input('page'); endif;
+    //     public function rejectedUserList(Request $request)
+    //     {
+    //         $parpage = 10;
+    //         $page = 1;
+    //         if ($request->has('parpage')): $parpage = $request->input('parpage'); endif;
+    //         if ($request->has('page')): $page = $request->input('page'); endif;
 
-//         $search = $this->userRepository->getModel()->newQuery();
-//         if ($page) {
-//             $skip = $parpage * ($page - 1);
-//             $userList = $search->where('status','=','4')->limit($parpage)->offset($skip)->get();
-//         } else {
-//             $userList = $search->where('status','=','4')->limit($parpage)->offset(0)->get();
-//         }
-// //        $userList=User::where('status','=',0)->paginate($parpage);
-//         $formatted_data = UserReportResource::collection($userList);
-//         return $this->sendResponse($formatted_data, 'Data retrieved successfully');
+    //         $search = $this->userRepository->getModel()->newQuery();
+    //         if ($page) {
+    //             $skip = $parpage * ($page - 1);
+    //             $userList = $search->where('status','=','4')->limit($parpage)->offset($skip)->get();
+    //         } else {
+    //             $userList = $search->where('status','=','4')->limit($parpage)->offset(0)->get();
+    //         }
+    // //        $userList=User::where('status','=',0)->paginate($parpage);
+    //         $formatted_data = UserReportResource::collection($userList);
+    //         return $this->sendResponse($formatted_data, 'Data retrieved successfully');
 
-//     }
+    //     }
 
     /**
-     * @param Request $request
-     * @param $id
+     * @param  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function verifyRejectUser(Request $request)
     {
 
-        if(!Gate::allows('CAN_ACCESS_ADMIN')){
+        if (! Gate::allows('CAN_ACCESS_ADMIN')) {
             return $this->sendUnauthorizedResponse();
         }
 
@@ -408,52 +404,52 @@ class AdminDashboardController extends AppBaseController
             'deleted' => 0,
         ];
         $ver_rej = $status[$request->status];
-        if (!empty($request->id)) {
+        if (! empty($request->id)) {
             $userId = $request->id;
         } else {
             return $this->sendError('User Id is required ', FResponse::HTTP_BAD_REQUEST);
         }
         $userInfo = $this->userRepository->findOneByProperties(['id' => $userId]);
-        if (!$userInfo) {
+        if (! $userInfo) {
             throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $userId);
         }
         $userInfo->status = strval($ver_rej);
         if ($userInfo->save()) {
-            if($ver_rej == '4') {
+            if ($ver_rej == '4') {
                 $rj = new RejectedNote();
                 $rj->user_id = $userId;
                 $rj->note = $request->note;
                 $rj->save();
             }
-            if($ver_rej == '9') {
-                if($userInfo->email) {
-                    try{
+            if ($ver_rej == '9') {
+                if ($userInfo->email) {
+                    try {
                         Mail::to($userInfo->email)->send(new UserSuspendedMail($userInfo));
-                    } catch(Exception $e) {
+                    } catch (Exception $e) {
                         return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
                     }
                 }
             }
             //
-            if($ver_rej == '4') {
-                if($userInfo->email) {
-                    try{
+            if ($ver_rej == '4') {
+                if ($userInfo->email) {
+                    try {
                         $rejected_notes = User::with(['rejected_notes'])->where('id', $userInfo->id)->first();
-                        if($rejected_notes->rejected_notes->count() > 0) {
+                        if ($rejected_notes->rejected_notes->count() > 0) {
                             Mail::to($userInfo->email)->send(new UserRejectedMail($userInfo, $rejected_notes->rejected_notes));
                         } else {
-                            Mail::to($userInfo->email)->send(new UserRejectedMail($userInfo, ["note"=>"verification"]));
+                            Mail::to($userInfo->email)->send(new UserRejectedMail($userInfo, ['note' => 'verification']));
                         }
-                    } catch(Exception $e) {
+                    } catch (Exception $e) {
                         return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
                     }
                 }
             }
-            if($ver_rej == '0') {
-                if($userInfo->email) {
-                    try{
+            if ($ver_rej == '0') {
+                if ($userInfo->email) {
+                    try {
                         Mail::to($userInfo->email)->send(new UserDeletedMail($userInfo));
-                    } catch(Exception $e) {
+                    } catch (Exception $e) {
                         return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
                     }
                 }
@@ -462,8 +458,7 @@ class AdminDashboardController extends AppBaseController
             // $this->deleteImageGuzzle($request->filename, $request->id);
             // $this->deleteImageGuzzle($request->filename, $request->id);
 
-
-            return $this->sendSuccess($userInfo, 'User '. $request->status.' successfully', [], FResponse::HTTP_OK);
+            return $this->sendSuccess($userInfo, 'User '.$request->status.' successfully', [], FResponse::HTTP_OK);
         } else {
             return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
         }
@@ -473,13 +468,14 @@ class AdminDashboardController extends AppBaseController
     //Raz
 
     // Representative details
-    public function RepresentativeUserInfo($id = null) {
+    public function RepresentativeUserInfo($id = null)
+    {
 
-        if(!Gate::allows('GET_PARTICULAR_REPRESENTATIVE')){
+        if (! Gate::allows('GET_PARTICULAR_REPRESENTATIVE')) {
             return $this->sendUnauthorizedResponse();
         }
 
-        if (!empty($id)) {
+        if (! empty($id)) {
             $userId = $id;
         } else {
             return $this->sendError('User Id is required ', FResponse::HTTP_BAD_REQUEST);
@@ -487,59 +483,60 @@ class AdminDashboardController extends AppBaseController
 
         try {
             $representativeInformation = $this->representativeRepository->findOneByProperties([
-                'user_id' => $userId
+                'user_id' => $userId,
             ]);
 
-            if (!$representativeInformation) {
+            if (! $representativeInformation) {
                 throw (new ModelNotFoundException)->setModel(get_class($this->representativeRepository->getModel()), $userId);
             }
             $data = $this->representativeTransformer->profileInfo($representativeInformation);
             if ($data) {
-                 //Raz
+                //Raz
                 $rejected_notes = RejectedNote::where('user_id', $userId)->get();
                 $res = array_merge(
                     $data,
                     [
-                        'rejected_notes' => $rejected_notes
+                        'rejected_notes' => $rejected_notes,
                     ],
                     [
-                        'user' => User::where('id', $id)->first()
+                        'user' => User::where('id', $id)->first(),
                     ]
                 );
+
                 return $this->sendSuccess($res, 'User info loaded successfully', [], FResponse::HTTP_OK);
             } else {
                 return $this->sendError('Something went wrong please try again later', FResponse::HTTP_NOT_MODIFIED);
             }
 
-
-        }catch (Exception $exception){
+        } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
     }
 
     // candidate details
 
-    public function CandidateUserInfo($id = null) {
+    public function CandidateUserInfo($id = null)
+    {
 
-        if(!Gate::allows('GET_PARTICULAR_CANDIDATE')){
+        if (! Gate::allows('GET_PARTICULAR_CANDIDATE')) {
             return $this->sendUnauthorizedResponse();
         }
 
-        if (!empty($id)) {
+        if (! empty($id)) {
             $userId = $id;
         } else {
             return $this->sendError('User Id is required ', FResponse::HTTP_BAD_REQUEST);
         }
         $candidate = $this->candidateRepository->findOneByProperties([
-            'user_id' => $userId
+            'user_id' => $userId,
         ]);
-        if (!$candidate) {
+        if (! $candidate) {
             throw (new ModelNotFoundException)->setModel(get_class($this->candidateRepository->getModel()), $userId);
         }
-        $images = $this->imageRepository->findBy(['user_id'=>$userId]);
+        $images = $this->imageRepository->findBy(['user_id' => $userId]);
         $candidate_info = $this->candidateTransformer->transform($candidate);
         $candidate_info['essential'] = $this->candidateTransformer->transformPersonalEssential($candidate)['essential'];
-        $candidate_image = $this->candidateTransformer->candidateOtherImage($images,CandidateImage::getPermissionStatus($userId));
+        $candidate_image = $this->candidateTransformer->candidateOtherImage($images, CandidateImage::getPermissionStatus($userId));
 
         //Raz
         $rejected_notes = RejectedNote::where('user_id', $userId)->get();
@@ -558,17 +555,17 @@ class AdminDashboardController extends AppBaseController
                 'contact' => $this->candidateTransformer->transformPersonal($candidate)['contact'],
             ],
             [
-                'more_about' =>  $this->candidateTransformer->transformPersonal($candidate)['more_about'],
+                'more_about' => $this->candidateTransformer->transformPersonal($candidate)['more_about'],
             ],
             [
 
-                'other_images' => $candidate->other_images
+                'other_images' => $candidate->other_images,
             ],
             [
-                'rejected_notes' => $rejected_notes
+                'rejected_notes' => $rejected_notes,
             ],
             [
-                'user' => User::where('id', $id)->first()
+                'user' => User::where('id', $id)->first(),
             ]
         );
 
@@ -579,38 +576,38 @@ class AdminDashboardController extends AppBaseController
         }
     }
 
-    public function UserInfo($id = null) {
+    public function UserInfo($id = null)
+    {
 
-        if(!Gate::allows('GET_PARTICULAR_USER')){
+        if (! Gate::allows('GET_PARTICULAR_USER')) {
             return $this->sendUnauthorizedResponse();
         }
 
-        if (!empty($id)) {
+        if (! empty($id)) {
             $userId = $id;
         } else {
             return $this->sendError('User Id is required ', FResponse::HTTP_BAD_REQUEST);
         }
-        $userInfo = User::
-        with([
-            'candidate_info' => function($r1){
+        $userInfo = User::with([
+            'candidate_info' => function ($r1) {
                 $r1->with([
                     'candidateEducationLevel',
                     'getCountryOFBirth',
                     'getCurrentResidenceCountry',
                     'getPermanentCountry',
                     'getPetnarCountryOFBirth',
-                    'activeTeams'
+                    'activeTeams',
                 ]);
-            }
+            },
         ])
-        ->with(
-            [
-                'representative_info',
-                'candidate_image',
-                'rejected_notes'
+            ->with(
+                [
+                    'representative_info',
+                    'candidate_image',
+                    'rejected_notes',
                 ]
             )->where('id', $userId)->first();
-        if (!$userInfo) {
+        if (! $userInfo) {
             throw (new ModelNotFoundException)->setModel(get_class($this->userRepository->getModel()), $userId);
         }
         //$userInfo->status = 1;
@@ -619,12 +616,16 @@ class AdminDashboardController extends AppBaseController
         if ($userInfo) {
             $ci = new CandidateTransformer();
             $cr = new RepresentativeTransformer();
-            if($userInfo->candidate_info)
-            $userInfo->candidate_info_modified = $ci->candidateSearchData($userInfo->candidate_info);
-            else $userInfo->candidate_info_modified = null;
-            if($userInfo->representative_info)
-            $userInfo->representative_info_modified = $cr->RepDetails($userInfo->representative_info);
-            else $userInfo->representative_info_modified = null;
+            if ($userInfo->candidate_info) {
+                $userInfo->candidate_info_modified = $ci->candidateSearchData($userInfo->candidate_info);
+            } else {
+                $userInfo->candidate_info_modified = null;
+            }
+            if ($userInfo->representative_info) {
+                $userInfo->representative_info_modified = $cr->RepDetails($userInfo->representative_info);
+            } else {
+                $userInfo->representative_info_modified = null;
+            }
 
             return $this->sendSuccess($userInfo, 'User info loaded successfully', [], FResponse::HTTP_OK);
         } else {
@@ -632,20 +633,15 @@ class AdminDashboardController extends AppBaseController
         }
     }
 
-
     /**
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-
     public function subscription(Request $request)
     {
         return $this->subscriptionService->subscriptionReport($request->all());
     }
 
-
     /**
-     * @param $queryData
      * @return array
      */
     protected function pagination($queryData)
@@ -659,6 +655,7 @@ class AdminDashboardController extends AppBaseController
             'last_page' => $queryData->lastPage(),
             'has_more_pages' => $queryData->hasMorePages(),
         ];
+
         return $data;
     }
 
@@ -668,16 +665,16 @@ class AdminDashboardController extends AppBaseController
         return array_merge(
             $this->basicInfo($item),
             [
-                'essential' => $this->essentialInfo($item)
+                'essential' => $this->essentialInfo($item),
             ],
             [
-                'personal' => $this->personalInfo($item)
+                'personal' => $this->personalInfo($item),
             ],
             [
-                'verification' => $this->verificationInfo($item)
+                'verification' => $this->verificationInfo($item),
             ],
             [
-                'image_upload' => $this->imageUploadInfo($item)
+                'image_upload' => $this->imageUploadInfo($item),
             ]
         );
     }
@@ -686,18 +683,16 @@ class AdminDashboardController extends AppBaseController
     {
         return [
             'id' => $item->id,
-            'user_id'=>$item->user_id,
-            'first_name'=>$item->first_name,
-            'last_name'=>$item->last_name,
-            'screen_name'=>$item->screen_name,
-            'data_input_status' => $item->data_input_status
+            'user_id' => $item->user_id,
+            'first_name' => $item->first_name,
+            'last_name' => $item->last_name,
+            'screen_name' => $item->screen_name,
+            'data_input_status' => $item->data_input_status,
         ];
     }
 
     /**
      * Extract Essential info only
-     * @param RepresentativeInformation $item
-     * @return array
      */
     private function essentialInfo(RepresentativeInformation $item): array
     {
@@ -711,8 +706,6 @@ class AdminDashboardController extends AppBaseController
 
     /**
      * Extract Personal info only
-     * @param RepresentativeInformation $item
-     * @return array
      */
     private function personalInfo(RepresentativeInformation $item): array
     {
@@ -721,7 +714,7 @@ class AdminDashboardController extends AppBaseController
             'per_current_residence_country' => $item->per_current_residence_country,
             'per_current_residence_country_text' => $item->currentResidenceCountry ? $item->currentResidenceCountry->name : null,
             'per_current_residence_city' => $item->per_current_residence_city,
-            'per_permanent_country' => $item->per_permanent_country ,
+            'per_permanent_country' => $item->per_permanent_country,
             'per_permanent_country_text' => $item->permanentCountry ? $item->permanentCountry->name : null,
             'per_permanent_city' => $item->per_permanent_city,
             'per_county' => $item->per_county,
@@ -736,8 +729,6 @@ class AdminDashboardController extends AppBaseController
 
     /**
      * Extract Verification info only
-     * @param RepresentativeInformation $item
-     * @return array
      */
     private function verificationInfo(RepresentativeInformation $item): array
     {
@@ -746,8 +737,8 @@ class AdminDashboardController extends AppBaseController
             'ver_country' => $item->ver_country,
             'ver_city' => $item->ver_city,
             'ver_document_type' => $item->ver_document_type,
-            'ver_document_frontside' => $item->ver_document_frontside ? env('IMAGE_SERVER') .'/'. $item->ver_document_frontside : '',
-            'ver_document_backside' => $item->ver_document_backside ? env('IMAGE_SERVER') .'/'. $item->ver_document_backside : '',
+            'ver_document_frontside' => $item->ver_document_frontside ? env('IMAGE_SERVER').'/'.$item->ver_document_frontside : '',
+            'ver_document_backside' => $item->ver_document_backside ? env('IMAGE_SERVER').'/'.$item->ver_document_backside : '',
             'ver_recommender_title' => $item->ver_recommender_title,
             'ver_recommender_first_name' => $item->ver_recommender_first_name,
             'ver_recommender_last_name' => $item->ver_recommender_last_name,
@@ -759,16 +750,14 @@ class AdminDashboardController extends AppBaseController
 
     /**
      * Extract Verification info only
-     * @param RepresentativeInformation $item
-     * @return array
      */
     private function imageUploadInfo(RepresentativeInformation $item): array
     {
         return [
-            'per_avatar_url' => $item->per_avatar_url ?  $item->per_avatar_url : '',
+            'per_avatar_url' => $item->per_avatar_url ? $item->per_avatar_url : '',
             // 'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
             // 'per_main_image_url' => $item->per_main_image_url ? env('IMAGE_SERVER') .'/'. $item->per_main_image_url : '',
-            'per_main_image_url' => $item->per_main_image_url ?  $item->per_main_image_url : '',
+            'per_main_image_url' => $item->per_main_image_url ? $item->per_main_image_url : '',
             'anybody_can_see' => $item->anybody_can_see,
             'only_team_can_see' => $item->only_team_can_see,
             'team_connection_can_see' => $item->team_connection_can_see,
@@ -779,8 +768,8 @@ class AdminDashboardController extends AppBaseController
     private function galleryInfo(RepresentativeInformation $item)
     {
         return [
-            'ver_document_frontside' => $item->ver_document_frontside ? env('IMAGE_SERVER') .'/'. $item->ver_document_frontside : '',
-            'ver_document_backside' => $item->ver_document_backside ? env('IMAGE_SERVER') .'/'. $item->ver_document_backside : '',
+            'ver_document_frontside' => $item->ver_document_frontside ? env('IMAGE_SERVER').'/'.$item->ver_document_frontside : '',
+            'ver_document_backside' => $item->ver_document_backside ? env('IMAGE_SERVER').'/'.$item->ver_document_backside : '',
             'per_avatar_url' => $item->per_avatar_url ? $item->per_avatar_url : '',
             // 'per_avatar_url' => $item->per_avatar_url ? env('IMAGE_SERVER') .'/'. $item->per_avatar_url : '',
             // 'per_main_image_url' => $item->per_main_image_url ? env('IMAGE_SERVER') .'/'. $item->per_main_image_url : '',
@@ -788,7 +777,7 @@ class AdminDashboardController extends AppBaseController
         ];
     }
 
-    public function deleteImageGuzzle(String $filename, int $userId)
+    public function deleteImageGuzzle(string $filename, int $userId)
     {
 
         try {
@@ -796,10 +785,10 @@ class AdminDashboardController extends AppBaseController
                 'path' => 'candidate/candidate_'.$userId.'/',
                 'file' => $filename,
             ]);
+
             return $response->json();
         } catch (\Exception $exception) {
             Log::log('error', $exception->getMessage());
         }
     }
-
 }

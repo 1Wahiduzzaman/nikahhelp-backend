@@ -2,26 +2,21 @@
 
 namespace App\Http\Controllers\API\V1\Auth;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use App\Enums\HttpStatusCode;
-use App\Services\ApiBaseService;
-use Illuminate\Support\Facades\Validator;
-use App\Repositories\UserRepository;
-use App\Models\PasswordReset;
-use Str;
+use App\Http\Controllers\Controller;
 use App\Mail\ForgetPasswordMail;
+use App\Models\PasswordReset;
+use App\Repositories\UserRepository;
+use App\Services\ApiBaseService;
 use Exception;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Artisan;
-use Swift_TransportException;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ForgotPasswordController extends Controller
 {
-    use SendsPasswordResetEmails;
-
     protected \App\Services\ApiBaseService $apiBaseService;
 
     protected \App\Repositories\UserRepository $userRepository;
@@ -39,18 +34,17 @@ class ForgotPasswordController extends Controller
     /**
      * This method use for password reset mail send and token generation
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke(Request $request)
     {
         $input = $request->all();
-        $rules = array(
-            'email' => "required|email",
-        );
+        $rules = [
+            'email' => 'required|email',
+        ];
         $validator = Validator::make($input, $rules);
         if ($validator->fails()) {
-            return $this->apiBaseService->sendErrorResponse('validation error', $validator->errors()->first(), HttpStatusCode::BAD_REQUEST);
+            return $this->apiBaseService->sendErrorResponse('validation error', $validator->errors()->first(), HttpStatusCode::BAD_REQUEST->value);
         } else {
             try {
                 $user = $this->userRepository->findOneByProperties(['email' => $input['email']]);
@@ -64,7 +58,7 @@ class ForgotPasswordController extends Controller
                     Mail::to($user->email)->send(new ForgetPasswordMail($user, $token));
 
                     try {
-                        dispatch(function () use ($passwordUpdate, $input) {
+                        dispatch(function () use ($passwordUpdate) {
                             $passwordUpdate->forceDelete();
                         })->delay(now()->addMinutes(4));
                     } catch (Exception $exception) {
@@ -74,34 +68,29 @@ class ForgotPasswordController extends Controller
                     return $this->apiBaseService->sendSuccessResponse([], 'Reset link sent to your email');
                 } else {
                     return $this->apiBaseService->sendErrorResponse('Invalid Email', ['detail' => 'User Not found'],
-                        HttpStatusCode::BAD_REQUEST
+                        HttpStatusCode::BAD_REQUEST->value
                     );
                 }
 
             } catch (Exception $exception) {
                 return $this->sendErrorResponse($exception->getMessage(), [], $exception->getStatusCode());
-            } catch (Swift_TransportException $exception) {
-                return $this->sendErrorResponse($exception->getMessage(), []);
             }
 
         }
 
-
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-
     public function forgetPasswordTokenVerification(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'token' => 'required'
+            'token' => 'required',
         ]);
 
         if ($validator->fails()) {
-            return $this->sendErrorResponse('validation error', $validator->errors(), HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('validation error', $validator->errors(), HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $input = $request->all();
@@ -110,16 +99,16 @@ class ForgotPasswordController extends Controller
             $data = [
                 'token' => $input['token'],
                 'email' => $verified->email,
-                'validation' => true
+                'validation' => true,
             ];
+
             return $this->apiBaseService->sendSuccessResponse($data, 'This token is valid token');
         } else {
-            return $this->apiBaseService->sendErrorResponse('Token not found', [], HttpStatusCode::NOT_FOUND);
+            return $this->apiBaseService->sendErrorResponse('Token not found', [], HttpStatusCode::NOT_FOUND->value);
         }
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function updatePassword(Request $request)
@@ -130,15 +119,15 @@ class ForgotPasswordController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->sendErrorResponse('validation error', $validator->errors(), HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('validation error', $validator->errors(), HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $verified = PasswordReset::where('token', $request['token'])->first();
 
-        if($verified) {
+        if ($verified) {
             $verified->delete();
         } else {
-            return $this->sendErrorResponse('validation error', $validator->errors(), HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('validation error', $validator->errors(), HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $input = $request->all();
@@ -161,7 +150,4 @@ class ForgotPasswordController extends Controller
             return $this->apiBaseService->sendErrorResponse($exception->getMessage(), [], $exception->getStatusCode());
         }
     }
-
-
 }
-

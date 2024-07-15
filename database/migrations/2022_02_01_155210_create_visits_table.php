@@ -21,7 +21,7 @@ class CreateVisitsTable extends Migration
             $table->bigInteger('visit_count')->default(0);
             $table->string('lat')->nullable();
             $table->string('lng')->nullable();
-            $table->string('country')->nullable();            
+            $table->string('country')->nullable();
             $table->timestamps();
         });
     }

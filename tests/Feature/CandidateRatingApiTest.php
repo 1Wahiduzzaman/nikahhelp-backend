@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\ApiTestTrait;
 use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class CandidateRatingApiTest extends TestCase
 {
@@ -25,7 +26,7 @@ class CandidateRatingApiTest extends TestCase
 
         $this->user['email'] = 'admin@mail.com';
         $this->user['password'] = '12345678';
-        $this->token = \JWTAuth::attempt($this->user);
+        $this->token = JWTAuth::attempt($this->user);
     }
 
     /**

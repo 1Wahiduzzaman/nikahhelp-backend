@@ -3,6 +3,7 @@
 use App\Models\RepresentativeInformation;
 use App\Repositories\RepresentativeInformationRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\App;
 use Tests\TestCase;
 use Tests\ApiTestTrait;
 
@@ -18,7 +19,7 @@ class RepresentativeInformationRepositoryTest extends TestCase
     public function setUp() : void
     {
         parent::setUp();
-        $this->representativeInformationRepo = \App::make(RepresentativeInformationRepository::class);
+        $this->representativeInformationRepo = App::make(RepresentativeInformationRepository::class);
     }
 
     /**

@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 class CandidateCreateRequest extends APIRequest
 {
     /**
@@ -37,8 +35,7 @@ class CandidateCreateRequest extends APIRequest
             'first_name.max' => 'First name maximum input size 255',
             'screen_name.max' => 'Screen name maximum input size 255',
             'screen_name.required' => 'Screen name field is required',
-            'screen_name.unique' => 'This Screen name already exists'
+            'screen_name.unique' => 'This Screen name already exists',
         ];
     }
-
 }

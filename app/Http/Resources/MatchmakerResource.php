@@ -9,34 +9,34 @@ class MatchmakerResource extends JsonResource
     /**
      * Resource collection into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function toArray($request)
     {
-        if (!empty($this->ver_document_frontside)):
-            $document_frontside = url('storage/' . $this->ver_document_frontside);
-        else:
+        if (! empty($this->ver_document_frontside)) {
+            $document_frontside = url('storage/'.$this->ver_document_frontside);
+        } else {
             $document_frontside = null;
-        endif;
+        }
 
-        if (!empty($this->ver_document_backside)):
-            $ver_document_backside = url('storage/' . $this->ver_document_backside);
-        else:
+        if (! empty($this->ver_document_backside)) {
+            $ver_document_backside = url('storage/'.$this->ver_document_backside);
+        } else {
             $ver_document_backside = null;
-        endif;
+        }
 
-        if (!empty($this->per_avatar_url)):
-            $per_avatar_url = url('storage/' . $this->per_avatar_url);
-        else:
+        if (! empty($this->per_avatar_url)) {
+            $per_avatar_url = url('storage/'.$this->per_avatar_url);
+        } else {
             $per_avatar_url = null;
-        endif;
+        }
 
-        if (!empty($this->per_main_image_url)):
-            $per_main_image_url = url('storage/' . $this->per_main_image_url);
-        else:
+        if (! empty($this->per_main_image_url)) {
+            $per_main_image_url = url('storage/'.$this->per_main_image_url);
+        } else {
             $per_main_image_url = null;
-        endif;
+        }
 
         return [
             'id' => $this->id ?? null,
@@ -58,7 +58,7 @@ class MatchmakerResource extends JsonResource
             'mobile_country_code' => $this->mobile_country_code ?? null,
             'per_permanent_post_code' => $this->per_permanent_post_code ?? null,
             'per_permanent_address' => $this->per_permanent_address ?? null,
-            'is_document_upload' => (bool)$this->is_document_upload ?? false,
+            'is_document_upload' => (bool) $this->is_document_upload ?? false,
             'ver_country' => $this->ver_country ?? null,
             'ver_city' => $this->ver_city ?? null,
             'ver_document_type' => $this->ver_document_type ?? null,
@@ -86,15 +86,13 @@ class MatchmakerResource extends JsonResource
 
             'per_avatar_url' => $per_avatar_url ?? null,
             'per_main_image_url' => $per_main_image_url ?? null,
-            'anybody_can_see' => (bool)$this->anybody_can_see ?? false,
-            'only_team_can_see' => (bool)$this->only_team_can_see ?? false,
-            'team_connection_can_see' => (bool)$this->team_connection_can_see ?? false,
-            'is_agree' => (bool)$this->is_agree ?? false,
+            'anybody_can_see' => (bool) $this->anybody_can_see ?? false,
+            'only_team_can_see' => (bool) $this->only_team_can_see ?? false,
+            'team_connection_can_see' => (bool) $this->team_connection_can_see ?? false,
+            'is_agree' => (bool) $this->is_agree ?? false,
             'data_input_status' => $this->data_input_status ?? null,
 
         ];
 
     }
-
-
 }

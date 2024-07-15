@@ -1,38 +1,30 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Enums\HttpStatusCode;
-use App\Models\Generic;
-use App\Models\Team;
-use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\JsonResponse;
-use App\Traits\CrudTrait;
-use Illuminate\Http\Request;
-use App\Repositories\UserRepository;
-use App\Repositories\TeamRepository;
-use App\Repositories\TeamMemberRepository;
-use App\Models\TeamChat;
-use Illuminate\Support\Facades\Auth;
-use \Illuminate\Support\Facades\DB;
-use App\Transformers\TeamTransformer;
-use Illuminate\Support\Str;
-use App\Services\AccessRulesDefinitionService;
-use Illuminate\Support\Carbon;
-use App\Repositories\TeamConnectionRepository;
-use App\Models\TeamMember;
-use App\Models\TeamConnection;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\QueryException;
 use App\Http\Resources\TeamConnectionResource;
+use App\Models\Generic;
 use App\Models\Subscription;
+use App\Models\Team;
+use App\Models\TeamChat;
+use App\Models\TeamConnection;
+use App\Models\TeamMember;
+use App\Repositories\TeamConnectionRepository;
+use App\Repositories\TeamMemberRepository;
+use App\Repositories\TeamRepository;
+use App\Repositories\UserRepository;
+use App\Traits\CrudTrait;
+use Exception;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TeamConnectionService extends ApiBaseService
 {
-
     use CrudTrait;
 
     protected \App\Repositories\UserRepository $userRepository;
@@ -43,16 +35,13 @@ class TeamConnectionService extends ApiBaseService
 
     protected \App\Repositories\TeamConnectionRepository $teamConnectionRepository;
 
-
     /**
      * TeamService constructor.
-     *
-     * @param TeamRepository $teamRepository
      */
     public function __construct(TeamRepository $teamRepository,
-                                TeamMemberRepository $teamMemberRepository,
-                                UserRepository $userRepository,
-                                TeamConnectionRepository $teamConnectionRepository)
+        TeamMemberRepository $teamMemberRepository,
+        UserRepository $userRepository,
+        TeamConnectionRepository $teamConnectionRepository)
     {
         $this->teamRepository = $teamRepository;
         $this->teamMemberRepository = $teamMemberRepository;
@@ -60,48 +49,45 @@ class TeamConnectionService extends ApiBaseService
         $this->teamConnectionRepository = $teamConnectionRepository;
     }
 
-
     /**
      * Update resource
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function sendRequest($request)
-    {   
+    {
         $user_id = self::getUserId();
         $from_team = $this->teamRepository->findOneByProperties([
-            "team_id" => $request->from_team_id
+            'team_id' => $request->from_team_id,
         ]);
 
         // Find user member status
         $team_member_info = $this->teamMemberRepository->findOneByProperties(
             [
-                "user_id" => $user_id,
-                "team_id" => $from_team->id
+                'user_id' => $user_id,
+                'team_id' => $from_team->id,
             ]
         );
 
         $user_role = $team_member_info->role;
         $access_rules = new AccessRulesDefinitionService();
         $disconnection_rights = $access_rules->hasSendConnectionRequestRights();
-        if (!in_array($user_role, $disconnection_rights)) {
-            return $this->sendErrorResponse("You dont have rights to send request.", [], HttpStatusCode::VALIDATION_ERROR);
+        if (! in_array($user_role, $disconnection_rights)) {
+            return $this->sendErrorResponse('You dont have rights to send request.', [], HttpStatusCode::VALIDATION_ERROR);
         }
 
-
-
-        if (!$from_team) {
+        if (! $from_team) {
             return $this->sendErrorResponse('From team not found.', [], HttpStatusCode::VALIDATION_ERROR);
         }
 
         $to_team = $this->teamRepository->findOneByProperties([
-            "team_id" => $request->to_team_id
+            'team_id' => $request->to_team_id,
         ]);
 
         // $expire_date = $to_team->subscription_expire_at;
 
         // $expired_now = $expire_date->lessThanOrEqualTo(now());
-
 
         // if ($expired_now) {
         //     return $this->sendErrorResponse('Team expired', [], HttpStatusCode::NOT_FOUND);
@@ -109,19 +95,19 @@ class TeamConnectionService extends ApiBaseService
 
         // Log::info('sending');
 
-        if (!$to_team) {
+        if (! $to_team) {
             return $this->sendErrorResponse('To team not found.', [], HttpStatusCode::VALIDATION_ERROR);
         }
 
         /// verification validation start
         // from team candidate must be verified
         $from_team_id = $from_team->id;
-        $from_team_candidate = TeamMember::select("*")
-            ->with("user")
+        $from_team_candidate = TeamMember::select('*')
+            ->with('user')
             ->where('team_id', $from_team_id)
-            ->where('user_type', "Candidate")
+            ->where('user_type', 'Candidate')
             ->get();
-//        dd($from_team_id,$from_team_candidate);
+        //        dd($from_team_id,$from_team_candidate);
         if (count($from_team_candidate) > 0) {
             $from_team_candidate_user = $from_team_candidate[0]->user;
             if ($from_team_candidate_user->is_verified != 1) {
@@ -133,10 +119,10 @@ class TeamConnectionService extends ApiBaseService
 
         // to team candidate must be verified
         $to_team_id = $to_team->id;
-        $to_team_candidate = TeamMember::select("*")
-            ->with("user")
+        $to_team_candidate = TeamMember::select('*')
+            ->with('user')
             ->where('team_id', "$to_team_id")
-            ->where('user_type', "Candidate")
+            ->where('user_type', 'Candidate')
             ->get();
 
         if (count($to_team_candidate) > 0) {
@@ -149,10 +135,10 @@ class TeamConnectionService extends ApiBaseService
         }
 
         // at least 1 representative must be verified from "from_team"
-        $from_team_verified_reps = TeamMember::select("*")
-            ->with("user")
+        $from_team_verified_reps = TeamMember::select('*')
+            ->with('user')
             ->where('team_id', $from_team_id)
-            ->where('user_type', "Representative")
+            ->where('user_type', 'Representative')
             ->get();
 
         if (count($from_team_verified_reps) > 0) {
@@ -165,12 +151,11 @@ class TeamConnectionService extends ApiBaseService
 
         }
 
-
         // at least 1 representative must be verified from "to_team"
-        $to_team_verified_reps = TeamMember::select("*")
-            ->with("user")
+        $to_team_verified_reps = TeamMember::select('*')
+            ->with('user')
             ->where('team_id', $to_team_id)
-            ->where('user_type', "Representative")
+            ->where('user_type', 'Representative')
             ->get();
         if (count($to_team_verified_reps) > 0) {
             $to_team_verified_reps_user = $from_team_verified_reps[0]->user;
@@ -184,7 +169,7 @@ class TeamConnectionService extends ApiBaseService
         /// verification validation end
 
         // Check previous connection request
-        $previous_reqs = TeamConnection::select("*")
+        $previous_reqs = TeamConnection::select('*')
             ->where(function ($query) use ($from_team_id, $to_team_id) {
                 $query->where('from_team_id', '=', $from_team_id)
                     ->where('to_team_id', '=', $to_team_id);
@@ -196,13 +181,14 @@ class TeamConnectionService extends ApiBaseService
             ->get();
 
         if (count($previous_reqs) == 0) {
-            $data = array();
-            $data["requested_by"] = self::getUserId();
-            $data["from_team_id"] = $from_team->id;
-            $data["to_team_id"] = $to_team->id;
+            $data = [];
+            $data['requested_by'] = self::getUserId();
+            $data['from_team_id'] = $from_team->id;
+            $data['to_team_id'] = $to_team->id;
 
             try {
                 $team_connection = $this->teamConnectionRepository->save($data);
+
                 return $this->sendSuccessResponse($team_connection, 'Request sent successfully!');
             } catch (Exception $ex) {
                 return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR);
@@ -210,23 +196,24 @@ class TeamConnectionService extends ApiBaseService
         } else {
             // Check request status
             $team_connection = $previous_reqs[0];
-            if ($team_connection->connection_status == "2") {
+            if ($team_connection->connection_status == '2') {
                 // If it was rejected by any side update connection to pending again
                 $connection_row = $this->teamConnectionRepository->findOneByProperties([
-                    "id" => $team_connection->id
+                    'id' => $team_connection->id,
                 ]);
                 $connection_row->from_team_id = $from_team->id;
                 $connection_row->to_team_id = $to_team->id;
                 $connection_row->requested_by = self::getUserId();
                 $connection_row->requested_at = Carbon::now()->toDateTimeString();
                 $connection_row->connection_status = '0';
-                $connection_row->responded_by = NULL;
-                $connection_row->responded_at = NULL;
+                $connection_row->responded_by = null;
+                $connection_row->responded_at = null;
 
-                $input = (array)$connection_row;
+                $input = (array) $connection_row;
                 // As BaseRepository update method has bug that's why we have to fallback to model default methods.
                 $input = $connection_row->fill($input)->toArray();
                 $connection_row->save($input);
+
                 return $this->sendSuccessResponse($connection_row, 'Connection request resent!');
             }
 
@@ -236,72 +223,75 @@ class TeamConnectionService extends ApiBaseService
 
     /**
      * Update resource
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function respondRequest($request)
     {
         $user_id = self::getUserId();
         $connection_request = $this->teamConnectionRepository->findOneByProperties([
-            "id" => $request->request_id
+            'id' => $request->request_id,
         ]);
 
-        if (!$connection_request) {
+        if (! $connection_request) {
             return $this->sendErrorResponse('Connection request not found.', [], HttpStatusCode::VALIDATION_ERROR);
         }
 
-        if($request->connection_status == 10){
+        if ($request->connection_status == 10) {
             $team_id = $connection_request->from_team_id;
         } else {
             $team_id = $connection_request->to_team_id;
         }
 
         $update_response = $this->updateResponse($user_id, $team_id, $connection_request, $request->connection_status);
+
         return $update_response;
     }
 
-
     public function updateResponse($user_id, $team_id, $connection_row, $connection_status)
-    {   
+    {
         $user_member_status = $this->teamMemberRepository->findOneByProperties(
             [
-                "user_id" => $user_id,
-                "team_id" => $team_id
+                'user_id' => $user_id,
+                'team_id' => $team_id,
             ]
         );
 
-        if (!$user_member_status) {
-            return $this->sendErrorResponse("You are no longer a member of the connection requested team.", [], HttpStatusCode::NOT_FOUND);
+        if (! $user_member_status) {
+            return $this->sendErrorResponse('You are no longer a member of the connection requested team.', [], HttpStatusCode::NOT_FOUND);
         }
 
         $access_rules = new AccessRulesDefinitionService();
         $respond_connection_rights = $access_rules->hasRespondConnectionRequestRights();
-        if (!in_array($user_member_status->role, $respond_connection_rights)) {
-            return $this->sendErrorResponse("You dont have rights to accept or decline connection request.", [], HttpStatusCode::VALIDATION_ERROR);
+        if (! in_array($user_member_status->role, $respond_connection_rights)) {
+            return $this->sendErrorResponse('You dont have rights to accept or decline connection request.', [], HttpStatusCode::VALIDATION_ERROR);
         }
-        
-        if($connection_status == 10) {
-             $connection_row = TeamConnection::where('id', $connection_row->id)->delete();
-             return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
+
+        if ($connection_status == 10) {
+            $connection_row = TeamConnection::where('id', $connection_row->id)->delete();
+
+            return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
         } else {
             //  If connection status is pending only "To Team" can update the connection status
 
-            if (!is_numeric($connection_status)) {
-                return $this->sendErrorResponse("Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]", [], HttpStatusCode::VALIDATION_ERROR);
+            if (! is_numeric($connection_status)) {
+                return $this->sendErrorResponse('Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]', [], HttpStatusCode::VALIDATION_ERROR);
             }
 
-            if (!in_array($connection_status, ["0", "1", "2"])) {
-                return $this->sendErrorResponse("Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]", [], HttpStatusCode::VALIDATION_ERROR);
+            if (! in_array($connection_status, ['0', '1', '2'])) {
+                return $this->sendErrorResponse('Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]', [], HttpStatusCode::VALIDATION_ERROR);
             }
 
             $connection_row->connection_status = $connection_status;
             $connection_row->responded_by = $user_id;
             $connection_row->responded_at = Carbon::now()->toDateTimeString();
-            $input = (array)$connection_row;
+            $input = (array) $connection_row;
             $input = $connection_row->fill($input)->toArray();
 
             try {
                 $connection_row->save($input);
+
                 return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
             } catch (QueryException $ex) {
                 return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR);
@@ -318,9 +308,9 @@ class TeamConnectionService extends ApiBaseService
         $they_declined = 0;
         $teamId = $request->team_id;
         $userId = self::getUserId();
-        $teamInformation = Team::where("team_id", '=', "$teamId")
-        ->where('status',1)
-        ->first();
+        $teamInformation = Team::where('team_id', '=', "$teamId")
+            ->where('status', 1)
+            ->first();
         if (empty($teamInformation)) {
             return $this->sendErrorResponse('Active team information not found', [], HttpStatusCode::NOT_FOUND);
         }
@@ -331,7 +321,7 @@ class TeamConnectionService extends ApiBaseService
         $searchResult->where('from_team_id', $teamInformation->id);
         $searchResult->orWhere('to_team_id', $teamInformation->id);
         $queryData = $searchResult->get();
-        if (!empty($queryData) && count($queryData)) {
+        if (! empty($queryData) && count($queryData)) {
             foreach ($queryData as $key => $rInput) {
                 $queryData[$key]['active_teams'] = $teamInformation->id;
             }
@@ -358,34 +348,33 @@ class TeamConnectionService extends ApiBaseService
 
         $resultInfo = TeamConnectionResource::collection($queryData);
         //dd($resultInfo);
-        $data = array();
+        $data = [];
         $data['result'] = $resultInfo;
-        $data["connected_teams"] = $connected_teams;
-        $data["request_received"] = $request_received;
-        $data["request_sent"] = $request_sent;
-        $data["we_declined"] = $we_declined;
-        $data["they_declined"] = $they_declined;
-
+        $data['connected_teams'] = $connected_teams;
+        $data['request_received'] = $request_received;
+        $data['request_sent'] = $request_sent;
+        $data['we_declined'] = $we_declined;
+        $data['they_declined'] = $they_declined;
 
         return $this->sendSuccessResponse($data, 'Data fetched successfully!');
-
 
     }
 
     /**
      * Update resource
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function report($request)
     {
         $team_id = $request->team_id;
         $team = $this->teamRepository->findOneByProperties([
-            "team_id" => $team_id
+            'team_id' => $team_id,
         ]);
 
-        if (!$team) {
-            return $this->sendErrorResponse("Team not found.", [], HttpStatusCode::NOT_FOUND);
+        if (! $team) {
+            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
         }
 
         $team_row_id = $team->id;
@@ -433,7 +422,6 @@ class TeamConnectionService extends ApiBaseService
             // Note any method of class PDOException can be called on $ex.
         }
 
-
         try {
             $connected_teams_2 = DB::table('team_connections AS TCon')
                 ->join('teams AS FromTeam', 'TCon.from_team_id', '=', 'FromTeam.id')
@@ -468,8 +456,7 @@ class TeamConnectionService extends ApiBaseService
             return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
         }
 
-
-//        $connected_teams = array_merge($connected_teams_1,$connected_teams_2);
+        //        $connected_teams = array_merge($connected_teams_1,$connected_teams_2);
         $connected_teams = $connected_teams_1->concat($connected_teams_2);
         $connected_teams = $this->formatImageUrls($connected_teams);
 
@@ -547,7 +534,6 @@ class TeamConnectionService extends ApiBaseService
         } catch (\Illuminate\Database\QueryException $ex) {
             return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
         }
-
 
         $request_sent = $this->formatImageUrls($request_sent);
 
@@ -627,12 +613,12 @@ class TeamConnectionService extends ApiBaseService
 
         $they_declined = $this->formatImageUrls($they_declined);
 
-        $data = array();
-        $data["connected_teams"] = $connected_teams;
-        $data["request_received"] = $request_received;
-        $data["request_sent"] = $request_sent;
-        $data["we_declined"] = $we_declined;
-        $data["they_declined"] = $they_declined;
+        $data = [];
+        $data['connected_teams'] = $connected_teams;
+        $data['request_received'] = $request_received;
+        $data['request_sent'] = $request_sent;
+        $data['we_declined'] = $we_declined;
+        $data['they_declined'] = $they_declined;
 
         return $this->sendSuccessResponse($data, 'Data fetched successfully!');
     }
@@ -640,16 +626,18 @@ class TeamConnectionService extends ApiBaseService
     public function formatImageUrls($dataArray)
     {
         for ($i = 0; $i < count($dataArray); $i++) {
-            if (!empty($dataArray[$i]->candidate_image)) {
-                $dataArray[$i]->candidate_image = url('storage/' . $dataArray[$i]->candidate_image);
+            if (! empty($dataArray[$i]->candidate_image)) {
+                $dataArray[$i]->candidate_image = url('storage/'.$dataArray[$i]->candidate_image);
             }
         }
+
         return $dataArray;
     }
 
     /**
      * Update resource
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function overview($request)
@@ -657,8 +645,8 @@ class TeamConnectionService extends ApiBaseService
         $connection_id = $request->connection_id;
         $team_id = $request->team_id;
 
-        $team_connection = TeamConnection::select("*")
-            ->with("requested_by_user")
+        $team_connection = TeamConnection::select('*')
+            ->with('requested_by_user')
             ->where('id', $connection_id)
             ->get();
 
@@ -668,54 +656,53 @@ class TeamConnectionService extends ApiBaseService
             $responded_by = $connection_details->responded_by_user;
         } else {
             // send connection not found exception
-            return $this->sendErrorResponse("Connection not found.", [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Connection not found.', [], HttpStatusCode::NOT_FOUND);
         }
 
-
-        $connection_overview = array();
-        if ($connection_details->connection_status == "0") {
-            $connection_overview["connection_status"] = "Pending";
-        } else if ($connection_details->connection_status == "1") {
-            $connection_overview["connection_status"] = "Connected";
-        } else if ($connection_details->connection_status == "2") {
-            $connection_overview["connection_status"] = "Rejected";
+        $connection_overview = [];
+        if ($connection_details->connection_status == '0') {
+            $connection_overview['connection_status'] = 'Pending';
+        } elseif ($connection_details->connection_status == '1') {
+            $connection_overview['connection_status'] = 'Connected';
+        } elseif ($connection_details->connection_status == '2') {
+            $connection_overview['connection_status'] = 'Rejected';
         } else {
-            $connection_overview["connection_status"] = "Invalid";
+            $connection_overview['connection_status'] = 'Invalid';
         }
-        $connection_overview["requested_by"] = $requested_by;
-        $connection_overview["requested_at"] = $connection_details->requested_at;
-        $connection_overview["responded_by"] = $responded_by;
-        $connection_overview["responded_at"] = $connection_details->responded_at;
+        $connection_overview['requested_by'] = $requested_by;
+        $connection_overview['requested_at'] = $connection_details->requested_at;
+        $connection_overview['responded_by'] = $responded_by;
+        $connection_overview['responded_at'] = $connection_details->responded_at;
 
-        $profile_team_overview = array();
-        $teams = Team::select("*")
-            ->with("user")
+        $profile_team_overview = [];
+        $teams = Team::select('*')
+            ->with('user')
             ->where('team_id', $team_id)
             ->get();
         if (count($teams) > 0) {
             $user_team = $teams[0];
             $created_by = $user_team->user;
-            $profile_team_overview["team_id"] = $team_id;
-            $profile_team_overview["team_name"] = $user_team->name;
-            $profile_team_overview["member_count"] = $user_team->member_count;
-            $profile_team_overview["team_creation_date"] = $user_team->created_at;
-            $profile_team_overview["team_created_by"] = $created_by;
+            $profile_team_overview['team_id'] = $team_id;
+            $profile_team_overview['team_name'] = $user_team->name;
+            $profile_team_overview['member_count'] = $user_team->member_count;
+            $profile_team_overview['team_creation_date'] = $user_team->created_at;
+            $profile_team_overview['team_created_by'] = $created_by;
         } else {
             // send team not found exception
-            return $this->sendErrorResponse("Team not found.", [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
         }
 
-        $data = array();
-        $data["connection_overview"] = $connection_overview;
-        $data["profile_team_overview"] = $profile_team_overview;
+        $data = [];
+        $data['connection_overview'] = $connection_overview;
+        $data['profile_team_overview'] = $profile_team_overview;
 
         return $this->sendSuccessResponse($data, 'Data fetched successfully!');
     }
 
     /**
-     *
      * Update resource
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function disconnect($request)
@@ -724,38 +711,37 @@ class TeamConnectionService extends ApiBaseService
         $connection_id = $request->connection_id;
 
         $connection_row = $this->teamConnectionRepository->findOneByProperties([
-            'id' => $connection_id
+            'id' => $connection_id,
         ]);
 
-        $team_chat = TeamChat::select("*")
+        $team_chat = TeamChat::select('*')
             ->where('team_connection_id', $connection_id)
             ->get();
 
-            
-        if (!$connection_row) {
+        if (! $connection_row) {
             // send connection not found exception
-            return $this->sendErrorResponse("Connection data not found.", [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Connection data not found.', [], HttpStatusCode::NOT_FOUND);
         }
 
         // Find user member status
         $team_member_info = $this->teamMemberRepository->findOneByProperties(
             [
-                "user_id" => $user_id,
-                "team_id" => $connection_row->from_team_id
+                'user_id' => $user_id,
+                'team_id' => $connection_row->from_team_id,
             ]
         );
 
-        if (!$team_member_info) {
+        if (! $team_member_info) {
             $team_member_info = $this->teamMemberRepository->findOneByProperties(
                 [
-                    "user_id" => $user_id,
-                    "team_id" => $connection_row->to_team_id
+                    'user_id' => $user_id,
+                    'team_id' => $connection_row->to_team_id,
                 ]
             );
 
-            if (!$team_member_info) {
+            if (! $team_member_info) {
                 // Send team member info not found exception
-                return $this->sendErrorResponse("Your member info not found.", [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Your member info not found.', [], HttpStatusCode::NOT_FOUND);
             }
         }
 
@@ -763,8 +749,8 @@ class TeamConnectionService extends ApiBaseService
         $user_role = $team_member_info->role;
         $access_rules = new AccessRulesDefinitionService();
         $disconnection_rights = $access_rules->hasDisconnectionRights();
-        if (!in_array($user_role, $disconnection_rights)) {
-            return $this->sendErrorResponse("You cannot disconnect or block.", [], HttpStatusCode::VALIDATION_ERROR);
+        if (! in_array($user_role, $disconnection_rights)) {
+            return $this->sendErrorResponse('You cannot disconnect or block.', [], HttpStatusCode::VALIDATION_ERROR);
         }
 
         // Proceed to disconnect
@@ -772,7 +758,7 @@ class TeamConnectionService extends ApiBaseService
         $connection_row->responded_by = self::getUserId();
         $connection_row->responded_at = Carbon::now()->toDateTimeString();
 
-        $input = (array)$connection_row;
+        $input = (array) $connection_row;
         // As BaseRepository update method has bug that's why we have to fallback to model default methods.
         $input = $connection_row->fill($input)->toArray();
         // $connection_row->save($input);
@@ -790,18 +776,16 @@ class TeamConnectionService extends ApiBaseService
         $userActiveTeam = (new Generic())->getActiveTeamId();
 
         $blockTeam = $this->teamRepository->findOneByProperties([
-            "team_id" => $request->team_id
+            'team_id' => $request->team_id,
         ]);
 
         $fromTeamDisconnect = $blockTeam->sentRequest()->detach($userActiveTeam);
         $toTeamDisconnect = $blockTeam->receivedRequest()->detach($userActiveTeam);
 
-        if($fromTeamDisconnect || $toTeamDisconnect){
+        if ($fromTeamDisconnect || $toTeamDisconnect) {
             return $this->sendSuccessResponse([], 'Connection disconnected!');
         }
 
-        return $this->sendErrorResponse("Team Connection not found");
+        return $this->sendErrorResponse('Team Connection not found');
     }
-
-
 }

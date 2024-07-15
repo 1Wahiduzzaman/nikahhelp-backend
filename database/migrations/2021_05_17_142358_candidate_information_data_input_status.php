@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CandidateInformationDataInputStatus extends Migration
@@ -14,7 +13,7 @@ class CandidateInformationDataInputStatus extends Migration
     public function up()
     {
         //
-        Schema::table('candidate_information', function($table) {
+        Schema::table('candidate_information', function ($table) {
             $table->integer('data_input_status')->default(0);
         });
     }
@@ -27,7 +26,7 @@ class CandidateInformationDataInputStatus extends Migration
     public function down()
     {
         //
-        Schema::table('candidate_information', function($table) {
+        Schema::table('candidate_information', function ($table) {
             $table->dropColumn('data_input_status');
         });
     }

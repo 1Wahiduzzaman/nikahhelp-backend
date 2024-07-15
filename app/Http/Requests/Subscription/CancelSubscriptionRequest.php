@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests\Subscription;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use App\Http\Requests\APIRequest;
 
 class CancelSubscriptionRequest extends APIRequest
@@ -26,7 +24,7 @@ class CancelSubscriptionRequest extends APIRequest
     public function rules()
     {
         return [
-            'subscription_id' => 'required'
+            'subscription_id' => 'required',
         ];
     }
 
@@ -36,8 +34,7 @@ class CancelSubscriptionRequest extends APIRequest
     public function messages()
     {
         return [
-            'subscription_id.required' => 'Subscription id field is required'
+            'subscription_id.required' => 'Subscription id field is required',
         ];
     }
-
 }
