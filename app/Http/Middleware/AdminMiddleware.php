@@ -50,14 +50,14 @@ class AdminMiddleware extends Middleware
     /**
      * Get all permissions with role.
      *
-     * @return Collection
+     * @return Collection|array
      */
     protected function getPermissions()
     {
         if (Schema::hasTable('roles') && Schema::hasTable('permissions')) {
             return Permission::with('roles')->get();
         } else {
-            return collect([]);
+            return [];
         }
     }
 }
