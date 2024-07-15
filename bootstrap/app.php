@@ -13,12 +13,16 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         //
-        $middleware->appendToGroup('api', [
-            \App\Http\Middleware\Cors::class,
+        $middleware->appendToGroup('jwt.verify', [
             \App\Http\Middleware\JwtMiddleware::class,
+        ]);
+
+        $middleware->appendToGroup('admin', [
             \App\Http\Middleware\AdminMiddleware::class,
+        ]);
+
+        $middleware->appendToGroup('candidate.profile.completed', [
             \App\Http\Middleware\EnsureProfileCompleted::class,
-            \App\Http\Middleware\Authenticate::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
