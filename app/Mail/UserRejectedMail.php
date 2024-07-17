@@ -5,11 +5,9 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Sichikawa\LaravelSendgridDriver\SendGrid;
-
 class UserRejectedMail extends Mailable
 {
-    use Queueable, SerializesModels, SendGrid;
+    use Queueable, SerializesModels;
 
     public $user;
 
@@ -35,15 +33,6 @@ class UserRejectedMail extends Mailable
     public function build()
     {
         return $this->subject('Mail from MatrimonyAssist | Verification Rejected!')
-            ->markdown('emails.status.reject')->with('user_name', $this->user->full_name)->sendgrid([
-                'personalizations' => [
-                    [
-                        'to' => [
-                            ['email' => $this->user->email, 'name' => $this->user->full_name],
-                        ]
-                    ],
-                ],
-                'categories' => ['user_group1'],
-        ]);
+            ->markdown('emails.status.reject')->with('user_name', $this->user->full_name);
     }
 }

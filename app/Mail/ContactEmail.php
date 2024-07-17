@@ -5,11 +5,10 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 class ContactEmail extends Mailable
 {
-    use Queueable, SerializesModels, SendGrid;
+    use Queueable, SerializesModels;
 
     public $email;
 
@@ -45,15 +44,6 @@ class ContactEmail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.contact')->with('data', $this->data)->sendgrid([
-            'personalizations' => [
-                [
-                    'to' => [
-                        ['email' => $this->data['email'], 'name' => $this->data['first_name'].' '. $this->data['last_name'],
-                    ]
-                ],
-            ],
-            'categories' => ['user_group1'],
-    ]);
+        return $this->view('emails.contact')->with('data', $this->data);
     }
 }
