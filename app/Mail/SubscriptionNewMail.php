@@ -5,11 +5,9 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Sichikawa\LaravelSendgridDriver\SendGrid;
-
 class SubscriptionNewMail extends Mailable
 {
-    use Queueable, SerializesModels, SendGrid;
+    use Queueable, SerializesModels;
 
     public $subscription;
 
@@ -44,15 +42,6 @@ class SubscriptionNewMail extends Mailable
                 'team' => $this->team,
                 'subscription' => $this->subscription,
                 'domain' => $this->domain,
-            ])->sendgrid([
-                'personalizations' => [
-                    [
-                        'to' => [
-                            ['email' => $this->user->email, 'name' => $this->user->full_name],
-                        ]
-                    ],
-                ],
-                'categories' => ['user_group1'],
-        ]);
+            ]);
     }
 }
