@@ -95,9 +95,12 @@ return [
             ],
         ],
 
-                'sendgrid' => [
-                    'transport' => 'sendgrid',
-                ],
+               'mailgun' => [
+                   'transport' => 'mailgun',
+                   // 'client' => [
+                   //     'timeout' => 5,
+                   // ],
+               ],
 
     ],
 
