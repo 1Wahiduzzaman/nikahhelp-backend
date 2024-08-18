@@ -142,7 +142,7 @@ class ForgotPasswordController extends Controller
 
             } else {
                 return $this->apiBaseService->sendErrorResponse('Invalid Token', ['detail' => 'User Not found'],
-                    HttpStatusCode::BAD_REQUEST
+                    HttpStatusCode::BAD_REQUEST->value
                 );
             }
 

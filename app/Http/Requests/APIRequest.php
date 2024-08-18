@@ -18,7 +18,7 @@ abstract class APIRequest extends FormRequest
     {
         $response = [
             'status' => 'FAIL',
-            'status_code' => HttpStatusCode::VALIDATION_ERROR,
+            'status_code' => HttpStatusCode::VALIDATION_ERROR->value,
             'message' => 'Input validation error',
             'data' => $validator->errors(),
         ];

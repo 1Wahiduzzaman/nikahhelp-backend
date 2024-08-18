@@ -104,7 +104,7 @@ class AdminService extends ApiBaseService
 
         return Response::json($data, 200);
 
-        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [1], HttpStatusCode::SUCCESS);
+        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [1], HttpStatusCode::SUCCESS->value);
     }
 
     /**
@@ -119,7 +119,7 @@ class AdminService extends ApiBaseService
                 'id' => $request->user_id,
             ]);
             if (! $user) {
-                return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND->value);
             } else {
                 $candidate = $this->candidateRepository->findOneByProperties([
                     'user_id' => $request->user_id,
@@ -146,7 +146,7 @@ class AdminService extends ApiBaseService
         $data['candidate_information'] = $candidateInformation;
         $data['representative_information'] = $representativeInformation;
 
-        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS);
+        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS->value);
     }
 
     private function getPermissions(Admin $admin)
@@ -166,7 +166,7 @@ class AdminService extends ApiBaseService
             $ticket = TicketSubmission::find($request->input('ticket_id'));
             $ticket->delete();
 
-            return $this->sendSuccessResponse($ticket, 'Resolved', 0, HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse($ticket, 'Resolved', 0, HttpStatusCode::SUCCESS->value);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage(), 'failed to resolve');
         }

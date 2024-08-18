@@ -45,7 +45,7 @@ class MemberInvitationService extends ApiBaseService
             ]);
 
             if (! $team) {
-                return $this->sendErrorResponse('Team is not found', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Team is not found', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             $team_row_id = $team->id;
@@ -103,7 +103,7 @@ class MemberInvitationService extends ApiBaseService
         );
 
         if (! $invitation) {
-            return $this->sendErrorResponse('Invitation not found or expired.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Invitation not found or expired.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         // Search team
@@ -114,17 +114,17 @@ class MemberInvitationService extends ApiBaseService
         );
 
         if (! $team) {
-            return $this->sendErrorResponse('Team not found or may be deleted.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Team not found or may be deleted.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         // Match with team password
         if ($team->password !== $data['team_password']) {
-            return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         // Check team size < 5
         if ($team->member_count > 4) {
-            return $this->sendErrorResponse('Team can not have more than 5 members.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Team can not have more than 5 members.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         // Get user id
@@ -139,7 +139,7 @@ class MemberInvitationService extends ApiBaseService
         );
 
         if ($team_member) {
-            return $this->sendErrorResponse('You are already a member.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('You are already a member.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         // If user is a member of more than 5 teams
@@ -148,7 +148,7 @@ class MemberInvitationService extends ApiBaseService
         ]);
 
         if (count($all_user_teams) == 5) {
-            return $this->sendErrorResponse('You can not join in more than 5 teams.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('You can not join in more than 5 teams.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         //If already member as a candidate  By Raz

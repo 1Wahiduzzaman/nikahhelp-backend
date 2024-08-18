@@ -83,7 +83,7 @@ class RepresentativeService extends ApiBaseService
                     $userInfo->save();
                 }
 
-                return $this->sendSuccessResponse($representative->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($representative->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED->value);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
@@ -145,12 +145,12 @@ class RepresentativeService extends ApiBaseService
                 'user_id' => $userId,
             ]);
             if (! $representativeInformation) {
-                return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND->value);
             }
             $request['user_id'] = $userId;
             $representative = $representativeInformation->update($request->all());
             if ($representative) {
-                return $this->sendSuccessResponse($representativeInformation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($representativeInformation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED->value);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
@@ -171,14 +171,14 @@ class RepresentativeService extends ApiBaseService
                 'user_id' => $userId,
             ]);
             if (! $representativeInfomation) {
-                return $this->sendErrorResponse('Representative information  Not fund', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Representative information  Not fund', [], HttpStatusCode::NOT_FOUND->value);
             }
             $request['user_id'] = $userId;
             $request['per_gender'] = $representativeInfomation->per_gender && $representativeInfomation->data_input_status == 5 ? $representativeInfomation->per_gender : $request['per_gender'];
             $request['dob'] = $representativeInfomation->dob && $representativeInfomation->data_input_status == 5 ? $representativeInfomation->dob : $request['dob'];
             $representative = $representativeInfomation->update($request);
             if ($representative) {
-                return $this->sendSuccessResponse($representativeInfomation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($representativeInfomation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED->value);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
@@ -227,7 +227,7 @@ class RepresentativeService extends ApiBaseService
             $representativeInformation = RepresentativeInformation::where('user_id', $userId)->first();
 
             if (! $representativeInformation) {
-                return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             Log::info('message');
@@ -239,7 +239,7 @@ class RepresentativeService extends ApiBaseService
             Log::info($data);
             if ($representative) {
 
-                return $this->sendSuccessResponse($data, 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($data, 'Information save Successfully!', [], HttpStatusCode::CREATED->value);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
@@ -274,7 +274,7 @@ class RepresentativeService extends ApiBaseService
                 'user_id' => $userId,
             ]);
             if (! $representativeInformation) {
-                return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             $representative = $representativeInformation->fill($representative)->toArray();
@@ -291,7 +291,7 @@ class RepresentativeService extends ApiBaseService
 
             Notificationhelpers::add('Picture update successfully complete', 'single', null, $userId);
             if ($representative) {
-                return $this->sendSuccessResponse($data, 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($data, 'Information save Successfully!', [], HttpStatusCode::CREATED->value);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
@@ -341,7 +341,7 @@ class RepresentativeService extends ApiBaseService
 
             return $this->sendSuccessResponse($ticket, 'Success');
         } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR->value);
         }
     }
 
@@ -375,12 +375,12 @@ class RepresentativeService extends ApiBaseService
                 'user_id' => $userId,
             ]);
             if (! $representativeInfomation) {
-                return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Representative information is Not fund', [], HttpStatusCode::NOT_FOUND->value);
             }
             $request['user_id'] = $userId;
             $representative = $representativeInfomation->update($request);
             if ($representative) {
-                return $this->sendSuccessResponse($representativeInfomation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($representativeInfomation->toArray(), 'Information save Successfully!', [], HttpStatusCode::CREATED->value);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }

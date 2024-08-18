@@ -49,7 +49,7 @@ class SubscriptionService extends ApiBaseService
             $userId = self::getUserId();
             $user = User::find($userId);
             if (! $user) {
-                return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
+                return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST->value);
             }
 
             if ($user->stripe_id == null) {
@@ -61,7 +61,7 @@ class SubscriptionService extends ApiBaseService
                 'client_secret' => $intent->client_secret,
             ];
 
-            return $this->sendSuccessResponse($data, self::INITIALIZATION_SUCCESSFULLY, [], HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse($data, self::INITIALIZATION_SUCCESSFULLY, [], HttpStatusCode::SUCCESS->value);
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
         }
@@ -76,7 +76,7 @@ class SubscriptionService extends ApiBaseService
             $userId = self::getUserId();
             $user = User::find($userId);
             if (! $user) {
-                return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
+                return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST->value);
             }
             $stripeToken = $request['stripeToken'];
             $packageID = self::selectPlaneID(5);
@@ -161,7 +161,7 @@ class SubscriptionService extends ApiBaseService
         try {
             $teamExpireDateUpdate = Team::find($request['team_id']);
             if (! $teamExpireDateUpdate) {
-                return $this->sendErrorResponse('Team not found', [], HttpStatusCode::BAD_REQUEST);
+                return $this->sendErrorResponse('Team not found', [], HttpStatusCode::BAD_REQUEST->value);
             }
 
             //            $userId = self::getUserId();
@@ -180,7 +180,7 @@ class SubscriptionService extends ApiBaseService
             //            if ($subscriptionInfo->status == "succeeded"):
             return $this->sendSuccessResponse($teamExpireDateUpdate->toArray(), self::SUBSCRIPTION_SUCCESSFULLY);
             //            else:
-            //                return $this->sendErrorResponse('something went wrong please try again', [], HttpStatusCode::BAD_REQUEST);
+            //                return $this->sendErrorResponse('something went wrong please try again', [], HttpStatusCode::BAD_REQUEST->value);
             //            endif;
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -288,12 +288,12 @@ class SubscriptionService extends ApiBaseService
         try {
             $findSubscription = Subscription::find($request['subscription_id']);
             if (! $findSubscription) {
-                return $this->sendErrorResponse('Team subscription not found', [], HttpStatusCode::BAD_REQUEST);
+                return $this->sendErrorResponse('Team subscription not found', [], HttpStatusCode::BAD_REQUEST->value);
             }
             $userId = self::getUserId();
             $user = User::find($userId);
             if (! $user) {
-                return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST);
+                return $this->sendErrorResponse('User not found', [], HttpStatusCode::BAD_REQUEST->value);
             }
             $subscriptionCancelInfo = $user->subscription($findSubscription->name)->cancelNowAndInvoice();
             //            $subscriptionCancelInfo = $user->subscription($findSubscription->name)->cancelNow();
@@ -307,7 +307,7 @@ class SubscriptionService extends ApiBaseService
 
                 return $this->sendSuccessResponse($subscriptionCancelInfo->toArray(), self::SUBSCRIPTION_SUCCESSFULLY);
             } else {
-                return $this->sendErrorResponse('Something went wrong please try again', [], HttpStatusCode::BAD_REQUEST);
+                return $this->sendErrorResponse('Something went wrong please try again', [], HttpStatusCode::BAD_REQUEST->value);
             }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());

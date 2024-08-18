@@ -46,9 +46,9 @@ class EnsureProfileCompleted
     {
         return response()->json([
             'status' => 'FAIL',
-            'status_code' => HttpStatusCode::VALIDATION_ERROR,
+            'status_code' => HttpStatusCode::VALIDATION_ERROR->value,
             'message' => $message,
             'error' => ['details' => $message],
-        ], HttpStatusCode::VALIDATION_ERROR);
+        ], HttpStatusCode::VALIDATION_ERROR->value);
     }
 }

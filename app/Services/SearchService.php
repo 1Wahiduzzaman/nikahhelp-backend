@@ -270,7 +270,7 @@ class SearchService extends ApiBaseService
             // $caniddateInTeam = $candidates->whereHas('candidateTeam')->get();
 
             if ($candidates->total() < 1) {
-                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             $candidatesResponse = [];
@@ -372,7 +372,7 @@ class SearchService extends ApiBaseService
             return $this->sendSuccessResponse($searchResult, 'Candidates fetched successfully');
 
         } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
+            return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR->value);
         }
     }
 
@@ -413,13 +413,13 @@ class SearchService extends ApiBaseService
             );
 
             if (! $team) {
-                return $this->sendErrorResponse('Team is Not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Team is Not found.', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             if ($team->password == $password) {
                 return $this->sendSuccessResponse($team, 'Login successful.');
             } else {
-                return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::NOT_FOUND->value);
             }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());

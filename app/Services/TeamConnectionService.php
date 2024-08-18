@@ -74,11 +74,11 @@ class TeamConnectionService extends ApiBaseService
         $access_rules = new AccessRulesDefinitionService();
         $disconnection_rights = $access_rules->hasSendConnectionRequestRights();
         if (! in_array($user_role, $disconnection_rights)) {
-            return $this->sendErrorResponse('You dont have rights to send request.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('You dont have rights to send request.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         if (! $from_team) {
-            return $this->sendErrorResponse('From team not found.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('From team not found.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $to_team = $this->teamRepository->findOneByProperties([
@@ -90,13 +90,13 @@ class TeamConnectionService extends ApiBaseService
         // $expired_now = $expire_date->lessThanOrEqualTo(now());
 
         // if ($expired_now) {
-        //     return $this->sendErrorResponse('Team expired', [], HttpStatusCode::NOT_FOUND);
+        //     return $this->sendErrorResponse('Team expired', [], HttpStatusCode::NOT_FOUND->value);
         // }
 
         // Log::info('sending');
 
         if (! $to_team) {
-            return $this->sendErrorResponse('To team not found.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('To team not found.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         /// verification validation start
@@ -111,10 +111,10 @@ class TeamConnectionService extends ApiBaseService
         if (count($from_team_candidate) > 0) {
             $from_team_candidate_user = $from_team_candidate[0]->user;
             if ($from_team_candidate_user->is_verified != 1) {
-                return $this->sendErrorResponse('Your Team candidate is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('Your Team candidate is not verified.', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
         } else {
-            return $this->sendErrorResponse('No candidate found in your team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('No candidate found in your team.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         // to team candidate must be verified
@@ -128,10 +128,10 @@ class TeamConnectionService extends ApiBaseService
         if (count($to_team_candidate) > 0) {
             $to_team_candidate_user = $to_team_candidate[0]->user;
             if ($to_team_candidate_user->is_verified != 1) {
-                return $this->sendErrorResponse('Their Team candidate is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('Their Team candidate is not verified.', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
         } else {
-            return $this->sendErrorResponse('No candidate found in their team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('No candidate found in their team.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         // at least 1 representative must be verified from "from_team"
@@ -144,10 +144,10 @@ class TeamConnectionService extends ApiBaseService
         if (count($from_team_verified_reps) > 0) {
             $from_team_verified_reps_user = $from_team_verified_reps[0]->user;
             if ($from_team_verified_reps_user->is_verified != 1) {
-                return $this->sendErrorResponse('Your team representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('Your team representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
         } else {
-            return $this->sendErrorResponse('No verified representative found in your team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('No verified representative found in your team.', [], HttpStatusCode::VALIDATION_ERROR->value);
 
         }
 
@@ -160,10 +160,10 @@ class TeamConnectionService extends ApiBaseService
         if (count($to_team_verified_reps) > 0) {
             $to_team_verified_reps_user = $from_team_verified_reps[0]->user;
             if ($to_team_verified_reps_user->is_verified != 1) {
-                return $this->sendErrorResponse('Their Team representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('Their Team representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
         } else {
-            return $this->sendErrorResponse('No verified representative found in their team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('No verified representative found in their team.', [], HttpStatusCode::VALIDATION_ERROR->value);
 
         }
         /// verification validation end
@@ -191,7 +191,7 @@ class TeamConnectionService extends ApiBaseService
 
                 return $this->sendSuccessResponse($team_connection, 'Request sent successfully!');
             } catch (Exception $ex) {
-                return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR->value);
             }
         } else {
             // Check request status
@@ -235,7 +235,7 @@ class TeamConnectionService extends ApiBaseService
         ]);
 
         if (! $connection_request) {
-            return $this->sendErrorResponse('Connection request not found.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Connection request not found.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         if ($request->connection_status == 10) {
@@ -259,13 +259,13 @@ class TeamConnectionService extends ApiBaseService
         );
 
         if (! $user_member_status) {
-            return $this->sendErrorResponse('You are no longer a member of the connection requested team.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('You are no longer a member of the connection requested team.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $access_rules = new AccessRulesDefinitionService();
         $respond_connection_rights = $access_rules->hasRespondConnectionRequestRights();
         if (! in_array($user_member_status->role, $respond_connection_rights)) {
-            return $this->sendErrorResponse('You dont have rights to accept or decline connection request.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('You dont have rights to accept or decline connection request.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         if ($connection_status == 10) {
@@ -276,11 +276,11 @@ class TeamConnectionService extends ApiBaseService
             //  If connection status is pending only "To Team" can update the connection status
 
             if (! is_numeric($connection_status)) {
-                return $this->sendErrorResponse('Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
 
             if (! in_array($connection_status, ['0', '1', '2'])) {
-                return $this->sendErrorResponse('Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('Invalid connection status.Valid Values[0=>pending,1=>accepted,2=>rejected]', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
 
             $connection_row->connection_status = $connection_status;
@@ -294,7 +294,7 @@ class TeamConnectionService extends ApiBaseService
 
                 return $this->sendSuccessResponse($connection_row, 'Response updated successfully!');
             } catch (QueryException $ex) {
-                return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::VALIDATION_ERROR->value);
             }
         }
     }
@@ -312,7 +312,7 @@ class TeamConnectionService extends ApiBaseService
             ->where('status', 1)
             ->first();
         if (empty($teamInformation)) {
-            return $this->sendErrorResponse('Active team information not found', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Active team information not found', [], HttpStatusCode::NOT_FOUND->value);
         }
         // Connected
         $connection_status = 1;
@@ -374,7 +374,7 @@ class TeamConnectionService extends ApiBaseService
         ]);
 
         if (! $team) {
-            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $team_row_id = $team->id;
@@ -418,7 +418,7 @@ class TeamConnectionService extends ApiBaseService
                 ->get();
             // Closures include ->first(), ->get(), ->pluck(), etc.
         } catch (\Illuminate\Database\QueryException $ex) {
-            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND->value);
             // Note any method of class PDOException can be called on $ex.
         }
 

@@ -121,7 +121,7 @@ class MessageService extends ApiBaseService
         ]);
 
         if (! $team) {
-            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $team_row_id = $team->id;
@@ -165,7 +165,7 @@ class MessageService extends ApiBaseService
                 ->get();
             // Closures include ->first(), ->get(), ->pluck(), etc.
         } catch (\Illuminate\Database\QueryException $ex) {
-            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND->value);
             // Note any method of class PDOException can be called on $ex.
         }
 
@@ -200,7 +200,7 @@ class MessageService extends ApiBaseService
                 ->get();
             // Closures include ->first(), ->get(), ->pluck(), etc.
         } catch (\Illuminate\Database\QueryException $ex) {
-            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND->value);
         }
 
         //        $connected_teams = array_merge($connected_teams_1,$connected_teams_2);
@@ -240,7 +240,7 @@ class MessageService extends ApiBaseService
                 ->get();
             // Closures include ->first(), ->get(), ->pluck(), etc.
         } catch (\Illuminate\Database\QueryException $ex) {
-            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $request_received = $this->formatImageUrls($request_received);
@@ -279,7 +279,7 @@ class MessageService extends ApiBaseService
                 ->get();
             // Closures include ->first(), ->get(), ->pluck(), etc.
         } catch (\Illuminate\Database\QueryException $ex) {
-            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $request_sent = $this->formatImageUrls($request_sent);
@@ -318,7 +318,7 @@ class MessageService extends ApiBaseService
                 ->get();
             // Closures include ->first(), ->get(), ->pluck(), etc.
         } catch (\Illuminate\Database\QueryException $ex) {
-            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $we_declined = $this->formatImageUrls($we_declined);
@@ -355,7 +355,7 @@ class MessageService extends ApiBaseService
                 ->get();
             // Closures include ->first(), ->get(), ->pluck(), etc.
         } catch (\Illuminate\Database\QueryException $ex) {
-            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $they_declined = $this->formatImageUrls($they_declined);
@@ -974,7 +974,7 @@ class MessageService extends ApiBaseService
     public function getTeamInformation($teamId)
     {
         if (empty($teamId)) {
-            return $this->sendErrorResponse('Team ID is required.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Team ID is required.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
         try {
             // Get Team Data
@@ -984,7 +984,7 @@ class MessageService extends ApiBaseService
 
             /// Team not found exception throw
             if (! $team) {
-                return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             $team_infos = Team::select('*')
