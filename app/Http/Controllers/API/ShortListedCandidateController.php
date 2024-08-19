@@ -148,7 +148,7 @@ class ShortListedCandidateController extends AppBaseController
 
             $pagination = $this->paginationResponse($shortListCandidates);
 
-            return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED);
+            return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED->value);
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -242,7 +242,7 @@ class ShortListedCandidateController extends AppBaseController
 
             $pagination = $this->paginationResponse($teamShortListUsers);
 
-            return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED);
+            return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED->value);
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -372,7 +372,7 @@ class ShortListedCandidateController extends AppBaseController
 
             $candidate->shortList()->detach($request->user_id);
 
-            return $this->sendSuccessResponse([], 'Candidate remove from shortlist successfully!', [], HttpStatusCode::CREATED);
+            return $this->sendSuccessResponse([], 'Candidate remove from shortlist successfully!', [], HttpStatusCode::CREATED->value);
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());

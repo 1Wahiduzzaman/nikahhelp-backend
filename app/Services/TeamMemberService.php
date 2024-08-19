@@ -76,7 +76,7 @@ class TeamMemberService extends ApiBaseService
         $access_rules = new AccessRulesDefinitionService();
         $valid_roles = $access_rules->getValidRoles();
         if (! in_array($new_access_type, $valid_roles)) {
-            return $this->sendErrorResponse('Invalid access type specified.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Invalid access type specified.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $team = $this->teamRepository->findOneByProperties([
@@ -85,7 +85,7 @@ class TeamMemberService extends ApiBaseService
 
         // Check team
         if (! $team) {
-            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         // Get executer
@@ -98,12 +98,12 @@ class TeamMemberService extends ApiBaseService
 
         // Check if executer is a member and has enough access to do this
         if (! $executer_member_info) {
-            return $this->sendErrorResponse('You are not a member of this team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('You are not a member of this team.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $role_with_change_rights = $access_rules->hasRoleChangeRights(); //["Owner+Admin"];
         if (! in_array($executer_member_info->role, $role_with_change_rights)) {
-            return $this->sendErrorResponse('You do not have access to do this.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('You do not have access to do this.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         // Check if requested user is a member
@@ -115,7 +115,7 @@ class TeamMemberService extends ApiBaseService
         );
 
         if (! $user_for_change_access) {
-            return $this->sendErrorResponse('Specified user is not a member of this team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Specified user is not a member of this team.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         if ($executer_member_info->role == 'Owner+Admin' && $new_access_type == 'Owner+Admin') {
@@ -176,7 +176,7 @@ class TeamMemberService extends ApiBaseService
             );
 
             if (! $team) {
-                return $this->sendErrorResponse('Team is Not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Team is Not found.', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             // find user to be deleted
@@ -185,7 +185,7 @@ class TeamMemberService extends ApiBaseService
                 'team_id' => $team->id,
             ]);
             if (! $user_to_be_deleted) {
-                return $this->sendErrorResponse('User to be deleted not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('User to be deleted not found.', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             // get requested user member status
@@ -194,7 +194,7 @@ class TeamMemberService extends ApiBaseService
                 'team_id' => $team->id,
             ]);
             if (! $request_member) {
-                return $this->sendErrorResponse('You are not a member of this team.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('You are not a member of this team.', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             if ($user_id != $delete_user_id) {
@@ -203,12 +203,12 @@ class TeamMemberService extends ApiBaseService
                 $access_rules = new AccessRulesDefinitionService();
                 $role_with_remove_rights = $access_rules->hasRemoveMemberRights(); //["Owner+Admin","Member Admin","Candidate","Matchmaker"];
                 if (! in_array($request_member->role, $role_with_remove_rights)) {
-                    return $this->sendErrorResponse("You do not have access to remove member.($request_member->user_id)", [], HttpStatusCode::NOT_FOUND);
+                    return $this->sendErrorResponse("You do not have access to remove member.($request_member->user_id)", [], HttpStatusCode::NOT_FOUND->value);
                 }
             }
 
             if ($user_to_be_deleted->role == 'Owner+Admin') {
-                return $this->sendErrorResponse('You can not remove Team Owner', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('You can not remove Team Owner', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             if ($user_to_be_deleted->user_type == 'Candidate') {
@@ -257,7 +257,7 @@ class TeamMemberService extends ApiBaseService
         ]);
 
         if (! $user) {
-            return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         if (! empty($request['new_owner'])) {
@@ -267,7 +267,7 @@ class TeamMemberService extends ApiBaseService
             ]);
 
             if (! $Owner) {
-                return $this->sendErrorResponse('Team New Owner not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Team New Owner not found.', [], HttpStatusCode::NOT_FOUND->value);
             }
             $Owner->role = 'Owner+Admin';
             $Owner->save();

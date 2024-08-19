@@ -270,7 +270,7 @@ class SearchService extends ApiBaseService
             // $caniddateInTeam = $candidates->whereHas('candidateTeam')->get();
 
             if ($candidates->total() < 1) {
-                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('No Candidates Match Found', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             $candidatesResponse = [];
@@ -343,7 +343,7 @@ class SearchService extends ApiBaseService
                     $candidatesResponseUnAuth[] = array_merge([
                         'image' => $candidate->per_avatar_url ? $candidate->per_avatar_url : null,
                         'screen_name' => $candidate->screen_name,
-                        'per_gender' => $candidate->getGender($candidate->per_gender),
+                        'per_gender' => $candidate->per_gender,
                         'per_age' => Carbon::now()->diffInYears($candidate->dob),
                         'per_nationality_id' => $candidate->per_nationality,
                         'per_nationality' => $candidate->getNationality()->exists() ? $candidate->getNationality->name : null,
@@ -372,7 +372,7 @@ class SearchService extends ApiBaseService
             return $this->sendSuccessResponse($searchResult, 'Candidates fetched successfully');
 
         } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR);
+            return $this->sendErrorResponse($exception->getMessage(), [], HttpStatusCode::INTERNAL_ERROR->value);
         }
     }
 
@@ -413,13 +413,13 @@ class SearchService extends ApiBaseService
             );
 
             if (! $team) {
-                return $this->sendErrorResponse('Team is Not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Team is Not found.', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             if ($team->password == $password) {
                 return $this->sendSuccessResponse($team, 'Login successful.');
             } else {
-                return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::NOT_FOUND->value);
             }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());

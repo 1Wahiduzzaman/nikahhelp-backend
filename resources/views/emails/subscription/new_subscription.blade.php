@@ -100,6 +100,7 @@
         $main_domain=env('MAIN_DOMAIN');
         $domain=env('WEB_DOMAIN');
         $chobi= $main_domain.'/logo';
+        use Carbon\Carbon;
     @endphp
     <a href="{{ $domain }}"><img src="{{ $chobi }}" alt="logo" style="text-align: center; margin: auto" /></a>
 </div>

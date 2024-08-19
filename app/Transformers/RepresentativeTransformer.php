@@ -298,7 +298,7 @@ class RepresentativeTransformer extends TransformerAbstract
             'last_name' => $item->last_name,
             'screen_name' => $item->screen_name,
             'per_age' => Carbon::now()->diffInYears($item->dob),
-            'per_gender' => RepresentativeInformation::getGender($item->per_gender),
+            'per_gender' => $item->per_gender,
             'per_nationality_id' => $item->per_nationality,
             'per_nationality' => $item->getNationality()->exists() ? $item->getNationality->name : null,
             'per_religion_id' => $item->per_religion_id,

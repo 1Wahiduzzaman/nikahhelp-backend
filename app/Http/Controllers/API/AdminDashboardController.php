@@ -131,11 +131,9 @@ class AdminDashboardController extends AppBaseController
 
     public function count_can_rep()
     {
-        $candidate_count = User::where('status', 1)
-            ->where('account_type', 1)
+        $candidate_count = User::where('account_type', 1)
             ->count();
-        $rep_count = User::where('status', 1)
-            ->where('account_type', 2)
+        $rep_count = User::where('account_type', 2)
             ->count();
 
         $data = [

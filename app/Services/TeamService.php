@@ -73,18 +73,18 @@ class TeamService extends ApiBaseService
         if (count($countTeamList) >= env('CANDIDATE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 1) {
             $createLimit = env('CANDIDATE_TEAM_CREATE_LIMIT');
 
-            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
+            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST->value);
         }
 
         if (count($countTeamList) >= env('REPRESENTATIVE_TEAM_CREATE_LIMIT') && $userInfo->account_type == 2) {
             $createLimit = env('REPRESENTATIVE_TEAM_CREATE_LIMIT');
 
-            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
+            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST->value);
         }
         if (count($countTeamList) >= env('MATCHMAKER_TEAM_CREATE_LIMIT') && $userInfo->account_type == 4) {
             $createLimit = env('MATCHMAKER_TEAM_CREATE_LIMIT');
 
-            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST);
+            return $this->sendErrorResponse("Your maximum team create permission is $createLimit", [], HttpStatusCode::BAD_REQUEST->value);
         }
         try {
             $data = $request->all();
@@ -136,7 +136,7 @@ class TeamService extends ApiBaseService
             return $this->sendErrorResponse($exception->getMessage());
         }
         // } else {
-        //     return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST);
+        //     return $this->sendErrorResponse("You are not able to create a Team or join in a Team until verified. please contact us so we can assist you.", [], HttpStatusCode::BAD_REQUEST->value);
         // }
     }
 
@@ -159,13 +159,13 @@ class TeamService extends ApiBaseService
             );
 
             if (! $team) {
-                return $this->sendErrorResponse('Team is Not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Team is Not found.', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             if ($team->password == $password) {
                 return $this->sendSuccessResponse($team, 'Login successful.');
             } else {
-                return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Password incorrect.', [], HttpStatusCode::NOT_FOUND->value);
             }
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -273,7 +273,7 @@ class TeamService extends ApiBaseService
     public function getTeamInformation($teamId)
     {
         if (empty($teamId)) {
-            return $this->sendErrorResponse('Team ID is required.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Team ID is required.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
         try {
             // Get Team Data
@@ -283,7 +283,7 @@ class TeamService extends ApiBaseService
 
             /// Team not found exception throw
             if (! $team) {
-                return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             $team_infos = Team::select('*')
@@ -320,7 +320,7 @@ class TeamService extends ApiBaseService
 
         /// Team not found exception throw
         if (! $team) {
-            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $team_row_id = $team->id;
@@ -330,7 +330,7 @@ class TeamService extends ApiBaseService
 
         // Check team member count != 0
         if (count($team_members) == 0) {
-            return $this->sendErrorResponse('There are 0 members in team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('There are 0 members in team.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         // check one candidate and one representative available
@@ -348,11 +348,11 @@ class TeamService extends ApiBaseService
         }
 
         if ($candidate_id == 0) {
-            return $this->sendErrorResponse('There is no candidate in team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('There is no candidate in team.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         if ($representative_id == 0) {
-            return $this->sendErrorResponse('There is no representative in team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('There is no representative in team.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $candidate_user_info = $this->userRepository->findOneByProperties([
@@ -360,7 +360,7 @@ class TeamService extends ApiBaseService
         ]);
 
         if ($candidate_user_info->status == 0) {
-            return $this->sendErrorResponse('Candidate is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Candidate is not verified.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $representative_user_info = $this->userRepository->findOneByProperties([
@@ -368,7 +368,7 @@ class TeamService extends ApiBaseService
         ]);
 
         if ($representative_user_info->status == 0) {
-            return $this->sendErrorResponse('Representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $data = [];
@@ -394,12 +394,12 @@ class TeamService extends ApiBaseService
         ]);
         /// Team not found exception throw
         if (! $team) {
-            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $subscription_expire_at = $team->subscription_expire_at;
         if ($subscription_expire_at == '') {
-            return $this->sendErrorResponse('You have not choosen any subscription plan for this team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('You have not choosen any subscription plan for this team.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         $current_date = Carbon::now()->toDateString();
@@ -409,7 +409,7 @@ class TeamService extends ApiBaseService
             ->get();
 
         if (count($checksubscription) == 0) {
-            return $this->sendErrorResponse('Your subscription plan has expired.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Your subscription plan has expired.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         //Update Active Team Info
@@ -440,7 +440,7 @@ class TeamService extends ApiBaseService
     public function checkTeamActiveStatus($teamId)
     {
         if (empty($teamId)) {
-            return $this->sendErrorResponse('Team ID is required.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Team ID is required.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
         try {
             // Get Team Data
@@ -450,7 +450,7 @@ class TeamService extends ApiBaseService
 
             /// Team not found exception throw
             if (! $team) {
-                return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             $team_row_id = $team->id;
@@ -460,7 +460,7 @@ class TeamService extends ApiBaseService
 
             // Check team member count != 0
             if (count($team_members) == 0) {
-                return $this->sendErrorResponse('This team have no members.', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('This team have no members.', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
 
             // check one candidate and one representative available
@@ -478,11 +478,11 @@ class TeamService extends ApiBaseService
             }
 
             if ($candidate_id == 0) {
-                return $this->sendErrorResponse('There is no candidate in team.', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('There is no candidate in team.', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
 
             if ($representative_id == 0) {
-                return $this->sendErrorResponse('There is no representative in team.', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('There is no representative in team.', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
 
             $candidate_user_info = $this->userRepository->findOneByProperties([
@@ -490,7 +490,7 @@ class TeamService extends ApiBaseService
             ]);
 
             if ($candidate_user_info->status == 0) {
-                return $this->sendErrorResponse('Candidate is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('Candidate is not verified.', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
 
             $representative_user_info = $this->userRepository->findOneByProperties([
@@ -498,7 +498,7 @@ class TeamService extends ApiBaseService
             ]);
 
             if ($representative_user_info->status == 0) {
-                return $this->sendErrorResponse('Representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR);
+                return $this->sendErrorResponse('Representative is not verified.', [], HttpStatusCode::VALIDATION_ERROR->value);
             }
 
             $data = [];
@@ -531,11 +531,11 @@ class TeamService extends ApiBaseService
             'team_id' => "$team_id",
         ]);
         if (! $team) {
-            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         if ($team->password != $team_password) {
-            return $this->sendErrorResponse('Incorrect team password.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Incorrect team password.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         // Get User status
@@ -545,14 +545,14 @@ class TeamService extends ApiBaseService
         ]);
 
         if (! $team_member) {
-            return $this->sendErrorResponse('You are not a member of this team.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('You are not a member of this team.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         // Access rule check
         $access_rules = new AccessRulesDefinitionService();
         $delete_team_rights = $access_rules->hasDeleteTeamRights();
         if (! in_array($team_member->role, $delete_team_rights)) {
-            return $this->sendErrorResponse('You dont have rights to delete this team.', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('You dont have rights to delete this team.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         // Delete Team
@@ -628,7 +628,7 @@ class TeamService extends ApiBaseService
                     if ($request['old_password'] == $hashedPassword) {
                         $team->password = $request['new_password'];
                     } else {
-                        return $this->sendErrorResponse('Old password does not match', [], HttpStatusCode::BAD_REQUEST);
+                        return $this->sendErrorResponse('Old password does not match', [], HttpStatusCode::BAD_REQUEST->value);
                     }
                 }
 
@@ -661,9 +661,9 @@ class TeamService extends ApiBaseService
                 'updated_at' => $team->updated_at,
             ];
 
-            return $this->sendSuccessResponse($teamInformation, 'Successfully updated', [], HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse($teamInformation, 'Successfully updated', [], HttpStatusCode::SUCCESS->value);
         } catch (\Illuminate\Database\QueryException $ex) {
-            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::BAD_REQUEST);
+            return $this->sendErrorResponse($ex->getMessage(), [], HttpStatusCode::BAD_REQUEST->value);
         }
 
     }

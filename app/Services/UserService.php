@@ -290,7 +290,7 @@ class UserService extends ApiBaseService
     public function logout($token)
     {
         if (empty($token)) {
-            return $this->sendErrorResponse('Authorization token is empty', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Authorization token is empty', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
         try {
@@ -371,7 +371,7 @@ class UserService extends ApiBaseService
         $data['candidate_information'] = $candidateInformation;
         $data['representative_information'] = $representativeInformation;
 
-        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS);
+        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS->value);
 
     }
 
@@ -392,7 +392,7 @@ class UserService extends ApiBaseService
             ]);
 
             if (! $user) {
-                return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND->value);
             } else {
                 $candidate = $this->candidateRepository->findOneByProperties([
                     'user_id' => $request->user_id,
@@ -451,7 +451,7 @@ class UserService extends ApiBaseService
                             }
 
                         } catch (\Exception $th) {
-                            return $this->sendErrorResponse($th->getMessage(), [], HttpStatusCode::FORBIDDEN);
+                            return $this->sendErrorResponse($th->getMessage(), [], HttpStatusCode::FORBIDDEN->value);
                         }
 
                         $activeTeam = $loggedInCandidate->active_team;
@@ -496,7 +496,7 @@ class UserService extends ApiBaseService
         $data['team_id'] = $teamid;
         $data['team'] = $teamTableId;
 
-        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS);
+        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS->value);
 
     }
 
@@ -515,7 +515,7 @@ class UserService extends ApiBaseService
                 'email' => $request->email,
             ]);
             if (! $user) {
-                return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('User not found.', [], HttpStatusCode::NOT_FOUND->value);
             } else {
                 $candidate = $this->candidateRepository->findOneByProperties([
                     'user_id' => $user->id,
@@ -562,7 +562,7 @@ class UserService extends ApiBaseService
         }
         $data['invitation_status'] = $status;
 
-        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS);
+        return $this->sendSuccessResponse($data, 'Data retrieved successfully', [], HttpStatusCode::SUCCESS->value);
 
     }
 
@@ -582,18 +582,18 @@ class UserService extends ApiBaseService
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'FAIL',
-                'status_code' => HttpStatusCode::INTERNAL_ERROR,
+                'status_code' => HttpStatusCode::INTERNAL_ERROR->value,
                 'message' => $e->getMessage(),
                 'error' => ['details' => $e->getMessage()],
-            ], HttpStatusCode::INTERNAL_ERROR);
+            ], HttpStatusCode::INTERNAL_ERROR->value);
 
         } catch (Tymon\JWTAuth\Exceptions\TokenBlacklistedException $e) {
             return response()->json([
                 'status' => 'FAIL',
-                'status_code' => HttpStatusCode::INTERNAL_ERROR,
+                'status_code' => HttpStatusCode::INTERNAL_ERROR->value,
                 'message' => $e->getMessage(),
                 'error' => ['details' => $e->getMessage()],
-            ], HttpStatusCode::INTERNAL_ERROR);
+            ], HttpStatusCode::INTERNAL_ERROR->value);
         }
     }
 
@@ -628,7 +628,7 @@ class UserService extends ApiBaseService
 
         } catch (DecryptException $e) {
             return $this->sendErrorResponse('Invalid Token', ['detail' => 'Token not found in Database'],
-                HttpStatusCode::BAD_REQUEST
+                HttpStatusCode::BAD_REQUEST->value
             );
         }
 
@@ -671,7 +671,7 @@ class UserService extends ApiBaseService
                                 $user->delete();
 
                                 return $this->sendErrorResponse('Token expired', ['detail' => 'Token expired'],
-                                    HttpStatusCode::BAD_REQUEST
+                                    HttpStatusCode::BAD_REQUEST->value
                                 );
                             } else {
                                 $user->is_verified = 1;
@@ -688,7 +688,7 @@ class UserService extends ApiBaseService
                     }
 
                     return $this->sendErrorResponse('Invalid Token', ['detail' => 'Token not found in Database'],
-                        HttpStatusCode::BAD_REQUEST
+                        HttpStatusCode::BAD_REQUEST->value
                     );
                 } catch (Exception $e) {
                     $verifyUser = VerifyUser::where('token', $token)->first();
@@ -715,7 +715,7 @@ class UserService extends ApiBaseService
                     }
 
                     return $this->sendErrorResponse('Token expired', ['detail' => 'Token expired'],
-                        HttpStatusCode::BAD_REQUEST
+                        HttpStatusCode::BAD_REQUEST->value
                     );
                 }
             });
@@ -724,10 +724,10 @@ class UserService extends ApiBaseService
 
             return response()->json([
                 'status' => 'FAIL',
-                'status_code' => HttpStatusCode::NOT_FOUND,
+                'status_code' => HttpStatusCode::NOT_FOUND->value,
                 'message' => $e->getMessage(),
                 'error' => ['details' => $e->getMessage()],
-            ], HttpStatusCode::NOT_FOUND);
+            ], HttpStatusCode::NOT_FOUND->value);
         }
     }
 
@@ -840,11 +840,11 @@ class UserService extends ApiBaseService
                 return $this->sendSuccessResponse($usr_info, 'User account switch successfully');
             } else {
                 return $this->sendErrorResponse('Invalid Token', ['detail' => 'Token not found in Database'],
-                    HttpStatusCode::BAD_REQUEST
+                    HttpStatusCode::BAD_REQUEST->value
                 );
             }
         } else {
-            return $this->sendErrorResponse('Data validation error', [], HttpStatusCode::VALIDATION_ERROR);
+            return $this->sendErrorResponse('Data validation error', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
     }
 
@@ -866,13 +866,13 @@ class UserService extends ApiBaseService
 
             } else {
                 return $this->sendErrorResponse('new password can not be the old password!', [],
-                    HttpStatusCode::BAD_REQUEST
+                    HttpStatusCode::BAD_REQUEST->value
                 );
             }
 
         } else {
             return $this->sendErrorResponse('old password doesnt matched', [],
-                HttpStatusCode::BAD_REQUEST
+                HttpStatusCode::BAD_REQUEST->value
             );
         }
 
@@ -888,7 +888,7 @@ class UserService extends ApiBaseService
         ]);
 
         if ($validPass->fails()) {
-            return $this->sendErrorResponse('Sorry you can not access', [], HttpStatusCode::FORBIDDEN);
+            return $this->sendErrorResponse('Sorry you can not access', [], HttpStatusCode::FORBIDDEN->value);
         }
 
         // $hashPassword = Hash::make($request->password);
@@ -896,12 +896,12 @@ class UserService extends ApiBaseService
         $user = JWTAuth::parseToken()->authenticate();
 
         if (! $user) {
-            return $this->sendErrorResponse('User Not Found', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('User Not Found', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $check = Hash::check($request->password, $user->password);
         if (! $check) {
-            return $this->sendErrorResponse('Sorry you are not allowed to access', ['data' => false], HttpStatusCode::FORBIDDEN);
+            return $this->sendErrorResponse('Sorry you are not allowed to access', ['data' => false], HttpStatusCode::FORBIDDEN->value);
         }
 
         try {
@@ -939,7 +939,7 @@ class UserService extends ApiBaseService
             }
         } else {
             return $this->sendErrorResponse('validation error ', [],
-                HttpStatusCode::VALIDATION_ERROR
+                HttpStatusCode::VALIDATION_ERROR->value
             );
         }
 
@@ -1053,10 +1053,10 @@ class UserService extends ApiBaseService
 
             $ticket->save();
 
-            return $this->sendSuccessResponse(['ticket' => $ticket], 'successfully submittedTicket', HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse(['ticket' => $ticket], 'successfully submittedTicket', HttpStatusCode::SUCCESS->value);
 
         } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR->value);
         }
     }
 
@@ -1092,7 +1092,7 @@ class UserService extends ApiBaseService
 
             return $this->sendSuccessResponse($allTickets, 'All tickets');
         } catch (Exception $exception) {
-            return $this->sendErrorResponse('error', $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+            return $this->sendErrorResponse('error', $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR->value);
         }
     }
 
@@ -1132,9 +1132,9 @@ class UserService extends ApiBaseService
 
             $ticketProcess->save();
 
-            return $this->sendSuccessResponse($ticketProcess, 'ticket processed', HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse($ticketProcess, 'ticket processed', HttpStatusCode::SUCCESS->value);
         } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR->value);
         }
     }
 
@@ -1144,7 +1144,7 @@ class UserService extends ApiBaseService
 
             $ticketProcessMessages = ProcessTicket::where('ticket_id', $id)->get();
 
-            return $this->sendSuccessResponse($ticketProcessMessages, 'Success', HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse($ticketProcessMessages, 'Success', HttpStatusCode::SUCCESS->value);
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception, $exception->getMessage());
@@ -1158,7 +1158,7 @@ class UserService extends ApiBaseService
 
             $ticketProcessMessages->delete();
 
-            return $this->sendSuccessResponse($ticketProcessMessages, 'Success', HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse($ticketProcessMessages, 'Success', HttpStatusCode::SUCCESS->value);
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception, $exception->getMessage());
@@ -1176,9 +1176,9 @@ class UserService extends ApiBaseService
             $resolveIssue->resolve = 1;
             $resolveIssue->save();
 
-            return $this->sendSuccessResponse($resolveIssue, 'Pending to resolve', [], HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse($resolveIssue, 'Pending to resolve', [], HttpStatusCode::SUCCESS->value);
         } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception->getMessage(), 'Failed to resolve', HttpStatusCode::INTERNAL_ERROR);
+            return $this->sendErrorResponse($exception->getMessage(), 'Failed to resolve', HttpStatusCode::INTERNAL_ERROR->value);
         }
 
     }
@@ -1195,9 +1195,9 @@ class UserService extends ApiBaseService
 
             $message->save();
 
-            return $this->sendSuccessResponse($message, 'Message sent', [], HttpStatusCode::SUCCESS);
+            return $this->sendSuccessResponse($message, 'Message sent', [], HttpStatusCode::SUCCESS->value);
         } catch (Exception $exception) {
-            return $this->sendErrorResponse('failed', 'failed', HttpStatusCode::INTERNAL_ERROR);
+            return $this->sendErrorResponse('failed', 'failed', HttpStatusCode::INTERNAL_ERROR->value);
         }
     }
 

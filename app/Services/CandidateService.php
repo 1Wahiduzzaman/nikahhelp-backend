@@ -96,7 +96,7 @@ class CandidateService extends ApiBaseService
             ]);
 
             if ($checkCandidate) {
-                return $this->sendSuccessResponse($checkCandidate, 'Candidate Information Already Exists', [], HttpStatusCode::SUCCESS);
+                return $this->sendSuccessResponse($checkCandidate, 'Candidate Information Already Exists', [], HttpStatusCode::SUCCESS->value);
             }
             $request['user_id'] = $userId;
             $candidate = $this->candidateRepository->save($request);
@@ -107,7 +107,7 @@ class CandidateService extends ApiBaseService
                     $userInfo->save();
                 }
 
-                return $this->sendSuccessResponse($candidate, 'Information save Successfully!', [], HttpStatusCode::CREATED);
+                return $this->sendSuccessResponse($candidate, 'Information save Successfully!', [], HttpStatusCode::CREATED->value);
             } else {
                 return $this->sendErrorResponse('Something went wrong. try again later', [], FResponse::HTTP_BAD_REQUEST);
             }
@@ -786,16 +786,16 @@ class CandidateService extends ApiBaseService
                 return $this->sendSuccessResponse($responseInfo, 'Family Info listed successfully');
             } else {
                 return $this->sendErrorResponse('Invalid User ID', ['detail' => 'User ID Not found'],
-                    HttpStatusCode::BAD_REQUEST
+                    HttpStatusCode::BAD_REQUEST->value
                 );
             }
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'FAIL',
-                'status_code' => HttpStatusCode::NOT_FOUND,
+                'status_code' => HttpStatusCode::NOT_FOUND->value,
                 'message' => $e->getMessage(),
                 'error' => ['details' => $e->getMessage()],
-            ], HttpStatusCode::NOT_FOUND);
+            ], HttpStatusCode::NOT_FOUND->value);
         }
     }
 
@@ -836,17 +836,17 @@ class CandidateService extends ApiBaseService
                 return $this->sendSuccessResponse($candidate, 'Family Info updated successfully');
             } else {
                 return $this->sendErrorResponse('Invalid User ID', ['detail' => 'User ID Not found'],
-                    HttpStatusCode::BAD_REQUEST
+                    HttpStatusCode::BAD_REQUEST->value
                 );
             }
 
         } catch (Exception $e) {
             return response()->json([
                 'status' => 'FAIL',
-                'status_code' => HttpStatusCode::NOT_FOUND,
+                'status_code' => HttpStatusCode::NOT_FOUND->value,
                 'message' => $e->getMessage(),
                 'error' => ['details' => $e->getMessage()],
-            ], HttpStatusCode::NOT_FOUND);
+            ], HttpStatusCode::NOT_FOUND->value);
         }
     }
 
@@ -996,7 +996,7 @@ class CandidateService extends ApiBaseService
             ]);
 
             if (! $checkRepresentative) {
-                return $this->sendErrorResponse('Candidate information is Not fund', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Candidate information is Not fund', [], HttpStatusCode::NOT_FOUND->value);
             }
 
             if (! empty($request->input('per_avatar_url'))) {
@@ -1075,7 +1075,7 @@ class CandidateService extends ApiBaseService
             ]);
 
             if (! $checkRepresentative) {
-                return $this->sendErrorResponse('Candidate information is Not fund', [], HttpStatusCode::NOT_FOUND);
+                return $this->sendErrorResponse('Candidate information is Not fund', [], HttpStatusCode::NOT_FOUND->value);
             }
             if ($request->hasFile('per_avatar_url')) {
                 $per_avatar_url = $this->singleImageUploadFile($request->file('per_avatar_url'));
@@ -1170,7 +1170,7 @@ class CandidateService extends ApiBaseService
 
         if ($imageType >= 10) {
             return $this->sendErrorResponse(
-                HttpStatusCode::VALIDATION_ERROR, HttpStatusCode::VALIDATION_ERROR_MESSAGE
+                HttpStatusCode::VALIDATION_ERROR->value, HttpStatusCode::VALIDATION_ERROR->name
             );
         }
 
@@ -1231,7 +1231,7 @@ class CandidateService extends ApiBaseService
 
             return $this->sendSuccessResponse($tickets, 'success');
         } catch (Exception $exception) {
-            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR);
+            return $this->sendErrorResponse($exception, $exception->getMessage(), HttpStatusCode::INTERNAL_ERROR->value);
         }
     }
 
@@ -1300,7 +1300,7 @@ class CandidateService extends ApiBaseService
         ]);
 
         if (! $candidate) {
-            return $this->sendErrorResponse('Candidate not found.', [], HttpStatusCode::NOT_FOUND);
+            return $this->sendErrorResponse('Candidate not found.', [], HttpStatusCode::NOT_FOUND->value);
         }
 
         $searchCriteria = ['user_id' => $user_id];

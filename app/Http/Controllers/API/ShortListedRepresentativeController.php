@@ -122,7 +122,7 @@ class ShortListedRepresentativeController extends AppBaseController
 
             $pagination = $this->paginationResponse($shortListRepresentative);
 
-            return $this->sendSuccessResponse($representativeResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED);
+            return $this->sendSuccessResponse($representativeResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED->value);
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -195,7 +195,7 @@ class ShortListedRepresentativeController extends AppBaseController
 
             $pagination = $this->paginationResponse($teamShortListUsers);
 
-            return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED);
+            return $this->sendSuccessResponse($candidatesResponse, 'Short Listed Candidate Fetch successfully!', $pagination, HttpStatusCode::CREATED->value);
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());
@@ -319,7 +319,7 @@ class ShortListedRepresentativeController extends AppBaseController
 
             $representative->shortList()->detach($request->user_id);
 
-            return $this->sendSuccessResponse([], 'Candidate remove from shortlist successfully!', [], HttpStatusCode::CREATED);
+            return $this->sendSuccessResponse([], 'Candidate remove from shortlist successfully!', [], HttpStatusCode::CREATED->value);
 
         } catch (Exception $exception) {
             return $this->sendErrorResponse($exception->getMessage());

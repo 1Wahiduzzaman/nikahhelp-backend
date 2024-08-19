@@ -58,7 +58,7 @@ class SubscriptionController extends AppBaseController
     //Cron job
     public function subscriptionExpiring($days = 7)
     {
-        $date = Carbon::today()->addDay($days);
+        $date = Carbon::today()->addDay((int)$days);
         $teams = Team::with(['team_members' => function ($q) {
             $q->with(['user' => function ($u) {
                 $u->select('id', 'full_name', 'email', 'status');
@@ -73,7 +73,7 @@ class SubscriptionController extends AppBaseController
 
     public function subscriptionExpired($days = 1)
     {
-        $date = Carbon::today()->subDay($days);
+        $date = Carbon::today()->subDay((int)$days);
         $teams = Team::with(['team_members' => function ($q) {
             $q->with(['user' => function ($u) {
                 $u->select('id', 'full_name', 'email', 'status');
