@@ -8,6 +8,7 @@ use App\Models\TeamMember;
 use App\Models\User;
 use DB;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class TeamConnectionResource extends JsonResource
 {
@@ -250,7 +251,7 @@ class TeamConnectionResource extends JsonResource
      */
     public function getUserId()
     {
-        $user = auth()->authenticate();
+        $user = JWTAuth::parseToken()->authenticate();
 
         return $user['id'];
     }

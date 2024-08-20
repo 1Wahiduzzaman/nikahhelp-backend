@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Response;
 use Symfony\Component\HttpFoundation\Response as FResponse;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * @SWG\Swagger(
@@ -44,8 +45,7 @@ class AppBaseController extends Controller
 
     public function getUserId()
     {
-        $user = auth()->authenticate();
-
+        $user = JWTAuth::parseToken()->authenticate();
         return $user['id'];
     }
 

@@ -13,6 +13,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Mail;
 
 class UserController extends Controller
@@ -139,9 +140,9 @@ class UserController extends Controller
     //Raz
     public function postDocUpload(Request $request)
     {
-        $is_exist = CandidateInformation::where('user_id', auth()->authenticate()['id'])->first();
+        $is_exist = CandidateInformation::where('user_id', JWTAuth::parseToken()->authenticate()['id'])->first();
         if ($is_exist) {
-            $res = CandidateInformation::where('user_id', auth()->authenticate()['id'])->update(['is_uplaoded_doc' => $request->is_uplaoded_doc]);
+            $res = CandidateInformation::where('user_id', JWTAuth::parseToken()->authenticate()['id'])->update(['is_uplaoded_doc' => $request->is_uplaoded_doc]);
 
             return $this->sendSuccessResponse([], 'Successfully Updated');
         } else {
@@ -151,7 +152,7 @@ class UserController extends Controller
 
     public function postDocUploadRep(Request $request)
     {
-        $res = RepresentativeInformation::where('user_id', auth()->authenticate()['id'])->update(['is_uplaoded_doc' => $request->is_uplaoded_doc]);
+        $res = RepresentativeInformation::where('user_id', JWTAuth::parseToken()->authenticate()['id'])->update(['is_uplaoded_doc' => $request->is_uplaoded_doc]);
         if ($res) {
             return $this->sendSuccessResponse([], 'Successfully Updated');
         } else {
