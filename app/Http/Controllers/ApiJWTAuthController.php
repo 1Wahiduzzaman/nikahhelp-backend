@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Validator;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class JwtAuthController extends Controller
 {
@@ -50,7 +51,7 @@ class JwtAuthController extends Controller
         $input = $request->only('email', 'password');
         $jwt_token = null;
 
-        if (! $jwt_token = auth()->attempt($input)) {
+        if (! $jwt_token = JWTAuth::attempt($input)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid Email or Password',
@@ -70,7 +71,7 @@ class JwtAuthController extends Controller
         ]);
 
         try {
-            auth()->invalidate($request->token);
+            JWTAuth::invalidate($request->token);
 
             return response()->json([
                 'success' => true,
@@ -90,7 +91,7 @@ class JwtAuthController extends Controller
             'token' => 'required',
         ]);
 
-        $user = auth()->authenticate($request->token);
+        $user = JWTAuth::authenticate($request->token);
 
         return response()->json(['user' => $user]);
     }

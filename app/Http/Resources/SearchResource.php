@@ -7,6 +7,7 @@ use App\Models\TeamMember;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SearchResource extends JsonResource
 {
@@ -158,7 +159,7 @@ class SearchResource extends JsonResource
      */
     public function getUserId()
     {
-        $user = auth()->authenticate();
+        $user = JWTAuth::parseToken()->authenticate();
 
         return $user['id'];
     }

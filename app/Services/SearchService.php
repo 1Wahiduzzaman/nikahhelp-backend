@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Auth;
 // use phpDocumentor\Reflection\Types\Null_;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SearchService extends ApiBaseService
 {
@@ -86,7 +87,7 @@ class SearchService extends ApiBaseService
 
             /*Attempt log in */
             try {
-                auth()->authenticate();
+                JWTAuth::parseToken()->authenticate();
             } catch (\Exception $e) {
             }
 

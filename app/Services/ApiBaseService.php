@@ -12,6 +12,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * Class ApiBaseService
@@ -89,8 +90,7 @@ class ApiBaseService implements ApiBaseServiceInterface
 
     public function getUserId()
     {
-        $user = auth()->authenticate();
-
+        $user = JWTAuth::parseToken()->authenticate();
         return $user['id'];
     }
 
@@ -99,7 +99,7 @@ class ApiBaseService implements ApiBaseServiceInterface
      */
     public function getUserInfo()
     {
-        return $user = auth()->authenticate();
+        return $user = JWTAuth::parseToken()->authenticate();
     }
 
     /**

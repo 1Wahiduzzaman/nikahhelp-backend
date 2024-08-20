@@ -202,7 +202,7 @@ class UserService extends ApiBaseService
             }
 
             /* attempt login */
-            if (! $token = auth()->attempt($credentials)) {
+            if (! $token = JWTAuth::attempt($credentials)) {
                 return $this->sendErrorResponse(
                     'Invalid credentials',
                     ['detail' => 'Ensure that the email and password included in the request are correct'],
