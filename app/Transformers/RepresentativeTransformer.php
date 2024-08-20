@@ -4,6 +4,7 @@ namespace App\Transformers;
 
 use App\Models\CandidateInformation;
 use App\Models\RepresentativeInformation;
+use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 
 /**
@@ -297,7 +298,7 @@ class RepresentativeTransformer extends TransformerAbstract
             'first_name' => $item->first_name,
             'last_name' => $item->last_name,
             'screen_name' => $item->screen_name,
-            'per_age' => Carbon::now()->diffInYears($item->dob),
+            'per_age' => (int) Carbon::now()->diffInYears($item->dob, true),
             'per_gender' => $item->per_gender,
             'per_nationality_id' => $item->per_nationality,
             'per_nationality' => $item->getNationality()->exists() ? $item->getNationality->name : null,
