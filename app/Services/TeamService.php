@@ -668,6 +668,37 @@ class TeamService extends ApiBaseService
 
     }
 
+    public function teamResetPin(Request $request)
+    {
+        $user = Auth::user();
+        $id = $request->id;
+
+        // Get Team
+        $team = $this->teamRepository->findOneByProperties([
+            'id' => "$id",
+        ]);
+
+        // get team members
+        $team_members = $this->teamMemberRepository->findByProperties([
+            'team_id' => $id,
+            'user_id' => $user->id,
+        ]);
+        
+        if (! $team) {
+            return $this->sendErrorResponse('Team not found.', [], HttpStatusCode::NOT_FOUND->value);
+        }
+
+        if (! $team_members) {
+            return $this->sendErrorResponse('You are not a member of this team.', [], HttpStatusCode::NOT_FOUND->value);
+        }
+
+
+        $team->password = "1234";
+        $team->save();
+
+        return $this->sendSuccessResponse([], 'Team password successfully updated.');
+    }
+
     //Admin
     public function getTeamListForBackend(array $data): JsonResponse
     {

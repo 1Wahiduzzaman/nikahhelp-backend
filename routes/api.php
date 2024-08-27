@@ -160,6 +160,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::POST('team-edit-check', [TeamController::class, 'teamEditCheck'])->name('team.team_edit_check');
         Route::POST('team-turn-on', [TeamController::class, 'teamTurnOn'])->name('team.turn.on');
         Route::POST('team', [TeamController::class, 'store'])->name('team.add');
+        Route::POST('reset-team-pin', [TeamController::class, 'resetPin'])->name('team.reset.pin');
         Route::POST('team-update/{id}', [TeamController::class, 'update'])->name('team.update');
         Route::POST('team-login', [TeamController::class, 'login'])->name('team.login');
         Route::POST('team-members', [TeamMembersController::class, 'store'])->name('team.members.add');
