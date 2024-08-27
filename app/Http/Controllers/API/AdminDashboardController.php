@@ -25,6 +25,8 @@ use App\Transformers\RepresentativeTransformer;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -413,6 +415,9 @@ class AdminDashboardController extends AppBaseController
         }
         $userInfo->status = strval($ver_rej);
         if ($userInfo->save()) {
+            if($ver_rej == '3'){
+                $this->deleteVerficationImages($request->id);
+            }
             if ($ver_rej == '4') {
                 $rj = new RejectedNote();
                 $rj->user_id = $userId;
@@ -787,6 +792,44 @@ class AdminDashboardController extends AppBaseController
             return $response->json();
         } catch (\Exception $exception) {
             Log::log('error', $exception->getMessage());
+        }
+    }
+
+    public function deleteVerficationImages(int $userId)
+    {   
+        try {
+            $candidate = CandidateInformation::where('user_id', $userId)->first();
+            if(! $candidate) {
+                return;
+            }
+
+            // create the paths
+            $ver_image_front_path = '_ver_image_front';
+            $ver_image_back_path = '_ver_image_back';
+
+            $this->deleteImage($userId, $ver_image_front_path);
+            $this->deleteImage($userId, $ver_image_back_path);
+            $candidate->ver_image_front = null;
+            $candidate->ver_image_back = null;
+            $candidate->save();
+
+        } catch (\Exception $exception) {
+            Log::log('error', $exception->getMessage());
+            error_log('error: '.$exception->getMessage());
+        }
+    }
+
+    public function deleteImage(int $id, string $path)
+    {
+        try {
+            // delete directory if exist from resource path
+            if (File::exists(resource_path('image/'.$id.$path))) {
+                error_log('resourse_path: '.resource_path('image/'.$id.$path));
+                File::deleteDirectory(resource_path('image/'.$id.$path));
+            }
+
+        } catch (\Exception $e) {
+            error_log('error: '.$e->getMessage());
         }
     }
 }
