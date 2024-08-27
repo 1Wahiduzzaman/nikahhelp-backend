@@ -104,6 +104,11 @@ class TeamController extends Controller
 
     }
 
+    public function resetPin(Request $request)
+    {
+        return $this->teamService->teamResetPin($request);
+    }
+
     /**
      * Remove the specified resource from storage.
      *
