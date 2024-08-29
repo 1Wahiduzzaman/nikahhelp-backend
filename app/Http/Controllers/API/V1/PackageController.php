@@ -14,11 +14,11 @@ class PackageController extends Controller
 {
     public function index()
     {
-        $team_id = (new Generic())->getActiveTeamId();
+        // $team_id = (new Generic())->getActiveTeamId();
 
-        if (Subscription::where('team_id', $team_id)->first()->subscription_expire_at) {
-            return $this->sendErrorResponse('Can not subscribe same Team until expiry', [], HttpStatusCode::FORBIDDEN->value);
-        };
+        // if (Subscription::where('team_id', $team_id)->first()->subscription_expire_at) {
+        //     return $this->sendErrorResponse('Can not subscribe same Team until expiry', [], HttpStatusCode::FORBIDDEN->value);
+        // };
 
         $data = Package::where('status', 'Active')->get();
 
