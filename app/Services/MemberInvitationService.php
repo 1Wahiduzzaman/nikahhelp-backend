@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\HttpStatusCode;
 //use App\Transformers\TeamMemberTransformer;
 use App\Models\TeamMemberInvitation;
+use App\Repositories\CandidateRepository;
 use App\Repositories\MemberInvitationRepository;
 use App\Repositories\TeamMemberRepository;
 use App\Repositories\TeamRepository;
@@ -22,14 +23,18 @@ class MemberInvitationService extends ApiBaseService
 
     protected \App\Repositories\TeamMemberRepository $teamMemberRepository;
 
+    protected \App\Repositories\CandidateRepository $candidateRepository;
+
+
     /**
      * MemberInvitationService constructor.
      */
-    public function __construct(MemberInvitationRepository $memberInvitationRepository, TeamRepository $teamRepository, TeamMemberRepository $teamMemberRepository)
+    public function __construct(CandidateRepository $candidateRepository, MemberInvitationRepository $memberInvitationRepository, TeamRepository $teamRepository, TeamMemberRepository $teamMemberRepository)
     {
         $this->memberInvitationRepository = $memberInvitationRepository;
         $this->teamRepository = $teamRepository;
         $this->teamMemberRepository = $teamMemberRepository;
+        $this->candidateRepository = $candidateRepository;
     }
 
     /**
@@ -142,6 +147,18 @@ class MemberInvitationService extends ApiBaseService
             return $this->sendErrorResponse('You are already a member.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
+        $alreadyCandidate = $this->teamMemberRepository->findByProperties(
+            [
+                'team_id' => $team->id,
+                'user_type' => 'Candidate',
+                'user_id' => $user_id,
+            ]
+        );
+
+        if(count($alreadyCandidate) > 0){
+            return $this->sendErrorResponse('You can not join as a Candidate in multiple teams.', [], HttpStatusCode::VALIDATION_ERROR->value);
+        }
+
         // If user is a member of more than 5 teams
         $all_user_teams = $this->teamMemberRepository->findByProperties([
             'user_id' => $user_id,
@@ -151,19 +168,9 @@ class MemberInvitationService extends ApiBaseService
             return $this->sendErrorResponse('You can not join in more than 5 teams.', [], HttpStatusCode::VALIDATION_ERROR->value);
         }
 
-        //If already member as a candidate  By Raz
-        // $is_candidate = $this->teamMemberRepository->findByProperties([
-        //     "user_id" => $user_id,
-        //     ''
-        // ]);
 
-        // if ($invitation) {
-        //     # code...
-        // }
 
-        // if($is_candidate->count()){
-        //     return $this->sendErrorResponse('You can not join as a Candidate in multiple teams.', [], HttpStatusCode::BAD_REQUEST);
-        // }
+
 
         // If everything alright add in team members
         $new_team_member = [];
