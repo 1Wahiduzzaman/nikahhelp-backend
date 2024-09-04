@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response as FResponse;
 
 /**
@@ -819,15 +820,29 @@ class AdminDashboardController extends AppBaseController
         }
     }
 
+    // delete image from resource path
+    // public function deleteImage(int $id, string $path)
+    // {
+    //     try {
+    //         // delete directory if exist from resource path
+    //         if (File::exists(resource_path('image/'.$id.$path))) {
+    //             error_log('resourse_path: '.resource_path('image/'.$id.$path));
+    //             File::deleteDirectory(resource_path('image/'.$id.$path));
+    //         }
+
+    //     } catch (\Exception $e) {
+    //         error_log('error: '.$e->getMessage());
+    //     }
+    // }
+
+    // delete image from cloudflare r2 storage
     public function deleteImage(int $id, string $path)
     {
         try {
             // delete directory if exist from resource path
-            if (File::exists(resource_path('image/'.$id.$path))) {
-                error_log('resourse_path: '.resource_path('image/'.$id.$path));
-                File::deleteDirectory(resource_path('image/'.$id.$path));
+            if(Storage::disk('r2')->exists('image/'.$id.$path)) {
+                Storage::disk('r2')->deleteDirectory('image/'.$id.$path);
             }
-
         } catch (\Exception $e) {
             error_log('error: '.$e->getMessage());
         }
