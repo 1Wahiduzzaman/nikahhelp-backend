@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "dedoc/scramble": "^0.11.27",
         "doctrine/dbal": "*",
         "dompdf/dompdf": "^3.0",
         "laravel/cashier": "^15.4",
